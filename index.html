@@ -305,23 +305,33 @@
     transition: width .1s;
   }
 
-  /* ===== ПОЛЗУНОК ПРОКРУТКИ (обновлённый) ===== */
+  /* ===== ПОЛЗУНОК ПРОКРУТКИ ===== */
   #side-progress {
     position: fixed;
     right: 0;
     top: 60px;
     bottom: 40px;
-    width: 22px;            /* увеличенная зона касания для пальца */
+    width: 22px;
     background: transparent;
     z-index: 90;
     cursor: grab;
-    touch-action: none;     /* чтобы палец не скроллил страницу при перетаскивании */
+    touch-action: none;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+    /* автоскрытие */
+    opacity: 1;
+    transition: opacity .35s ease;
+    pointer-events: auto;
+  }
+  #side-progress.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
   #side-progress.dragging {
     cursor: grabbing;
+    opacity: 1;
+    pointer-events: auto;
   }
   #side-progress::before {
     content: '';
@@ -339,7 +349,7 @@
 
   #side-thumb {
     position: absolute;
-    right: 6px;             /* выравнивание по центру полосы 4px + зазор */
+    right: 6px;
     width: 12px;
     height: 52px;
     background: var(--accent);
@@ -347,7 +357,7 @@
     opacity: .65;
     transition: opacity .15s, transform .12s;
     box-shadow: 0 0 0 2px var(--bg);
-    pointer-events: none;   /* событие ловит сам контейнер */
+    pointer-events: none;
   }
   #side-progress:hover #side-thumb,
   #side-progress.dragging #side-thumb {
@@ -768,7 +778,6 @@
       font-size: 18px;
     }
 
-    /* ===== Ползунок на телефоне ===== */
     #side-progress {
       width: 32px;
       right: 0;
@@ -965,6 +974,10 @@
   let chapters = [];
   let activeChapter = -1;
   let currentBookId = null;
+
+  // автоскрытие ползунка
+  let sideProgressTimer = null;
+  const SIDE_PROGRESS_HIDE_MS = 500;
 
   const DEFAULTS = {
     bg: '#14161a',
@@ -1256,6 +1269,27 @@
   tocClose.addEventListener('click', closeToc);
   tocOverlay.addEventListener('click', closeToc);
 
+  // ===== Автоскрытие бокового ползунка =====
+  function showSideProgress() {
+    // если ползунок уже в режиме перетаскивания — не прячем
+    if (dragging) {
+      sideProgress.classList.remove('hidden');
+      return;
+    }
+    sideProgress.classList.remove('hidden');
+    scheduleHideSideProgress();
+  }
+
+  function scheduleHideSideProgress() {
+    clearTimeout(sideProgressTimer);
+    sideProgressTimer = setTimeout(() => {
+      if (!dragging) {
+        sideProgress.classList.add('hidden');
+      }
+    }, SIDE_PROGRESS_HIDE_MS);
+  }
+
+  // ===== Прогресс =====
   function updateProgress() {
     const max = readerScreen.scrollHeight - readerScreen.clientHeight;
     const p = max > 0 ? (readerScreen.scrollTop / max) : 0;
@@ -1281,7 +1315,11 @@
     }
   }
 
-  readerScreen.addEventListener('scroll', updateProgress);
+  readerScreen.addEventListener('scroll', () => {
+    updateProgress();
+    showSideProgress();
+  });
+
   window.addEventListener('resize', updateProgress);
   window.addEventListener('orientationchange', () => {
     setTimeout(updateProgress, 300);
@@ -1295,13 +1333,11 @@
     const thumbSpace = trackH - thumbH;
     if (thumbSpace <= 0) return;
 
-    // Позиция верхушки ползунка относительно трека
     let localY = clientY - rect.top - thumbH / 2;
     localY = Math.max(0, Math.min(thumbSpace, localY));
     const p = localY / thumbSpace;
 
     const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    // важно: без smooth, чтобы следовало за пальцем мгновенно
     readerScreen.scrollTop = p * max;
   }
 
@@ -1311,10 +1347,10 @@
     e.preventDefault();
     dragging = true;
     sideProgress.classList.add('dragging');
+    sideProgress.classList.remove('hidden');
+    clearTimeout(sideProgressTimer);
     try { sideProgress.setPointerCapture(e.pointerId); } catch (err) {}
-    // Мгновенно подстраиваем позицию под палец
     scrollFromPointer(e.clientY);
-    // Отключаем плавную прокрутку на время перетаскивания
     readerScreen.style.scrollBehavior = 'auto';
   });
 
@@ -1329,6 +1365,7 @@
     dragging = false;
     sideProgress.classList.remove('dragging');
     readerScreen.style.scrollBehavior = '';
+    scheduleHideSideProgress();
   }
 
   sideProgress.addEventListener('pointerup', endDrag);
@@ -1337,14 +1374,26 @@
     if (dragging && e.buttons === 0) endDrag(e);
   });
 
-  // Колесо мыши по ползунку — прокрутка вниз/вверх
+  // Колесо мыши по ползунку
   sideProgress.addEventListener('wheel', (e) => {
     e.preventDefault();
     readerScreen.scrollTop += e.deltaY;
+    showSideProgress();
   }, { passive: false });
+
+  // Колесо мыши по самой странице
+  readerScreen.addEventListener('wheel', () => {
+    showSideProgress();
+  }, { passive: true });
+
+  // Коснулись экрана — показываем ползунок
+  readerScreen.addEventListener('touchstart', () => {
+    showSideProgress();
+  }, { passive: true });
 
   toTop.addEventListener('click', () => {
     readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
+    showSideProgress();
   });
 
   function openJump() {
@@ -1395,6 +1444,9 @@
 
     updateProgress();
     setTimeout(updateProgress, 60);
+    // показываем и запускаем таймер автоскрытия
+    sideProgress.classList.remove('hidden');
+    scheduleHideSideProgress();
   }
 
   function backToPaste() {
@@ -1413,6 +1465,8 @@
     sideProgress.style.display = 'none';
     toTop.style.display = 'none';
     progressBar.style.width = '0%';
+    clearTimeout(sideProgressTimer);
+    sideProgress.classList.remove('hidden');
     closeToc();
     closeJump();
     palette.classList.remove('open');
