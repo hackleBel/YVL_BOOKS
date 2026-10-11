@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YVL BOOKS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕸️%3C/text%3E%3C/svg%3E" type="image/svg+xml">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
     height: 100%;
@@ -14,7 +14,6 @@
     color: var(--fg);
     font-family: Georgia, 'Times New Roman', serif;
     transition: background .2s, color .2s;
-    -webkit-text-size-adjust: 100%;
   }
 
   :root {
@@ -72,7 +71,6 @@
     cursor: pointer;
     transition: background .15s, border-color .15s;
     line-height: 1;
-    touch-action: manipulation;
   }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
@@ -109,8 +107,6 @@
     text-align: center;
   }
 
-  #settings-toggle { display: none; }
-
   #paste-screen {
     flex: 1;
     display: flex;
@@ -118,7 +114,6 @@
     padding: 24px;
     align-items: center;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   #paste-screen .inner {
@@ -180,6 +175,22 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
+  .library-search {
+    width: 100%;
+    background: var(--bg-input);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color .15s;
+  }
+  .library-search:focus { border-color: var(--accent); }
+  .library-search::placeholder { color: var(--fg-dim); }
+
   .book-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -197,7 +208,6 @@
     cursor: pointer;
     transition: border-color .15s, transform .12s;
     position: relative;
-    touch-action: manipulation;
   }
   .book-item:hover { border-color: var(--accent); transform: translateY(-1px); }
 
@@ -266,7 +276,6 @@
     overflow-x: hidden;
     scroll-behavior: smooth;
     position: relative;
-    -webkit-overflow-scrolling: touch;
   }
 
   #reader-screen::-webkit-scrollbar { width: 10px; }
@@ -305,65 +314,29 @@
     transition: width .1s;
   }
 
-  /* ===== ПОЛЗУНОК ПРОКРУТКИ ===== */
   #side-progress {
     position: fixed;
-    right: 0;
+    right: 6px;
     top: 60px;
     bottom: 40px;
-    width: 22px;
-    background: transparent;
-    z-index: 90;
-    cursor: grab;
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    /* автоскрытие */
-    opacity: 1;
-    transition: opacity .35s ease;
-    pointer-events: auto;
-  }
-  #side-progress.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  #side-progress.dragging {
-    cursor: grabbing;
-    opacity: 1;
-    pointer-events: auto;
-  }
-  #side-progress::before {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    right: 8px;
-    width: 4px;
+    width: 3px;
     background: var(--border);
-    border-radius: 3px;
-  }
-  #side-progress:hover::before,
-  #side-progress.dragging::before {
-    background: var(--border-strong);
+    border-radius: 2px;
+    z-index: 90;
+    cursor: pointer;
   }
 
   #side-thumb {
     position: absolute;
-    right: 6px;
-    width: 12px;
-    height: 52px;
+    left: -3px;
+    width: 9px;
+    height: 40px;
     background: var(--accent);
-    border-radius: 8px;
-    opacity: .65;
-    transition: opacity .15s, transform .12s;
-    box-shadow: 0 0 0 2px var(--bg);
-    pointer-events: none;
+    border-radius: 5px;
+    opacity: .6;
+    transition: opacity .15s;
   }
-  #side-progress:hover #side-thumb,
-  #side-progress.dragging #side-thumb {
-    opacity: 1;
-    transform: scaleX(1.15);
-  }
+  #side-progress:hover #side-thumb { opacity: 1; }
 
   #to-top {
     position: fixed;
@@ -452,7 +425,6 @@
     flex: 1;
     overflow-y: auto;
     padding: 8px 0;
-    -webkit-overflow-scrolling: touch;
   }
 
   #toc-list::-webkit-scrollbar { width: 8px; }
@@ -504,7 +476,6 @@
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
   }
 
   #hint {
@@ -561,7 +532,6 @@
     text-align: center;
     font-size: 10px;
     transition: transform .12s, border-color .15s;
-    touch-action: manipulation;
   }
   .palette-item:hover { transform: translateY(-1px); border-color: var(--accent); }
   .palette-item.active { border-color: var(--accent); }
@@ -615,201 +585,12 @@
 
   input[type=file] { display: none; }
 
-  /* ============ МОБИЛЬНАЯ ВЕРСИЯ ============ */
-  @media (max-width: 700px) {
-    header {
-      padding: 8px 10px;
-      gap: 6px;
-      padding-top: calc(8px + env(safe-area-inset-top));
-    }
-    header h1 {
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
-    button {
-      padding: 10px 12px;
-      font-size: 13px;
-      min-height: 40px;
-    }
-    .btn-group {
-      padding: 2px;
-      gap: 2px;
-    }
-    .btn-group button {
-      padding: 10px 10px;
-      min-width: 40px;
-      min-height: 40px;
-      font-size: 15px;
-    }
-    .size-label {
-      min-width: 26px;
-      font-size: 10px;
-    }
-
-    #settings-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-strong);
-      color: var(--fg);
-      font-size: 18px;
-      padding: 8px 12px;
-      min-width: 44px;
-      min-height: 44px;
-      border-radius: 8px;
-      line-height: 1;
-    }
-    #settings-toggle.active {
-      background: var(--border-strong);
-      border-color: var(--accent);
-    }
-
-    #reader-controls {
-      display: none !important;
-      width: 100%;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-    #reader-controls.open {
-      display: flex !important;
-    }
-    #reader-controls .btn-group {
-      width: 100%;
-      justify-content: space-between;
-      padding: 4px;
-    }
-    #reader-controls .btn-group button {
-      flex: 1;
-      min-width: 0;
-    }
-    #reader-controls > button {
-      width: 100%;
-      padding: 12px;
-      font-size: 14px;
-    }
-
-    #paste-screen {
-      padding: 14px;
-      padding-bottom: calc(14px + env(safe-area-inset-bottom));
-    }
-    #paste-screen p {
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-    textarea {
-      font-size: 16px;
-      padding: 14px;
-      min-height: 120px;
-    }
-    #paste-screen .actions {
-      flex-direction: column;
-      gap: 8px;
-    }
-    #paste-screen .actions button {
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-    }
-
-    .book-list {
-      grid-template-columns: 1fr;
-    }
-    .book-item {
-      padding: 14px;
-    }
-
-    #content {
-      padding: 26px 18px 110px;
-      font-size: 17px;
-      text-align: left;
-    }
-    #content p {
-      text-indent: 1.5em;
-      text-align: left;
-      hyphens: none;
-      -webkit-hyphens: none;
-    }
-
-    #toc-panel {
-      width: 100%;
-      right: -100%;
-    }
-    #toc-header {
-      padding: 14px 16px;
-      padding-top: calc(14px + env(safe-area-inset-top));
-    }
-
-    .palette {
-      right: 8px;
-      left: 8px;
-      width: auto;
-      max-width: none;
-    }
-
-    #jump-box {
-      left: 10px;
-      right: 10px;
-      transform: none;
-      bottom: calc(20px + env(safe-area-inset-bottom));
-      padding: 12px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    #jump-box input {
-      width: 90px;
-      font-size: 16px;
-      padding: 10px;
-    }
-    #jump-box button {
-      min-width: 44px;
-      min-height: 44px;
-    }
-
-    #to-top {
-      right: 16px;
-      bottom: calc(70px + env(safe-area-inset-bottom));
-      width: 46px;
-      height: 46px;
-      font-size: 18px;
-    }
-
-    #side-progress {
-      width: 32px;
-      right: 0;
-      top: 70px;
-      bottom: 60px;
-    }
-    #side-progress::before {
-      right: 12px;
-      width: 5px;
-    }
-    #side-thumb {
-      right: 9px;
-      width: 16px;
-      height: 60px;
-      border-radius: 10px;
-    }
-
-    #hint {
-      display: none;
-    }
-
-    footer {
-      font-size: 10px;
-      padding: 6px 12px;
-      padding-bottom: calc(6px + env(safe-area-inset-bottom));
-    }
-
-    .del {
-      min-width: 32px;
-      min-height: 32px;
-      font-size: 16px;
-    }
+  /* ---------- Мобильные правки ---------- */
+  @media (max-width: 768px) {
+    #hint { display: none !important; }
+    #content { padding: 30px 18px 120px; }
+    #toc-panel { width: 88%; right: -100%; }
+    header { padding: 8px 12px; gap: 6px; }
   }
 </style>
 </head>
@@ -820,7 +601,6 @@
 
   <header style="position:relative">
     <h1 id="logo">YVL BOOKS</h1>
-    <button id="settings-toggle" title="Настройки">⚙</button>
     <div class="spacer"></div>
     <div id="reader-controls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
 
@@ -873,6 +653,7 @@
 
       <div id="library">
         <h3>Библиотека</h3>
+        <input type="text" id="library-search" class="library-search" placeholder="Поиск по названию..." autocomplete="off" spellcheck="false">
         <div id="library-list"></div>
       </div>
     </div>
@@ -896,7 +677,7 @@
 
 <div id="jump-box">
   <span>Перейти к главе:</span>
-  <input type="number" id="jump-input" min="1" value="1" inputmode="numeric">
+  <input type="number" id="jump-input" min="1" value="1">
   <button id="jump-go">→</button>
   <button id="jump-cancel">✕</button>
 </div>
@@ -929,7 +710,6 @@
   const btnToc = document.getElementById('btn-toc');
   const btnTheme = document.getElementById('btn-theme');
   const readerControls = document.getElementById('reader-controls');
-  const settingsToggle = document.getElementById('settings-toggle');
   const progressBar = document.getElementById('progress-bar');
   const footerLeft = document.getElementById('footer-left');
   const footerRight = document.getElementById('footer-right');
@@ -969,15 +749,13 @@
   const lhLabel = document.getElementById('lh-label');
 
   const libraryList = document.getElementById('library-list');
+  const librarySearch = document.getElementById('library-search');
   const dropOverlay = document.getElementById('drop-overlay');
 
   let chapters = [];
   let activeChapter = -1;
   let currentBookId = null;
-
-  // автоскрытие ползунка
-  let sideProgressTimer = null;
-  const SIDE_PROGRESS_HIDE_MS = 500;
+  let libraryFilter = '';
 
   const DEFAULTS = {
     bg: '#14161a',
@@ -1000,6 +778,7 @@
     { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
   ];
 
+  // ---------- Настройки ----------
   function loadSettings() {
     try {
       const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
@@ -1008,9 +787,7 @@
   }
   let settings = loadSettings();
   function saveSettings() {
-    try {
-      localStorage.setItem('reader_settings', JSON.stringify(settings));
-    } catch (e) {}
+    localStorage.setItem('reader_settings', JSON.stringify(settings));
   }
 
   function shade(hex, amt) {
@@ -1143,27 +920,7 @@
     applySettings();
   });
 
-  if (settingsToggle) {
-    settingsToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      readerControls.classList.toggle('open');
-      settingsToggle.classList.toggle('active', readerControls.classList.contains('open'));
-    });
-  }
-
-  document.addEventListener('click', (e) => {
-    if (!readerControls.classList.contains('open')) return;
-    if (readerControls.contains(e.target)) return;
-    if (e.target === settingsToggle) return;
-    readerControls.classList.remove('open');
-    if (settingsToggle) settingsToggle.classList.remove('active');
-  });
-
-  function closeSettingsPanel() {
-    readerControls.classList.remove('open');
-    if (settingsToggle) settingsToggle.classList.remove('active');
-  }
-
+  // ---------- Разбиение на абзацы ----------
   function splitIntoParagraphs(text) {
     const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
     if (blocks.length <= 1) {
@@ -1217,49 +974,76 @@
     footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
 
     buildToc();
+    updateProgress();
+    readerScreen.scrollTop = 0;
   }
 
+  // ---------- Прогресс ----------
+  function updateProgress() {
+    if (readerScreen.style.display === 'none') return;
+    const scrollTop = readerScreen.scrollTop;
+    const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+
+    const trackH = sideProgress.clientHeight;
+    const thumbH = sideThumb.offsetHeight;
+    const top = (pct / 100) * (trackH - thumbH);
+    sideThumb.style.top = Math.max(0, Math.min(trackH - thumbH, top)) + 'px';
+
+    toTop.style.display = scrollTop > 400 ? 'flex' : 'none';
+
+    // подсветка активной главы
+    if (chapters.length) {
+      let current = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        if (chapters[i].el.offsetTop - readerScreen.scrollTop <= 120) current = i;
+      }
+      if (current !== activeChapter) {
+        activeChapter = current;
+        document.querySelectorAll('.toc-item').forEach((el, i) => {
+          el.classList.toggle('active', i === current);
+        });
+      }
+    }
+  }
+
+  readerScreen.addEventListener('scroll', updateProgress);
+  window.addEventListener('resize', updateProgress);
+
+  sideProgress.addEventListener('click', (e) => {
+    const rect = sideProgress.getBoundingClientRect();
+    const pct = (e.clientY - rect.top) / rect.height;
+    readerScreen.scrollTop = pct * (readerScreen.scrollHeight - readerScreen.clientHeight);
+  });
+
+  toTop.addEventListener('click', () => readerScreen.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ---------- Оглавление ----------
   function buildToc() {
     tocList.innerHTML = '';
-    if (chapters.length === 0) {
-      const d = document.createElement('div');
-      d.id = 'toc-empty';
-      d.textContent = 'Главы не найдены. Перейти по номеру можно через Ctrl+G.';
-      tocList.appendChild(d);
+    if (!chapters.length) {
+      const empty = document.createElement('div');
+      empty.id = 'toc-empty';
+      empty.textContent = 'Главы не найдены. Разбейте текст заголовками вида «Глава 1» или пустыми строками.';
+      tocList.appendChild(empty);
       return;
     }
     chapters.forEach((ch, i) => {
-      const item = document.createElement('div');
-      item.className = 'toc-item';
-      item.textContent = ch.title;
-      item.addEventListener('click', () => {
-        goToChapter(i);
+      const el = document.createElement('div');
+      el.className = 'toc-item';
+      el.textContent = ch.title;
+      el.addEventListener('click', () => {
+        readerScreen.scrollTo({ top: ch.el.offsetTop - 40, behavior: 'smooth' });
         closeToc();
       });
-      tocList.appendChild(item);
-    });
-  }
-
-  function goToChapter(i) {
-    if (i < 0 || i >= chapters.length) return;
-    const el = chapters[i].el;
-    readerScreen.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
-    activeChapter = i;
-    updateTocActive();
-  }
-
-  function updateTocActive() {
-    tocList.querySelectorAll('.toc-item').forEach((it, i) => {
-      it.classList.toggle('active', i === activeChapter);
+      tocList.appendChild(el);
     });
   }
 
   function openToc() {
-    if (chapters.length === 0) buildToc();
     tocPanel.classList.add('open');
     tocOverlay.classList.add('open');
-    updateTocActive();
-    closeSettingsPanel();
   }
   function closeToc() {
     tocPanel.classList.remove('open');
@@ -1269,855 +1053,229 @@
   tocClose.addEventListener('click', closeToc);
   tocOverlay.addEventListener('click', closeToc);
 
-  // ===== Автоскрытие бокового ползунка =====
-  function showSideProgress() {
-    // если ползунок уже в режиме перетаскивания — не прячем
-    if (dragging) {
-      sideProgress.classList.remove('hidden');
-      return;
-    }
-    sideProgress.classList.remove('hidden');
-    scheduleHideSideProgress();
-  }
-
-  function scheduleHideSideProgress() {
-    clearTimeout(sideProgressTimer);
-    sideProgressTimer = setTimeout(() => {
-      if (!dragging) {
-        sideProgress.classList.add('hidden');
-      }
-    }, SIDE_PROGRESS_HIDE_MS);
-  }
-
-  // ===== Прогресс =====
-  function updateProgress() {
-    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    const p = max > 0 ? (readerScreen.scrollTop / max) : 0;
-    progressBar.style.width = (p * 100) + '%';
-
-    const trackH = sideProgress.clientHeight;
-    const thumbH = sideThumb.offsetHeight;
-    const thumbSpace = trackH - thumbH;
-    sideThumb.style.top = Math.max(0, Math.min(thumbSpace, p * thumbSpace)) + 'px';
-
-    toTop.style.display = readerScreen.scrollTop > 400 ? 'flex' : 'none';
-
-    if (chapters.length > 0) {
-      let current = 0;
-      for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].el.offsetTop - readerScreen.scrollTop <= 100) current = i;
-        else break;
-      }
-      if (current !== activeChapter) {
-        activeChapter = current;
-        updateTocActive();
-      }
-    }
-  }
-
-  readerScreen.addEventListener('scroll', () => {
-    updateProgress();
-    showSideProgress();
-  });
-
-  window.addEventListener('resize', updateProgress);
-  window.addEventListener('orientationchange', () => {
-    setTimeout(updateProgress, 300);
-  });
-
-  // ===== Перетаскивание ползунка =====
-  function scrollFromPointer(clientY) {
-    const rect = sideProgress.getBoundingClientRect();
-    const thumbH = sideThumb.offsetHeight;
-    const trackH = rect.height;
-    const thumbSpace = trackH - thumbH;
-    if (thumbSpace <= 0) return;
-
-    let localY = clientY - rect.top - thumbH / 2;
-    localY = Math.max(0, Math.min(thumbSpace, localY));
-    const p = localY / thumbSpace;
-
-    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    readerScreen.scrollTop = p * max;
-  }
-
-  let dragging = false;
-
-  sideProgress.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    dragging = true;
-    sideProgress.classList.add('dragging');
-    sideProgress.classList.remove('hidden');
-    clearTimeout(sideProgressTimer);
-    try { sideProgress.setPointerCapture(e.pointerId); } catch (err) {}
-    scrollFromPointer(e.clientY);
-    readerScreen.style.scrollBehavior = 'auto';
-  });
-
-  sideProgress.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    e.preventDefault();
-    scrollFromPointer(e.clientY);
-  });
-
-  function endDrag(e) {
-    if (!dragging) return;
-    dragging = false;
-    sideProgress.classList.remove('dragging');
-    readerScreen.style.scrollBehavior = '';
-    scheduleHideSideProgress();
-  }
-
-  sideProgress.addEventListener('pointerup', endDrag);
-  sideProgress.addEventListener('pointercancel', endDrag);
-  sideProgress.addEventListener('pointerleave', (e) => {
-    if (dragging && e.buttons === 0) endDrag(e);
-  });
-
-  // Колесо мыши по ползунку
-  sideProgress.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    readerScreen.scrollTop += e.deltaY;
-    showSideProgress();
-  }, { passive: false });
-
-  // Колесо мыши по самой странице
-  readerScreen.addEventListener('wheel', () => {
-    showSideProgress();
-  }, { passive: true });
-
-  // Коснулись экрана — показываем ползунок
-  readerScreen.addEventListener('touchstart', () => {
-    showSideProgress();
-  }, { passive: true });
-
-  toTop.addEventListener('click', () => {
-    readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
-    showSideProgress();
-  });
-
-  function openJump() {
-    jumpBox.style.display = 'flex';
-    jumpInput.value = (activeChapter + 1) || 1;
-    jumpInput.max = chapters.length || 1;
-    jumpInput.focus();
-    jumpInput.select();
-    closeSettingsPanel();
-  }
-  function closeJump() { jumpBox.style.display = 'none'; }
-  jumpGo.addEventListener('click', () => {
-    const n = parseInt(jumpInput.value, 10) - 1;
-    if (!isNaN(n)) goToChapter(n);
-    closeJump();
-  });
-  jumpCancel.addEventListener('click', closeJump);
-  jumpInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') jumpGo.click();
-    if (e.key === 'Escape') closeJump();
-  });
-
-  function openReader(text, bookId) {
-    currentBookId = bookId || null;
-    if (bookId) {
-      localStorage.setItem('reader_last_book', bookId);
-      try { localStorage.setItem('reader_last_text', text); } catch (e) {}
-    }
-    render(text);
-    applySettings();
-    pasteScreen.style.display = 'none';
-    readerScreen.style.display = 'block';
-    readerControls.style.display = 'flex';
-    sideProgress.style.display = 'block';
-    readerScreen.scrollTop = 0;
-    closeSettingsPanel();
-
-    if (bookId) {
-      const books = loadBooks();
-      const b = books.find(x => x.id === bookId);
-      if (b && b.scroll) {
-        setTimeout(() => {
-          readerScreen.scrollTop = b.scroll;
-          updateProgress();
-        }, 80);
-      }
-    }
-
-    updateProgress();
-    setTimeout(updateProgress, 60);
-    // показываем и запускаем таймер автоскрытия
-    sideProgress.classList.remove('hidden');
-    scheduleHideSideProgress();
-  }
-
-  function backToPaste() {
-    if (currentBookId) {
-      const books = loadBooks();
-      const b = books.find(x => x.id === currentBookId);
-      if (b) {
-        b.scroll = readerScreen.scrollTop;
-        saveBooks(books);
-      }
-    }
-
-    readerScreen.style.display = 'none';
-    pasteScreen.style.display = 'flex';
-    readerControls.style.display = 'none';
-    sideProgress.style.display = 'none';
-    toTop.style.display = 'none';
-    progressBar.style.width = '0%';
-    clearTimeout(sideProgressTimer);
-    sideProgress.classList.remove('hidden');
-    closeToc();
-    closeJump();
-    palette.classList.remove('open');
-    closeSettingsPanel();
-    renderLibrary();
-  }
-
-  btnRead.addEventListener('click', () => {
-    const text = input.value.trim();
-    if (!text) { alert('Вставьте текст книги'); return; }
-    const book = addBook('Без названия — ' + new Date().toLocaleString('ru-RU'), text, 'text');
-    openReader(text, book.id);
-  });
-
-  btnClear.addEventListener('click', () => {
-    input.value = '';
-  });
-
-  let scrollTimer = null;
-  readerScreen.addEventListener('scroll', () => {
-    if (!currentBookId) return;
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      const books = loadBooks();
-      const b = books.find(x => x.id === currentBookId);
-      if (b) { b.scroll = readerScreen.scrollTop; saveBooks(books); }
-    }, 400);
-  });
-
-  function loadBooks() {
+  // ---------- Библиотека ----------
+  function getLibrary() {
     try {
-      const main = JSON.parse(localStorage.getItem('reader_books') || '[]');
-      if (Array.isArray(main) && main.length > 0) return main;
-
-      const backup = JSON.parse(localStorage.getItem('reader_books_backup') || '[]');
-      if (Array.isArray(backup) && backup.length > 0) {
-        try { localStorage.setItem('reader_books', JSON.stringify(backup)); } catch (e) {}
-        return backup;
-      }
-      return [];
-    } catch (e) {
-      try {
-        const backup = JSON.parse(localStorage.getItem('reader_books_backup') || '[]');
-        if (Array.isArray(backup)) return backup;
-      } catch (e2) {}
-      return [];
-    }
+      return JSON.parse(localStorage.getItem('reader_library') || '[]');
+    } catch (e) { return []; }
   }
-
-  function saveBooks(books) {
-    try {
-      const json = JSON.stringify(books);
-      localStorage.setItem('reader_books', json);
-      try { localStorage.setItem('reader_books_backup', json); } catch (e) {}
-    } catch (e) {
-      alert('Не удалось сохранить книгу: превышен лимит хранилища браузера. Удалите лишние книги.');
-    }
-  }
-
-  function addBook(title, text, type, sourceName) {
-    const books = loadBooks();
-    const id = 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    books.unshift({
-      id,
-      title: title || 'Без названия',
-      text,
-      type: type || 'text',
-      source: sourceName || '',
-      words,
-      added: Date.now(),
-      scroll: 0
-    });
-    saveBooks(books);
-    renderLibrary();
-    return books[0];
-  }
-
-  function removeBook(id) {
-    if (!confirm('Удалить книгу из библиотеки?')) return;
-    const books = loadBooks().filter(b => b.id !== id);
-    saveBooks(books);
-    if (currentBookId === id) currentBookId = null;
-    renderLibrary();
+  function saveLibrary(lib) {
+    localStorage.setItem('reader_library', JSON.stringify(lib));
   }
 
   function renderLibrary() {
-    const books = loadBooks();
+    const lib = getLibrary();
     libraryList.innerHTML = '';
 
-    if (books.length === 0) {
+    const query = libraryFilter.trim().toLowerCase();
+    const filtered = query
+      ? lib.filter(b => (b.title || '').toLowerCase().includes(query))
+      : lib;
+
+    if (!filtered.length) {
       const empty = document.createElement('div');
       empty.id = 'library-empty';
-      empty.textContent = 'Пока нет сохранённых книг. Загрузите файл или вставьте текст и нажмите «Читать».';
+      empty.textContent = query ? 'Ничего не найдено' : 'Библиотека пуста';
       libraryList.appendChild(empty);
       return;
     }
 
-    books.forEach(b => {
-      const el = document.createElement('div');
-      el.className = 'book-item';
-      el.innerHTML = `
-        <div class="title" title="${escapeHtml(b.title)}">${escapeHtml(b.title)}</div>
-        <div class="meta">${b.words.toLocaleString('ru-RU')} слов · ${new Date(b.added).toLocaleDateString('ru-RU')}</div>
-      `;
-      el.addEventListener('click', (e) => {
-        if (e.target.classList.contains('del')) return;
-        openReader(b.text, b.id);
-      });
+    const list = document.createElement('div');
+    list.className = 'book-list';
+
+    filtered.forEach(book => {
+      const item = document.createElement('div');
+      item.className = 'book-item';
+
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = book.title;
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const words = (book.text || '').trim().split(/\s+/).filter(Boolean).length;
+      meta.textContent = words.toLocaleString('ru-RU') + ' слов';
+
       const del = document.createElement('button');
       del.className = 'del';
       del.textContent = '✕';
       del.title = 'Удалить';
       del.addEventListener('click', (e) => {
         e.stopPropagation();
-        removeBook(b.id);
+        const lib2 = getLibrary().filter(b => b.id !== book.id);
+        saveLibrary(lib2);
+        if (currentBookId === book.id) currentBookId = null;
+        renderLibrary();
       });
-      el.appendChild(del);
-      libraryList.appendChild(el);
+
+      item.appendChild(title);
+      item.appendChild(meta);
+      item.appendChild(del);
+
+      item.addEventListener('click', () => {
+        currentBookId = book.id;
+        openBook(book.text, book.title);
+      });
+
+      list.appendChild(item);
     });
+
+    libraryList.appendChild(list);
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
+  librarySearch.addEventListener('input', (e) => {
+    libraryFilter = e.target.value;
+    renderLibrary();
+  });
+
+  // ---------- Открытие книги ----------
+  function openBook(text, title) {
+    if (!text || !text.trim()) return;
+    pasteScreen.style.display = 'none';
+    readerScreen.style.display = 'block';
+    readerControls.style.display = 'flex';
+    sideProgress.style.display = 'block';
+    document.getElementById('hint').style.display = 'none';
+    render(text);
+    if (title) document.title = title + ' — YVL BOOKS';
+    else document.title = 'YVL BOOKS';
   }
 
-  btnLibrary.addEventListener('click', backToPaste);
-  logo.addEventListener('click', backToPaste);
+  function showLibraryScreen() {
+    readerScreen.style.display = 'none';
+    pasteScreen.style.display = 'flex';
+    readerControls.style.display = 'none';
+    sideProgress.style.display = 'none';
+    progressBar.style.width = '0%';
+    toTop.style.display = 'none';
+    document.title = 'YVL BOOKS';
+    renderLibrary();
+  }
+
+  // ---------- Кнопки ----------
+  btnRead.addEventListener('click', () => {
+    const text = input.value.trim();
+    if (!text) return;
+    // Сохраняем в библиотеку
+    const lib = getLibrary();
+    const title = text.split('\n')[0].trim().slice(0, 80) || 'Без названия';
+    const id = 'book_' + Date.now();
+    lib.unshift({ id, title, text, added: Date.now() });
+    saveLibrary(lib);
+    currentBookId = id;
+    openBook(text, title);
+  });
+
+  btnClear.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
 
   btnFile.addEventListener('click', () => fileInput.click());
+
   fileInput.addEventListener('change', (e) => {
-    const f = e.target.files[0];
-    if (f) handleFile(f);
+    const file = e.target.files[0];
+    if (!file) return;
+    readFile(file);
     fileInput.value = '';
   });
 
+  btnLibrary.addEventListener('click', showLibraryScreen);
+  logo.addEventListener('click', showLibraryScreen);
+
+  // ---------- Чтение файлов ----------
+  function readFile(file) {
+    const reader = new FileReader();
+    const name = file.name.replace(/\.[^.]+$/, '');
+
+    reader.onload = (e) => {
+      let text = e.target.result;
+
+      if (/\.(html?|fb2)$/i.test(file.name)) {
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+        doc.querySelectorAll('script, style').forEach(el => el.remove());
+        text = doc.body ? doc.body.innerText : text;
+      }
+
+      text = text.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+      if (!text) return;
+
+      const lib = getLibrary();
+      const id = 'book_' + Date.now();
+      lib.unshift({ id, title: name || 'Без названия', text, added: Date.now() });
+      saveLibrary(lib);
+      currentBookId = id;
+      openBook(text, name);
+    };
+
+    reader.readAsText(file, 'utf-8');
+  }
+
+  // ---------- Drag & Drop ----------
   let dragCounter = 0;
   window.addEventListener('dragenter', (e) => {
     e.preventDefault();
     dragCounter++;
-    dropOverlay.classList.add('show');
+    if (dragCounter === 1) dropOverlay.classList.add('show');
   });
   window.addEventListener('dragover', (e) => e.preventDefault());
   window.addEventListener('dragleave', (e) => {
+    e.preventDefault();
     dragCounter--;
-    if (dragCounter <= 0) {
-      dragCounter = 0;
-      dropOverlay.classList.remove('show');
-    }
+    if (dragCounter <= 0) { dragCounter = 0; dropOverlay.classList.remove('show'); }
   });
   window.addEventListener('drop', (e) => {
     e.preventDefault();
     dragCounter = 0;
     dropOverlay.classList.remove('show');
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
+    const file = e.dataTransfer.files[0];
+    if (file) readFile(file);
   });
 
-  async function handleFile(file) {
-    const name = file.name;
-    const ext = (name.split('.').pop() || '').toLowerCase();
-    const title = name.replace(/\.[^.]+$/, '');
-
-    try {
-      let text = '';
-
-      if (ext === 'fb2') {
-        const buf = await readAsArrayBuffer(file);
-        text = fb2ToText(buf);
-      } else if (ext === 'html' || ext === 'htm') {
-        const buf = await readAsArrayBuffer(file);
-        text = htmlToText(decodeBuffer(buf));
-      } else if (ext === 'epub') {
-        text = await epubToText(file);
-      } else if (ext === 'md' || ext === 'txt' || ext === '') {
-        const buf = await readAsArrayBuffer(file);
-        text = decodeBuffer(buf);
-      } else {
-        const buf = await readAsArrayBuffer(file);
-        text = decodeBuffer(buf);
-      }
-
-      text = (text || '').trim();
-      if (!text) {
-        alert('Не удалось извлечь текст из файла');
-        return;
-      }
-
-      const book = addBook(title, text, ext || 'txt', name);
-      openReader(text, book.id);
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка чтения файла: ' + err.message);
-    }
-  }
-
-  function readAsArrayBuffer(file) {
-    return new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = () => rej(r.error);
-      r.readAsArrayBuffer(file);
-    });
-  }
-
-  function decodeBuffer(buffer) {
-    const bytes = new Uint8Array(buffer);
-
-    if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
-      return new TextDecoder('utf-8').decode(bytes.subarray(3));
-    }
-    if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
-      return new TextDecoder('utf-16le').decode(bytes.subarray(2));
-    }
-    if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
-      return new TextDecoder('utf-16be').decode(bytes.subarray(2));
-    }
-
-    try {
-      const utf8 = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-      if (!utf8.includes('\uFFFD')) return utf8;
-    } catch (e) {}
-
-    const candidates = ['windows-1251', 'koi8-r', 'windows-1252', 'iso-8859-5', 'ibm866'];
-    let best = null;
-    let bestScore = -Infinity;
-
-    for (const enc of candidates) {
-      try {
-        const text = new TextDecoder(enc).decode(bytes);
-        const score = scoreCyrillic(text);
-        if (score > bestScore) {
-          bestScore = score;
-          best = text;
-        }
-      } catch (e) {}
-    }
-
-    return best !== null ? best : new TextDecoder('windows-1251').decode(bytes);
-  }
-
-  function scoreCyrillic(text) {
-    let cyr = 0, lat = 0, bad = 0;
-    const sample = text.slice(0, 5000);
-    for (let i = 0; i < sample.length; i++) {
-      const ch = sample[i];
-      if (/[А-Яа-яЁё]/.test(ch)) cyr++;
-      else if (/[A-Za-z]/.test(ch)) lat++;
-      else if (ch === '\uFFFD' || ch === '\u0000') bad++;
-    }
-    return cyr * 2 - bad * 10 - Math.abs(cyr - lat) * 0.1;
-  }
-
-  function htmlToText(html) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    doc.querySelectorAll('script,style,nav,header,footer').forEach(n => n.remove());
-    doc.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
-    doc.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,tr').forEach(el => {
-      el.appendChild(document.createTextNode('\n'));
-    });
-    const t = doc.body ? doc.body.textContent : doc.textContent;
-    return t.replace(/\u00a0/g, ' ')
-            .replace(/[ \t]+\n/g, '\n')
-            .replace(/\n{3,}/g, '\n\n')
-            .trim();
-  }
-
-  function fb2ToText(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let head = '';
-    for (let i = 0; i < Math.min(bytes.length, 400); i++) {
-      head += String.fromCharCode(bytes[i]);
-    }
-
-    let enc = 'utf-8';
-    const m = head.match(/encoding\s*=\s*["']([^"']+)["']/i);
-    if (m) {
-      const declared = m[1].toLowerCase();
-      if (declared === 'windows-1251' || declared === 'cp1251') enc = 'windows-1251';
-      else if (declared === 'koi8-r') enc = 'koi8-r';
-      else if (declared === 'utf-8' || declared === 'utf8') enc = 'utf-8';
-      else if (declared === 'utf-16' || declared === 'utf-16le' || declared === 'utf-16be') enc = declared;
-      else enc = null;
-    }
-
-    let xml;
-    if (enc) {
-      try { xml = new TextDecoder(enc).decode(buffer); }
-      catch (e) { xml = decodeBuffer(buffer); }
-    } else {
-      xml = decodeBuffer(buffer);
-    }
-
-    const doc = new DOMParser().parseFromString(xml, 'application/xml');
-    if (doc.querySelector('parsererror')) {
-      return htmlToText(xml);
-    }
-    const bodies = doc.querySelectorAll('body');
-    const parts = [];
-    bodies.forEach(body => {
-      body.querySelectorAll('section, p, title, subtitle, poem, stanza, v, epigraph, empty-line').forEach(el => {
-        const tag = el.tagName.toLowerCase();
-        if (tag === 'empty-line') { parts.push(''); return; }
-        if (tag === 'v') {
-          parts.push('  ' + (el.textContent || '').trim());
-          return;
-        }
-        let own = '';
-        el.childNodes.forEach(n => {
-          if (n.nodeType === 3) own += n.nodeValue;
-        });
-        own = own.trim();
-        if (own) parts.push(own);
-      });
-    });
-    let text = parts.join('\n');
-    if (!text.trim()) {
-      text = doc.documentElement ? doc.documentElement.textContent : xml;
-    }
-    return text.replace(/\u00a0/g, ' ')
-               .replace(/[ \t]+\n/g, '\n')
-               .replace(/\n{3,}/g, '\n\n')
-               .trim();
-  }
-
-  async function epubToText(file) {
-    const buf = await readAsArrayBuffer(file);
-    const entries = unzip(buf);
-
-    let opfName = null;
-    for (const name in entries) {
-      if (name.toLowerCase().endsWith('.opf')) { opfName = name; break; }
-    }
-
-    let htmlFiles = [];
-
-    if (opfName) {
-      const opfText = decodeBuffer(entries[opfName].buffer || entries[opfName]);
-      const opfDoc = new DOMParser().parseFromString(opfText, 'application/xml');
-      const basePath = opfName.includes('/') ? opfName.slice(0, opfName.lastIndexOf('/') + 1) : '';
-
-      const manifest = {};
-      opfDoc.querySelectorAll('manifest > item').forEach(it => {
-        const id = it.getAttribute('id');
-        const href = it.getAttribute('href');
-        const mt = it.getAttribute('media-type') || '';
-        if (id && href) manifest[id] = { href, mt };
-      });
-
-      opfDoc.querySelectorAll('spine > itemref').forEach(ref => {
-        const idref = ref.getAttribute('idref');
-        const item = manifest[idref];
-        if (item && /html|xml/.test(item.mt)) {
-          const path = normalizePath(basePath + item.href);
-          if (entries[path]) htmlFiles.push(path);
-        }
-      });
-    }
-
-    if (htmlFiles.length === 0) {
-      for (const name in entries) {
-        if (/\.(x?html?)$/i.test(name)) htmlFiles.push(name);
-      }
-      htmlFiles.sort();
-    }
-
-    if (htmlFiles.length === 0) throw new Error('В epub не найдено HTML-содержимого');
-
-    const parts = [];
-    for (const name of htmlFiles) {
-      try {
-        const u8 = entries[name];
-        const html = decodeBuffer(u8.buffer ? u8.buffer : u8);
-        parts.push(htmlToText(html));
-      } catch (e) {}
-    }
-
-    return parts.filter(Boolean).join('\n\n').trim();
-  }
-
-  function normalizePath(p) {
-    const parts = p.split('/');
-    const out = [];
-    for (const part of parts) {
-      if (part === '' || part === '.') continue;
-      if (part === '..') out.pop();
-      else out.push(part);
-    }
-    return out.join('/');
-  }
-
-  function unzip(arrayBuffer) {
-    const data = new Uint8Array(arrayBuffer);
-    const files = {};
-    const view = new DataView(arrayBuffer);
-    const len = data.length;
-
-    let eocd = -1;
-    for (let i = len - 22; i >= 0 && i >= len - 22 - 65536; i--) {
-      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
-    }
-    if (eocd < 0) throw new Error('Не найден EOCD — это точно zip/epub?');
-
-    const cdCount = view.getUint16(eocd + 10, true);
-    let cdOffset = view.getUint32(eocd + 16, true);
-
-    let p = cdOffset;
-    const decoder = new TextDecoder('utf-8');
-
-    for (let n = 0; n < cdCount; n++) {
-      if (view.getUint32(p, true) !== 0x02014b50) break;
-      const method = view.getUint16(p + 10, true);
-      const compSize = view.getUint32(p + 20, true);
-      const uncompSize = view.getUint32(p + 24, true);
-      const nameLen = view.getUint16(p + 28, true);
-      const extraLen = view.getUint16(p + 30, true);
-      const commentLen = view.getUint16(p + 32, true);
-      const localOffset = view.getUint32(p + 42, true);
-
-      const nameBytes = data.subarray(p + 46, p + 46 + nameLen);
-      const name = decoder.decode(nameBytes);
-
-      const lp = localOffset;
-      if (view.getUint32(lp, true) === 0x04034b50) {
-        const lnameLen = view.getUint16(lp + 26, true);
-        const lextraLen = view.getUint16(lp + 28, true);
-        const dataStart = lp + 30 + lnameLen + lextraLen;
-        const comp = data.subarray(dataStart, dataStart + compSize);
-        try {
-          if (method === 0) {
-            files[name] = comp;
-          } else if (method === 8) {
-            files[name] = inflateRaw(comp, uncompSize);
-          }
-        } catch (e) {}
-      }
-
-      p += 46 + nameLen + extraLen + commentLen;
-    }
-
-    return files;
-  }
-
-  function inflateRaw(comp, uncompSize) {
-    try { return inflateRawSync(comp, uncompSize); }
-    catch (e) { throw new Error('Не удалось распаковать epub: ' + e.message); }
-  }
-
-  function inflateRawSync(input, expectedSize) {
-    const out = new Uint8Array(expectedSize);
-    let outPos = 0;
-    let inPos = 0;
-    let bitBuf = 0;
-    let bitCnt = 0;
-
-    function getBit() {
-      if (bitCnt === 0) {
-        bitBuf = input[inPos++];
-        bitCnt = 8;
-      }
-      const b = bitBuf & 1;
-      bitBuf >>= 1;
-      bitCnt--;
-      return b;
-    }
-    function getBits(n) {
-      let v = 0;
-      for (let i = 0; i < n; i++) v |= getBit() << i;
-      return v;
-    }
-
-    function buildHuffman(lengths) {
-      const maxLen = Math.max.apply(null, lengths);
-      const blCount = new Array(maxLen + 1).fill(0);
-      for (const l of lengths) if (l > 0) blCount[l]++;
-      const nextCode = new Array(maxLen + 1).fill(0);
-      let code = 0;
-      for (let bits = 1; bits <= maxLen; bits++) {
-        code = (code + (blCount[bits - 1] || 0)) << 1;
-        nextCode[bits] = code;
-      }
-      const map = new Map();
-      for (let i = 0; i < lengths.length; i++) {
-        const l = lengths[i];
-        if (l > 0) {
-          map.set(l + ':' + nextCode[l], i);
-          nextCode[l]++;
-        }
-      }
-      return { map, maxLen };
-    }
-
-    function decodeSym(huff) {
-      let code = 0;
-      for (let len = 1; len <= huff.maxLen; len++) {
-        code = (code << 1) | getBit();
-        const sym = huff.map.get(len + ':' + code);
-        if (sym !== undefined) return sym;
-      }
-      throw new Error('Ошибка Huffman');
-    }
-
-    while (true) {
-      const bfinal = getBit();
-      const btype = getBits(2);
-
-      if (btype === 0) {
-        bitBuf = 0; bitCnt = 0;
-        const len = input[inPos] | (input[inPos + 1] << 8);
-        inPos += 4;
-        for (let i = 0; i < len; i++) out[outPos++] = input[inPos++];
-      } else if (btype === 1 || btype === 2) {
-        let litHuff, distHuff;
-        if (btype === 1) {
-          const litLens = new Array(288);
-          for (let i = 0; i < 144; i++) litLens[i] = 8;
-          for (let i = 144; i < 256; i++) litLens[i] = 9;
-          for (let i = 256; i < 280; i++) litLens[i] = 7;
-          for (let i = 280; i < 288; i++) litLens[i] = 8;
-          litHuff = buildHuffman(litLens);
-          distHuff = buildHuffman(new Array(30).fill(5));
-        } else {
-          const hlit = getBits(5) + 257;
-          const hdist = getBits(5) + 1;
-          const hclen = getBits(4) + 4;
-          const order = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
-          const clLens = new Array(19).fill(0);
-          for (let i = 0; i < hclen; i++) clLens[order[i]] = getBits(3);
-          const clHuff = buildHuffman(clLens);
-
-          const lens = [];
-          while (lens.length < hlit + hdist) {
-            const sym = decodeSym(clHuff);
-            if (sym < 16) lens.push(sym);
-            else if (sym === 16) {
-              const prev = lens[lens.length - 1];
-              const rep = getBits(2) + 3;
-              for (let i = 0; i < rep; i++) lens.push(prev);
-            } else if (sym === 17) {
-              const rep = getBits(3) + 3;
-              for (let i = 0; i < rep; i++) lens.push(0);
-            } else {
-              const rep = getBits(7) + 11;
-              for (let i = 0; i < rep; i++) lens.push(0);
-            }
-          }
-          litHuff = buildHuffman(lens.slice(0, hlit));
-          distHuff = buildHuffman(lens.slice(hlit));
-        }
-
-        const lenBase = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
-        const lenExtra = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
-        const distBase = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
-        const distExtra = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
-
-        while (true) {
-          const sym = decodeSym(litHuff);
-          if (sym === 256) break;
-          if (sym < 256) {
-            out[outPos++] = sym;
-          } else {
-            const li = sym - 257;
-            const length = lenBase[li] + getBits(lenExtra[li]);
-            const dsym = decodeSym(distHuff);
-            const distance = distBase[dsym] + getBits(distExtra[dsym]);
-            const start = outPos - distance;
-            for (let i = 0; i < length; i++) {
-              out[outPos++] = out[start + i];
-            }
-          }
-        }
-      } else {
-        throw new Error('Неподдерживаемый тип блока deflate');
-      }
-
-      if (bfinal) break;
-    }
-
-    return out.subarray(0, outPos);
-  }
-
-  function saveCurrentState() {
-    if (currentBookId) {
-      const books = loadBooks();
-      const b = books.find(x => x.id === currentBookId);
-      if (b) {
-        b.scroll = readerScreen.scrollTop;
-        saveBooks(books);
-      }
-    }
-  }
-
-  window.addEventListener('beforeunload', () => { saveCurrentState(); });
-  window.addEventListener('pagehide', () => { saveCurrentState(); });
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') saveCurrentState();
-  });
-
+  // ---------- Горячие клавиши ----------
   document.addEventListener('keydown', (e) => {
-    if (readerScreen.style.display !== 'block') {
-      if (e.ctrlKey && e.key === 'Enter' && document.activeElement === input) btnRead.click();
-      return;
+    if (e.ctrlKey && e.key.toLowerCase() === 'g') {
+      e.preventDefault();
+      if (readerScreen.style.display === 'block') {
+        jumpBox.style.display = 'flex';
+        jumpInput.focus();
+        jumpInput.select();
+      }
     }
-
-    if (e.ctrlKey && (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П')) {
-      e.preventDefault(); openJump();
-    } else if (e.ctrlKey && (e.key === 'o' || e.key === 'O' || e.key === 'щ' || e.key === 'Щ')) {
-      e.preventDefault(); openToc();
-    } else if (e.ctrlKey && !e.shiftKey && (e.key === '+' || e.key === '=' )) {
-      e.preventDefault(); changeFont(2);
-    } else if (e.ctrlKey && !e.shiftKey && (e.key === '-' || e.key === '–')) {
-      e.preventDefault(); changeFont(-2);
-    } else if (e.ctrlKey && e.shiftKey && (e.key === '+' || e.key === '=')) {
-      e.preventDefault(); changeWidth(40);
-    } else if (e.ctrlKey && e.shiftKey && (e.key === '-' || e.key === '–')) {
-      e.preventDefault(); changeWidth(-40);
-    } else if (e.altKey && (e.key === '+' || e.key === '=')) {
-      e.preventDefault(); changeLineHeight(0.1);
-    } else if (e.altKey && (e.key === '-' || e.key === '–')) {
-      e.preventDefault(); changeLineHeight(-0.1);
-    } else if (e.key === 'Escape') {
-      closeToc(); closeJump(); palette.classList.remove('open');
-      closeSettingsPanel();
+    if (e.ctrlKey && e.key.toLowerCase() === 'o') {
+      e.preventDefault();
+      if (readerScreen.style.display === 'block') openToc();
+    }
+    if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      changeFont(2);
+    }
+    if (e.ctrlKey && e.key === '-') {
+      e.preventDefault();
+      changeFont(-2);
+    }
+    if (e.key === 'Escape') {
+      jumpBox.style.display = 'none';
+      closeToc();
     }
   });
 
+  jumpGo.addEventListener('click', () => {
+    const n = parseInt(jumpInput.value, 10);
+    if (n >= 1 && n <= chapters.length) {
+      readerScreen.scrollTo({ top: chapters[n-1].el.offsetTop - 40, behavior: 'smooth' });
+    }
+    jumpBox.style.display = 'none';
+  });
+  jumpCancel.addEventListener('click', () => jumpBox.style.display = 'none');
+  jumpInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') jumpGo.click();
+  });
+
+  // ---------- Инициализация ----------
   buildPresets();
   applySettings();
   renderLibrary();
-
-  const lastId = localStorage.getItem('reader_last_book');
-  if (lastId) {
-    const books = loadBooks();
-    const b = books.find(x => x.id === lastId);
-    if (b) {
-      openReader(b.text, b.id);
-    } else {
-      const lastText = localStorage.getItem('reader_last_text');
-      if (lastText) {
-        const book = addBook('Восстановленная книга', lastText, 'text');
-        openReader(lastText, book.id);
-      }
-    }
-  }
-
-  setTimeout(() => {
-    const h = document.getElementById('hint');
-    if (h) setTimeout(() => h.style.opacity = '0', 8000);
-  }, 1000);
 })();
 </script>
 </body>
