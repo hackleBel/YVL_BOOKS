@@ -907,6 +907,9 @@
     let currentBookId = null;
     let currentMarks = [];  // закладки текущей книги
 
+    // ===== НОВОЕ: сохранение позиции чтения =====
+    let anchorRestorePending = false; // нужно ли восстановить позицию после пересчёта раскладки
+
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
       fontSize: 20, colWidth: 720, lineHeight: 1.85
@@ -958,7 +961,58 @@
       return '#' + r.map(x=>x.toString(16).padStart(2,'0')).join('');
     }
 
+    // ==== НОВОЕ: получить якорь текущей позиции чтения ====
+    function getReadingAnchor() {
+      if (!readerScreen || readerScreen.style.display !== 'block') return null;
+      const scrollTop = readerScreen.scrollTop;
+      const paras = content.querySelectorAll('p');
+      if (!paras.length) return null;
+
+      // ищем абзац, который виден в верхней части экрана
+      let target = null;
+      let targetIndex = -1;
+      for (let i = 0; i < paras.length; i++) {
+        const el = paras[i];
+        const top = el.offsetTop;
+        const bottom = top + el.offsetHeight;
+        if (bottom > scrollTop + 8) {
+          target = el;
+          targetIndex = i;
+          break;
+        }
+      }
+      if (!target) { target = paras[paras.length - 1]; targetIndex = paras.length - 1; }
+
+      const offsetInPara = Math.max(0, scrollTop - target.offsetTop);
+      const paraHeight = Math.max(1, target.offsetHeight);
+      const ratio = Math.min(1, Math.max(0, offsetInPara / paraHeight));
+
+      return { index: targetIndex, ratio: ratio, offsetInPara: offsetInPara };
+    }
+
+    // ==== НОВОЕ: восстановить позицию чтения по якорю ====
+    function restoreReadingAnchor(anchor) {
+      if (!anchor || !readerScreen || readerScreen.style.display !== 'block') return;
+      const paras = content.querySelectorAll('p');
+      if (!paras.length) return;
+      const idx = Math.max(0, Math.min(paras.length - 1, anchor.index));
+      const el = paras[idx];
+      const top = el.offsetTop;
+      const h = Math.max(1, el.offsetHeight);
+      let offset = anchor.offsetInPara;
+      if (typeof offset !== 'number' || isNaN(offset)) {
+        offset = (anchor.ratio || 0) * h;
+      } else {
+        // ограничиваем пропорционально, чтобы не вылететь за абзац после пересчёта
+        offset = Math.min(offset, h);
+      }
+      readerScreen.scrollTop = top + offset;
+    }
+
     function applySettings() {
+      // Запоминаем позицию до изменения раскладки
+      const anchor = getReadingAnchor();
+
       const { bg, fg, accent } = settings;
       root.style.setProperty('--bg', bg);
       root.style.setProperty('--fg', fg);
@@ -993,7 +1047,12 @@
         );
       });
 
-      setTimeout(updateProgress, 20);
+      // Восстанавливаем позицию после пересчёта
+      requestAnimationFrame(() => {
+        restoreReadingAnchor(anchor);
+        updateProgress();
+        renderSideMarks();
+      });
     }
 
     function buildPresets() {
@@ -1151,14 +1210,15 @@
       const paragraphs = splitIntoParagraphs(text);
       let chapterCount = 0;
 
-      paragraphs.forEach(p => {
+      paragraphs.forEach((p, idx) => {
         const el = document.createElement('p');
         el.textContent = p;
+        el.dataset.pIndex = idx; // НОВОЕ: индекс абзаца
         if (isChapterTitle(p)) {
           el.classList.add('chapter-title');
           el.style.color = mix(settings.fg, settings.bg, 0.3);
           chapterCount++;
-          chapters.push({ title: p.trim(), el: el, num: chapterCount });
+          chapters.push({ title: p.trim(), el: el, num: chapterCount, pIndex: idx });
         }
         content.appendChild(el);
       });
@@ -1237,51 +1297,74 @@
       try { localStorage.setItem(marksKey(bookId), JSON.stringify(arr)); } catch (e) {}
     }
 
-    function getCurrentSnippet() {
+    // ==== НОВОЕ: получить информацию о месте под курсором/в позиции ====
+    function getSnippetAt(posY) {
       const scrollTop = readerScreen.scrollTop;
-      // Ищем абзац, который находится в верхней части экрана
+      const y = (typeof posY === 'number' && !isNaN(posY)) ? posY : scrollTop + 40;
       const paras = content.querySelectorAll('p');
       let target = null;
+      let targetIndex = -1;
       for (let i = 0; i < paras.length; i++) {
         const el = paras[i];
         const top = el.offsetTop;
-        if (top + el.offsetHeight > scrollTop + 40) {
+        const bottom = top + el.offsetHeight;
+        if (y >= top && y <= bottom) {
           target = el;
+          targetIndex = i;
           break;
         }
       }
-      if (!target && paras.length) target = paras[0];
-      if (!target) return { text: '', chapter: '' };
+      if (!target) {
+        // берём ближайший
+        for (let i = 0; i < paras.length; i++) {
+          const el = paras[i];
+          if (el.offsetTop + el.offsetHeight > y) { target = el; targetIndex = i; break; }
+        }
+      }
+      if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
+      if (!target) return { text: '', chapter: '', pIndex: 0, offsetInPara: 0, ratio: 0 };
+
+      const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
+      const paraHeight = Math.max(1, target.offsetHeight);
+      const ratio = offsetInPara / paraHeight;
 
       const text = (target.textContent || '').trim();
       const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
 
-      // Ищем ближайший заголовок выше
+      // ближайший заголовок выше
       let chapterTitle = '';
-      let idx = -1;
       for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].el.offsetTop <= scrollTop + 40) idx = i;
+        if (chapters[i].el.offsetTop <= y) chapterTitle = chapters[i].title;
         else break;
       }
-      if (idx >= 0) chapterTitle = chapters[idx].title;
 
-      return { text: snippet, chapter: chapterTitle };
+      return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara: offsetInPara, ratio: ratio };
     }
 
-    function addMark() {
+    // ==== ОБНОВЛЕНО: текущий сниппет для закладки ====
+    function getCurrentSnippet() {
+      return getSnippetAt(readerScreen.scrollTop + 40);
+    }
+
+    // ==== ОБНОВЛЕНО: создание закладки с якорем ====
+    function addMark(posY) {
       if (readerScreen.style.display !== 'block') return;
+      const anchor = (typeof posY === 'number') ? getSnippetAt(posY) : getCurrentSnippet();
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
 
-      const { text, chapter } = getCurrentSnippet();
-
       const mark = {
         id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
+        // старые поля (для совместимости)
         pos: scrollTop,
         pct: pct,
-        chapter: chapter,
-        text: text,
+        // НОВОЕ: якорь для восстановления после изменения размера
+        pIndex: anchor.pIndex,
+        offsetInPara: anchor.offsetInPara,
+        ratio: anchor.ratio,
+        chapter: anchor.chapter,
+        text: anchor.text,
         date: Date.now()
       };
 
@@ -1289,7 +1372,7 @@
       saveMarks(currentBookId, currentMarks);
       renderSideMarks();
       renderMarksList();
-      toast('Закладка сохранена' + (chapter ? ' — ' + chapter : ''));
+      toast('Закладка сохранена' + (anchor.chapter ? ' — ' + anchor.chapter : ''));
 
       if (btnAddMark) {
         btnAddMark.classList.add('saved', 'pulse');
@@ -1314,10 +1397,25 @@
       renderMarksList();
     }
 
+    // ==== ОБНОВЛЕНО: переход к закладке через якорь ====
     function goToMark(id) {
       const m = currentMarks.find(x => x.id === id);
       if (!m) return;
-      readerScreen.scrollTo({ top: m.pos, behavior: 'smooth' });
+      const paras = content.querySelectorAll('p');
+      let top;
+      if (typeof m.pIndex === 'number' && paras[m.pIndex]) {
+        const el = paras[m.pIndex];
+        const h = Math.max(1, el.offsetHeight);
+        let offset = m.offsetInPara;
+        if (typeof offset !== 'number' || isNaN(offset)) {
+          offset = (m.ratio || 0) * h;
+        }
+        offset = Math.min(offset, h);
+        top = el.offsetTop + offset;
+      } else {
+        top = m.pos || 0;
+      }
+      readerScreen.scrollTo({ top: top, behavior: 'smooth' });
       closeMarks();
     }
 
@@ -1342,7 +1440,12 @@
       }
 
       // Сортируем по позиции
-      const sorted = currentMarks.slice().sort((a, b) => a.pos - b.pos);
+      const sorted = currentMarks.slice().sort((a, b) => {
+        const ai = (typeof a.pIndex === 'number') ? a.pIndex : 0;
+        const bi = (typeof b.pIndex === 'number') ? b.pIndex : 0;
+        if (ai !== bi) return ai - bi;
+        return (a.offsetInPara || 0) - (b.offsetInPara || 0);
+      });
 
       sorted.forEach(m => {
         const el = document.createElement('div');
@@ -1380,16 +1483,31 @@
       });
     }
 
+    // ==== ОБНОВЛЕНО: метки на полосе с учётом пересчёта ====
     function renderSideMarks() {
       if (!sideMarks) return;
       sideMarks.innerHTML = '';
       if (currentMarks.length === 0) return;
       const trackH = sideProgress.clientHeight;
       if (trackH === 0) return;
+      const totalScroll = readerScreen.scrollHeight - readerScreen.clientHeight;
+      const paras = content.querySelectorAll('p');
       currentMarks.forEach(m => {
         const mark = document.createElement('div');
         mark.className = 'side-mark';
-        const pct = Math.max(0, Math.min(1, m.pct || 0));
+        let pct = 0;
+        if (typeof m.pIndex === 'number' && paras[m.pIndex] && totalScroll > 0) {
+          const el = paras[m.pIndex];
+          const h = Math.max(1, el.offsetHeight);
+          let offset = m.offsetInPara;
+          if (typeof offset !== 'number' || isNaN(offset)) offset = (m.ratio || 0) * h;
+          offset = Math.min(offset, h);
+          const top = el.offsetTop + offset;
+          pct = top / totalScroll;
+        } else {
+          pct = m.pct || 0;
+        }
+        pct = Math.max(0, Math.min(1, pct));
         mark.style.top = (pct * 100) + '%';
         mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
         sideMarks.appendChild(mark);
@@ -1409,12 +1527,24 @@
     }
     function toggleMarks() { marksPanel.classList.contains('open') ? closeMarks() : openMarks(); }
 
-    if (btnMark) btnMark.addEventListener('click', addMark);
-    if (btnAddMark) btnAddMark.addEventListener('click', addMark);
+    if (btnMark) btnMark.addEventListener('click', () => addMark());
+    if (btnAddMark) btnAddMark.addEventListener('click', () => addMark());
     if (btnMarks) btnMarks.addEventListener('click', toggleMarks);
     if (marksClose) marksClose.addEventListener('click', closeMarks);
     if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
     if (marksClear) marksClear.addEventListener('click', clearMarks);
+
+    // ==== НОВОЕ: тройной клик по слову — закладка ====
+    if (content) {
+      content.addEventListener('dblclick', () => { /* оставляем выделение */ });
+      content.addEventListener('click', (e) => {
+        if (e.detail === 3) {
+          // Тройной клик — ставим закладку в месте клика
+          const y = e.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
+          addMark(y);
+        }
+      });
+    }
 
     // ============================================================
     //  ПРОГРЕСС
@@ -1479,8 +1609,12 @@
       readerScreen.addEventListener('scroll', () => { updateProgress(); showScroller(); });
     }
     window.addEventListener('resize', () => {
-      updateProgress();
-      renderSideMarks();
+      const anchor = getReadingAnchor();
+      requestAnimationFrame(() => {
+        restoreReadingAnchor(anchor);
+        updateProgress();
+        renderSideMarks();
+      });
     });
 
     if (sideProgress) {
