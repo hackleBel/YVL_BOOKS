@@ -30,31 +30,20 @@
     --line-height: 1.85;
   }
 
-  #app {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+  #app { display: flex; flex-direction: column; height: 100%; }
 
   header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
     padding: 10px 18px;
+    padding-top: max(10px, env(safe-area-inset-top));
     background: var(--bg-header);
     border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    position: relative;
-    padding-top: max(10px, env(safe-area-inset-top));
+    flex-wrap: wrap; flex-shrink: 0; position: relative;
   }
 
   header h1 {
-    font-size: 13px;
-    font-weight: normal;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
+    font-size: 13px; font-weight: normal; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--fg-dim);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     cursor: pointer;
   }
@@ -62,113 +51,71 @@
   .spacer { flex: 1; }
 
   button {
-    background: var(--border);
-    color: var(--fg);
+    background: var(--border); color: var(--fg);
     border: 1px solid var(--border-strong);
-    padding: 7px 12px;
-    border-radius: 6px;
+    padding: 7px 12px; border-radius: 6px;
     font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    cursor: pointer;
-    line-height: 1;
+    cursor: pointer; line-height: 1;
   }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
 
   .btn-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    display: flex; align-items: center; gap: 4px;
     background: var(--bg-panel);
     border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 3px;
+    border-radius: 8px; padding: 3px;
   }
-
   .btn-group button {
-    background: transparent;
-    border: none;
-    padding: 6px 8px;
-    border-radius: 5px;
-    font-size: 13px;
+    background: transparent; border: none;
+    padding: 6px 8px; border-radius: 5px; font-size: 13px;
   }
   .btn-group button:hover { background: var(--border-strong); }
-
-  .btn-icon {
-    font-family: Georgia, serif;
-    font-weight: bold;
-  }
+  .btn-icon { font-family: Georgia, serif; font-weight: bold; }
 
   .size-label {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    min-width: 34px;
-    text-align: center;
+    font-size: 11px; color: var(--fg-dim);
+    min-width: 34px; text-align: center;
   }
 
   #btn-menu {
-    display: none;
-    background: transparent;
-    border: none;
-    padding: 8px 10px;
-    font-size: 22px;
-    line-height: 1;
-    color: var(--fg);
-    border-radius: 8px;
+    display: none; background: transparent; border: none;
+    padding: 8px 10px; font-size: 22px; line-height: 1;
+    color: var(--fg); border-radius: 8px;
   }
   #btn-menu:hover { background: var(--border-strong); }
 
   #paste-screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    align-items: center;
-    overflow-y: auto;
+    flex: 1; display: flex; flex-direction: column;
+    padding: 24px; align-items: center; overflow-y: auto;
   }
-
   #paste-screen .inner {
-    width: 100%;
-    max-width: 860px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    width: 100%; max-width: 860px;
+    display: flex; flex-direction: column;
+    flex: 1; min-height: 0;
   }
-
   #paste-screen p {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px;
-    color: var(--fg-dim);
-    margin-bottom: 12px;
-    text-align: center;
+    font-size: 13px; color: var(--fg-dim);
+    margin-bottom: 12px; text-align: center;
   }
 
   textarea {
-    flex: 1;
-    width: 100%;
-    min-height: 160px;
-    background: var(--bg-input);
-    color: var(--fg);
+    flex: 1; width: 100%; min-height: 160px;
+    background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 18px;
-    font-size: 15px;
-    line-height: 1.6;
+    border-radius: 8px; padding: 18px;
+    font-size: 15px; line-height: 1.6;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    resize: none;
-    outline: none;
+    resize: none; outline: none;
   }
   textarea:focus { border-color: var(--accent); }
 
   #paste-screen .actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
+    display: flex; justify-content: center; gap: 12px;
+    margin-top: 16px; flex-wrap: wrap; flex-shrink: 0;
   }
 
   #library {
@@ -176,44 +123,29 @@
     border-top: 1px solid var(--border);
     padding-top: 18px;
   }
-
   #library h3 {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-    margin-bottom: 12px;
-    font-weight: normal;
+    font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--fg-dim);
+    margin-bottom: 12px; font-weight: normal;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
   #library-search-wrap { margin-bottom: 12px; position: relative; }
   #library-search {
-    width: 100%;
-    background: var(--bg-input);
-    color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 10px 34px 10px 12px;
-    font-size: 13px;
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 34px 10px 12px; font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     outline: none;
   }
   #library-search:focus { border-color: var(--accent); }
   #library-search-clear {
-    position: absolute;
-    right: 6px;
-    top: 50%;
+    position: absolute; right: 6px; top: 50%;
     transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: var(--fg-dim);
-    font-size: 14px;
-    padding: 4px 8px;
-    cursor: pointer;
-    display: none;
-    line-height: 1;
-    border-radius: 4px;
+    background: transparent; border: none;
+    color: var(--fg-dim); font-size: 14px;
+    padding: 4px 8px; cursor: pointer; display: none;
+    line-height: 1; border-radius: 4px;
   }
   #library-search-wrap.has-value #library-search-clear { display: block; }
 
@@ -222,310 +154,204 @@
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 10px;
   }
-
   .book-item {
     background: var(--bg-panel);
     border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    cursor: pointer;
-    position: relative;
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+    cursor: pointer; position: relative;
   }
   .book-item:hover { border-color: var(--accent); }
-
   .book-item .title {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 14px;
-    color: var(--fg);
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-right: 22px;
+    font-size: 14px; color: var(--fg); font-weight: 600;
+    overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; padding-right: 22px;
   }
-
   .book-item .meta {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
+    font-size: 11px; color: var(--fg-dim);
   }
-
   .book-item .del {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: transparent;
-    border: none;
-    color: var(--fg-dim);
-    font-size: 14px;
-    padding: 2px 6px;
-    line-height: 1;
-    border-radius: 4px;
-    cursor: pointer;
+    position: absolute; top: 8px; right: 8px;
+    background: transparent; border: none;
+    color: var(--fg-dim); font-size: 14px;
+    padding: 2px 6px; line-height: 1;
+    border-radius: 4px; cursor: pointer;
   }
   .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
-
   .book-item mark { background: var(--accent); color: var(--bg); border-radius: 2px; padding: 0 2px; }
 
   #library-empty, #library-no-results {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 12px;
-    color: var(--fg-dim);
-    text-align: center;
-    padding: 14px;
-    border: 1px dashed var(--border-strong);
+    font-size: 12px; color: var(--fg-dim); text-align: center;
+    padding: 14px; border: 1px dashed var(--border-strong);
     border-radius: 8px;
   }
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
 
   #drop-overlay {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(0,0,0,.65);
-    display: none;
-    align-items: center;
-    justify-content: center;
+    display: none; align-items: center; justify-content: center;
     z-index: 500;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 18px;
-    color: var(--fg);
+    font-size: 18px; color: var(--fg);
     pointer-events: none;
     border: 2px dashed var(--accent);
   }
   #drop-overlay.show { display: flex; }
 
   #reader-screen {
-    flex: 1;
-    display: none;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex: 1; display: none;
+    overflow-y: auto; overflow-x: hidden;
     position: relative;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none; -ms-overflow-style: none;
   }
   #reader-screen::-webkit-scrollbar { width: 0; height: 0; }
 
   #content {
-    max-width: var(--col-width);
-    margin: 0 auto;
+    max-width: var(--col-width); margin: 0 auto;
     padding: 50px 40px 140px;
-    font-size: 20px;
-    line-height: var(--line-height);
+    font-size: 20px; line-height: var(--line-height);
     color: var(--fg);
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    hyphens: auto; -webkit-hyphens: auto;
   }
-
   #content p {
-    margin-bottom: 1.15em;
-    text-indent: 2em;
-    text-align: justify;
-    orphans: 2;
-    widows: 2;
+    margin-bottom: 1.15em; text-indent: 2em;
+    text-align: justify; orphans: 2; widows: 2;
   }
   #content p:first-child { text-indent: 0; }
   #content .chapter-title {
-    text-indent: 0 !important;
-    text-align: center;
-    margin: 2.2em 0 1.4em;
-    font-size: 1.1em;
-    letter-spacing: 1px;
-    font-weight: normal;
+    text-indent: 0 !important; text-align: center;
+    margin: 2.2em 0 1.4em; font-size: 1.1em;
+    letter-spacing: 1px; font-weight: normal;
   }
 
   #progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: var(--accent);
-    width: 0%;
-    z-index: 100;
+    position: fixed; top: 0; left: 0;
+    height: 2px; background: var(--accent);
+    width: 0%; z-index: 100;
   }
 
   #side-progress {
-    position: fixed;
-    right: 6px;
-    top: 60px;
-    bottom: 40px;
-    width: 22px;
-    background: transparent;
-    z-index: 90;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity .35s;
+    position: fixed; right: 6px; top: 60px; bottom: 40px;
+    width: 22px; background: transparent; z-index: 90;
+    cursor: pointer; opacity: 0; transition: opacity .35s;
     touch-action: none;
   }
   #side-progress.visible { opacity: 1; }
   #side-progress::before {
-    content: "";
-    position: absolute;
-    right: 9px;
-    top: 0; bottom: 0;
-    width: 3px;
-    background: var(--border);
-    border-radius: 2px;
+    content: ""; position: absolute; right: 9px; top: 0; bottom: 0;
+    width: 3px; background: var(--border); border-radius: 2px;
   }
   #side-thumb {
-    position: absolute;
-    right: 6px;
-    width: 9px;
-    height: 40px;
-    background: var(--accent);
-    border-radius: 5px;
-    opacity: .6;
+    position: absolute; right: 6px; width: 9px; height: 40px;
+    background: var(--accent); border-radius: 5px; opacity: .6;
   }
   #side-progress.dragging #side-thumb { opacity: 1; }
 
   #to-top {
-    position: fixed;
-    right: 28px;
-    bottom: 60px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    color: var(--accent);
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    z-index: 90;
+    position: fixed; right: 28px; bottom: 60px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--accent); cursor: pointer; display: none;
+    align-items: center; justify-content: center;
+    font-size: 16px; z-index: 90;
   }
   #to-top.show { display: flex; }
 
   #jump-box {
-    position: fixed;
-    bottom: 70px;
-    left: 50%;
+    position: fixed; bottom: 70px; left: 50%;
     transform: translateX(-50%);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 14px 18px;
-    display: none;
-    gap: 10px;
-    align-items: center;
-    z-index: 200;
-    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 14px 18px;
+    display: none; gap: 10px; align-items: center;
+    z-index: 200; box-shadow: 0 8px 30px rgba(0,0,0,.5);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #jump-box.show { display: flex; }
   #jump-box input {
-    background: var(--bg);
-    border: 1px solid var(--border-strong);
-    color: var(--fg);
-    padding: 7px 10px;
-    border-radius: 6px;
-    width: 130px;
-    font-size: 13px;
-    outline: none;
+    background: var(--bg); border: 1px solid var(--border-strong);
+    color: var(--fg); padding: 7px 10px; border-radius: 6px;
+    width: 130px; font-size: 13px; outline: none;
   }
   #jump-box span { font-size: 12px; color: var(--fg-dim); }
 
   #toc-panel {
-    position: fixed;
-    top: 0;
-    right: -360px;
-    width: 360px;
-    height: 100%;
+    position: fixed; top: 0; right: -360px;
+    width: 360px; height: 100%;
     background: var(--bg-header);
     border-left: 1px solid var(--border);
-    z-index: 300;
-    transition: right .25s ease;
-    display: flex;
-    flex-direction: column;
+    z-index: 300; transition: right .25s ease;
+    display: flex; flex-direction: column;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #toc-panel.open { right: 0; }
   #toc-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase;
   }
   #toc-list { flex: 1; overflow-y: auto; padding: 8px 0; }
   .toc-item {
-    padding: 10px 20px;
-    font-size: 13px;
-    color: var(--fg-mid);
-    cursor: pointer;
-    line-height: 1.4;
+    padding: 10px 20px; font-size: 13px; color: var(--fg-mid);
+    cursor: pointer; line-height: 1.4;
     border-left: 2px solid transparent;
   }
   .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
   .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
 
   #toc-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 299;
-    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 299; display: none;
   }
   #toc-overlay.open { display: block; }
-
   #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
 
   footer {
     padding: 8px 20px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
     background: var(--bg-header);
     border-top: 1px solid var(--border);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 11px; color: var(--fg-dim);
+    display: flex; justify-content: space-between; align-items: center;
     flex-shrink: 0;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 
   #hint {
-    position: fixed;
-    bottom: 50px;
-    left: 20px;
+    position: fixed; bottom: 50px; left: 20px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    opacity: .6;
-    z-index: 80;
-    pointer-events: none;
+    font-size: 11px; color: var(--fg-dim);
+    opacity: .6; z-index: 80; pointer-events: none;
   }
 
   .palette {
-    position: absolute;
-    top: 100%;
-    right: 18px;
-    margin-top: 6px;
-    background: var(--bg-panel);
+    position: absolute; top: 100%; right: 18px;
+    margin-top: 6px; background: var(--bg-panel);
     border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 12px;
-    display: none;
-    z-index: 250;
+    border-radius: 10px; padding: 12px;
+    display: none; z-index: 250;
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     width: 240px;
   }
   .palette.open { display: block; }
   .palette h4 {
-    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
+    font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--fg-dim);
+    margin-bottom: 10px; font-weight: normal;
   }
-  .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+  .palette-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 6px; margin-bottom: 12px;
+  }
   .palette-item {
-    padding: 6px 4px; border-radius: 6px; border: 1px solid var(--border-strong);
+    padding: 6px 4px; border-radius: 6px;
+    border: 1px solid var(--border-strong);
     cursor: pointer; text-align: center; font-size: 10px;
   }
   .palette-item:hover { border-color: var(--accent); }
@@ -535,21 +361,24 @@
     display: flex; align-items: center; justify-content: center;
     font-family: Georgia, serif; font-size: 13px;
   }
-  .palette-custom { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .palette-custom {
+    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
   .custom-row { display: flex; align-items: center; gap: 8px; }
   .custom-row label { font-size: 12px; color: var(--fg-mid); flex: 1; }
   .custom-row input[type=color] {
-    width: 34px; height: 26px; border: 1px solid var(--border-strong);
-    border-radius: 5px; background: var(--bg); cursor: pointer; padding: 2px;
+    width: 34px; height: 26px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px; background: var(--bg);
+    cursor: pointer; padding: 2px;
   }
   .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
   input[type=file] { display: none; }
 
-  /* Нижняя панель на телефоне */
   #mobile-sheet {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
+    position: fixed; left: 0; right: 0; bottom: 0;
     background: var(--bg-panel);
     border-top: 1px solid var(--border-strong);
     border-radius: 18px 18px 0 0;
@@ -560,8 +389,7 @@
     padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
     display: none;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    max-height: 80vh;
-    overflow-y: auto;
+    max-height: 80vh; overflow-y: auto;
   }
   #mobile-sheet.open { transform: translateY(0); }
   #sheet-handle {
@@ -570,8 +398,9 @@
   }
   .sheet-section { margin-bottom: 14px; }
   .sheet-section h5 {
-    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--fg-dim); font-weight: normal; margin-bottom: 8px;
+    font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--fg-dim);
+    font-weight: normal; margin-bottom: 8px;
   }
   .sheet-row { display: flex; align-items: center; gap: 8px; }
   .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; }
@@ -584,33 +413,52 @@
   #sheet-close {
     display: block; margin: 4px auto 0; padding: 8px 20px;
     font-size: 12px; background: transparent;
-    border: 1px solid var(--border-strong); color: var(--fg-dim); border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-dim); border-radius: 20px;
   }
   #sheet-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.45);
-    z-index: 399; opacity: 0; pointer-events: none; transition: opacity .25s;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 399; opacity: 0; pointer-events: none;
+    transition: opacity .25s;
   }
   #sheet-overlay.open { opacity: 1; pointer-events: auto; }
 
   #boot-error {
-    display: none;
-    position: fixed;
+    display: none; position: fixed;
     left: 12px; right: 12px; top: 12px;
-    background: #3a1a1a;
-    color: #ffd0d0;
+    background: #3a1a1a; color: #ffd0d0;
     border: 1px solid #7a2a2a;
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-family: monospace;
-    font-size: 12px;
-    white-space: pre-wrap;
-    z-index: 999;
+    border-radius: 8px; padding: 12px 14px;
+    font-family: monospace; font-size: 12px;
+    white-space: pre-wrap; z-index: 999;
   }
+
+  /* Модальное сообщение о загрузке файла */
+  #file-toast {
+    position: fixed;
+    left: 50%; top: 24px;
+    transform: translateX(-50%);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    color: var(--fg);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 13px;
+    z-index: 1000;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+    display: none;
+    max-width: 90vw;
+    text-align: center;
+    line-height: 1.4;
+  }
+  #file-toast.show { display: block; }
+  #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
 
   @media (max-width: 720px) {
     #content { padding: 36px 22px 120px; font-size: 19px; }
   }
-
   @media (max-width: 640px) {
     #hint { display: none !important; }
     #reader-controls { display: none !important; }
@@ -643,6 +491,7 @@
 </head>
 <body>
 <div id="boot-error"></div>
+<div id="file-toast"></div>
 <div id="progress-bar"></div>
 
 <div id="app">
@@ -694,7 +543,8 @@
         <button id="btn-read">Читать</button>
         <button id="btn-file">Загрузить файл</button>
         <button id="btn-clear">Очистить</button>
-        <input type="file" id="file-input" accept=".txt,.md,.fb2,.html,.htm,text/plain">
+        <input type="file" id="file-input"
+               accept=".txt,.md,.markdown,.fb2,.html,.htm,.xhtml,.rtf,.docx,.odt,.epub,.zip,.json,.csv,text/plain,text/html,application/epub+zip,application/zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,text/rtf">
       </div>
 
       <div id="library">
@@ -801,6 +651,16 @@
     box.textContent = 'Ошибка запуска:\n' + msg;
   }
 
+  function toast(msg, isError) {
+    const el = document.getElementById('file-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('error', !!isError);
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
   try {
     const $ = (id) => document.getElementById(id);
 
@@ -904,6 +764,9 @@
       { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
     ];
 
+    // ============================================================
+    //  НАСТРОЙКИ
+    // ============================================================
     function loadSettings() {
       try {
         const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
@@ -1045,7 +908,9 @@
       saveSettings(); applySettings();
     });
 
-    // Нижняя панель
+    // ============================================================
+    //  НИЖНЯЯ ПАНЕЛЬ
+    // ============================================================
     function openSheet() {
       if (!mobileSheet) return;
       mobileSheet.classList.add('open');
@@ -1088,7 +953,9 @@
     if (mJump) mJump.addEventListener('click', () => { closeSheet(); setTimeout(openJump, 180); });
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
 
-    // Разбиение текста
+    // ============================================================
+    //  ТЕКСТ: РАЗБИВКА, РЕНДЕР
+    // ============================================================
     function splitIntoParagraphs(text) {
       const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
       if (blocks.length <= 1) {
@@ -1196,6 +1063,9 @@
       highlightActiveToc();
     }
 
+    // ============================================================
+    //  ПРОГРЕСС
+    // ============================================================
     let hideTimer = null;
     function showScroller() {
       if (!sideProgress || readerScreen.style.display !== 'block') return;
@@ -1313,6 +1183,9 @@
       readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
+    // ============================================================
+    //  ПЕРЕХОД К ГЛАВЕ
+    // ============================================================
     function openJump() {
       if (!jumpBox || chapters.length === 0) return;
       jumpBox.classList.add('show');
@@ -1334,6 +1207,9 @@
       if (e.key === 'Escape') closeJump();
     });
 
+    // ============================================================
+    //  ЭКРАНЫ
+    // ============================================================
     function showReader() {
       pasteScreen.style.display = 'none';
       readerScreen.style.display = 'block';
@@ -1357,6 +1233,9 @@
     });
     if (btnLibrary) btnLibrary.addEventListener('click', () => { showPaste(); renderLibrary(); });
 
+    // ============================================================
+    //  БИБЛИОТЕКА
+    // ============================================================
     function loadBooks() {
       try { return JSON.parse(localStorage.getItem('reader_books') || '[]'); }
       catch (e) { return []; }
@@ -1470,7 +1349,7 @@
     });
 
     function startReading(text, fromBook) {
-      if (!text || !text.trim()) { alert('Нет текста для чтения.'); return; }
+      if (!text || !text.trim()) { toast('Нет текста для чтения.', true); return; }
       render(text);
       showReader();
       readerScreen.scrollTop = 0;
@@ -1480,7 +1359,7 @@
 
     if (btnRead) btnRead.addEventListener('click', () => {
       const text = input.value;
-      if (!text.trim()) { alert('Вставьте текст книги.'); return; }
+      if (!text.trim()) { toast('Вставьте текст книги.', true); return; }
       const title = guessTitle(text);
       const id = addBook(title, text);
       currentBookId = id;
@@ -1509,36 +1388,410 @@
       fileInput.value = '';
     });
 
-    function readFile(file) {
-      const name = file.name.replace(/\.[^.]+$/, '');
-      const reader = new FileReader();
-      reader.onload = () => {
-        let text = String(reader.result || '');
-        if (/\.html?$/i.test(file.name) || /\.fb2$/i.test(file.name)) {
-          text = stripHtml(text);
+    // ============================================================
+    //  КОДИРОВКИ
+    // ============================================================
+    function decodeBuffer(buffer) {
+      const bytes = new Uint8Array(buffer);
+
+      // 1. Проверяем BOM
+      if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+        return new TextDecoder('utf-8').decode(bytes.subarray(3));
+      }
+      if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
+        return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+      }
+      if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
+        return new TextDecoder('utf-16be').decode(bytes.subarray(2));
+      }
+
+      // 2. Пробуем UTF-8
+      let utf8 = '';
+      try {
+        utf8 = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+        // Если нет replacement-символов — это точно UTF-8
+        if (!utf8.includes('\uFFFD')) return utf8;
+      } catch (e) {
+        // Не UTF-8, идём дальше
+      }
+
+      // 3. Пробуем windows-1251
+      try {
+        const win = new TextDecoder('windows-1251').decode(bytes);
+        if (win && !win.includes('\uFFFD')) return win;
+      } catch (e) {}
+
+      // 4. Пробуем koi8-r
+      try {
+        const koi = new TextDecoder('koi8-r').decode(bytes);
+        if (koi && !koi.includes('\uFFFD')) return koi;
+      } catch (e) {}
+
+      // 5. Пробуем iso-8859-1
+      try {
+        const iso = new TextDecoder('iso-8859-1').decode(bytes);
+        if (iso && !iso.includes('\uFFFD')) return iso;
+      } catch (e) {}
+
+      // 6. Фолбэк — нефатальный UTF-8
+      return utf8 || new TextDecoder('utf-8').decode(bytes);
+    }
+
+    function arrayBufferToBase64(buffer) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+      }
+      return btoa(binary);
+    }
+    function base64ToArrayBuffer(b64) {
+      const binary = atob(b64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    // ============================================================
+    //  ZIP
+    // ============================================================
+    async function unzip(arrayBuffer) {
+      const bytes = new Uint8Array(arrayBuffer);
+      const view = new DataView(arrayBuffer);
+      const files = {};
+
+      // Находим End of Central Directory
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65558); i--) {
+        if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+      }
+      if (eocd < 0) throw new Error('Не найден ZIP-каталог');
+      const cdOffset = view.getUint32(eocd + 16, true);
+      const cdCount = view.getUint16(eocd + 10, true);
+
+      let p = cdOffset;
+      for (let i = 0; i < cdCount; i++) {
+        if (view.getUint32(p, true) !== 0x02014b50) break;
+        const compMethod = view.getUint16(p + 10, true);
+        const compSize = view.getUint32(p + 20, true);
+        const uncompSize = view.getUint32(p + 24, true);
+        const nameLen = view.getUint16(p + 28, true);
+        const extraLen = view.getUint16(p + 30, true);
+        const commentLen = view.getUint16(p + 32, true);
+        const localOffset = view.getUint32(p + 42, true);
+        const name = new TextDecoder('utf-8').decode(bytes.subarray(p + 46, p + 46 + nameLen));
+        p += 46 + nameLen + extraLen + commentLen;
+
+        // Читаем Local File Header
+        const lhNameLen = view.getUint16(localOffset + 26, true);
+        const lhExtraLen = view.getUint16(localOffset + 28, true);
+        const dataStart = localOffset + 30 + lhNameLen + lhExtraLen;
+        const dataEnd = dataStart + compSize;
+        const data = bytes.subarray(dataStart, dataEnd);
+
+        files[name] = { data, compMethod, uncompSize };
+      }
+
+      // Декодируем записи
+      const result = {};
+      for (const name in files) {
+        const f = files[name];
+        try {
+          if (f.compMethod === 0) {
+            result[name] = decodeBuffer(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength));
+          } else if (f.compMethod === 8) {
+            if (typeof DecompressionStream === 'undefined') {
+              throw new Error('DecompressionStream недоступен');
+            }
+            const ds = new DecompressionStream('deflate-raw');
+            const stream = new Blob([f.data]).stream().pipeThrough(ds);
+            const decompressed = await new Response(stream).arrayBuffer();
+            result[name] = decodeBuffer(decompressed);
+          }
+        } catch (e) {
+          result[name] = '';
         }
-        text = text.replace(/\r\n?/g, '\n').trim();
-        if (!text) { alert('Файл пуст.'); return; }
-        const title = name || guessTitle(text);
-        const id = addBook(title, text);
+      }
+      return result;
+    }
+
+    // ============================================================
+    //  ПАРСЕРЫ
+    // ============================================================
+    function textFromHtml(html) {
+      // Убираем script/style/head
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('script,style,noscript,head,meta,link').forEach(n => n.remove());
+      const body = doc.body || doc.documentElement;
+      // Заменяем блочные теги переводами строк
+      body.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+      body.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,tr,section,article,blockquote').forEach(n => {
+        n.appendChild(document.createTextNode('\n\n'));
+      });
+      let text = body.textContent || '';
+      text = text.replace(/\u00a0/g, ' ');
+      text = text.replace(/[ \t]+\n/g, '\n');
+      text = text.replace(/\n{3,}/g, '\n\n');
+      return text.trim();
+    }
+
+    function textFromFb2(xml) {
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      if (doc.querySelector('parsererror')) {
+        // Иногда FB2 с некорректными сущностями — попробуем html
+        const doc2 = new DOMParser().parseFromString(xml, 'text/html');
+        return textFromHtml(doc2.documentElement.outerHTML);
+      }
+      const body = doc.querySelector('body');
+      if (!body) return '';
+      const out = [];
+      body.querySelectorAll('section').forEach(sec => {
+        sec.querySelectorAll('title').forEach(t => {
+          out.push('\n\n' + (t.textContent || '').trim() + '\n\n');
+        });
+        sec.querySelectorAll('p').forEach(p => {
+          const t = (p.textContent || '').trim();
+          if (t) out.push(t + '\n\n');
+        });
+      });
+      if (out.length === 0) {
+        body.querySelectorAll('p').forEach(p => {
+          const t = (p.textContent || '').trim();
+          if (t) out.push(t + '\n\n');
+        });
+      }
+      return out.join('').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function textFromRtf(rtf) {
+      let text = rtf;
+      // Удаляем группы шрифтов, цветов, информации
+      text = text.replace(/\\fonttbl[\s\S]*?\}/g, '');
+      text = text.replace(/\\colortbl[\s\S]*?\}/g, '');
+      text = text.replace(/\\stylesheet[\s\S]*?\}/g, '');
+      text = text.replace(/\\info[\s\S]*?\}/g, '');
+      text = text.replace(/\\pict[\s\S]*?\}/g, '');
+      // Переводы строк
+      text = text.replace(/\\par[d]?\b/g, '\n');
+      text = text.replace(/\\line\b/g, '\n');
+      text = text.replace(/\\tab\b/g, '\t');
+      // Юникод \uN? 
+      text = text.replace(/\\u(-?\d+)\??/g, (m, n) => {
+        let code = parseInt(n, 10);
+        if (code < 0) code += 65536;
+        return String.fromCharCode(code);
+      });
+      // Hex-последовательности \'xx
+      text = text.replace(/\\'([0-9a-fA-F]{2})/g, (m, h) => {
+        const b = parseInt(h, 16);
+        return String.fromCharCode(b);
+      });
+      // Убираем остальные управляющие последовательности
+      text = text.replace(/\\[a-zA-Z]+-?\d* ?/g, '');
+      text = text.replace(/[{}]/g, '');
+      text = text.replace(/\r/g, '');
+      text = text.replace(/\n{3,}/g, '\n\n');
+      // Попытка перекодировать "кракозябры" cp1251->юникод не делаем, просто возвращаем
+      return text.trim();
+    }
+
+    function textFromDocx(xml) {
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      if (doc.querySelector('parsererror')) return '';
+      const paras = doc.querySelectorAll('w\\:p, p');
+      const out = [];
+      paras.forEach(p => {
+        const texts = p.querySelectorAll('w\\:t, t');
+        let line = '';
+        texts.forEach(t => { line += t.textContent; });
+        if (line.trim()) out.push(line.trim());
+      });
+      return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function textFromOdt(xml) {
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      if (doc.querySelector('parsererror')) return '';
+      const paras = doc.querySelectorAll('text\\:p, p');
+      const out = [];
+      paras.forEach(p => {
+        const line = (p.textContent || '').trim();
+        if (line) out.push(line);
+      });
+      return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function textFromJson(json) {
+      try {
+        const obj = JSON.parse(json);
+        if (typeof obj === 'string') return obj;
+        const tryFields = ['text', 'content', 'body', 'book', 'story', 'data'];
+        for (const f of tryFields) {
+          if (typeof obj[f] === 'string' && obj[f].length > 20) return obj[f];
+        }
+        if (Array.isArray(obj)) {
+          return obj.map(x => typeof x === 'string' ? x : (x && x.text) || '').join('\n\n');
+        }
+        return JSON.stringify(obj, null, 2);
+      } catch (e) { return ''; }
+    }
+
+    function textFromCsv(csv) {
+      return csv.split(/\r?\n/).map(row => {
+        return row.split(/[,;\t]/).map(c => c.replace(/^"|"$/g, '')).join(' ');
+      }).join('\n');
+    }
+
+    // ============================================================
+    //  ГЛАВНАЯ ФУНКЦИЯ ЧТЕНИЯ ФАЙЛА
+    // ============================================================
+    async function readFile(file) {
+      toast('Обработка: ' + file.name);
+      const name = file.name.replace(/\.[^.]+$/, '') || 'Без названия';
+      const ext = (file.name.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
+
+      try {
+        const buffer = await file.arrayBuffer();
+        let text = '';
+
+        if (ext === 'epub') {
+          const files = await unzip(buffer);
+          // Найдём OPF (content.opf) или container.xml
+          let opfPath = null;
+          for (const n in files) {
+            if (/\.opf$/i.test(n)) { opfPath = n; break; }
+          }
+          // Или через META-INF/container.xml
+          if (!opfPath) {
+            const container = files['META-INF/container.xml'] || files['meta-inf/container.xml'];
+            if (container) {
+              const doc = new DOMParser().parseFromString(container, 'application/xml');
+              const rootfile = doc.querySelector('rootfile');
+              if (rootfile) opfPath = rootfile.getAttribute('full-path');
+            }
+          }
+
+          const parts = [];
+          if (opfPath && files[opfPath]) {
+            const opfDoc = new DOMParser().parseFromString(files[opfPath], 'application/xml');
+            const baseDir = opfPath.includes('/') ? opfPath.replace(/[^/]+$/, '') : '';
+            const manifest = {};
+            opfDoc.querySelectorAll('manifest > item, item').forEach(it => {
+              const id = it.getAttribute('id');
+              const href = it.getAttribute('href');
+              const media = it.getAttribute('media-type') || '';
+              if (id && href) manifest[id] = { href, media };
+            });
+            const spine = [];
+            opfDoc.querySelectorAll('spine > itemref, itemref').forEach(ref => {
+              const idref = ref.getAttribute('idref');
+              if (idref && manifest[idref]) spine.push(manifest[idref]);
+            });
+
+            for (const item of spine) {
+              let path = item.href;
+              try { path = decodeURIComponent(path); } catch (e) {}
+              const full = baseDir + path;
+              const raw = files[full] || files[path] || files[full.replace(/\\/g,'/')];
+              if (raw && /html|xml/i.test(item.media || '') || /\.x?html?$/i.test(path)) {
+                parts.push(textFromHtml(raw));
+              }
+            }
+          }
+          if (parts.length === 0) {
+            // Фолбэк — пройтись по всем html/xhtml
+            for (const n in files) {
+              if (/\.x?html?$/i.test(n)) parts.push(textFromHtml(files[n]));
+            }
+          }
+          text = parts.join('\n\n');
+        } else if (ext === 'docx') {
+          const files = await unzip(buffer);
+          const docXml = files['word/document.xml'] || files['Word/document.xml'];
+          if (!docXml) throw new Error('Внутри DOCX нет word/document.xml');
+          text = textFromDocx(docXml);
+        } else if (ext === 'odt') {
+          const files = await unzip(buffer);
+          const xml = files['content.xml'] || files['Content.xml'];
+          if (!xml) throw new Error('Внутри ODT нет content.xml');
+          text = textFromOdt(xml);
+        } else if (ext === 'zip') {
+          const files = await unzip(buffer);
+          // Ищем первый подходящий файл
+          const order = ['txt','md','markdown','html','htm','xhtml','fb2','docx','odt','epub','json','csv','rtf'];
+          let chosen = null;
+          for (const e of order) {
+            for (const n in files) {
+              if (new RegExp('\\.' + e + '$', 'i').test(n)) { chosen = { name: n, ext: e }; break; }
+            }
+            if (chosen) break;
+          }
+          if (!chosen) {
+            // Любой текстовый
+            for (const n in files) {
+              if (files[n] && files[n].length > 50) { chosen = { name: n, ext: '' }; break; }
+            }
+          }
+          if (!chosen) throw new Error('Внутри ZIP не найдено читаемого файла');
+          const raw = files[chosen.name];
+          if (chosen.ext === 'html' || chosen.ext === 'htm' || chosen.ext === 'xhtml') text = textFromHtml(raw);
+          else if (chosen.ext === 'fb2') text = textFromFb2(raw);
+          else if (chosen.ext === 'docx') text = textFromDocx(raw);
+          else if (chosen.ext === 'odt') text = textFromOdt(raw);
+          else if (chosen.ext === 'json') text = textFromJson(raw);
+          else if (chosen.ext === 'csv') text = textFromCsv(raw);
+          else if (chosen.ext === 'rtf') text = textFromRtf(raw);
+          else text = raw;
+        } else if (ext === 'fb2') {
+          const raw = decodeBuffer(buffer);
+          text = textFromFb2(raw);
+        } else if (ext === 'html' || ext === 'htm' || ext === 'xhtml') {
+          const raw = decodeBuffer(buffer);
+          text = textFromHtml(raw);
+        } else if (ext === 'rtf') {
+          const raw = decodeBuffer(buffer);
+          text = textFromRtf(raw);
+        } else if (ext === 'json') {
+          const raw = decodeBuffer(buffer);
+          text = textFromJson(raw);
+        } else if (ext === 'csv') {
+          const raw = decodeBuffer(buffer);
+          text = textFromCsv(raw);
+        } else {
+          // txt, md, markdown и всё остальное
+          text = decodeBuffer(buffer);
+        }
+
+        // Нормализация
+        text = text.replace(/\u0000/g, '');
+        text = text.replace(/\r\n?/g, '\n');
+        text = text.replace(/[ \t]+\n/g, '\n');
+        text = text.replace(/\n{4,}/g, '\n\n\n');
+        text = text.replace(/\u00a0/g, ' ');
+        text = text.trim();
+
+        if (!text) {
+          toast('Не удалось извлечь текст из «' + file.name + '»', true);
+          return;
+        }
+
+        const finalTitle = name || guessTitle(text);
+        const id = addBook(finalTitle, text);
         input.value = text;
         currentBookId = id;
         startReading(text, true);
-      };
-      reader.onerror = () => alert('Не удалось прочитать файл.');
-      reader.readAsText(file, 'UTF-8');
+        toast('Загружено: ' + finalTitle);
+      } catch (err) {
+        console.error(err);
+        toast('Ошибка: ' + (err && err.message ? err.message : 'не удалось прочитать файл'), true);
+      }
     }
 
-    function stripHtml(html) {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      doc.querySelectorAll('script,style,noscript').forEach(n => n.remove());
-      doc.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,br,li').forEach(n => {
-        n.appendChild(doc.createTextNode('\n'));
-      });
-      let text = doc.body ? doc.body.textContent : html;
-      return text.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
-    }
-
+    // ============================================================
+    //  DRAG & DROP
+    // ============================================================
     let dragCounter = 0;
     window.addEventListener('dragenter', (e) => {
       if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
@@ -1562,6 +1815,9 @@
       if (f) readFile(f);
     });
 
+    // ============================================================
+    //  ГОРЯЧИЕ КЛАВИШИ
+    // ============================================================
     document.addEventListener('keydown', (e) => {
       if (readerScreen.style.display !== 'block') return;
       const ctrl = e.ctrlKey || e.metaKey;
@@ -1576,7 +1832,9 @@
       }
     });
 
-    // Инициализация
+    // ============================================================
+    //  ИНИЦИАЛИЗАЦИЯ
+    // ============================================================
     buildPresets();
     applySettings();
     renderLibrary();
@@ -1587,6 +1845,7 @@
     }
   } catch (err) {
     showError((err && err.message) ? err.message : String(err));
+    console.error(err);
   }
 })();
 </script>
