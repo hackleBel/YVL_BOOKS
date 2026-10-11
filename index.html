@@ -252,6 +252,24 @@
   }
   #side-progress.dragging #side-thumb { opacity: 1; }
 
+  /* Метка закладки на полосе прокрутки */
+  #side-marks {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 100%;
+    pointer-events: none;
+  }
+  .side-mark {
+    position: absolute;
+    right: 3px;
+    width: 10px;
+    height: 3px;
+    background: #e0b84a;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(224,184,74,.7);
+    transform: translateY(-50%);
+  }
+
   #to-top {
     position: fixed; right: 28px; bottom: 60px;
     width: 40px; height: 40px; border-radius: 50%;
@@ -310,6 +328,116 @@
   }
   #toc-overlay.open { display: block; }
   #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
+
+  /* ===== Панель закладок ===== */
+  #marks-panel {
+    position: fixed; top: 0; right: -360px;
+    width: 360px; height: 100%;
+    background: var(--bg-header);
+    border-left: 1px solid var(--border);
+    z-index: 320; transition: right .25s ease;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #marks-panel.open { right: 0; }
+  #marks-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  #marks-header-actions { display: flex; gap: 6px; }
+  #marks-header button { padding: 4px 10px; font-size: 12px; }
+  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+  .mark-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    transition: background .15s;
+  }
+  .mark-item:hover { background: var(--bg-panel); }
+  .mark-item .mark-title {
+    font-size: 12px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .mark-item .mark-text {
+    font-size: 13px;
+    color: var(--fg);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .mark-item .mark-date {
+    font-size: 10px;
+    color: var(--fg-dim);
+  }
+  .mark-item .mark-del {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: transparent; border: none;
+    color: var(--fg-dim); font-size: 13px;
+    padding: 4px 8px; line-height: 1;
+    border-radius: 4px; cursor: pointer;
+  }
+  .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
+  .mark-item .mark-pos {
+    font-size: 10px;
+    color: var(--accent);
+    margin-left: 8px;
+  }
+
+  #marks-empty {
+    padding: 24px 20px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  #marks-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 319; display: none;
+  }
+  #marks-overlay.open { display: block; }
+
+  /* Плавающая кнопка добавления закладки */
+  #btn-add-mark {
+    position: fixed;
+    right: 28px;
+    bottom: 116px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    color: #e0b84a;
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+    z-index: 90;
+  }
+  #btn-add-mark.show { display: flex; }
+  #btn-add-mark.saved {
+    background: #e0b84a;
+    color: var(--bg);
+    border-color: #e0b84a;
+  }
+  #btn-add-mark.pulse {
+    animation: markPulse .5s ease;
+  }
+  @keyframes markPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
 
   footer {
     padding: 8px 20px;
@@ -410,6 +538,7 @@
     background: var(--bg-input); border: 1px solid var(--border-strong);
   }
   .sheet-grid button.wide { grid-column: 1 / -1; }
+  .sheet-grid button.mark-btn { color: #e0b84a; border-color: rgba(224,184,74,.4); }
   #sheet-close {
     display: block; margin: 4px auto 0; padding: 8px 20px;
     font-size: 12px; background: transparent;
@@ -434,24 +563,18 @@
     white-space: pre-wrap; z-index: 999;
   }
 
-  /* Модальное сообщение о загрузке файла */
   #file-toast {
-    position: fixed;
-    left: 50%; top: 24px;
+    position: fixed; left: 50%; top: 24px;
     transform: translateX(-50%);
     background: var(--bg-panel);
     border: 1px solid var(--border-strong);
     color: var(--fg);
-    border-radius: 10px;
-    padding: 12px 18px;
+    border-radius: 10px; padding: 12px 18px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px;
-    z-index: 1000;
+    font-size: 13px; z-index: 1000;
     box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    display: none;
-    max-width: 90vw;
-    text-align: center;
-    line-height: 1.4;
+    display: none; max-width: 90vw;
+    text-align: center; line-height: 1.4;
   }
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
@@ -477,7 +600,9 @@
       font-size: 16px; padding: 8px 10px; border-radius: 8px;
     }
     #toc-panel { width: 88%; right: -88%; }
+    #marks-panel { width: 88%; right: -88%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
+    #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
     #jump-box { left: 12px; right: 12px; transform: none; padding: 10px 12px; }
     #jump-box input { width: 100px; }
     .palette { right: 8px; width: calc(100vw - 32px); max-width: 260px; }
@@ -485,6 +610,7 @@
     #side-progress { right: 2px; width: 28px; top: 50px; bottom: 50px; }
     #side-progress::before { right: 12px; }
     #side-thumb { right: 9px; width: 10px; height: 44px; }
+    .side-mark { right: 6px; width: 12px; height: 3px; }
     #mobile-sheet { display: block; }
   }
 </style>
@@ -515,6 +641,8 @@
         <span class="size-label" id="lh-label">1.85</span>
         <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
+      <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
+      <button id="btn-marks">🔖 Закладки</button>
       <button id="btn-theme">Цвет</button>
       <button id="btn-toc">Содержание</button>
       <button id="btn-library">Библиотека</button>
@@ -569,8 +697,13 @@
   </footer>
 </div>
 
-<div id="side-progress"><div id="side-thumb"></div></div>
+<div id="side-progress">
+  <div id="side-thumb"></div>
+  <div id="side-marks"></div>
+</div>
+
 <button id="to-top" title="Наверх">↑</button>
+<button id="btn-add-mark" title="Поставить закладку">🔖</button>
 
 <div id="jump-box">
   <span>Перейти к главе:</span>
@@ -579,12 +712,24 @@
   <button id="jump-cancel">✕</button>
 </div>
 
-<div id="hint">Ctrl+G — глава · Ctrl+O — содержание · Ctrl +/− — размер</div>
+<div id="hint">Ctrl+G — глава · Ctrl+O — содержание · Ctrl+B — закладка</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
   <div id="toc-header"><span>Содержание</span><button id="toc-close">✕</button></div>
   <div id="toc-list"></div>
+</div>
+
+<div id="marks-overlay"></div>
+<div id="marks-panel">
+  <div id="marks-header">
+    <span>🔖 Закладки</span>
+    <div id="marks-header-actions">
+      <button id="marks-clear" title="Удалить все">Очистить</button>
+      <button id="marks-close">✕</button>
+    </div>
+  </div>
+  <div id="marks-list"></div>
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
@@ -629,6 +774,8 @@
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
+      <button id="m-mark" class="mark-btn">🔖 Закладка</button>
+      <button id="m-marks" class="mark-btn">🔖 Закладки</button>
       <button id="m-theme">🎨 Цвет</button>
       <button id="m-toc">📖 Содержание</button>
       <button id="m-jump">🔢 К главе</button>
@@ -658,7 +805,7 @@
     el.classList.toggle('error', !!isError);
     el.classList.add('show');
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 4000);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
   }
 
   try {
@@ -684,7 +831,17 @@
 
     const sideProgress = $('side-progress');
     const sideThumb = $('side-thumb');
+    const sideMarks = $('side-marks');
     const toTop = $('to-top');
+
+    const btnMark = $('btn-mark');
+    const btnMarks = $('btn-marks');
+    const btnAddMark = $('btn-add-mark');
+    const marksPanel = $('marks-panel');
+    const marksList = $('marks-list');
+    const marksClose = $('marks-close');
+    const marksOverlay = $('marks-overlay');
+    const marksClear = $('marks-clear');
 
     const jumpBox = $('jump-box');
     const jumpInput = $('jump-input');
@@ -741,11 +898,14 @@
     const mToc = $('m-toc');
     const mJump = $('m-jump');
     const mLibrary = $('m-library');
+    const mMark = $('m-mark');
+    const mMarks = $('m-marks');
     const mClose = $('m-close');
 
     let chapters = [];
     let activeChapter = -1;
     let currentBookId = null;
+    let currentMarks = [];  // закладки текущей книги
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -787,7 +947,6 @@
       b = Math.max(0, Math.min(255, b + amt));
       return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1);
     }
-
     function mix(c1, c2, t) {
       const p = (c) => {
         const n = c.replace('#','');
@@ -952,6 +1111,8 @@
     if (mToc) mToc.addEventListener('click', () => { closeSheet(); setTimeout(openToc, 180); });
     if (mJump) mJump.addEventListener('click', () => { closeSheet(); setTimeout(openJump, 180); });
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
+    if (mMark) mMark.addEventListener('click', () => { closeSheet(); addMark(); });
+    if (mMarks) mMarks.addEventListener('click', () => { closeSheet(); setTimeout(openMarks, 180); });
 
     // ============================================================
     //  ТЕКСТ: РАЗБИВКА, РЕНДЕР
@@ -965,7 +1126,6 @@
       }
       return blocks;
     }
-
     function isChapterTitle(text) {
       if (!text) return false;
       const t = text.trim();
@@ -1009,6 +1169,7 @@
 
       buildToc();
       updateProgress();
+      renderSideMarks();
     }
 
     function buildToc() {
@@ -1055,13 +1216,205 @@
         items[activeChapter].scrollIntoView({ block: 'nearest' });
       }
     }
-
     function goToChapter(i) {
       if (i < 0 || i >= chapters.length) return;
       activeChapter = i;
       chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       highlightActiveToc();
     }
+
+    // ============================================================
+    //  ЗАКЛАДКИ
+    // ============================================================
+    function marksKey(bookId) {
+      return 'reader_marks_' + (bookId || 'scratch');
+    }
+    function loadMarks(bookId) {
+      try { return JSON.parse(localStorage.getItem(marksKey(bookId)) || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveMarks(bookId, arr) {
+      try { localStorage.setItem(marksKey(bookId), JSON.stringify(arr)); } catch (e) {}
+    }
+
+    function getCurrentSnippet() {
+      const scrollTop = readerScreen.scrollTop;
+      // Ищем абзац, который находится в верхней части экрана
+      const paras = content.querySelectorAll('p');
+      let target = null;
+      for (let i = 0; i < paras.length; i++) {
+        const el = paras[i];
+        const top = el.offsetTop;
+        if (top + el.offsetHeight > scrollTop + 40) {
+          target = el;
+          break;
+        }
+      }
+      if (!target && paras.length) target = paras[0];
+      if (!target) return { text: '', chapter: '' };
+
+      const text = (target.textContent || '').trim();
+      const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
+
+      // Ищем ближайший заголовок выше
+      let chapterTitle = '';
+      let idx = -1;
+      for (let i = 0; i < chapters.length; i++) {
+        if (chapters[i].el.offsetTop <= scrollTop + 40) idx = i;
+        else break;
+      }
+      if (idx >= 0) chapterTitle = chapters[idx].title;
+
+      return { text: snippet, chapter: chapterTitle };
+    }
+
+    function addMark() {
+      if (readerScreen.style.display !== 'block') return;
+      const scrollTop = readerScreen.scrollTop;
+      const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
+      const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+
+      const { text, chapter } = getCurrentSnippet();
+
+      const mark = {
+        id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
+        pos: scrollTop,
+        pct: pct,
+        chapter: chapter,
+        text: text,
+        date: Date.now()
+      };
+
+      currentMarks.push(mark);
+      saveMarks(currentBookId, currentMarks);
+      renderSideMarks();
+      renderMarksList();
+      toast('Закладка сохранена' + (chapter ? ' — ' + chapter : ''));
+
+      if (btnAddMark) {
+        btnAddMark.classList.add('saved', 'pulse');
+        setTimeout(() => btnAddMark.classList.remove('pulse'), 500);
+        setTimeout(() => btnAddMark.classList.remove('saved'), 1000);
+      }
+    }
+
+    function removeMark(id) {
+      currentMarks = currentMarks.filter(m => m.id !== id);
+      saveMarks(currentBookId, currentMarks);
+      renderSideMarks();
+      renderMarksList();
+    }
+
+    function clearMarks() {
+      if (currentMarks.length === 0) return;
+      if (!confirm('Удалить все закладки этой книги?')) return;
+      currentMarks = [];
+      saveMarks(currentBookId, currentMarks);
+      renderSideMarks();
+      renderMarksList();
+    }
+
+    function goToMark(id) {
+      const m = currentMarks.find(x => x.id === id);
+      if (!m) return;
+      readerScreen.scrollTo({ top: m.pos, behavior: 'smooth' });
+      closeMarks();
+    }
+
+    function formatDate(ts) {
+      try {
+        const d = new Date(ts);
+        const pad = (n) => n < 10 ? '0' + n : '' + n;
+        return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear() +
+               ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+      } catch (e) { return ''; }
+    }
+
+    function renderMarksList() {
+      if (!marksList) return;
+      marksList.innerHTML = '';
+      if (currentMarks.length === 0) {
+        const empty = document.createElement('div');
+        empty.id = 'marks-empty';
+        empty.textContent = 'Пока нет закладок. Нажмите «🔖 Закладка», чтобы сохранить текущее место.';
+        marksList.appendChild(empty);
+        return;
+      }
+
+      // Сортируем по позиции
+      const sorted = currentMarks.slice().sort((a, b) => a.pos - b.pos);
+
+      sorted.forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'mark-item';
+
+        const title = document.createElement('div');
+        title.className = 'mark-title';
+        const pct = Math.round((m.pct || 0) * 100);
+        title.textContent = (m.chapter || 'Без главы') + ' · ' + pct + '%';
+
+        const text = document.createElement('div');
+        text.className = 'mark-text';
+        text.textContent = m.text || '(пусто)';
+
+        const date = document.createElement('div');
+        date.className = 'mark-date';
+        date.textContent = formatDate(m.date);
+
+        const del = document.createElement('button');
+        del.className = 'mark-del';
+        del.title = 'Удалить';
+        del.textContent = '✕';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeMark(m.id);
+        });
+
+        el.appendChild(title);
+        el.appendChild(text);
+        el.appendChild(date);
+        el.appendChild(del);
+
+        el.addEventListener('click', () => goToMark(m.id));
+        marksList.appendChild(el);
+      });
+    }
+
+    function renderSideMarks() {
+      if (!sideMarks) return;
+      sideMarks.innerHTML = '';
+      if (currentMarks.length === 0) return;
+      const trackH = sideProgress.clientHeight;
+      if (trackH === 0) return;
+      currentMarks.forEach(m => {
+        const mark = document.createElement('div');
+        mark.className = 'side-mark';
+        const pct = Math.max(0, Math.min(1, m.pct || 0));
+        mark.style.top = (pct * 100) + '%';
+        mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
+        sideMarks.appendChild(mark);
+      });
+    }
+
+    function openMarks() {
+      if (!marksPanel) return;
+      renderMarksList();
+      marksPanel.classList.add('open');
+      marksOverlay.classList.add('open');
+    }
+    function closeMarks() {
+      if (!marksPanel) return;
+      marksPanel.classList.remove('open');
+      marksOverlay.classList.remove('open');
+    }
+    function toggleMarks() { marksPanel.classList.contains('open') ? closeMarks() : openMarks(); }
+
+    if (btnMark) btnMark.addEventListener('click', addMark);
+    if (btnAddMark) btnAddMark.addEventListener('click', addMark);
+    if (btnMarks) btnMarks.addEventListener('click', toggleMarks);
+    if (marksClose) marksClose.addEventListener('click', closeMarks);
+    if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
+    if (marksClear) marksClear.addEventListener('click', clearMarks);
 
     // ============================================================
     //  ПРОГРЕСС
@@ -1092,6 +1445,12 @@
         sideThumb.style.top = top + 'px';
       }
 
+      // Показываем плавающую кнопку закладки при прокрутке
+      if (btnAddMark) {
+        if (scrollTop > 100) btnAddMark.classList.add('show');
+        else btnAddMark.classList.remove('show');
+      }
+
       if (toTop) {
         if (scrollTop > 400) toTop.classList.add('show');
         else toTop.classList.remove('show');
@@ -1119,7 +1478,10 @@
     if (readerScreen) {
       readerScreen.addEventListener('scroll', () => { updateProgress(); showScroller(); });
     }
-    window.addEventListener('resize', updateProgress);
+    window.addEventListener('resize', () => {
+      updateProgress();
+      renderSideMarks();
+    });
 
     if (sideProgress) {
       sideProgress.addEventListener('mouseenter', () => {
@@ -1222,10 +1584,14 @@
       progressBar.style.width = '0%';
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
+      if (btnAddMark) btnAddMark.classList.remove('show');
       closeToc();
       closeJump();
       closeSheet();
+      closeMarks();
       currentBookId = null;
+      currentMarks = [];
+      if (sideMarks) sideMarks.innerHTML = '';
     }
 
     if (logo) logo.addEventListener('click', () => {
@@ -1291,7 +1657,10 @@
         meta.className = 'meta';
         const words = b.words || 0;
         const min = Math.max(1, Math.round(words / 200));
-        meta.textContent = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
+        const marksCount = loadMarks(b.id).length;
+        let metaText = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
+        if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
+        meta.textContent = metaText;
 
         const del = document.createElement('button');
         del.className = 'del';
@@ -1300,6 +1669,7 @@
         del.addEventListener('click', (e) => {
           e.stopPropagation();
           if (confirm('Удалить «' + b.title + '»?')) {
+            try { localStorage.removeItem(marksKey(b.id)); } catch (e) {}
             const arr = loadBooks().filter(x => x.id !== b.id);
             saveBooks(arr);
             renderLibrary();
@@ -1319,6 +1689,7 @@
       const b = books.find(x => x.id === id);
       if (!b) return;
       currentBookId = id;
+      currentMarks = loadMarks(id);
       input.value = b.text;
       startReading(b.text, true);
       setTimeout(() => {
@@ -1326,7 +1697,7 @@
         else if (typeof b.chapter === 'number' && b.chapter >= 0 && chapters[b.chapter]) {
           chapters[b.chapter].el.scrollIntoView({ block: 'start' });
         }
-        updateProgress(); showScroller();
+        updateProgress(); showScroller(); renderSideMarks();
       }, 60);
     }
 
@@ -1353,8 +1724,11 @@
       render(text);
       showReader();
       readerScreen.scrollTop = 0;
-      if (!fromBook) currentBookId = null;
-      setTimeout(() => { updateProgress(); showScroller(); }, 30);
+      if (!fromBook) {
+        currentBookId = null;
+        currentMarks = [];
+      }
+      setTimeout(() => { updateProgress(); showScroller(); renderSideMarks(); }, 30);
     }
 
     if (btnRead) btnRead.addEventListener('click', () => {
@@ -1363,6 +1737,7 @@
       const title = guessTitle(text);
       const id = addBook(title, text);
       currentBookId = id;
+      currentMarks = [];
       startReading(text, true);
     });
 
@@ -1393,8 +1768,6 @@
     // ============================================================
     function decodeBuffer(buffer) {
       const bytes = new Uint8Array(buffer);
-
-      // 1. Проверяем BOM
       if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
         return new TextDecoder('utf-8').decode(bytes.subarray(3));
       }
@@ -1404,54 +1777,24 @@
       if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
         return new TextDecoder('utf-16be').decode(bytes.subarray(2));
       }
-
-      // 2. Пробуем UTF-8
       let utf8 = '';
       try {
         utf8 = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-        // Если нет replacement-символов — это точно UTF-8
         if (!utf8.includes('\uFFFD')) return utf8;
-      } catch (e) {
-        // Не UTF-8, идём дальше
-      }
-
-      // 3. Пробуем windows-1251
+      } catch (e) {}
       try {
         const win = new TextDecoder('windows-1251').decode(bytes);
         if (win && !win.includes('\uFFFD')) return win;
       } catch (e) {}
-
-      // 4. Пробуем koi8-r
       try {
         const koi = new TextDecoder('koi8-r').decode(bytes);
         if (koi && !koi.includes('\uFFFD')) return koi;
       } catch (e) {}
-
-      // 5. Пробуем iso-8859-1
       try {
         const iso = new TextDecoder('iso-8859-1').decode(bytes);
         if (iso && !iso.includes('\uFFFD')) return iso;
       } catch (e) {}
-
-      // 6. Фолбэк — нефатальный UTF-8
       return utf8 || new TextDecoder('utf-8').decode(bytes);
-    }
-
-    function arrayBufferToBase64(buffer) {
-      let binary = '';
-      const bytes = new Uint8Array(buffer);
-      const chunk = 0x8000;
-      for (let i = 0; i < bytes.length; i += chunk) {
-        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
-      }
-      return btoa(binary);
-    }
-    function base64ToArrayBuffer(b64) {
-      const binary = atob(b64);
-      const len = binary.length;
-      const bytes = new Uint8Array(len);
-      for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
-      return bytes.buffer;
     }
 
     // ============================================================
@@ -1461,8 +1804,6 @@
       const bytes = new Uint8Array(arrayBuffer);
       const view = new DataView(arrayBuffer);
       const files = {};
-
-      // Находим End of Central Directory
       let eocd = -1;
       for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65558); i--) {
         if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
@@ -1476,25 +1817,20 @@
         if (view.getUint32(p, true) !== 0x02014b50) break;
         const compMethod = view.getUint16(p + 10, true);
         const compSize = view.getUint32(p + 20, true);
-        const uncompSize = view.getUint32(p + 24, true);
         const nameLen = view.getUint16(p + 28, true);
         const extraLen = view.getUint16(p + 30, true);
         const commentLen = view.getUint16(p + 32, true);
         const localOffset = view.getUint32(p + 42, true);
         const name = new TextDecoder('utf-8').decode(bytes.subarray(p + 46, p + 46 + nameLen));
         p += 46 + nameLen + extraLen + commentLen;
-
-        // Читаем Local File Header
         const lhNameLen = view.getUint16(localOffset + 26, true);
         const lhExtraLen = view.getUint16(localOffset + 28, true);
         const dataStart = localOffset + 30 + lhNameLen + lhExtraLen;
         const dataEnd = dataStart + compSize;
         const data = bytes.subarray(dataStart, dataEnd);
-
-        files[name] = { data, compMethod, uncompSize };
+        files[name] = { data, compMethod };
       }
 
-      // Декодируем записи
       const result = {};
       for (const name in files) {
         const f = files[name];
@@ -1510,9 +1846,7 @@
             const decompressed = await new Response(stream).arrayBuffer();
             result[name] = decodeBuffer(decompressed);
           }
-        } catch (e) {
-          result[name] = '';
-        }
+        } catch (e) { result[name] = ''; }
       }
       return result;
     }
@@ -1521,14 +1855,12 @@
     //  ПАРСЕРЫ
     // ============================================================
     function textFromHtml(html) {
-      // Убираем script/style/head
       const doc = new DOMParser().parseFromString(html, 'text/html');
       doc.querySelectorAll('script,style,noscript,head,meta,link').forEach(n => n.remove());
       const body = doc.body || doc.documentElement;
-      // Заменяем блочные теги переводами строк
       body.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
       body.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,tr,section,article,blockquote').forEach(n => {
-        n.appendChild(document.createTextNode('\n\n'));
+        n.appendChild(doc.createTextNode('\n\n'));
       });
       let text = body.textContent || '';
       text = text.replace(/\u00a0/g, ' ');
@@ -1536,11 +1868,9 @@
       text = text.replace(/\n{3,}/g, '\n\n');
       return text.trim();
     }
-
     function textFromFb2(xml) {
       const doc = new DOMParser().parseFromString(xml, 'application/xml');
       if (doc.querySelector('parsererror')) {
-        // Иногда FB2 с некорректными сущностями — попробуем html
         const doc2 = new DOMParser().parseFromString(xml, 'text/html');
         return textFromHtml(doc2.documentElement.outerHTML);
       }
@@ -1564,39 +1894,28 @@
       }
       return out.join('').replace(/\n{3,}/g, '\n\n').trim();
     }
-
     function textFromRtf(rtf) {
       let text = rtf;
-      // Удаляем группы шрифтов, цветов, информации
       text = text.replace(/\\fonttbl[\s\S]*?\}/g, '');
       text = text.replace(/\\colortbl[\s\S]*?\}/g, '');
       text = text.replace(/\\stylesheet[\s\S]*?\}/g, '');
       text = text.replace(/\\info[\s\S]*?\}/g, '');
       text = text.replace(/\\pict[\s\S]*?\}/g, '');
-      // Переводы строк
       text = text.replace(/\\par[d]?\b/g, '\n');
       text = text.replace(/\\line\b/g, '\n');
       text = text.replace(/\\tab\b/g, '\t');
-      // Юникод \uN? 
       text = text.replace(/\\u(-?\d+)\??/g, (m, n) => {
         let code = parseInt(n, 10);
         if (code < 0) code += 65536;
         return String.fromCharCode(code);
       });
-      // Hex-последовательности \'xx
-      text = text.replace(/\\'([0-9a-fA-F]{2})/g, (m, h) => {
-        const b = parseInt(h, 16);
-        return String.fromCharCode(b);
-      });
-      // Убираем остальные управляющие последовательности
+      text = text.replace(/\\'([0-9a-fA-F]{2})/g, (m, h) => String.fromCharCode(parseInt(h, 16)));
       text = text.replace(/\\[a-zA-Z]+-?\d* ?/g, '');
       text = text.replace(/[{}]/g, '');
       text = text.replace(/\r/g, '');
       text = text.replace(/\n{3,}/g, '\n\n');
-      // Попытка перекодировать "кракозябры" cp1251->юникод не делаем, просто возвращаем
       return text.trim();
     }
-
     function textFromDocx(xml) {
       const doc = new DOMParser().parseFromString(xml, 'application/xml');
       if (doc.querySelector('parsererror')) return '';
@@ -1610,7 +1929,6 @@
       });
       return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
     }
-
     function textFromOdt(xml) {
       const doc = new DOMParser().parseFromString(xml, 'application/xml');
       if (doc.querySelector('parsererror')) return '';
@@ -1622,7 +1940,6 @@
       });
       return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
     }
-
     function textFromJson(json) {
       try {
         const obj = JSON.parse(json);
@@ -1637,7 +1954,6 @@
         return JSON.stringify(obj, null, 2);
       } catch (e) { return ''; }
     }
-
     function textFromCsv(csv) {
       return csv.split(/\r?\n/).map(row => {
         return row.split(/[,;\t]/).map(c => c.replace(/^"|"$/g, '')).join(' ');
@@ -1645,7 +1961,7 @@
     }
 
     // ============================================================
-    //  ГЛАВНАЯ ФУНКЦИЯ ЧТЕНИЯ ФАЙЛА
+    //  ЧТЕНИЕ ФАЙЛА
     // ============================================================
     async function readFile(file) {
       toast('Обработка: ' + file.name);
@@ -1658,12 +1974,8 @@
 
         if (ext === 'epub') {
           const files = await unzip(buffer);
-          // Найдём OPF (content.opf) или container.xml
           let opfPath = null;
-          for (const n in files) {
-            if (/\.opf$/i.test(n)) { opfPath = n; break; }
-          }
-          // Или через META-INF/container.xml
+          for (const n in files) { if (/\.opf$/i.test(n)) { opfPath = n; break; } }
           if (!opfPath) {
             const container = files['META-INF/container.xml'] || files['meta-inf/container.xml'];
             if (container) {
@@ -1672,7 +1984,6 @@
               if (rootfile) opfPath = rootfile.getAttribute('full-path');
             }
           }
-
           const parts = [];
           if (opfPath && files[opfPath]) {
             const opfDoc = new DOMParser().parseFromString(files[opfPath], 'application/xml');
@@ -1689,19 +2000,17 @@
               const idref = ref.getAttribute('idref');
               if (idref && manifest[idref]) spine.push(manifest[idref]);
             });
-
             for (const item of spine) {
               let path = item.href;
               try { path = decodeURIComponent(path); } catch (e) {}
               const full = baseDir + path;
-              const raw = files[full] || files[path] || files[full.replace(/\\/g,'/')];
-              if (raw && /html|xml/i.test(item.media || '') || /\.x?html?$/i.test(path)) {
+              const raw = files[full] || files[path];
+              if (raw && (/\.x?html?$/i.test(path) || /html|xml/i.test(item.media))) {
                 parts.push(textFromHtml(raw));
               }
             }
           }
           if (parts.length === 0) {
-            // Фолбэк — пройтись по всем html/xhtml
             for (const n in files) {
               if (/\.x?html?$/i.test(n)) parts.push(textFromHtml(files[n]));
             }
@@ -1719,7 +2028,6 @@
           text = textFromOdt(xml);
         } else if (ext === 'zip') {
           const files = await unzip(buffer);
-          // Ищем первый подходящий файл
           const order = ['txt','md','markdown','html','htm','xhtml','fb2','docx','odt','epub','json','csv','rtf'];
           let chosen = null;
           for (const e of order) {
@@ -1729,7 +2037,6 @@
             if (chosen) break;
           }
           if (!chosen) {
-            // Любой текстовый
             for (const n in files) {
               if (files[n] && files[n].length > 50) { chosen = { name: n, ext: '' }; break; }
             }
@@ -1745,26 +2052,19 @@
           else if (chosen.ext === 'rtf') text = textFromRtf(raw);
           else text = raw;
         } else if (ext === 'fb2') {
-          const raw = decodeBuffer(buffer);
-          text = textFromFb2(raw);
+          text = textFromFb2(decodeBuffer(buffer));
         } else if (ext === 'html' || ext === 'htm' || ext === 'xhtml') {
-          const raw = decodeBuffer(buffer);
-          text = textFromHtml(raw);
+          text = textFromHtml(decodeBuffer(buffer));
         } else if (ext === 'rtf') {
-          const raw = decodeBuffer(buffer);
-          text = textFromRtf(raw);
+          text = textFromRtf(decodeBuffer(buffer));
         } else if (ext === 'json') {
-          const raw = decodeBuffer(buffer);
-          text = textFromJson(raw);
+          text = textFromJson(decodeBuffer(buffer));
         } else if (ext === 'csv') {
-          const raw = decodeBuffer(buffer);
-          text = textFromCsv(raw);
+          text = textFromCsv(decodeBuffer(buffer));
         } else {
-          // txt, md, markdown и всё остальное
           text = decodeBuffer(buffer);
         }
 
-        // Нормализация
         text = text.replace(/\u0000/g, '');
         text = text.replace(/\r\n?/g, '\n');
         text = text.replace(/[ \t]+\n/g, '\n');
@@ -1772,15 +2072,13 @@
         text = text.replace(/\u00a0/g, ' ');
         text = text.trim();
 
-        if (!text) {
-          toast('Не удалось извлечь текст из «' + file.name + '»', true);
-          return;
-        }
+        if (!text) { toast('Не удалось извлечь текст из «' + file.name + '»', true); return; }
 
         const finalTitle = name || guessTitle(text);
         const id = addBook(finalTitle, text);
         input.value = text;
         currentBookId = id;
+        currentMarks = [];
         startReading(text, true);
         toast('Загружено: ' + finalTitle);
       } catch (err) {
@@ -1823,12 +2121,15 @@
       const ctrl = e.ctrlKey || e.metaKey;
       if (ctrl && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); openJump(); }
       else if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
+      else if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addMark(); }
+      else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); toggleMarks(); }
       else if (ctrl && (e.key === '=' || e.key === '+')) { e.preventDefault(); changeFont(2); }
       else if (ctrl && (e.key === '-' || e.key === '_')) { e.preventDefault(); changeFont(-2); }
       else if (e.key === 'Escape') {
         closeJump(); closeToc();
         if (palette) palette.classList.remove('open');
         closeSheet();
+        closeMarks();
       }
     });
 
