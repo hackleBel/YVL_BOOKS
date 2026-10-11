@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YVL</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕸️%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: Georgia, 'Times New Roman', serif;
+    transition: background .2s, color .2s;
+  }
+
+  :root {
+    --bg: #14161a;
+    --bg-header: #191c21;
+    --bg-panel: #1e2228;
+    --bg-input: #191c21;
+    --border: #23272e;
+    --border-strong: #2e333b;
+    --fg: #d4d7dc;
+    --fg-dim: #6d737d;
+    --fg-mid: #a8adb5;
+    --accent: #8b919b;
+    --col-width: 720px;
+    --line-height: 1.85;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 13px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    cursor: pointer;
+  }
+
+  .spacer { flex: 1; }
+
+  button {
+    background: var(--border);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    line-height: 1;
+  }
+  button:hover { background: var(--border-strong); }
+  button:active { transform: translateY(1px); }
+
+  .btn-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .btn-group button {
+    background: transparent;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+  }
+  .btn-group button:hover { background: var(--border-strong); }
+
+  .btn-icon {
+    font-family: Georgia, serif;
+    font-weight: bold;
+  }
+
+  .size-label {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--fg-dim);
+    min-width: 34px;
+    text-align: center;
+  }
+
+  /* ---- Экран вставки / библиотеки ---- */
+  #paste-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    align-items: center;
+    overflow-y: auto;
+  }
+
+  #paste-screen .inner {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  #paste-screen p {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 13px;
+    color: var(--fg-dim);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 160px;
+    background: var(--bg-input);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    resize: none;
+    outline: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  #paste-screen .actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  /* ---- Библиотека ---- */
+  #library {
+    margin-top: 22px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+
+  #library h3 {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 12px;
+    font-weight: normal;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  .book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+
+  .book-item {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: border-color .15s, transform .12s;
+    position: relative;
+  }
+  .book-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  .book-item .title {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 14px;
+    color: var(--fg);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 22px;
+  }
+
+  .book-item .meta {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--fg-dim);
+  }
+
+  .book-item .del {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--fg-dim);
+    font-size: 14px;
+    padding: 2px 6px;
+    line-height: 1;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
+
+  #library-empty {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 12px;
+    color: var(--fg-dim);
+    text-align: center;
+    padding: 14px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+  }
+
+  /* ---- Drop overlay ---- */
+  #drop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 18px;
+    color: var(--fg);
+    pointer-events: none;
+    border: 2px dashed var(--accent);
+  }
+  #drop-overlay.show { display: flex; }
+
+  /* ---- Экран чтения ---- */
+  #reader-screen {
+    flex: 1;
+    display: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+  }
+
+  #reader-screen::-webkit-scrollbar { width: 10px; }
+  #reader-screen::-webkit-scrollbar-track { background: var(--bg); }
+  #reader-screen::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+
+  #content {
+    max-width: var(--col-width);
+    margin: 0 auto;
+    padding: 50px 40px 140px;
+    font-size: 20px;
+    line-height: var(--line-height);
+    color: var(--fg);
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    transition: max-width .15s, line-height .15s;
+  }
+
+  #content p {
+    margin-bottom: 1.15em;
+    text-indent: 2em;
+    text-align: justify;
+    orphans: 2;
+    widows: 2;
+  }
+
+  #content p:first-child { text-indent: 0; }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 100;
+    transition: width .1s;
+  }
+
+  #side-progress {
+    position: fixed;
+    right: 6px;
+    top: 60px;
+    bottom: 40px;
+    width: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    z-index: 90;
+    cursor: pointer;
+  }
+
+  #side-thumb {
+    position: absolute;
+    left: -3px;
+    width: 9px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 5px;
+    opacity: .6;
+    transition: opacity .15s;
+  }
+  #side-progress:hover #side-thumb { opacity: 1; }
+
+  #to-top {
+    position: fixed;
+    right: 28px;
+    bottom: 60px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    color: var(--accent);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    z-index: 90;
+  }
+  #to-top:hover { background: var(--border-strong); color: var(--fg); }
+
+  #jump-box {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: none;
+    gap: 10px;
+    align-items: center;
+    z-index: 200;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  #jump-box input {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    color: var(--fg);
+    padding: 7px 10px;
+    border-radius: 6px;
+    width: 130px;
+    font-size: 13px;
+    outline: none;
+  }
+  #jump-box input:focus { border-color: var(--accent); }
+
+  #jump-box span {
+    font-size: 12px;
+    color: var(--fg-dim);
+  }
+
+  #toc-panel {
+    position: fixed;
+    top: 0;
+    right: -360px;
+    width: 360px;
+    height: 100%;
+    background: var(--bg-header);
+    border-left: 1px solid var(--border);
+    z-index: 300;
+    transition: right .25s ease;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #toc-panel.open { right: 0; }
+
+  #toc-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  #toc-header button { padding: 4px 10px; font-size: 12px; }
+
+  #toc-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  #toc-list::-webkit-scrollbar { width: 8px; }
+  #toc-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+  .toc-item {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--fg-mid);
+    cursor: pointer;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+  }
+  .toc-item:hover {
+    background: var(--bg-panel);
+    color: var(--fg);
+    border-left-color: var(--accent);
+  }
+  .toc-item.active {
+    color: var(--fg);
+    border-left-color: var(--accent);
+  }
+
+  #toc-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 299;
+    display: none;
+  }
+  #toc-overlay.open { display: block; }
+
+  #toc-empty {
+    padding: 20px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  footer {
+    padding: 8px 20px;
+    background: var(--bg-header);
+    border-top: 1px solid var(--border);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--fg-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  #hint {
+    position: fixed;
+    bottom: 50px;
+    left: 20px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--fg-dim);
+    opacity: .6;
+    z-index: 80;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+
+  .palette {
+    position: absolute;
+    top: 100%;
+    right: 18px;
+    margin-top: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 12px;
+    display: none;
+    z-index: 250;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    width: 240px;
+  }
+  .palette.open { display: block; }
+
+  .palette h4 {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 10px;
+    font-weight: normal;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .palette-item {
+    padding: 6px 4px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    text-align: center;
+    font-size: 10px;
+    transition: transform .12s, border-color .15s;
+  }
+  .palette-item:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .palette-item.active { border-color: var(--accent); }
+  .palette-item .sw {
+    height: 22px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    font-size: 13px;
+  }
+
+  .palette-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .custom-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .custom-row label {
+    font-size: 12px;
+    color: var(--fg-mid);
+    flex: 1;
+  }
+  .custom-row input[type=color] {
+    width: 34px;
+    height: 26px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    background: var(--bg);
+    cursor: pointer;
+    padding: 2px;
+  }
+  .custom-row input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  .custom-row input[type=color]::-webkit-color-swatch { border: none; border-radius: 3px; }
+
+  .palette-reset {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<div id="app">
+
+  <header style="position:relative">
+    <h1 id="logo">Читалка</h1>
+    <div class="spacer"></div>
+    <div id="reader-controls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
+
+      <div class="btn-group" title="Размер текста">
+        <button id="font-dec" class="btn-icon" title="Уменьшить">A−</button>
+        <span class="size-label" id="size-label">20</span>
+        <button id="font-inc" class="btn-icon" title="Увеличить">A+</button>
+      </div>
+
+      <div class="btn-group" title="Ширина колонки">
+        <button id="width-dec" class="btn-icon" title="Уже">↔−</button>
+        <span class="size-label" id="width-label">720</span>
+        <button id="width-inc" class="btn-icon" title="Шире">↔+</button>
+      </div>
+
+      <div class="btn-group" title="Межстрочный интервал">
+        <button id="lh-dec" class="btn-icon" title="Плотнее">⇕−</button>
+        <span class="size-label" id="lh-label">1.85</span>
+        <button id="lh-inc" class="btn-icon" title="Просторнее">⇕+</button>
+      </div>
+
+      <button id="btn-theme">Цвет</button>
+      <button id="btn-toc">Содержание</button>
+      <button id="btn-library">Библиотека</button>
+    </div>
+
+    <div class="palette" id="palette">
+      <h4>Готовые темы</h4>
+      <div class="palette-grid" id="palette-grid"></div>
+      <h4>Свои цвета</h4>
+      <div class="palette-custom">
+        <div class="custom-row"><label>Фон</label><input type="color" id="col-bg"></div>
+        <div class="custom-row"><label>Текст</label><input type="color" id="col-fg"></div>
+        <div class="custom-row"><label>Акцент</label><input type="color" id="col-accent"></div>
+        <button class="palette-reset" id="reset-theme">Сбросить цвета</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="paste-screen">
+    <div class="inner">
+      <p>Вставьте текст книги в поле ниже, загрузите файл или перетащите его в окно</p>
+      <textarea id="input" placeholder="Сюда текст..." spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off"></textarea>
+      <div class="actions">
+        <button id="btn-read">Читать</button>
+        <button id="btn-file">Загрузить файл</button>
+        <button id="btn-clear">Очистить</button>
+        <input type="file" id="file-input" accept=".txt,.md,.fb2,.html,.htm,.epub,text/plain">
+      </div>
+
+      <div id="library">
+        <h3>Библиотека</h3>
+        <div id="library-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="reader-screen">
+    <div id="content"></div>
+  </div>
+
+  <footer>
+    <span id="footer-left"></span>
+    <span id="footer-right"></span>
+  </footer>
+</div>
+
+<div id="side-progress" style="display:none">
+  <div id="side-thumb"></div>
+</div>
+
+<button id="to-top" title="Наверх">↑</button>
+
+<div id="jump-box">
+  <span>Перейти к главе:</span>
+  <input type="number" id="jump-input" min="1" value="1">
+  <button id="jump-go">→</button>
+  <button id="jump-cancel">✕</button>
+</div>
+
+<div id="hint">Ctrl+G — глава · Ctrl+O — содержание · Ctrl +/− — размер</div>
+
+<div id="toc-overlay"></div>
+<div id="toc-panel">
+  <div id="toc-header">
+    <span>Содержание</span>
+    <button id="toc-close">✕</button>
+  </div>
+  <div id="toc-list"></div>
+</div>
+
+<div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const pasteScreen = document.getElementById('paste-screen');
+  const readerScreen = document.getElementById('reader-screen');
+  const input = document.getElementById('input');
+  const content = document.getElementById('content');
+  const btnRead = document.getElementById('btn-read');
+  const btnClear = document.getElementById('btn-clear');
+  const btnFile = document.getElementById('btn-file');
+  const fileInput = document.getElementById('file-input');
+  const btnLibrary = document.getElementById('btn-library');
+  const btnToc = document.getElementById('btn-toc');
+  const btnTheme = document.getElementById('btn-theme');
+  const readerControls = document.getElementById('reader-controls');
+  const progressBar = document.getElementById('progress-bar');
+  const footerLeft = document.getElementById('footer-left');
+  const footerRight = document.getElementById('footer-right');
+  const logo = document.getElementById('logo');
+
+  const sideProgress = document.getElementById('side-progress');
+  const sideThumb = document.getElementById('side-thumb');
+  const toTop = document.getElementById('to-top');
+
+  const jumpBox = document.getElementById('jump-box');
+  const jumpInput = document.getElementById('jump-input');
+  const jumpGo = document.getElementById('jump-go');
+  const jumpCancel = document.getElementById('jump-cancel');
+
+  const tocPanel = document.getElementById('toc-panel');
+  const tocList = document.getElementById('toc-list');
+  const tocClose = document.getElementById('toc-close');
+  const tocOverlay = document.getElementById('toc-overlay');
+
+  const palette = document.getElementById('palette');
+  const paletteGrid = document.getElementById('palette-grid');
+  const colBg = document.getElementById('col-bg');
+  const colFg = document.getElementById('col-fg');
+  const colAccent = document.getElementById('col-accent');
+  const resetTheme = document.getElementById('reset-theme');
+
+  const fontDec = document.getElementById('font-dec');
+  const fontInc = document.getElementById('font-inc');
+  const sizeLabel = document.getElementById('size-label');
+
+  const widthDec = document.getElementById('width-dec');
+  const widthInc = document.getElementById('width-inc');
+  const widthLabel = document.getElementById('width-label');
+
+  const lhDec = document.getElementById('lh-dec');
+  const lhInc = document.getElementById('lh-inc');
+  const lhLabel = document.getElementById('lh-label');
+
+  const libraryList = document.getElementById('library-list');
+  const dropOverlay = document.getElementById('drop-overlay');
+
+  let chapters = [];
+  let activeChapter = -1;
+  let currentBookId = null;
+
+  const DEFAULTS = {
+    bg: '#14161a',
+    fg: '#d4d7dc',
+    accent: '#8b919b',
+    fontSize: 20,
+    colWidth: 720,
+    lineHeight: 1.85
+  };
+
+  const PRESETS = [
+    { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
+    { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
+    { name: 'Сепия', bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
+    { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
+    { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
+    { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
+    { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
+    { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
+    { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
+  ];
+
+  // ---------- Настройки ----------
+  function loadSettings() {
+    try {
+      const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
+      return Object.assign({}, DEFAULTS, s);
+    } catch (e) { return Object.assign({}, DEFAULTS); }
+  }
+  let settings = loadSettings();
+  function saveSettings() {
+    localStorage.setItem('reader_settings', JSON.stringify(settings));
+  }
+
+  function shade(hex, amt) {
+    const n = hex.replace('#','');
+    const num = parseInt(n.length === 3 ? n.split('').map(c=>c+c).join('') : n, 16);
+    let r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+    r = Math.max(0, Math.min(255, r + amt));
+    g = Math.max(0, Math.min(255, g + amt));
+    b = Math.max(0, Math.min(255, b + amt));
+    return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1);
+  }
+
+  function mix(c1, c2, t) {
+    const p = (c) => {
+      const n = c.replace('#','');
+      const v = parseInt(n.length === 3 ? n.split('').map(x=>x+x).join('') : n, 16);
+      return [(v>>16)&255, (v>>8)&255, v&255];
+    };
+    const a = p(c1), b = p(c2);
+    const r = a.map((v,i)=>Math.round(v*(1-t) + b[i]*t));
+    return '#' + r.map(x=>x.toString(16).padStart(2,'0')).join('');
+  }
+
+  function applySettings() {
+    const { bg, fg, accent } = settings;
+    root.style.setProperty('--bg', bg);
+    root.style.setProperty('--fg', fg);
+    root.style.setProperty('--accent', accent);
+    root.style.setProperty('--bg-header', shade(bg, 6));
+    root.style.setProperty('--bg-panel', shade(bg, 10));
+    root.style.setProperty('--bg-input', shade(bg, 6));
+    root.style.setProperty('--border', shade(bg, 14));
+    root.style.setProperty('--border-strong', shade(bg, 22));
+    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
+    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+
+    root.style.setProperty('--col-width', settings.colWidth + 'px');
+    root.style.setProperty('--line-height', settings.lineHeight);
+
+    content.style.fontSize = settings.fontSize + 'px';
+    sizeLabel.textContent = settings.fontSize;
+    widthLabel.textContent = settings.colWidth;
+    lhLabel.textContent = settings.lineHeight.toFixed(2);
+
+    colBg.value = settings.bg;
+    colFg.value = settings.fg;
+    colAccent.value = settings.accent;
+
+    document.querySelectorAll('.palette-item').forEach(el => {
+      el.classList.toggle('active',
+        el.dataset.bg === settings.bg &&
+        el.dataset.fg === settings.fg &&
+        el.dataset.accent === settings.accent
+      );
+    });
+
+    setTimeout(updateProgress, 20);
+  }
+
+  function buildPresets() {
+    paletteGrid.innerHTML = '';
+    PRESETS.forEach(pr => {
+      const el = document.createElement('div');
+      el.className = 'palette-item';
+      el.dataset.bg = pr.bg;
+      el.dataset.fg = pr.fg;
+      el.dataset.accent = pr.accent;
+      el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
+      el.addEventListener('click', () => {
+        settings.bg = pr.bg;
+        settings.fg = pr.fg;
+        settings.accent = pr.accent;
+        saveSettings();
+        applySettings();
+      });
+      paletteGrid.appendChild(el);
+    });
+  }
+
+  function changeFont(delta) {
+    let s = settings.fontSize + delta;
+    s = Math.max(12, Math.min(48, s));
+    settings.fontSize = s;
+    saveSettings();
+    applySettings();
+  }
+  fontDec.addEventListener('click', () => changeFont(-2));
+  fontInc.addEventListener('click', () => changeFont(2));
+
+  function changeWidth(delta) {
+    let w = settings.colWidth + delta;
+    w = Math.max(400, Math.min(1600, w));
+    settings.colWidth = w;
+    saveSettings();
+    applySettings();
+  }
+  widthDec.addEventListener('click', () => changeWidth(-40));
+  widthInc.addEventListener('click', () => changeWidth(40));
+
+  function changeLineHeight(delta) {
+    let lh = Math.round((settings.lineHeight + delta) * 100) / 100;
+    lh = Math.max(1.2, Math.min(3.0, lh));
+    settings.lineHeight = lh;
+    saveSettings();
+    applySettings();
+  }
+  lhDec.addEventListener('click', () => changeLineHeight(-0.1));
+  lhInc.addEventListener('click', () => changeLineHeight(0.1));
+
+  btnTheme.addEventListener('click', (e) => {
+    e.stopPropagation();
+    palette.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!palette.contains(e.target) && e.target !== btnTheme) {
+      palette.classList.remove('open');
+    }
+  });
+  palette.addEventListener('click', e => e.stopPropagation());
+
+  colBg.addEventListener('input', e => { settings.bg = e.target.value; saveSettings(); applySettings(); });
+  colFg.addEventListener('input', e => { settings.fg = e.target.value; saveSettings(); applySettings(); });
+  colAccent.addEventListener('input', e => { settings.accent = e.target.value; saveSettings(); applySettings(); });
+
+  resetTheme.addEventListener('click', () => {
+    settings.bg = DEFAULTS.bg;
+    settings.fg = DEFAULTS.fg;
+    settings.accent = DEFAULTS.accent;
+    saveSettings();
+    applySettings();
+  });
+
+  // ---------- Разбиение на абзацы ----------
+  function splitIntoParagraphs(text) {
+    const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+    if (blocks.length <= 1) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length > 1) return lines;
+      return [text.trim()];
+    }
+    return blocks;
+  }
+
+  function isChapterTitle(text) {
+    if (!text) return false;
+    const t = text.trim();
+    if (t.length > 90 || t.length < 2) return false;
+    const patterns = [
+      /^(глава|часть|книга|том|chapter|part|book|volume)\s+[\divxlcdm]+/i,
+      /^[IVXLCDM]{1,7}\.?\s*$/,
+      /^\d+\.?\s*$/,
+      /^#{1,3}\s+/,
+      /^\*{3,}$/
+    ];
+    for (const p of patterns) if (p.test(t)) return true;
+    if (t.length < 70 && !/[.!?…]$/.test(t)) {
+      const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
+      if (upperRatio > 0.6) return true;
+    }
+    return false;
+  }
+
+  function render(text) {
+    content.innerHTML = '';
+    chapters = [];
+    const paragraphs = splitIntoParagraphs(text);
+    let chapterCount = 0;
+
+    paragraphs.forEach(p => {
+      const el = document.createElement('p');
+      el.textContent = p;
+
+      if (isChapterTitle(p)) {
+        el.classList.add('chapter-title');
+        el.style.cssText = 'text-indent:0; text-align:center; margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; color:' + mix(settings.fg, settings.bg, 0.3) + '; font-weight:normal;';
+        chapterCount++;
+        chapters.push({ title: p.trim(), el: el, num: chapterCount });
+      }
+      content.appendChild(el);
+    });
+
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    footerLeft.textContent = words.toLocaleString('ru-RU') + ' слов';
+    footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
+
+    buildToc();
+  }
+
+  function buildToc() {
+    tocList.innerHTML = '';
+    if (chapters.length === 0) {
+      const d = document.createElement('div');
+      d.id = 'toc-empty';
+      d.textContent = 'Главы не найдены. Перейти по номеру можно через Ctrl+G.';
+      tocList.appendChild(d);
+      return;
+    }
+    chapters.forEach((ch, i) => {
+      const item = document.createElement('div');
+      item.className = 'toc-item';
+      item.textContent = ch.title;
+      item.addEventListener('click', () => {
+        goToChapter(i);
+        closeToc();
+      });
+      tocList.appendChild(item);
+    });
+  }
+
+  function goToChapter(i) {
+    if (i < 0 || i >= chapters.length) return;
+    const el = chapters[i].el;
+    readerScreen.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
+    activeChapter = i;
+    updateTocActive();
+  }
+
+  function updateTocActive() {
+    tocList.querySelectorAll('.toc-item').forEach((it, i) => {
+      it.classList.toggle('active', i === activeChapter);
+    });
+  }
+
+  function openToc() {
+    if (chapters.length === 0) buildToc();
+    tocPanel.classList.add('open');
+    tocOverlay.classList.add('open');
+    updateTocActive();
+  }
+  function closeToc() {
+    tocPanel.classList.remove('open');
+    tocOverlay.classList.remove('open');
+  }
+  btnToc.addEventListener('click', openToc);
+  tocClose.addEventListener('click', closeToc);
+  tocOverlay.addEventListener('click', closeToc);
+
+  // ---------- Прогресс ----------
+  function updateProgress() {
+    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+    const p = max > 0 ? (readerScreen.scrollTop / max) : 0;
+    progressBar.style.width = (p * 100) + '%';
+
+    const trackH = sideProgress.clientHeight;
+    const thumbH = sideThumb.offsetHeight;
+    sideThumb.style.top = (p * (trackH - thumbH)) + 'px';
+
+    toTop.style.display = readerScreen.scrollTop > 400 ? 'flex' : 'none';
+
+    if (chapters.length > 0) {
+      let current = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        if (chapters[i].el.offsetTop - readerScreen.scrollTop <= 100) current = i;
+        else break;
+      }
+      if (current !== activeChapter) {
+        activeChapter = current;
+        updateTocActive();
+      }
+    }
+  }
+
+  readerScreen.addEventListener('scroll', updateProgress);
+  window.addEventListener('resize', updateProgress);
+
+  sideProgress.addEventListener('click', (e) => {
+    const rect = sideProgress.getBoundingClientRect();
+    const p = (e.clientY - rect.top) / rect.height;
+    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+    readerScreen.scrollTo({ top: p * max, behavior: 'smooth' });
+  });
+
+  toTop.addEventListener('click', () => {
+    readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---------- Переход к главе ----------
+  function openJump() {
+    jumpBox.style.display = 'flex';
+    jumpInput.value = (activeChapter + 1) || 1;
+    jumpInput.max = chapters.length || 1;
+    jumpInput.focus();
+    jumpInput.select();
+  }
+  function closeJump() { jumpBox.style.display = 'none'; }
+  jumpGo.addEventListener('click', () => {
+    const n = parseInt(jumpInput.value, 10) - 1;
+    if (!isNaN(n)) goToChapter(n);
+    closeJump();
+  });
+  jumpCancel.addEventListener('click', closeJump);
+  jumpInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') jumpGo.click();
+    if (e.key === 'Escape') closeJump();
+  });
+
+  // ---------- Открыть / закрыть читалку ----------
+  function openReader(text, bookId) {
+    currentBookId = bookId || null;
+    if (bookId) localStorage.setItem('reader_last_book', bookId);
+    render(text);
+    applySettings();
+    pasteScreen.style.display = 'none';
+    readerScreen.style.display = 'block';
+    readerControls.style.display = 'flex';
+    sideProgress.style.display = 'block';
+    readerScreen.scrollTop = 0;
+
+    if (bookId) {
+      const books = loadBooks();
+      const b = books.find(x => x.id === bookId);
+      if (b && b.scroll) {
+        setTimeout(() => {
+          readerScreen.scrollTop = b.scroll;
+          updateProgress();
+        }, 80);
+      }
+    }
+
+    updateProgress();
+    setTimeout(updateProgress, 60);
+  }
+
+  function backToPaste() {
+    if (currentBookId) {
+      const books = loadBooks();
+      const b = books.find(x => x.id === currentBookId);
+      if (b) {
+        b.scroll = readerScreen.scrollTop;
+        saveBooks(books);
+      }
+    }
+
+    readerScreen.style.display = 'none';
+    pasteScreen.style.display = 'flex';
+    readerControls.style.display = 'none';
+    sideProgress.style.display = 'none';
+    toTop.style.display = 'none';
+    progressBar.style.width = '0%';
+    closeToc();
+    closeJump();
+    palette.classList.remove('open');
+    renderLibrary();
+  }
+
+  btnRead.addEventListener('click', () => {
+    const text = input.value.trim();
+    if (!text) { alert('Вставьте текст книги'); return; }
+    const book = addBook('Без названия — ' + new Date().toLocaleString('ru-RU'), text, 'text');
+    openReader(text, book.id);
+  });
+
+  btnClear.addEventListener('click', () => {
+    input.value = '';
+  });
+
+  let scrollTimer = null;
+  readerScreen.addEventListener('scroll', () => {
+    if (!currentBookId) return;
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const books = loadBooks();
+      const b = books.find(x => x.id === currentBookId);
+      if (b) { b.scroll = readerScreen.scrollTop; saveBooks(books); }
+    }, 400);
+  });
+
+  // ---------- Библиотека ----------
+  function loadBooks() {
+    try {
+      return JSON.parse(localStorage.getItem('reader_books') || '[]');
+    } catch (e) { return []; }
+  }
+  function saveBooks(books) {
+    try {
+      localStorage.setItem('reader_books', JSON.stringify(books));
+    } catch (e) {
+      alert('Не удалось сохранить книгу: превышен лимит хранилища браузера. Удалите лишние книги.');
+    }
+  }
+
+  function addBook(title, text, type, sourceName) {
+    const books = loadBooks();
+    const id = 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    books.unshift({
+      id,
+      title: title || 'Без названия',
+      text,
+      type: type || 'text',
+      source: sourceName || '',
+      words,
+      added: Date.now(),
+      scroll: 0
+    });
+    saveBooks(books);
+    renderLibrary();
+    return books[0];
+  }
+
+  function removeBook(id) {
+    if (!confirm('Удалить книгу из библиотеки?')) return;
+    const books = loadBooks().filter(b => b.id !== id);
+    saveBooks(books);
+    if (currentBookId === id) currentBookId = null;
+    renderLibrary();
+  }
+
+  function renderLibrary() {
+    const books = loadBooks();
+    libraryList.innerHTML = '';
+
+    if (books.length === 0) {
+      const empty = document.createElement('div');
+      empty.id = 'library-empty';
+      empty.textContent = 'Пока нет сохранённых книг. Загрузите файл или вставьте текст и нажмите «Читать».';
+      libraryList.appendChild(empty);
+      return;
+    }
+
+    books.forEach(b => {
+      const el = document.createElement('div');
+      el.className = 'book-item';
+      el.innerHTML = `
+        <div class="title" title="${escapeHtml(b.title)}">${escapeHtml(b.title)}</div>
+        <div class="meta">${b.words.toLocaleString('ru-RU')} слов · ${new Date(b.added).toLocaleDateString('ru-RU')}</div>
+      `;
+      el.addEventListener('click', (e) => {
+        if (e.target.classList.contains('del')) return;
+        openReader(b.text, b.id);
+      });
+      const del = document.createElement('button');
+      del.className = 'del';
+      del.textContent = '✕';
+      del.title = 'Удалить';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeBook(b.id);
+      });
+      el.appendChild(del);
+      libraryList.appendChild(el);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  btnLibrary.addEventListener('click', backToPaste);
+  logo.addEventListener('click', backToPaste);
+
+  // ---------- Загрузка файлов ----------
+  btnFile.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (f) handleFile(f);
+    fileInput.value = '';
+  });
+
+  let dragCounter = 0;
+  window.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragCounter++;
+    dropOverlay.classList.add('show');
+  });
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('dragleave', (e) => {
+    dragCounter--;
+    if (dragCounter <= 0) {
+      dragCounter = 0;
+      dropOverlay.classList.remove('show');
+    }
+  });
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragCounter = 0;
+    dropOverlay.classList.remove('show');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  async function handleFile(file) {
+    const name = file.name;
+    const ext = (name.split('.').pop() || '').toLowerCase();
+    const title = name.replace(/\.[^.]+$/, '');
+
+    try {
+      let text = '';
+
+      if (ext === 'fb2') {
+        const raw = await readAsText(file);
+        text = fb2ToText(raw);
+      } else if (ext === 'html' || ext === 'htm') {
+        const raw = await readAsText(file);
+        text = htmlToText(raw);
+      } else if (ext === 'epub') {
+        text = await epubToText(file);
+      } else if (ext === 'md' || ext === 'txt' || ext === '') {
+        text = await readAsText(file);
+      } else {
+        text = await readAsText(file);
+      }
+
+      text = (text || '').trim();
+      if (!text) {
+        alert('Не удалось извлечь текст из файла');
+        return;
+      }
+
+      const book = addBook(title, text, ext || 'txt', name);
+      openReader(text, book.id);
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка чтения файла: ' + err.message);
+    }
+  }
+
+  function readAsText(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = () => rej(r.error);
+      r.readAsText(file, 'utf-8');
+    });
+  }
+
+  function readAsArrayBuffer(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = () => rej(r.error);
+      r.readAsArrayBuffer(file);
+    });
+  }
+
+  function htmlToText(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script,style,nav,header,footer').forEach(n => n.remove());
+    doc.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+    doc.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,tr').forEach(el => {
+      el.appendChild(document.createTextNode('\n'));
+    });
+    const t = doc.body ? doc.body.textContent : doc.textContent;
+    return t.replace(/\u00a0/g, ' ')
+            .replace(/[ \t]+\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+  }
+
+  function fb2ToText(xml) {
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
+    if (doc.querySelector('parsererror')) {
+      return htmlToText(xml);
+    }
+    const bodies = doc.querySelectorAll('body');
+    const parts = [];
+    bodies.forEach(body => {
+      body.querySelectorAll('section, p, title, subtitle, poem, stanza, v, epigraph, empty-line').forEach(el => {
+        const tag = el.tagName.toLowerCase();
+        if (tag === 'empty-line') { parts.push(''); return; }
+        if (tag === 'v') {
+          parts.push('  ' + (el.textContent || '').trim());
+          return;
+        }
+        let own = '';
+        el.childNodes.forEach(n => {
+          if (n.nodeType === 3) own += n.nodeValue;
+        });
+        own = own.trim();
+        if (own) parts.push(own);
+      });
+    });
+    let text = parts.join('\n');
+    if (!text.trim()) {
+      text = doc.documentElement ? doc.documentElement.textContent : xml;
+    }
+    return text.replace(/\u00a0/g, ' ')
+               .replace(/[ \t]+\n/g, '\n')
+               .replace(/\n{3,}/g, '\n\n')
+               .trim();
+  }
+
+  async function epubToText(file) {
+    const buf = await readAsArrayBuffer(file);
+    const entries = unzip(buf);
+
+    let opfName = null;
+    for (const name in entries) {
+      if (name.toLowerCase().endsWith('.opf')) { opfName = name; break; }
+    }
+
+    const decoder = new TextDecoder('utf-8');
+    let htmlFiles = [];
+
+    if (opfName) {
+      const opfText = decoder.decode(entries[opfName]);
+      const opfDoc = new DOMParser().parseFromString(opfText, 'application/xml');
+      const basePath = opfName.includes('/') ? opfName.slice(0, opfName.lastIndexOf('/') + 1) : '';
+
+      const manifest = {};
+      opfDoc.querySelectorAll('manifest > item').forEach(it => {
+        const id = it.getAttribute('id');
+        const href = it.getAttribute('href');
+        const mt = it.getAttribute('media-type') || '';
+        if (id && href) manifest[id] = { href, mt };
+      });
+
+      opfDoc.querySelectorAll('spine > itemref').forEach(ref => {
+        const idref = ref.getAttribute('idref');
+        const item = manifest[idref];
+        if (item && /html|xml/.test(item.mt)) {
+          const path = normalizePath(basePath + item.href);
+          if (entries[path]) htmlFiles.push(path);
+        }
+      });
+    }
+
+    if (htmlFiles.length === 0) {
+      for (const name in entries) {
+        if (/\.(x?html?)$/i.test(name)) htmlFiles.push(name);
+      }
+      htmlFiles.sort();
+    }
+
+    if (htmlFiles.length === 0) throw new Error('В epub не найдено HTML-содержимого');
+
+    const parts = [];
+    for (const name of htmlFiles) {
+      try {
+        const html = decoder.decode(entries[name]);
+        parts.push(htmlToText(html));
+      } catch (e) { /* пропускаем битые */ }
+    }
+
+    return parts.filter(Boolean).join('\n\n').trim();
+  }
+
+  function normalizePath(p) {
+    const parts = p.split('/');
+    const out = [];
+    for (const part of parts) {
+      if (part === '' || part === '.') continue;
+      if (part === '..') out.pop();
+      else out.push(part);
+    }
+    return out.join('/');
+  }
+
+  function unzip(arrayBuffer) {
+    const data = new Uint8Array(arrayBuffer);
+    const files = {};
+    const view = new DataView(arrayBuffer);
+    const len = data.length;
+
+    let eocd = -1;
+    for (let i = len - 22; i >= 0 && i >= len - 22 - 65536; i--) {
+      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error('Не найден EOCD — это точно zip/epub?');
+
+    const cdCount = view.getUint16(eocd + 10, true);
+    let cdOffset = view.getUint32(eocd + 16, true);
+
+    let p = cdOffset;
+    const decoder = new TextDecoder('utf-8');
+
+    for (let n = 0; n < cdCount; n++) {
+      if (view.getUint32(p, true) !== 0x02014b50) break;
+      const method = view.getUint16(p + 10, true);
+      const compSize = view.getUint32(p + 20, true);
+      const uncompSize = view.getUint32(p + 24, true);
+      const nameLen = view.getUint16(p + 28, true);
+      const extraLen = view.getUint16(p + 30, true);
+      const commentLen = view.getUint16(p + 32, true);
+      const localOffset = view.getUint32(p + 42, true);
+
+      const nameBytes = data.subarray(p + 46, p + 46 + nameLen);
+      const name = decoder.decode(nameBytes);
+
+      const lp = localOffset;
+      if (view.getUint32(lp, true) === 0x04034b50) {
+        const lnameLen = view.getUint16(lp + 26, true);
+        const lextraLen = view.getUint16(lp + 28, true);
+        const dataStart = lp + 30 + lnameLen + lextraLen;
+        const comp = data.subarray(dataStart, dataStart + compSize);
+        try {
+          if (method === 0) {
+            files[name] = comp;
+          } else if (method === 8) {
+            files[name] = inflateRaw(comp, uncompSize);
+          }
+        } catch (e) { /* пропускаем битый */ }
+      }
+
+      p += 46 + nameLen + extraLen + commentLen;
+    }
+
+    return files;
+  }
+
+  function inflateRaw(comp, uncompSize) {
+    try {
+      return inflateRawSync(comp, uncompSize);
+    } catch (e) {
+      throw new Error('Не удалось распаковать epub: ' + e.message);
+    }
+  }
+
+  function inflateRawSync(input, expectedSize) {
+    const out = new Uint8Array(expectedSize);
+    let outPos = 0;
+    let inPos = 0;
+    let bitBuf = 0;
+    let bitCnt = 0;
+
+    function getBit() {
+      if (bitCnt === 0) {
+        bitBuf = input[inPos++];
+        bitCnt = 8;
+      }
+      const b = bitBuf & 1;
+      bitBuf >>= 1;
+      bitCnt--;
+      return b;
+    }
+    function getBits(n) {
+      let v = 0;
+      for (let i = 0; i < n; i++) v |= getBit() << i;
+      return v;
+    }
+
+    function buildHuffman(lengths) {
+      const maxLen = Math.max(...lengths);
+      const blCount = new Array(maxLen + 1).fill(0);
+      for (const l of lengths) if (l > 0) blCount[l]++;
+      const nextCode = new Array(maxLen + 1).fill(0);
+      let code = 0;
+      for (let bits = 1; bits <= maxLen; bits++) {
+        code = (code + (blCount[bits - 1] || 0)) << 1;
+        nextCode[bits] = code;
+      }
+      const map = new Map();
+      for (let i = 0; i < lengths.length; i++) {
+        const l = lengths[i];
+        if (l > 0) {
+          map.set(l + ':' + nextCode[l], i);
+          nextCode[l]++;
+        }
+      }
+      return { map, maxLen };
+    }
+
+    function decodeSym(huff) {
+      let code = 0;
+      for (let len = 1; len <= huff.maxLen; len++) {
+        code = (code << 1) | getBit();
+        const sym = huff.map.get(len + ':' + code);
+        if (sym !== undefined) return sym;
+      }
+      throw new Error('Ошибка Huffman');
+    }
+
+    while (true) {
+      const bfinal = getBit();
+      const btype = getBits(2);
+
+      if (btype === 0) {
+        bitBuf = 0; bitCnt = 0;
+        const len = input[inPos] | (input[inPos + 1] << 8);
+        inPos += 4;
+        for (let i = 0; i < len; i++) out[outPos++] = input[inPos++];
+      } else if (btype === 1 || btype === 2) {
+        let litHuff, distHuff;
+        if (btype === 1) {
+          const litLens = new Array(288);
+          for (let i = 0; i < 144; i++) litLens[i] = 8;
+          for (let i = 144; i < 256; i++) litLens[i] = 9;
+          for (let i = 256; i < 280; i++) litLens[i] = 7;
+          for (let i = 280; i < 288; i++) litLens[i] = 8;
+          litHuff = buildHuffman(litLens);
+          distHuff = buildHuffman(new Array(30).fill(5));
+        } else {
+          const hlit = getBits(5) + 257;
+          const hdist = getBits(5) + 1;
+          const hclen = getBits(4) + 4;
+          const order = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+          const clLens = new Array(19).fill(0);
+          for (let i = 0; i < hclen; i++) clLens[order[i]] = getBits(3);
+          const clHuff = buildHuffman(clLens);
+
+          const lens = [];
+          while (lens.length < hlit + hdist) {
+            const sym = decodeSym(clHuff);
+            if (sym < 16) lens.push(sym);
+            else if (sym === 16) {
+              const prev = lens[lens.length - 1];
+              const rep = getBits(2) + 3;
+              for (let i = 0; i < rep; i++) lens.push(prev);
+            } else if (sym === 17) {
+              const rep = getBits(3) + 3;
+              for (let i = 0; i < rep; i++) lens.push(0);
+            } else {
+              const rep = getBits(7) + 11;
+              for (let i = 0; i < rep; i++) lens.push(0);
+            }
+          }
+          litHuff = buildHuffman(lens.slice(0, hlit));
+          distHuff = buildHuffman(lens.slice(hlit));
+        }
+
+        const lenBase = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+        const lenExtra = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+        const distBase = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+        const distExtra = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+
+        while (true) {
+          const sym = decodeSym(litHuff);
+          if (sym === 256) break;
+          if (sym < 256) {
+            out[outPos++] = sym;
+          } else {
+            const li = sym - 257;
+            const length = lenBase[li] + getBits(lenExtra[li]);
+            const dsym = decodeSym(distHuff);
+            const distance = distBase[dsym] + getBits(distExtra[dsym]);
+            const start = outPos - distance;
+            for (let i = 0; i < length; i++) {
+              out[outPos++] = out[start + i];
+            }
+          }
+        }
+      } else {
+        throw new Error('Неподдерживаемый тип блока deflate');
+      }
+
+      if (bfinal) break;
+    }
+
+    return out.subarray(0, outPos);
+  }
+
+  // ---------- Горячие клавиши ----------
+  document.addEventListener('keydown', (e) => {
+    if (readerScreen.style.display !== 'block') {
+      if (e.ctrlKey && e.key === 'Enter' && document.activeElement === input) btnRead.click();
+      return;
+    }
+
+    if (e.ctrlKey && (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П')) {
+      e.preventDefault();
+      openJump();
+    } else if (e.ctrlKey && (e.key === 'o' || e.key === 'O' || e.key === 'щ' || e.key === 'Щ')) {
+      e.preventDefault();
+      openToc();
+    } else if (e.ctrlKey && !e.shiftKey && (e.key === '+' || e.key === '=' )) {
+      e.preventDefault();
+      changeFont(2);
+    } else if (e.ctrlKey && !e.shiftKey && (e.key === '-' || e.key === '–')) {
+      e.preventDefault();
+      changeFont(-2);
+    } else if (e.ctrlKey && e.shiftKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      changeWidth(40);
+    } else if (e.ctrlKey && e.shiftKey && (e.key === '-' || e.key === '–')) {
+      e.preventDefault();
+      changeWidth(-40);
+    } else if (e.altKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      changeLineHeight(0.1);
+    } else if (e.altKey && (e.key === '-' || e.key === '–')) {
+      e.preventDefault();
+      changeLineHeight(-0.1);
+    } else if (e.key === 'Escape') {
+      closeToc();
+      closeJump();
+      palette.classList.remove('open');
+    }
+  });
+
+  // ---------- Инициализация ----------
+  buildPresets();
+  applySettings();
+  renderLibrary();
+
+  const lastId = localStorage.getItem('reader_last_book');
+  if (lastId) {
+    const books = loadBooks();
+    const b = books.find(x => x.id === lastId);
+    if (b) {
+      openReader(b.text, b.id);
+    }
+  }
+
+  setTimeout(() => {
+    const h = document.getElementById('hint');
+    if (h) setTimeout(() => h.style.opacity = '0', 8000);
+  }, 1000);
+})();
+</script>
+</body>
+</html>
