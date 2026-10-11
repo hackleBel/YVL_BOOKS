@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YVL BOOKS</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕸️%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+
+<!-- Библиотеки для форматов -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -31,566 +41,352 @@
     --line-height: 1.85;
   }
 
-  #app {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+  #app { display: flex; flex-direction: column; height: 100%; }
 
   header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    background: var(--bg-header);
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px; background: var(--bg-header);
     border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-    flex-shrink: 0;
+    flex-wrap: wrap; flex-shrink: 0;
   }
 
   header h1 {
-    font-size: 13px;
-    font-weight: normal;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    cursor: pointer;
+    font-size: 13px; font-weight: normal; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--fg-dim);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; cursor: pointer;
   }
 
   .spacer { flex: 1; }
 
   button {
-    background: var(--border);
-    color: var(--fg);
+    background: var(--border); color: var(--fg);
     border: 1px solid var(--border-strong);
-    padding: 7px 12px;
-    border-radius: 6px;
-    font-size: 13px;
+    padding: 7px 12px; border-radius: 6px; font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    cursor: pointer;
-    transition: background .15s, border-color .15s;
-    line-height: 1;
+    cursor: pointer; transition: background .15s, border-color .15s; line-height: 1;
   }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
 
   .btn-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 3px;
+    display: flex; align-items: center; gap: 4px;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 3px;
   }
-
-  .btn-group button {
-    background: transparent;
-    border: none;
-    padding: 6px 8px;
-    border-radius: 5px;
-    font-size: 13px;
-  }
+  .btn-group button { background: transparent; border: none; padding: 6px 8px; border-radius: 5px; font-size: 13px; }
   .btn-group button:hover { background: var(--border-strong); }
 
-  .btn-icon {
-    font-family: Georgia, serif;
-    font-weight: bold;
-  }
+  .btn-icon { font-family: Georgia, serif; font-weight: bold; }
 
   .size-label {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    min-width: 34px;
-    text-align: center;
+    font-size: 11px; color: var(--fg-dim);
+    min-width: 34px; text-align: center;
   }
 
   #paste-screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    align-items: center;
-    overflow-y: auto;
+    flex: 1; display: flex; flex-direction: column;
+    padding: 24px; align-items: center; overflow-y: auto;
   }
-
   #paste-screen .inner {
-    width: 100%;
-    max-width: 860px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    width: 100%; max-width: 860px;
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
   }
-
   #paste-screen p {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px;
-    color: var(--fg-dim);
-    margin-bottom: 12px;
-    text-align: center;
+    font-size: 13px; color: var(--fg-dim); margin-bottom: 12px; text-align: center;
   }
 
   textarea {
-    flex: 1;
-    width: 100%;
-    min-height: 160px;
-    background: var(--bg-input);
-    color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 18px;
-    font-size: 15px;
-    line-height: 1.6;
+    flex: 1; width: 100%; min-height: 160px;
+    background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 18px; font-size: 15px; line-height: 1.6;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    resize: none;
-    outline: none;
+    resize: none; outline: none;
   }
   textarea:focus { border-color: var(--accent); }
 
   #paste-screen .actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
+    display: flex; justify-content: center; gap: 12px;
+    margin-top: 16px; flex-wrap: wrap; flex-shrink: 0;
   }
 
-  #library {
-    margin-top: 22px;
-    border-top: 1px solid var(--border);
-    padding-top: 18px;
-  }
+  #library { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
 
   #library h3 {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-    margin-bottom: 12px;
-    font-weight: normal;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 12px; font-weight: normal;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
   .library-search {
-    width: 100%;
-    background: var(--bg-input);
-    color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 14px; font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    outline: none;
-    margin-bottom: 12px;
-    transition: border-color .15s;
+    outline: none; margin-bottom: 12px; transition: border-color .15s;
   }
   .library-search:focus { border-color: var(--accent); }
   .library-search::placeholder { color: var(--fg-dim); }
 
-  .book-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 10px;
-  }
+  .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 
   .book-item {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    cursor: pointer;
-    transition: border-color .15s, transform .12s;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+    cursor: pointer; transition: border-color .15s, transform .12s;
     position: relative;
   }
   .book-item:hover { border-color: var(--accent); transform: translateY(-1px); }
 
   .book-item .title {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 14px;
-    color: var(--fg);
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 14px; color: var(--fg); font-weight: 600;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     padding-right: 22px;
   }
-
   .book-item .meta {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
+    font-size: 11px; color: var(--fg-dim);
   }
-
   .book-item .del {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: transparent;
-    border: none;
-    color: var(--fg-dim);
-    font-size: 14px;
-    padding: 2px 6px;
-    line-height: 1;
-    border-radius: 4px;
-    cursor: pointer;
+    position: absolute; top: 8px; right: 8px;
+    background: transparent; border: none; color: var(--fg-dim);
+    font-size: 14px; padding: 2px 6px; line-height: 1; border-radius: 4px; cursor: pointer;
   }
   .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
 
   #library-empty {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 12px;
-    color: var(--fg-dim);
-    text-align: center;
-    padding: 14px;
-    border: 1px dashed var(--border-strong);
-    border-radius: 8px;
+    font-size: 12px; color: var(--fg-dim); text-align: center;
+    padding: 14px; border: 1px dashed var(--border-strong); border-radius: 8px;
   }
 
   #drop-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.65);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 500;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 18px;
-    color: var(--fg);
-    pointer-events: none;
-    border: 2px dashed var(--accent);
+    position: fixed; inset: 0; background: rgba(0,0,0,.65);
+    display: none; align-items: center; justify-content: center;
+    z-index: 500; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 18px; color: var(--fg); pointer-events: none;
+    border: 2px dashed var(--accent); text-align: center; padding: 20px;
   }
   #drop-overlay.show { display: flex; }
 
-  #reader-screen {
-    flex: 1;
-    display: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    position: relative;
+  #loading-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75);
+    display: none; align-items: center; justify-content: center;
+    z-index: 600; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 16px; color: var(--fg); flex-direction: column; gap: 14px;
   }
+  #loading-overlay.show { display: flex; }
+  #loading-overlay .spinner {
+    width: 36px; height: 36px; border: 3px solid var(--border-strong);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
+  #reader-screen {
+    flex: 1; display: none; overflow-y: auto; overflow-x: hidden;
+    scroll-behavior: smooth; position: relative;
+  }
   #reader-screen::-webkit-scrollbar { width: 10px; }
   #reader-screen::-webkit-scrollbar-track { background: var(--bg); }
   #reader-screen::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
 
   #content {
-    max-width: var(--col-width);
-    margin: 0 auto;
-    padding: 50px 40px 140px;
-    font-size: 20px;
-    line-height: var(--line-height);
-    color: var(--fg);
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    max-width: var(--col-width); margin: 0 auto;
+    padding: 50px 40px 140px; font-size: 20px;
+    line-height: var(--line-height); color: var(--fg);
+    hyphens: auto; -webkit-hyphens: auto;
     transition: max-width .15s, line-height .15s;
   }
-
   #content p {
-    margin-bottom: 1.15em;
-    text-indent: 2em;
-    text-align: justify;
-    orphans: 2;
-    widows: 2;
+    margin-bottom: 1.15em; text-indent: 2em; text-align: justify;
+    orphans: 2; widows: 2;
   }
-
   #content p:first-child { text-indent: 0; }
 
+  #content img {
+    max-width: 100%; height: auto; display: block;
+    margin: 1.2em auto; border-radius: 4px;
+  }
+
+  #content h1, #content h2, #content h3, #content h4 {
+    font-weight: normal; text-align: center;
+    margin: 2em 0 1em; line-height: 1.3;
+    color: var(--fg); letter-spacing: 0.5px;
+  }
+  #content h1 { font-size: 1.5em; }
+  #content h2 { font-size: 1.3em; }
+  #content h3 { font-size: 1.15em; }
+
+  #content blockquote {
+    margin: 1em 0; padding-left: 1.5em;
+    border-left: 3px solid var(--border-strong);
+    color: var(--fg-mid); font-style: italic;
+  }
+
+  #content pre, #content code {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 0.85em; background: var(--bg-panel);
+    padding: 2px 6px; border-radius: 4px;
+  }
+  #content pre { padding: 12px; overflow-x: auto; margin: 1em 0; }
+
   #progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: var(--accent);
-    width: 0%;
-    z-index: 100;
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--accent); width: 0%; z-index: 100;
     transition: width .1s;
   }
 
   #side-progress {
-    position: fixed;
-    right: 6px;
-    top: 60px;
-    bottom: 40px;
-    width: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    z-index: 90;
-    cursor: pointer;
+    position: fixed; right: 6px; top: 60px; bottom: 40px;
+    width: 3px; background: var(--border);
+    border-radius: 2px; z-index: 90; cursor: pointer;
   }
-
   #side-thumb {
-    position: absolute;
-    left: -3px;
-    width: 9px;
-    height: 40px;
-    background: var(--accent);
-    border-radius: 5px;
-    opacity: .6;
-    transition: opacity .15s;
+    position: absolute; left: -3px; width: 9px; height: 40px;
+    background: var(--accent); border-radius: 5px;
+    opacity: .6; transition: opacity .15s;
   }
   #side-progress:hover #side-thumb { opacity: 1; }
 
   #to-top {
-    position: fixed;
-    right: 28px;
-    bottom: 60px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    color: var(--accent);
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    z-index: 90;
+    position: fixed; right: 28px; bottom: 60px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--accent); cursor: pointer; display: none;
+    align-items: center; justify-content: center;
+    font-size: 16px; z-index: 90;
   }
   #to-top:hover { background: var(--border-strong); color: var(--fg); }
 
   #jump-box {
-    position: fixed;
-    bottom: 70px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 14px 18px;
-    display: none;
-    gap: 10px;
-    align-items: center;
-    z-index: 200;
+    position: fixed; bottom: 70px; left: 50%;
+    transform: translateX(-50%); background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 10px;
+    padding: 14px 18px; display: none; gap: 10px;
+    align-items: center; z-index: 200;
     box-shadow: 0 8px 30px rgba(0,0,0,.5);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
-
   #jump-box input {
-    background: var(--bg);
-    border: 1px solid var(--border-strong);
-    color: var(--fg);
-    padding: 7px 10px;
-    border-radius: 6px;
-    width: 130px;
-    font-size: 13px;
-    outline: none;
+    background: var(--bg); border: 1px solid var(--border-strong);
+    color: var(--fg); padding: 7px 10px; border-radius: 6px;
+    width: 130px; font-size: 13px; outline: none;
   }
   #jump-box input:focus { border-color: var(--accent); }
-
-  #jump-box span {
-    font-size: 12px;
-    color: var(--fg-dim);
-  }
+  #jump-box span { font-size: 12px; color: var(--fg-dim); }
 
   #toc-panel {
-    position: fixed;
-    top: 0;
-    right: -360px;
-    width: 360px;
-    height: 100%;
-    background: var(--bg-header);
-    border-left: 1px solid var(--border);
-    z-index: 300;
-    transition: right .25s ease;
-    display: flex;
-    flex-direction: column;
+    position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
+    background: var(--bg-header); border-left: 1px solid var(--border);
+    z-index: 300; transition: right .25s ease;
+    display: flex; flex-direction: column;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #toc-panel.open { right: 0; }
 
   #toc-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase;
   }
-
   #toc-header button { padding: 4px 10px; font-size: 12px; }
 
-  #toc-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-  }
-
+  #toc-list { flex: 1; overflow-y: auto; padding: 8px 0; }
   #toc-list::-webkit-scrollbar { width: 8px; }
   #toc-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
   .toc-item {
-    padding: 10px 20px;
-    font-size: 13px;
-    color: var(--fg-mid);
-    cursor: pointer;
-    line-height: 1.4;
+    padding: 10px 20px; font-size: 13px; color: var(--fg-mid);
+    cursor: pointer; line-height: 1.4;
     border-left: 2px solid transparent;
   }
-  .toc-item:hover {
-    background: var(--bg-panel);
-    color: var(--fg);
-    border-left-color: var(--accent);
-  }
-  .toc-item.active {
-    color: var(--fg);
-    border-left-color: var(--accent);
-  }
+  .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
+  .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
 
   #toc-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 299;
-    display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    z-index: 299; display: none;
   }
   #toc-overlay.open { display: block; }
 
   #toc-empty {
-    padding: 20px;
-    font-size: 13px;
-    color: var(--fg-dim);
-    text-align: center;
-    line-height: 1.5;
+    padding: 20px; font-size: 13px; color: var(--fg-dim);
+    text-align: center; line-height: 1.5;
   }
 
   footer {
-    padding: 8px 20px;
-    background: var(--bg-header);
+    padding: 8px 20px; background: var(--bg-header);
     border-top: 1px solid var(--border);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 11px; color: var(--fg-dim);
+    display: flex; justify-content: space-between; align-items: center;
     flex-shrink: 0;
   }
 
   #hint {
-    position: fixed;
-    bottom: 50px;
-    left: 20px;
+    position: fixed; bottom: 50px; left: 20px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px;
-    color: var(--fg-dim);
-    opacity: .6;
-    z-index: 80;
-    pointer-events: none;
+    font-size: 11px; color: var(--fg-dim);
+    opacity: .6; z-index: 80; pointer-events: none;
     transition: opacity .3s;
   }
 
   .palette {
-    position: absolute;
-    top: 100%;
-    right: 18px;
-    margin-top: 6px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 12px;
-    display: none;
-    z-index: 250;
+    position: absolute; top: 100%; right: 18px; margin-top: 6px;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 12px; display: none; z-index: 250;
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    width: 240px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; width: 240px;
   }
   .palette.open { display: block; }
-
   .palette h4 {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-    margin-bottom: 10px;
-    font-weight: normal;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
   }
-
-  .palette-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 12px;
-  }
+  .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
 
   .palette-item {
-    padding: 6px 4px;
-    border-radius: 6px;
+    padding: 6px 4px; border-radius: 6px;
     border: 1px solid var(--border-strong);
-    cursor: pointer;
-    text-align: center;
-    font-size: 10px;
+    cursor: pointer; text-align: center; font-size: 10px;
     transition: transform .12s, border-color .15s;
   }
   .palette-item:hover { transform: translateY(-1px); border-color: var(--accent); }
   .palette-item.active { border-color: var(--accent); }
   .palette-item .sw {
-    height: 22px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Georgia, serif;
-    font-size: 13px;
+    height: 22px; border-radius: 4px; margin-bottom: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, serif; font-size: 13px;
   }
 
   .palette-custom {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 10px; border-top: 1px solid var(--border);
   }
-
-  .custom-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .custom-row label {
-    font-size: 12px;
-    color: var(--fg-mid);
-    flex: 1;
-  }
+  .custom-row { display: flex; align-items: center; gap: 8px; }
+  .custom-row label { font-size: 12px; color: var(--fg-mid); flex: 1; }
   .custom-row input[type=color] {
-    width: 34px;
-    height: 26px;
-    border: 1px solid var(--border-strong);
-    border-radius: 5px;
-    background: var(--bg);
-    cursor: pointer;
-    padding: 2px;
+    width: 34px; height: 26px; border: 1px solid var(--border-strong);
+    border-radius: 5px; background: var(--bg); cursor: pointer; padding: 2px;
   }
   .custom-row input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
   .custom-row input[type=color]::-webkit-color-swatch { border: none; border-radius: 3px; }
-
-  .palette-reset {
-    width: 100%;
-    margin-top: 8px;
-    font-size: 11px;
-    padding: 6px;
-  }
+  .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
   input[type=file] { display: none; }
 
-  /* ---------- Мобильные правки ---------- */
   @media (max-width: 768px) {
     #hint { display: none !important; }
-    #content { padding: 30px 18px 120px; }
+    #content { padding: 30px 18px 120px; font-size: 18px; }
     #toc-panel { width: 88%; right: -100%; }
     header { padding: 8px 12px; gap: 6px; }
+    .book-list { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -642,13 +438,15 @@
 
   <div id="paste-screen">
     <div class="inner">
-      <p>Вставьте текст книги в поле ниже, загрузите файл или перетащите его в окно</p>
+      <p>Вставьте текст книги, загрузите файл или перетащите его в окно<br>
+      Поддерживаются: TXT, MD, HTML, FB2, EPUB, PDF, MOBI, AZW, AZW3, DOCX, RTF</p>
       <textarea id="input" placeholder="Сюда текст..." spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off"></textarea>
       <div class="actions">
         <button id="btn-read">Читать</button>
         <button id="btn-file">Загрузить файл</button>
         <button id="btn-clear">Очистить</button>
-        <input type="file" id="file-input" accept=".txt,.md,.fb2,.html,.htm,.epub,text/plain">
+        <input type="file" id="file-input"
+               accept=".txt,.md,.fb2,.html,.htm,.epub,.pdf,.mobi,.azw,.azw3,.docx,.rtf,.djvu,.djv,text/plain,application/pdf,application/epub+zip">
       </div>
 
       <div id="library">
@@ -694,6 +492,11 @@
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div id="loading-text">Загрузка книги...</div>
+</div>
 
 <script>
 (function () {
@@ -751,19 +554,22 @@
   const libraryList = document.getElementById('library-list');
   const librarySearch = document.getElementById('library-search');
   const dropOverlay = document.getElementById('drop-overlay');
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
 
   let chapters = [];
   let activeChapter = -1;
   let currentBookId = null;
   let libraryFilter = '';
+  let scrollSaveTimer = null;
+
+  const LIB_KEY = 'yvl_library_v2';
+  const SETTINGS_KEY = 'reader_settings';
+  const POS_KEY = 'yvl_positions';
 
   const DEFAULTS = {
-    bg: '#14161a',
-    fg: '#d4d7dc',
-    accent: '#8b919b',
-    fontSize: 20,
-    colWidth: 720,
-    lineHeight: 1.85
+    bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
+    fontSize: 20, colWidth: 720, lineHeight: 1.85
   };
 
   const PRESETS = [
@@ -778,17 +584,17 @@
     { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
   ];
 
-  // ---------- Настройки ----------
+  // ============================================================
+  // НАСТРОЙКИ
+  // ============================================================
   function loadSettings() {
     try {
-      const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
+      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
       return Object.assign({}, DEFAULTS, s);
     } catch (e) { return Object.assign({}, DEFAULTS); }
   }
   let settings = loadSettings();
-  function saveSettings() {
-    localStorage.setItem('reader_settings', JSON.stringify(settings));
-  }
+  function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
 
   function shade(hex, amt) {
     const n = hex.replace('#','');
@@ -857,54 +663,38 @@
       el.dataset.accent = pr.accent;
       el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
       el.addEventListener('click', () => {
-        settings.bg = pr.bg;
-        settings.fg = pr.fg;
-        settings.accent = pr.accent;
-        saveSettings();
-        applySettings();
+        settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+        saveSettings(); applySettings();
       });
       paletteGrid.appendChild(el);
     });
   }
 
   function changeFont(delta) {
-    let s = settings.fontSize + delta;
-    s = Math.max(12, Math.min(48, s));
-    settings.fontSize = s;
-    saveSettings();
-    applySettings();
+    settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta));
+    saveSettings(); applySettings();
   }
   fontDec.addEventListener('click', () => changeFont(-2));
   fontInc.addEventListener('click', () => changeFont(2));
 
   function changeWidth(delta) {
-    let w = settings.colWidth + delta;
-    w = Math.max(400, Math.min(1600, w));
-    settings.colWidth = w;
-    saveSettings();
-    applySettings();
+    settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta));
+    saveSettings(); applySettings();
   }
   widthDec.addEventListener('click', () => changeWidth(-40));
   widthInc.addEventListener('click', () => changeWidth(40));
 
   function changeLineHeight(delta) {
     let lh = Math.round((settings.lineHeight + delta) * 100) / 100;
-    lh = Math.max(1.2, Math.min(3.0, lh));
-    settings.lineHeight = lh;
-    saveSettings();
-    applySettings();
+    settings.lineHeight = Math.max(1.2, Math.min(3.0, lh));
+    saveSettings(); applySettings();
   }
   lhDec.addEventListener('click', () => changeLineHeight(-0.1));
   lhInc.addEventListener('click', () => changeLineHeight(0.1));
 
-  btnTheme.addEventListener('click', (e) => {
-    e.stopPropagation();
-    palette.classList.toggle('open');
-  });
+  btnTheme.addEventListener('click', (e) => { e.stopPropagation(); palette.classList.toggle('open'); });
   document.addEventListener('click', (e) => {
-    if (!palette.contains(e.target) && e.target !== btnTheme) {
-      palette.classList.remove('open');
-    }
+    if (!palette.contains(e.target) && e.target !== btnTheme) palette.classList.remove('open');
   });
   palette.addEventListener('click', e => e.stopPropagation());
 
@@ -913,14 +703,491 @@
   colAccent.addEventListener('input', e => { settings.accent = e.target.value; saveSettings(); applySettings(); });
 
   resetTheme.addEventListener('click', () => {
-    settings.bg = DEFAULTS.bg;
-    settings.fg = DEFAULTS.fg;
-    settings.accent = DEFAULTS.accent;
-    saveSettings();
-    applySettings();
+    settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
+    saveSettings(); applySettings();
   });
 
-  // ---------- Разбиение на абзацы ----------
+  // ============================================================
+  // ОПРЕДЕЛЕНИЕ КОДИРОВКИ (лечит "?")
+  // ============================================================
+  function detectEncoding(buffer) {
+    const bytes = new Uint8Array(buffer);
+    // BOM
+    if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) return 'utf-8';
+    if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) return 'utf-16le';
+    if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) return 'utf-16be';
+
+    // Проверка на валидный UTF-8
+    let utf8valid = true;
+    let i = 0;
+    let cyrillicScore = 0;
+    while (i < bytes.length) {
+      const b = bytes[i];
+      if (b < 0x80) { i++; continue; }
+      if (b >= 0xC0 && b < 0xE0) {
+        if (i+1 >= bytes.length || (bytes[i+1] & 0xC0) !== 0x80) { utf8valid = false; break; }
+        // кириллица U+0400..U+04FF кодируется D0/D1 xx
+        if ((b === 0xD0 || b === 0xD1) && i+1 < bytes.length && (bytes[i+1] & 0xC0) === 0x80) cyrillicScore++;
+        i += 2;
+      } else if (b >= 0xE0 && b < 0xF0) {
+        if (i+2 >= bytes.length || (bytes[i+1] & 0xC0) !== 0x80 || (bytes[i+2] & 0xC0) !== 0x80) { utf8valid = false; break; }
+        i += 3;
+      } else if (b >= 0xF0) {
+        if (i+3 >= bytes.length || (bytes[i+1] & 0xC0) !== 0x80 || (bytes[i+2] & 0xC0) !== 0x80 || (bytes[i+3] & 0xC0) !== 0x80) { utf8valid = false; break; }
+        i += 4;
+      } else { utf8valid = false; break; }
+      if (i > 65536) break;
+    }
+    if (utf8valid) return 'utf-8';
+
+    // Эвристика для Windows-1251 vs KOI8-R
+    let cp1251Score = 0, koi8Score = 0;
+    const sample = bytes.slice(0, Math.min(4096, bytes.length));
+    for (let j = 0; j < sample.length; j++) {
+      const b = sample[j];
+      if (b >= 0xC0 && b <= 0xFF) {
+        // В cp1251 строчные буквы а-я — это 0xE0-0xFF, заглавные А-Я — 0xC0-0xDF
+        if (b >= 0xE0 && b <= 0xFF) cp1251Score++;
+        // В koi8-r строчные — 0xC0-0xDF
+        if (b >= 0xC0 && b <= 0xDF) koi8Score++;
+      }
+    }
+    if (koi8Score > cp1251Score * 1.5) return 'koi8-r';
+    return 'windows-1251';
+  }
+
+  function decodeBuffer(buffer) {
+    const enc = detectEncoding(buffer);
+    try {
+      return new TextDecoder(enc, { fatal: false }).decode(buffer);
+    } catch (e) {
+      try { return new TextDecoder('windows-1251').decode(buffer); }
+      catch (e2) { return new TextDecoder('utf-8').decode(buffer); }
+    }
+  }
+
+  // ============================================================
+  // РАЗБОР ФОРМАТОВ
+  // ============================================================
+
+  // ---- HTML / FB2 / EPUB-главы ----
+  function extractTextFromHTML(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, style, head').forEach(el => el.remove());
+    const body = doc.body || doc.documentElement;
+    if (!body) return html.replace(/<[^>]+>/g, ' ');
+
+    // Собираем текст блоками
+    const blocks = [];
+    const walker = doc.createTreeWalker(body, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null);
+    let currentBlock = '';
+    const blockTags = new Set(['P','DIV','H1','H2','H3','H4','H5','H6','LI','TR','BR','SECTION','ARTICLE','BLOCKQUOTE','PRE','TD','TH']);
+
+    function flush() {
+      const t = currentBlock.replace(/\s+/g, ' ').trim();
+      if (t) blocks.push(t);
+      currentBlock = '';
+    }
+
+    function walk(node) {
+      if (node.nodeType === 3) {
+        currentBlock += node.nodeValue;
+      } else if (node.nodeType === 1) {
+        const tag = node.tagName;
+        if (blockTags.has(tag)) {
+          flush();
+          if (tag === 'H1' || tag === 'H2' || tag === 'H3') {
+            // заголовок — отдельный блок с пометкой
+            const txt = node.textContent.replace(/\s+/g,' ').trim();
+            if (txt) blocks.push(txt);
+            return;
+          }
+          node.childNodes.forEach(walk);
+          flush();
+        } else {
+          node.childNodes.forEach(walk);
+        }
+      }
+    }
+    walk(body);
+    flush();
+
+    return blocks.join('\n\n');
+  }
+
+  // ---- EPUB ----
+  async function parseEPUB(arrayBuffer) {
+    if (!window.JSZip) throw new Error('JSZip не загружен');
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    // Ищем OPF-файл
+    let opfPath = null;
+    for (const name in zip.files) {
+      if (name.endsWith('.opf')) { opfPath = name; break; }
+    }
+
+    const htmlFiles = [];
+    if (opfPath) {
+      const opfText = await zip.files[opfPath].async('string');
+      const opfDoc = new DOMParser().parseFromString(opfText, 'application/xml');
+      const baseDir = opfPath.includes('/') ? opfPath.substring(0, opfPath.lastIndexOf('/') + 1) : '';
+
+      // Манифест
+      const manifest = {};
+      opfDoc.querySelectorAll('manifest > item').forEach(item => {
+        const id = item.getAttribute('id');
+        const href = item.getAttribute('href');
+        const mt = item.getAttribute('media-type') || '';
+        if (id && href) manifest[id] = { href, mediaType: mt };
+      });
+
+      // Spine — порядок чтения
+      const spine = [];
+      opfDoc.querySelectorAll('spine > itemref').forEach(ref => {
+        const idref = ref.getAttribute('idref');
+        if (idref && manifest[idref]) spine.push(manifest[idref]);
+      });
+
+      for (const item of spine) {
+        const full = decodeURIComponent(baseDir + item.href).replace(/^\.\//,'');
+        if (zip.files[full]) {
+          const html = await zip.files[full].async('string');
+          htmlFiles.push(html);
+        } else {
+          // попытка найти по имени
+          for (const name in zip.files) {
+            if (name.endsWith(item.href.replace(/^\.\//,''))) {
+              htmlFiles.push(await zip.files[name].async('string'));
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Если spine не сработал — берём все html/xhtml
+    if (!htmlFiles.length) {
+      for (const name in zip.files) {
+        if (/\.(x?html?|htm)$/i.test(name)) {
+          htmlFiles.push(await zip.files[name].async('string'));
+        }
+      }
+      htmlFiles.sort();
+    }
+
+    const parts = htmlFiles.map(extractTextFromHTML).filter(Boolean);
+    return parts.join('\n\n');
+  }
+
+  // ---- PDF ----
+  async function parsePDF(arrayBuffer) {
+    if (!window.pdfjsLib) throw new Error('pdf.js не загружен');
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const parts = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      let lastY = null;
+      let line = '';
+      const lines = [];
+      for (const item of tc.items) {
+        const y = item.transform ? item.transform[5] : null;
+        if (lastY !== null && y !== null && Math.abs(y - lastY) > 3) {
+          if (line.trim()) lines.push(line.trim());
+          line = '';
+        }
+        line += item.str + ' ';
+        lastY = y;
+      }
+      if (line.trim()) lines.push(line.trim());
+      parts.push(lines.join('\n'));
+    }
+    return parts.join('\n\n');
+  }
+
+  // ---- FB2 ----
+  function parseFB2(text) {
+    const doc = new DOMParser().parseFromString(text, 'application/xml');
+    // Проверка на ошибку
+    if (doc.querySelector('parsererror')) {
+      return extractTextFromHTML(text);
+    }
+    const bodies = doc.querySelectorAll('body');
+    const parts = [];
+    bodies.forEach(body => {
+      const sections = body.querySelectorAll('section, title, p, subtitle, epigraph, poem, stanza, v');
+      if (!sections.length) {
+        // фолбэк — просто текст
+        const txt = body.textContent.replace(/\s+/g,' ').trim();
+        if (txt) parts.push(txt);
+      } else {
+        body.querySelectorAll('title, subtitle, p, v, epigraph, empty-line').forEach(el => {
+          const tag = el.tagName.toLowerCase();
+          if (tag === 'empty-line') { parts.push(''); return; }
+          const txt = el.textContent.replace(/\s+/g,' ').trim();
+          if (txt) {
+            if (tag === 'title' || tag === 'subtitle') parts.push('\n' + txt + '\n');
+            else parts.push(txt);
+          }
+        });
+      }
+    });
+    return parts.join('\n\n');
+  }
+
+  // ---- MOBI / AZW / AZW3 ----
+  // Извлекаем PalmDOC-текст из бинарника. Работает для старых MOBI и части AZW3 (KF8).
+  function parseMOBI(arrayBuffer) {
+    const bytes = new Uint8Array(arrayBuffer);
+    const dv = new DataView(arrayBuffer);
+
+    // Проверяем PalmDB header (78 байт) + записи (по 8 байт)
+    if (bytes.length < 90) throw new Error('Файл слишком мал');
+
+    const type = String.fromCharCode(bytes[60], bytes[61], bytes[62], bytes[63]);
+    const creator = String.fromCharCode(bytes[64], bytes[65], bytes[66], bytes[67]);
+
+    // Тип BOOK / creator MOBI
+    const numRecords = dv.getUint16(76, false);
+    if (numRecords < 1 || numRecords > 100000) throw new Error('Повреждённый MOBI');
+
+    const records = [];
+    const recordOffsetBase = 78;
+    for (let i = 0; i < numRecords; i++) {
+      const off = recordOffsetBase + i * 8;
+      if (off + 8 > bytes.length) break;
+      records.push({
+        offset: dv.getUint32(off, false),
+        attr: bytes[off+4],
+        uid: (bytes[off+5]<<16) | (bytes[off+6]<<8) | bytes[off+7]
+      });
+    }
+    records.push({ offset: bytes.length });
+
+    if (!records.length) throw new Error('Нет записей');
+
+    // Запись 0 — MOBI header
+    const r0 = records[0].offset;
+    const mobiMagic = String.fromCharCode(bytes[r0+16], bytes[r0+17], bytes[r0+18], bytes[r0+19]);
+    if (mobiMagic !== 'MOBI') throw new Error('Не MOBI формат');
+
+    // Читаем заголовок MOBI
+    const headerLength = dv.getUint32(r0 + 20, false);
+    const mobiType = dv.getUint32(r0 + 24, false);
+    const textEncoding = dv.getUint32(r0 + 28, false); // 1252 или 65001
+    const uid = dv.getUint32(r0 + 32, false);
+    const version = dv.getUint32(r0 + 36, false);
+
+    // EXTH — ищем title (100) и author (100)
+    let title = null, author = null;
+    const exthFlags = dv.getUint32(r0 + 0x80, false);
+    if (exthFlags & 0x40) {
+      const exthOff = r0 + 16 + headerLength + 4; // после MOBI header + 2 байта + 2 байта
+      const exthMagic = String.fromCharCode(bytes[exthOff], bytes[exthOff+1], bytes[exthOff+2], bytes[exthOff+3]);
+      if (exthMagic === 'EXTH') {
+        const exthLen = dv.getUint32(exthOff + 4, false);
+        const recCount = dv.getUint32(exthOff + 8, false);
+        let p = exthOff + 12;
+        for (let i = 0; i < recCount && p + 8 < exthOff + exthLen; i++) {
+          const recType = dv.getUint32(p, false);
+          const recLen = dv.getUint32(p + 4, false);
+          const data = bytes.slice(p + 8, p + recLen);
+          if (recType === 100 && !author) author = new TextDecoder('utf-8').decode(data);
+          if (recType === 503 && !title) title = new TextDecoder('utf-8').decode(data);
+          p += recLen;
+        }
+      }
+    }
+
+    // Определяем начало текста
+    // После MOBI header идёт EXTH (опционально), потом имена записей.
+    let textStart = r0 + 16 + headerLength;
+    // Пропускаем EXTH
+    const possibleExth = String.fromCharCode(bytes[textStart], bytes[textStart+1], bytes[textStart+2], bytes[textStart+3]);
+    if (possibleExth === 'EXTH') {
+      const exthLen = dv.getUint32(textStart + 4, false);
+      textStart += exthLen;
+    }
+
+    // Полная длина текста (first 4 bytes at textStart)
+    const fullTextLength = dv.getUint32(textStart, false);
+    const recordCount = dv.getUint16(textStart + 8, false);
+    const recordSize = dv.getUint16(textStart + 10, false);
+
+    // Записи текста начинаются с индекса 1
+    const textRecords = [];
+    for (let i = 1; i <= recordCount && i < records.length; i++) {
+      const start = records[i].offset;
+      const end = records[i+1] ? records[i+1].offset : bytes.length;
+      textRecords.push(bytes.slice(start, end));
+    }
+
+    // Распаковка PalmDOC (LZ77-подобный)
+    const output = [];
+    for (const rec of textRecords) {
+      if (rec.length === 0) continue;
+      // Проверяем, сжата ли запись (первый байт 0 — несжата, иначе — сжата)
+      if (rec[0] === 0) {
+        output.push(rec.slice(1));
+      } else {
+        output.push(decompressPalmDOC(rec));
+      }
+    }
+
+    const allBytes = concatUint8(output);
+    const enc = textEncoding === 65001 ? 'utf-8' : 'windows-1252';
+    let text = new TextDecoder(enc).decode(allBytes);
+    text = text.replace(/\u0000/g, '');
+
+    // Чистим HTML-теги (MOBI хранит текст в HTML)
+    if (/<[a-z][\s\S]*>/i.test(text)) {
+      text = extractTextFromHTML(text);
+    }
+
+    if (title) text = title + '\n\n' + text;
+    return text.trim();
+  }
+
+  function decompressPalmDOC(input) {
+    const out = [];
+    let i = 0;
+    const len = input.length;
+    while (i < len) {
+      const b = input[i++];
+      if (b === 0) { out.push(0); continue; }
+      if (b >= 1 && b <= 8) {
+        for (let j = 0; j < b && i < len; j++) out.push(input[i++]);
+        continue;
+      }
+      if (b >= 9 && b <= 0x7F) { out.push(b); continue; }
+      if (b >= 0x80 && b <= 0xBF) {
+        if (i >= len) break;
+        const b2 = input[i++];
+        const word = ((b << 8) | b2) & 0x3FFF;
+        const dist = word >> 3;
+        const length = (word & 0x07) + 3;
+        const start = out.length - dist;
+        for (let j = 0; j < length; j++) {
+          out.push(out[start + j] || 0);
+        }
+        continue;
+      }
+      if (b >= 0xC0 && b <= 0xFF) {
+        out.push(32);
+        out.push(b ^ 0x80);
+        continue;
+      }
+    }
+    return new Uint8Array(out);
+  }
+
+  function concatUint8(arrs) {
+    let total = 0;
+    for (const a of arrs) total += a.length;
+    const out = new Uint8Array(total);
+    let p = 0;
+    for (const a of arrs) { out.set(a, p); p += a.length; }
+    return out;
+  }
+
+  // ---- DOCX ----
+  async function parseDOCX(arrayBuffer) {
+    if (!window.JSZip) throw new Error('JSZip не загружен');
+    const zip = await JSZip.loadAsync(arrayBuffer);
+    const docXml = await zip.files['word/document.xml'].async('string');
+    // Извлекаем все <w:t> и вставляем переносы на </w:p>
+    let text = docXml.replace(/<\/w:p>/g, '\n\n');
+    text = text.replace(/<w:tab[^>]*\/>/g, '\t');
+    text = text.replace(/<[^>]+>/g, '');
+    // Декодируем XML-сущности
+    text = text.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&apos;/g,"'");
+    text = text.replace(/\n{3,}/g, '\n\n').trim();
+    return text;
+  }
+
+  // ---- RTF ----
+  function parseRTF(text) {
+    // Простой парсер RTF — убираем управляющие последовательности
+    let out = text;
+    // Удаляем группы шрифтов/цветов/инфо
+    out = out.replace(/\\\*\\[a-z]+[^\\{}]*/g, '');
+    // Заменяем \par на переносы
+    out = out.replace(/\\par[d]?\b/g, '\n\n');
+    out = out.replace(/\\line\b/g, '\n');
+    out = out.replace(/\\tab\b/g, '\t');
+    // Убираем остальные управляющие
+    out = out.replace(/\\[a-z]+-?\d* ?/gi, '');
+    out = out.replace(/[{}]/g, '');
+    // Hex-escape \'xx — декодируем как cp1251
+    out = out.replace(/\\'([0-9a-f]{2})/gi, (m, h) => {
+      const b = parseInt(h, 16);
+      try { return new TextDecoder('windows-1251').decode(new Uint8Array([b])); }
+      catch (e) { return String.fromCharCode(b); }
+    });
+    // Unicode \uN?
+    out = out.replace(/\\u(-?\d+)\?/g, (m, n) => String.fromCharCode(parseInt(n, 10) & 0xFFFF));
+    out = out.replace(/\n{3,}/g, '\n\n').trim();
+    return out;
+  }
+
+  // ---- Универсальный парсер ----
+  async function parseFile(file) {
+    const name = file.name.toLowerCase();
+    const arrayBuffer = await file.arrayBuffer();
+
+    if (name.endsWith('.epub')) {
+      return await parseEPUB(arrayBuffer);
+    }
+    if (name.endsWith('.pdf')) {
+      return await parsePDF(arrayBuffer);
+    }
+    if (name.endsWith('.mobi') || name.endsWith('.azw') || name.endsWith('.azw3')) {
+      return parseMOBI(arrayBuffer);
+    }
+    if (name.endsWith('.docx')) {
+      return await parseDOCX(arrayBuffer);
+    }
+    if (name.endsWith('.fb2')) {
+      const text = decodeBuffer(arrayBuffer);
+      return parseFB2(text);
+    }
+    if (name.endsWith('.html') || name.endsWith('.htm') || name.endsWith('.xhtml')) {
+      const text = decodeBuffer(arrayBuffer);
+      return extractTextFromHTML(text);
+    }
+    if (name.endsWith('.rtf')) {
+      const text = decodeBuffer(arrayBuffer);
+      return parseRTF(text);
+    }
+    // TXT, MD, DJVU (частично), всё остальное — как текст
+    let text = decodeBuffer(arrayBuffer);
+    // Если DJVU — попробуем вытащить хоть что-то
+    if (name.endsWith('.djvu') || name.endsWith('.djv')) {
+      // DJVU часто содержит текстовый слой в виде OCR — он в сжатом виде, тут не парсим
+      // Но можно попробовать найти читаемые фрагменты
+      const printable = text.replace(/[^\x20-\x7E\u0400-\u04FF\n\r\t]/g, ' ');
+      const cleaned = printable.replace(/\s{3,}/g, '\n').trim();
+      if (cleaned.length > 100) text = cleaned;
+      else text = '⚠ DJVU содержит отсканированные страницы. Извлеките текст через OCR (например, в Calibre или ABBYY) и загрузите как TXT.';
+    }
+    return text;
+  }
+
+  // ============================================================
+  // ОБРАБОТКА КНИГИ
+  // ============================================================
+  function normalizeText(text) {
+    if (!text) return '';
+    return text
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .replace(/\u00A0/g, ' ')
+      .replace(/[\u2028\u2029]/g, '\n')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
   function splitIntoParagraphs(text) {
     const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
     if (blocks.length <= 1) {
@@ -936,16 +1203,21 @@
     const t = text.trim();
     if (t.length > 90 || t.length < 2) return false;
     const patterns = [
-      /^(глава|часть|книга|том|chapter|part|book|volume)\s+[\divxlcdm]+/i,
+      /^(глава|часть|книга|том|chapter|part|book|volume|пролог|эпилог|prologue|epilogue)\s+[\divxlcdmа-яa-z]+/i,
       /^[IVXLCDM]{1,7}\.?\s*$/,
       /^\d+\.?\s*$/,
       /^#{1,3}\s+/,
-      /^\*{3,}$/
+      /^\*{3,}$/,
+      /^\s*глава\s+\d+/i,
+      /^\s*часть\s+\d+/i
     ];
     for (const p of patterns) if (p.test(t)) return true;
     if (t.length < 70 && !/[.!?…]$/.test(t)) {
-      const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
-      if (upperRatio > 0.6) return true;
+      const letters = t.replace(/[^А-ЯЁA-Z]/g, '');
+      if (letters.length >= 2) {
+        const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
+        if (upperRatio > 0.6) return true;
+      }
     }
     return false;
   }
@@ -962,7 +1234,7 @@
 
       if (isChapterTitle(p)) {
         el.classList.add('chapter-title');
-        el.style.cssText = 'text-indent:0; text-align:center; margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; color:' + mix(settings.fg, settings.bg, 0.3) + '; font-weight:normal;';
+        el.style.cssText = 'text-indent:0; text-align:center; margin: 2.2em 0 1.4em; font-size: 1.15em; letter-spacing: 1px; color:' + mix(settings.fg, settings.bg, 0.3) + '; font-weight:normal;';
         chapterCount++;
         chapters.push({ title: p.trim(), el: el, num: chapterCount });
       }
@@ -974,11 +1246,13 @@
     footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
 
     buildToc();
-    updateProgress();
+    requestAnimationFrame(updateProgress);
     readerScreen.scrollTop = 0;
   }
 
-  // ---------- Прогресс ----------
+  // ============================================================
+  // ПРОГРЕСС
+  // ============================================================
   function updateProgress() {
     if (readerScreen.style.display === 'none') return;
     const scrollTop = readerScreen.scrollTop;
@@ -993,7 +1267,6 @@
 
     toTop.style.display = scrollTop > 400 ? 'flex' : 'none';
 
-    // подсветка активной главы
     if (chapters.length) {
       let current = 0;
       for (let i = 0; i < chapters.length; i++) {
@@ -1006,6 +1279,26 @@
         });
       }
     }
+
+    // Сохраняем позицию
+    if (currentBookId) {
+      clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = setTimeout(() => savePosition(currentBookId, scrollTop), 400);
+    }
+  }
+
+  function savePosition(bookId, pos) {
+    try {
+      const all = JSON.parse(localStorage.getItem(POS_KEY) || '{}');
+      all[bookId] = pos;
+      localStorage.setItem(POS_KEY, JSON.stringify(all));
+    } catch (e) {}
+  }
+  function getPosition(bookId) {
+    try {
+      const all = JSON.parse(localStorage.getItem(POS_KEY) || '{}');
+      return all[bookId] || 0;
+    } catch (e) { return 0; }
   }
 
   readerScreen.addEventListener('scroll', updateProgress);
@@ -1019,7 +1312,9 @@
 
   toTop.addEventListener('click', () => readerScreen.scrollTo({ top: 0, behavior: 'smooth' }));
 
-  // ---------- Оглавление ----------
+  // ============================================================
+  // ОГЛАВЛЕНИЕ
+  // ============================================================
   function buildToc() {
     tocList.innerHTML = '';
     if (!chapters.length) {
@@ -1041,26 +1336,24 @@
     });
   }
 
-  function openToc() {
-    tocPanel.classList.add('open');
-    tocOverlay.classList.add('open');
-  }
-  function closeToc() {
-    tocPanel.classList.remove('open');
-    tocOverlay.classList.remove('open');
-  }
+  function openToc() { tocPanel.classList.add('open'); tocOverlay.classList.add('open'); }
+  function closeToc() { tocPanel.classList.remove('open'); tocOverlay.classList.remove('open'); }
   btnToc.addEventListener('click', openToc);
   tocClose.addEventListener('click', closeToc);
   tocOverlay.addEventListener('click', closeToc);
 
-  // ---------- Библиотека ----------
+  // ============================================================
+  // БИБЛИОТЕКА
+  // ============================================================
   function getLibrary() {
-    try {
-      return JSON.parse(localStorage.getItem('reader_library') || '[]');
-    } catch (e) { return []; }
+    try { return JSON.parse(localStorage.getItem(LIB_KEY) || '[]'); }
+    catch (e) { return []; }
   }
   function saveLibrary(lib) {
-    localStorage.setItem('reader_library', JSON.stringify(lib));
+    try { localStorage.setItem(LIB_KEY, JSON.stringify(lib)); }
+    catch (e) {
+      alert('Не удалось сохранить книгу: превышен лимит хранилища. Удалите старые книги.');
+    }
   }
 
   function renderLibrary() {
@@ -1090,11 +1383,13 @@
       const title = document.createElement('div');
       title.className = 'title';
       title.textContent = book.title;
+      title.title = book.title;
 
       const meta = document.createElement('div');
       meta.className = 'meta';
       const words = (book.text || '').trim().split(/\s+/).filter(Boolean).length;
-      meta.textContent = words.toLocaleString('ru-RU') + ' слов';
+      const size = book.text ? (book.text.length / 1024).toFixed(0) + ' КБ' : '';
+      meta.textContent = words.toLocaleString('ru-RU') + ' слов · ' + size;
 
       const del = document.createElement('button');
       del.className = 'del';
@@ -1102,6 +1397,7 @@
       del.title = 'Удалить';
       del.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (!confirm('Удалить «' + book.title + '»?')) return;
         const lib2 = getLibrary().filter(b => b.id !== book.id);
         saveLibrary(lib2);
         if (currentBookId === book.id) currentBookId = null;
@@ -1114,7 +1410,7 @@
 
       item.addEventListener('click', () => {
         currentBookId = book.id;
-        openBook(book.text, book.title);
+        openBook(book.text, book.title, book.id);
       });
 
       list.appendChild(item);
@@ -1128,17 +1424,25 @@
     renderLibrary();
   });
 
-  // ---------- Открытие книги ----------
-  function openBook(text, title) {
-    if (!text || !text.trim()) return;
+  // ============================================================
+  // ОТКРЫТИЕ КНИГИ
+  // ============================================================
+  function openBook(text, title, bookId) {
+    if (!text || !text.trim()) { alert('Не удалось извлечь текст из файла.'); return; }
     pasteScreen.style.display = 'none';
     readerScreen.style.display = 'block';
     readerControls.style.display = 'flex';
     sideProgress.style.display = 'block';
-    document.getElementById('hint').style.display = 'none';
+    const hint = document.getElementById('hint');
+    if (hint) hint.style.display = 'none';
     render(text);
     if (title) document.title = title + ' — YVL BOOKS';
     else document.title = 'YVL BOOKS';
+    // Восстанавливаем позицию
+    if (bookId) {
+      const pos = getPosition(bookId);
+      if (pos > 0) setTimeout(() => readerScreen.scrollTop = pos, 100);
+    }
   }
 
   function showLibraryScreen() {
@@ -1149,24 +1453,27 @@
     progressBar.style.width = '0%';
     toTop.style.display = 'none';
     document.title = 'YVL BOOKS';
+    currentBookId = null;
     renderLibrary();
   }
 
-  // ---------- Кнопки ----------
+  // ============================================================
+  // КНОПКИ
+  // ============================================================
   btnRead.addEventListener('click', () => {
     const text = input.value.trim();
     if (!text) return;
-    // Сохраняем в библиотеку
     const lib = getLibrary();
     const title = text.split('\n')[0].trim().slice(0, 80) || 'Без названия';
     const id = 'book_' + Date.now();
     lib.unshift({ id, title, text, added: Date.now() });
     saveLibrary(lib);
     currentBookId = id;
-    openBook(text, title);
+    openBook(text, title, id);
   });
 
   btnClear.addEventListener('click', () => {
+    if (input.value && !confirm('Очистить поле?')) return;
     input.value = '';
     input.focus();
   });
@@ -1176,45 +1483,66 @@
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    readFile(file);
+    handleFile(file);
     fileInput.value = '';
   });
 
   btnLibrary.addEventListener('click', showLibraryScreen);
   logo.addEventListener('click', showLibraryScreen);
 
-  // ---------- Чтение файлов ----------
-  function readFile(file) {
-    const reader = new FileReader();
-    const name = file.name.replace(/\.[^.]+$/, '');
+  // ============================================================
+  // ЗАГРУЗКА ФАЙЛОВ
+  // ============================================================
+  function showLoading(text) {
+    loadingText.textContent = text || 'Загрузка книги...';
+    loadingOverlay.classList.add('show');
+  }
+  function hideLoading() { loadingOverlay.classList.remove('show'); }
 
-    reader.onload = (e) => {
-      let text = e.target.result;
+  async function handleFile(file) {
+    const name = file.name;
+    const title = name.replace(/\.[^.]+$/, '');
+    const ext = (name.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
 
-      if (/\.(html?|fb2)$/i.test(file.name)) {
-        const doc = new DOMParser().parseFromString(text, 'text/html');
-        doc.querySelectorAll('script, style').forEach(el => el.remove());
-        text = doc.body ? doc.body.innerText : text;
+    // Быстрая проверка на огромные файлы в localStorage
+    const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
+    if (file.size > MAX_SIZE) {
+      if (!confirm('Файл большой (' + (file.size/1024/1024).toFixed(1) + ' МБ). Он может не сохраниться в библиотеке, но откроется для чтения. Продолжить?')) return;
+    }
+
+    showLoading('Обработка «' + name + '»...');
+
+    try {
+      const text = normalizeText(await parseFile(file));
+      if (!text || text.length < 5) {
+        throw new Error('Не удалось извлечь текст. Возможно, файл защищён DRM или содержит только изображения.');
       }
-
-      text = text.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
-      if (!text) return;
 
       const lib = getLibrary();
       const id = 'book_' + Date.now();
-      lib.unshift({ id, title: name || 'Без названия', text, added: Date.now() });
+      // Ограничиваем размер текста в библиотеке
+      const maxStore = 4 * 1024 * 1024; // 4 MB текста
+      const storeText = text.length > maxStore ? text.slice(0, maxStore) : text;
+      lib.unshift({ id, title, text: storeText, added: Date.now(), ext });
       saveLibrary(lib);
-      currentBookId = id;
-      openBook(text, name);
-    };
 
-    reader.readAsText(file, 'utf-8');
+      hideLoading();
+      currentBookId = id;
+      openBook(text, title, id);
+    } catch (err) {
+      hideLoading();
+      console.error(err);
+      alert('Ошибка при чтении файла:\n' + (err.message || err));
+    }
   }
 
-  // ---------- Drag & Drop ----------
+  // ============================================================
+  // DRAG & DROP
+  // ============================================================
   let dragCounter = 0;
   window.addEventListener('dragenter', (e) => {
     e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.types && !Array.from(e.dataTransfer.types).includes('Files')) return;
     dragCounter++;
     if (dragCounter === 1) dropOverlay.classList.add('show');
   });
@@ -1229,15 +1557,18 @@
     dragCounter = 0;
     dropOverlay.classList.remove('show');
     const file = e.dataTransfer.files[0];
-    if (file) readFile(file);
+    if (file) handleFile(file);
   });
 
-  // ---------- Горячие клавиши ----------
+  // ============================================================
+  // ГОРЯЧИЕ КЛАВИШИ
+  // ============================================================
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key.toLowerCase() === 'g') {
       e.preventDefault();
-      if (readerScreen.style.display === 'block') {
+      if (readerScreen.style.display === 'block' && chapters.length) {
         jumpBox.style.display = 'flex';
+        jumpInput.max = chapters.length;
         jumpInput.focus();
         jumpInput.select();
       }
@@ -1246,17 +1577,12 @@
       e.preventDefault();
       if (readerScreen.style.display === 'block') openToc();
     }
-    if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
-      e.preventDefault();
-      changeFont(2);
-    }
-    if (e.ctrlKey && e.key === '-') {
-      e.preventDefault();
-      changeFont(-2);
-    }
+    if (e.ctrlKey && (e.key === '+' || e.key === '=')) { e.preventDefault(); changeFont(2); }
+    if (e.ctrlKey && e.key === '-') { e.preventDefault(); changeFont(-2); }
     if (e.key === 'Escape') {
       jumpBox.style.display = 'none';
       closeToc();
+      palette.classList.remove('open');
     }
   });
 
@@ -1268,14 +1594,19 @@
     jumpBox.style.display = 'none';
   });
   jumpCancel.addEventListener('click', () => jumpBox.style.display = 'none');
-  jumpInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') jumpGo.click();
-  });
+  jumpInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') jumpGo.click(); });
 
-  // ---------- Инициализация ----------
+  // ============================================================
+  // ИНИЦИАЛИЗАЦИЯ
+  // ============================================================
   buildPresets();
   applySettings();
   renderLibrary();
+
+  // Автопроверка библиотеки
+  if (!getLibrary().length) {
+    // ничего, пустая библиотека
+  }
 })();
 </script>
 </body>
