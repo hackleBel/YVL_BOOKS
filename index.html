@@ -109,7 +109,6 @@
     text-align: center;
   }
 
-  /* Кнопка настроек — по умолчанию скрыта */
   #settings-toggle { display: none; }
 
   #paste-screen {
@@ -306,29 +305,55 @@
     transition: width .1s;
   }
 
+  /* ===== ПОЛЗУНОК ПРОКРУТКИ (обновлённый) ===== */
   #side-progress {
     position: fixed;
-    right: 6px;
+    right: 0;
     top: 60px;
     bottom: 40px;
-    width: 3px;
-    background: var(--border);
-    border-radius: 2px;
+    width: 22px;            /* увеличенная зона касания для пальца */
+    background: transparent;
     z-index: 90;
-    cursor: pointer;
+    cursor: grab;
+    touch-action: none;     /* чтобы палец не скроллил страницу при перетаскивании */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #side-progress.dragging {
+    cursor: grabbing;
+  }
+  #side-progress::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 8px;
+    width: 4px;
+    background: var(--border);
+    border-radius: 3px;
+  }
+  #side-progress:hover::before,
+  #side-progress.dragging::before {
+    background: var(--border-strong);
   }
 
   #side-thumb {
     position: absolute;
-    left: -3px;
-    width: 9px;
-    height: 40px;
+    right: 6px;             /* выравнивание по центру полосы 4px + зазор */
+    width: 12px;
+    height: 52px;
     background: var(--accent);
-    border-radius: 5px;
-    opacity: .6;
-    transition: opacity .15s;
+    border-radius: 8px;
+    opacity: .65;
+    transition: opacity .15s, transform .12s;
+    box-shadow: 0 0 0 2px var(--bg);
+    pointer-events: none;   /* событие ловит сам контейнер */
   }
-  #side-progress:hover #side-thumb { opacity: 1; }
+  #side-progress:hover #side-thumb,
+  #side-progress.dragging #side-thumb {
+    opacity: 1;
+    transform: scaleX(1.15);
+  }
 
   #to-top {
     position: fixed;
@@ -611,7 +636,6 @@
       font-size: 10px;
     }
 
-    /* Кнопка ⚙ — видна только на телефоне */
     #settings-toggle {
       display: flex;
       align-items: center;
@@ -631,7 +655,6 @@
       border-color: var(--accent);
     }
 
-    /* Панель настроек: скрыта, раскрывается по ⚙ на всю ширину */
     #reader-controls {
       display: none !important;
       width: 100%;
@@ -745,15 +768,22 @@
       font-size: 18px;
     }
 
+    /* ===== Ползунок на телефоне ===== */
     #side-progress {
-      right: 2px;
-      width: 6px;
-      top: 80px;
+      width: 32px;
+      right: 0;
+      top: 70px;
       bottom: 60px;
     }
+    #side-progress::before {
+      right: 12px;
+      width: 5px;
+    }
     #side-thumb {
-      left: -2px;
-      width: 10px;
+      right: 9px;
+      width: 16px;
+      height: 60px;
+      border-radius: 10px;
     }
 
     #hint {
@@ -1100,7 +1130,6 @@
     applySettings();
   });
 
-  // ---------- Кнопка ⚙ на телефоне ----------
   if (settingsToggle) {
     settingsToggle.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1109,7 +1138,6 @@
     });
   }
 
-  // Клик вне панели — закрываем
   document.addEventListener('click', (e) => {
     if (!readerControls.classList.contains('open')) return;
     if (readerControls.contains(e.target)) return;
@@ -1235,7 +1263,8 @@
 
     const trackH = sideProgress.clientHeight;
     const thumbH = sideThumb.offsetHeight;
-    sideThumb.style.top = (p * (trackH - thumbH)) + 'px';
+    const thumbSpace = trackH - thumbH;
+    sideThumb.style.top = Math.max(0, Math.min(thumbSpace, p * thumbSpace)) + 'px';
 
     toTop.style.display = readerScreen.scrollTop > 400 ? 'flex' : 'none';
 
@@ -1258,20 +1287,60 @@
     setTimeout(updateProgress, 300);
   });
 
-  sideProgress.addEventListener('click', (e) => {
+  // ===== Перетаскивание ползунка =====
+  function scrollFromPointer(clientY) {
     const rect = sideProgress.getBoundingClientRect();
-    const p = (e.clientY - rect.top) / rect.height;
+    const thumbH = sideThumb.offsetHeight;
+    const trackH = rect.height;
+    const thumbSpace = trackH - thumbH;
+    if (thumbSpace <= 0) return;
+
+    // Позиция верхушки ползунка относительно трека
+    let localY = clientY - rect.top - thumbH / 2;
+    localY = Math.max(0, Math.min(thumbSpace, localY));
+    const p = localY / thumbSpace;
+
     const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    readerScreen.scrollTo({ top: p * max, behavior: 'smooth' });
+    // важно: без smooth, чтобы следовало за пальцем мгновенно
+    readerScreen.scrollTop = p * max;
+  }
+
+  let dragging = false;
+
+  sideProgress.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    dragging = true;
+    sideProgress.classList.add('dragging');
+    try { sideProgress.setPointerCapture(e.pointerId); } catch (err) {}
+    // Мгновенно подстраиваем позицию под палец
+    scrollFromPointer(e.clientY);
+    // Отключаем плавную прокрутку на время перетаскивания
+    readerScreen.style.scrollBehavior = 'auto';
   });
 
-  sideProgress.addEventListener('touchstart', (e) => {
+  sideProgress.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
     e.preventDefault();
-    const touch = e.touches[0];
-    const rect = sideProgress.getBoundingClientRect();
-    const p = (touch.clientY - rect.top) / rect.height;
-    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    readerScreen.scrollTo({ top: p * max, behavior: 'smooth' });
+    scrollFromPointer(e.clientY);
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    sideProgress.classList.remove('dragging');
+    readerScreen.style.scrollBehavior = '';
+  }
+
+  sideProgress.addEventListener('pointerup', endDrag);
+  sideProgress.addEventListener('pointercancel', endDrag);
+  sideProgress.addEventListener('pointerleave', (e) => {
+    if (dragging && e.buttons === 0) endDrag(e);
+  });
+
+  // Колесо мыши по ползунку — прокрутка вниз/вверх
+  sideProgress.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    readerScreen.scrollTop += e.deltaY;
   }, { passive: false });
 
   toTop.addEventListener('click', () => {
