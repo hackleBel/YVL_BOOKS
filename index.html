@@ -2,18 +2,17 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>YVL BOOKS</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕸️%3C/text%3E%3C/svg%3E" type="image/svg+xml">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
     height: 100%;
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--bg, #14161a);
+    color: var(--fg, #d4d7dc);
     font-family: Georgia, 'Times New Roman', serif;
-    transition: background .2s, color .2s;
+    -webkit-tap-highlight-color: transparent;
   }
 
   :root {
@@ -47,6 +46,7 @@
     flex-wrap: wrap;
     flex-shrink: 0;
     position: relative;
+    padding-top: max(10px, env(safe-area-inset-top));
   }
 
   header h1 {
@@ -70,7 +70,6 @@
     font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     cursor: pointer;
-    transition: background .15s, border-color .15s;
     line-height: 1;
   }
   button:hover { background: var(--border-strong); }
@@ -107,6 +106,18 @@
     min-width: 34px;
     text-align: center;
   }
+
+  #btn-menu {
+    display: none;
+    background: transparent;
+    border: none;
+    padding: 8px 10px;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--fg);
+    border-radius: 8px;
+  }
+  #btn-menu:hover { background: var(--border-strong); }
 
   #paste-screen {
     flex: 1;
@@ -176,6 +187,36 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
+  #library-search-wrap { margin-bottom: 12px; position: relative; }
+  #library-search {
+    width: 100%;
+    background: var(--bg-input);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 34px 10px 12px;
+    font-size: 13px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    outline: none;
+  }
+  #library-search:focus { border-color: var(--accent); }
+  #library-search-clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--fg-dim);
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+    display: none;
+    line-height: 1;
+    border-radius: 4px;
+  }
+  #library-search-wrap.has-value #library-search-clear { display: block; }
+
   .book-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -191,10 +232,9 @@
     flex-direction: column;
     gap: 6px;
     cursor: pointer;
-    transition: border-color .15s, transform .12s;
     position: relative;
   }
-  .book-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .book-item:hover { border-color: var(--accent); }
 
   .book-item .title {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -228,7 +268,9 @@
   }
   .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
 
-  #library-empty {
+  .book-item mark { background: var(--accent); color: var(--bg); border-radius: 2px; padding: 0 2px; }
+
+  #library-empty, #library-no-results {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 12px;
     color: var(--fg-dim);
@@ -237,6 +279,8 @@
     border: 1px dashed var(--border-strong);
     border-radius: 8px;
   }
+  #library-no-results { display: none; }
+  #library-no-results.show { display: block; }
 
   #drop-overlay {
     position: fixed;
@@ -259,10 +303,9 @@
     display: none;
     overflow-y: auto;
     overflow-x: hidden;
-    scroll-behavior: smooth;
     position: relative;
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE/Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   #reader-screen::-webkit-scrollbar { width: 0; height: 0; }
 
@@ -275,7 +318,6 @@
     color: var(--fg);
     hyphens: auto;
     -webkit-hyphens: auto;
-    transition: max-width .15s, line-height .15s;
   }
 
   #content p {
@@ -285,9 +327,7 @@
     orphans: 2;
     widows: 2;
   }
-
   #content p:first-child { text-indent: 0; }
-
   #content .chapter-title {
     text-indent: 0 !important;
     text-align: center;
@@ -304,39 +344,31 @@
     background: var(--accent);
     width: 0%;
     z-index: 100;
-    transition: width .1s;
   }
 
-  /* ===== Ползунок прокрутки, автоскрытие ===== */
   #side-progress {
     position: fixed;
     right: 6px;
     top: 60px;
     bottom: 40px;
-    width: 22px;                 /* увеличена зона нажатия под палец */
+    width: 22px;
     background: transparent;
     z-index: 90;
     cursor: pointer;
     opacity: 0;
     transition: opacity .35s;
     touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
   }
   #side-progress.visible { opacity: 1; }
-
-  /* визуальная дорожка внутри контейнера */
   #side-progress::before {
     content: "";
     position: absolute;
     right: 9px;
-    top: 0;
-    bottom: 0;
+    top: 0; bottom: 0;
     width: 3px;
     background: var(--border);
     border-radius: 2px;
   }
-
   #side-thumb {
     position: absolute;
     right: 6px;
@@ -345,11 +377,8 @@
     background: var(--accent);
     border-radius: 5px;
     opacity: .6;
-    transition: opacity .15s, top 0s linear;
   }
-  #side-progress:hover #side-thumb,
   #side-progress.dragging #side-thumb { opacity: 1; }
-  #side-progress.dragging #side-thumb { transition: none; }
 
   #to-top {
     position: fixed;
@@ -368,7 +397,6 @@
     font-size: 16px;
     z-index: 90;
   }
-  #to-top:hover { background: var(--border-strong); color: var(--fg); }
   #to-top.show { display: flex; }
 
   #jump-box {
@@ -388,7 +416,6 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #jump-box.show { display: flex; }
-
   #jump-box input {
     background: var(--bg);
     border: 1px solid var(--border-strong);
@@ -399,12 +426,7 @@
     font-size: 13px;
     outline: none;
   }
-  #jump-box input:focus { border-color: var(--accent); }
-
-  #jump-box span {
-    font-size: 12px;
-    color: var(--fg-dim);
-  }
+  #jump-box span { font-size: 12px; color: var(--fg-dim); }
 
   #toc-panel {
     position: fixed;
@@ -421,7 +443,6 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #toc-panel.open { right: 0; }
-
   #toc-header {
     padding: 16px 20px;
     border-bottom: 1px solid var(--border);
@@ -433,18 +454,7 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   }
-
-  #toc-header button { padding: 4px 10px; font-size: 12px; }
-
-  #toc-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-  }
-
-  #toc-list::-webkit-scrollbar { width: 8px; }
-  #toc-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-
+  #toc-list { flex: 1; overflow-y: auto; padding: 8px 0; }
   .toc-item {
     padding: 10px 20px;
     font-size: 13px;
@@ -453,15 +463,8 @@
     line-height: 1.4;
     border-left: 2px solid transparent;
   }
-  .toc-item:hover {
-    background: var(--bg-panel);
-    color: var(--fg);
-    border-left-color: var(--accent);
-  }
-  .toc-item.active {
-    color: var(--fg);
-    border-left-color: var(--accent);
-  }
+  .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
+  .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
 
   #toc-overlay {
     position: fixed;
@@ -472,13 +475,7 @@
   }
   #toc-overlay.open { display: block; }
 
-  #toc-empty {
-    padding: 20px;
-    font-size: 13px;
-    color: var(--fg-dim);
-    text-align: center;
-    line-height: 1.5;
-  }
+  #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
 
   footer {
     padding: 8px 20px;
@@ -491,6 +488,7 @@
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 
   #hint {
@@ -503,7 +501,6 @@
     opacity: .6;
     z-index: 80;
     pointer-events: none;
-    transition: opacity .3s;
   }
 
   .palette {
@@ -522,246 +519,159 @@
     width: 240px;
   }
   .palette.open { display: block; }
-
   .palette h4 {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-    margin-bottom: 10px;
-    font-weight: normal;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
   }
-
-  .palette-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-
+  .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
   .palette-item {
-    padding: 6px 4px;
-    border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-    text-align: center;
-    font-size: 10px;
-    transition: transform .12s, border-color .15s;
+    padding: 6px 4px; border-radius: 6px; border: 1px solid var(--border-strong);
+    cursor: pointer; text-align: center; font-size: 10px;
   }
-  .palette-item:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .palette-item:hover { border-color: var(--accent); }
   .palette-item.active { border-color: var(--accent); }
   .palette-item .sw {
-    height: 22px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Georgia, serif;
-    font-size: 13px;
+    height: 22px; border-radius: 4px; margin-bottom: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, serif; font-size: 13px;
   }
-
-  .palette-custom {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-
-  .custom-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .custom-row label {
-    font-size: 12px;
-    color: var(--fg-mid);
-    flex: 1;
-  }
+  .palette-custom { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .custom-row { display: flex; align-items: center; gap: 8px; }
+  .custom-row label { font-size: 12px; color: var(--fg-mid); flex: 1; }
   .custom-row input[type=color] {
-    width: 34px;
-    height: 26px;
-    border: 1px solid var(--border-strong);
-    border-radius: 5px;
-    background: var(--bg);
-    cursor: pointer;
-    padding: 2px;
+    width: 34px; height: 26px; border: 1px solid var(--border-strong);
+    border-radius: 5px; background: var(--bg); cursor: pointer; padding: 2px;
   }
-  .custom-row input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
-  .custom-row input[type=color]::-webkit-color-swatch { border: none; border-radius: 3px; }
-
-  .palette-reset {
-    width: 100%;
-    margin-top: 8px;
-    font-size: 11px;
-    padding: 6px;
-  }
+  .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
   input[type=file] { display: none; }
 
-  /* ===== Поиск в библиотеке ===== */
-  #library-search-wrap {
-    margin-bottom: 12px;
-    position: relative;
-  }
-  #library-search {
-    width: 100%;
-    background: var(--bg-input);
-    color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 10px 34px 10px 12px;
-    font-size: 13px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    outline: none;
-  }
-  #library-search:focus { border-color: var(--accent); }
-  #library-search-clear {
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: var(--fg-dim);
-    font-size: 14px;
-    padding: 4px 8px;
-    cursor: pointer;
+  /* Нижняя панель на телефоне */
+  #mobile-sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-strong);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -12px 40px rgba(0,0,0,.55);
+    z-index: 400;
+    transform: translateY(110%);
+    transition: transform .28s ease;
+    padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
     display: none;
-    line-height: 1;
-    border-radius: 4px;
-  }
-  #library-search-clear:hover { background: var(--border-strong); color: var(--fg); }
-  #library-search-wrap.has-value #library-search-clear { display: block; }
-
-  .book-item mark {
-    background: var(--accent);
-    color: var(--bg);
-    border-radius: 2px;
-    padding: 0 2px;
-  }
-
-  #library-no-results {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  #mobile-sheet.open { transform: translateY(0); }
+  #sheet-handle {
+    width: 44px; height: 4px; background: var(--border-strong);
+    border-radius: 4px; margin: 4px auto 12px;
+  }
+  .sheet-section { margin-bottom: 14px; }
+  .sheet-section h5 {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); font-weight: normal; margin-bottom: 8px;
+  }
+  .sheet-row { display: flex; align-items: center; gap: 8px; }
+  .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; }
+  .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sheet-grid button {
+    padding: 12px; font-size: 14px; border-radius: 10px;
+    background: var(--bg-input); border: 1px solid var(--border-strong);
+  }
+  .sheet-grid button.wide { grid-column: 1 / -1; }
+  #sheet-close {
+    display: block; margin: 4px auto 0; padding: 8px 20px;
+    font-size: 12px; background: transparent;
+    border: 1px solid var(--border-strong); color: var(--fg-dim); border-radius: 20px;
+  }
+  #sheet-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    z-index: 399; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  #sheet-overlay.open { opacity: 1; pointer-events: auto; }
+
+  #boot-error {
+    display: none;
+    position: fixed;
+    left: 12px; right: 12px; top: 12px;
+    background: #3a1a1a;
+    color: #ffd0d0;
+    border: 1px solid #7a2a2a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: monospace;
     font-size: 12px;
-    color: var(--fg-dim);
-    text-align: center;
-    padding: 14px;
-    border: 1px dashed var(--border-strong);
-    border-radius: 8px;
-    display: none;
+    white-space: pre-wrap;
+    z-index: 999;
   }
-  #library-no-results.show { display: block; }
 
-  /* ===== Адаптация ===== */
   @media (max-width: 720px) {
     #content { padding: 36px 22px 120px; font-size: 19px; }
   }
 
   @media (max-width: 640px) {
     #hint { display: none !important; }
-
-    header {
-      padding: 8px 12px;
-      gap: 8px;
-    }
-    header h1 { font-size: 12px; letter-spacing: 1.5px; }
-
-    #reader-controls { gap: 6px; }
-    .btn-group { padding: 2px; }
-    .btn-group button { padding: 6px 7px; font-size: 12px; }
-    .size-label { min-width: 28px; font-size: 10px; }
-    header button { padding: 6px 9px; font-size: 12px; }
-
+    #reader-controls { display: none !important; }
+    #btn-menu { display: inline-flex; align-items: center; justify-content: center; }
+    header { padding: 8px 12px; gap: 8px; }
+    header h1 { font-size: 12px; }
     #paste-screen { padding: 14px; }
-    #paste-screen p { font-size: 12px; margin-bottom: 10px; }
     textarea { padding: 14px; font-size: 15px; }
-    #paste-screen .actions { gap: 8px; }
     #paste-screen .actions button { flex: 1 1 auto; min-width: 100px; }
-
     #content { padding: 28px 16px 100px; font-size: 18px; }
-
     .book-list { grid-template-columns: 1fr; gap: 10px; }
-    .book-item {
-      padding: 14px 44px 14px 16px;
-      border-radius: 12px;
-      gap: 4px;
-    }
-    .book-item .title {
-      font-size: 15px;
-      white-space: normal;
-      padding-right: 0;
-      line-height: 1.3;
-    }
-    .book-item .meta { font-size: 11px; }
+    .book-item { padding: 14px 44px 14px 16px; border-radius: 12px; gap: 4px; }
+    .book-item .title { font-size: 15px; white-space: normal; padding-right: 0; line-height: 1.3; }
     .book-item .del {
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      font-size: 16px;
-      padding: 8px 10px;
-      border-radius: 8px;
+      top: 50%; right: 10px; transform: translateY(-50%);
+      font-size: 16px; padding: 8px 10px; border-radius: 8px;
     }
-
     #toc-panel { width: 88%; right: -88%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
     #jump-box { left: 12px; right: 12px; transform: none; padding: 10px 12px; }
     #jump-box input { width: 100px; }
-
     .palette { right: 8px; width: calc(100vw - 32px); max-width: 260px; }
     footer { padding: 6px 12px; font-size: 10px; }
-
-    /* ползунок на телефоне чуть шире и правее */
-    #side-progress {
-      right: 2px;
-      width: 28px;
-      top: 50px;
-      bottom: 50px;
-    }
+    #side-progress { right: 2px; width: 28px; top: 50px; bottom: 50px; }
     #side-progress::before { right: 12px; }
     #side-thumb { right: 9px; width: 10px; height: 44px; }
-  }
-
-  @media (max-width: 400px) {
-    .size-label { display: none; }
-    header button { padding: 6px 8px; font-size: 11px; }
-    .btn-group button { padding: 6px 6px; font-size: 11px; }
+    #mobile-sheet { display: block; }
   }
 </style>
 </head>
 <body>
+<div id="boot-error"></div>
 <div id="progress-bar"></div>
 
 <div id="app">
-
   <header>
     <h1 id="logo">YVL BOOKS</h1>
     <div class="spacer"></div>
+
     <div id="reader-controls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
-
       <div class="btn-group" title="Размер текста">
-        <button id="font-dec" class="btn-icon" title="Уменьшить">A−</button>
+        <button id="font-dec" class="btn-icon">A−</button>
         <span class="size-label" id="size-label">20</span>
-        <button id="font-inc" class="btn-icon" title="Увеличить">A+</button>
+        <button id="font-inc" class="btn-icon">A+</button>
       </div>
-
       <div class="btn-group" title="Ширина колонки">
-        <button id="width-dec" class="btn-icon" title="Уже">↔−</button>
+        <button id="width-dec" class="btn-icon">↔−</button>
         <span class="size-label" id="width-label">720</span>
-        <button id="width-inc" class="btn-icon" title="Шире">↔+</button>
+        <button id="width-inc" class="btn-icon">↔+</button>
       </div>
-
       <div class="btn-group" title="Межстрочный интервал">
-        <button id="lh-dec" class="btn-icon" title="Плотнее">⇕−</button>
+        <button id="lh-dec" class="btn-icon">⇕−</button>
         <span class="size-label" id="lh-label">1.85</span>
-        <button id="lh-inc" class="btn-icon" title="Просторнее">⇕+</button>
+        <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
-
       <button id="btn-theme">Цвет</button>
       <button id="btn-toc">Содержание</button>
       <button id="btn-library">Библиотека</button>
     </div>
+
+    <button id="btn-menu" title="Меню">☰</button>
 
     <div class="palette" id="palette">
       <h4>Готовые темы</h4>
@@ -778,22 +688,22 @@
 
   <div id="paste-screen">
     <div class="inner">
-      <p>Вставьте текст книги в поле ниже, загрузите файл или перетащите его в окно</p>
-      <textarea id="input" placeholder="Сюда текст..." spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off"></textarea>
+      <p>Вставьте текст книги, загрузите файл или перетащите его в окно</p>
+      <textarea id="input" placeholder="Сюда текст..." spellcheck="false"></textarea>
       <div class="actions">
         <button id="btn-read">Читать</button>
         <button id="btn-file">Загрузить файл</button>
         <button id="btn-clear">Очистить</button>
-        <input type="file" id="file-input" accept=".txt,.md,.fb2,.html,.htm,.epub,text/plain">
+        <input type="file" id="file-input" accept=".txt,.md,.fb2,.html,.htm,text/plain">
       </div>
 
       <div id="library">
         <h3>Библиотека</h3>
         <div id="library-search-wrap">
-          <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off" spellcheck="false">
+          <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off">
           <button id="library-search-clear" title="Очистить">✕</button>
         </div>
-        <div id="library-list"></div>
+        <div id="library-list" class="book-list"></div>
         <div id="library-no-results">Ничего не найдено</div>
       </div>
     </div>
@@ -809,10 +719,7 @@
   </footer>
 </div>
 
-<div id="side-progress">
-  <div id="side-thumb"></div>
-</div>
-
+<div id="side-progress"><div id="side-thumb"></div></div>
 <button id="to-top" title="Наверх">↑</button>
 
 <div id="jump-box">
@@ -826,785 +733,860 @@
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
-  <div id="toc-header">
-    <span>Содержание</span>
-    <button id="toc-close">✕</button>
-  </div>
+  <div id="toc-header"><span>Содержание</span><button id="toc-close">✕</button></div>
   <div id="toc-list"></div>
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
 
+<div id="sheet-overlay"></div>
+<div id="mobile-sheet">
+  <div id="sheet-handle"></div>
+
+  <div class="sheet-section">
+    <h5>Размер текста</h5>
+    <div class="sheet-row">
+      <div class="btn-group">
+        <button id="m-font-dec" class="btn-icon">A−</button>
+        <span class="size-label" id="m-size-label">20</span>
+        <button id="m-font-inc" class="btn-icon">A+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-section">
+    <h5>Ширина колонки</h5>
+    <div class="sheet-row">
+      <div class="btn-group">
+        <button id="m-width-dec" class="btn-icon">↔−</button>
+        <span class="size-label" id="m-width-label">720</span>
+        <button id="m-width-inc" class="btn-icon">↔+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-section">
+    <h5>Межстрочный интервал</h5>
+    <div class="sheet-row">
+      <div class="btn-group">
+        <button id="m-lh-dec" class="btn-icon">⇕−</button>
+        <span class="size-label" id="m-lh-label">1.85</span>
+        <button id="m-lh-inc" class="btn-icon">⇕+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-section">
+    <h5>Разделы</h5>
+    <div class="sheet-grid">
+      <button id="m-theme">🎨 Цвет</button>
+      <button id="m-toc">📖 Содержание</button>
+      <button id="m-jump">🔢 К главе</button>
+      <button id="m-library">📚 Библиотека</button>
+      <button id="m-close" class="wide">✕ Закрыть</button>
+    </div>
+  </div>
+
+  <button id="sheet-close">Свернуть</button>
+</div>
+
 <script>
 (function () {
   'use strict';
 
-  const root = document.documentElement;
-  const pasteScreen = document.getElementById('paste-screen');
-  const readerScreen = document.getElementById('reader-screen');
-  const input = document.getElementById('input');
-  const content = document.getElementById('content');
-  const btnRead = document.getElementById('btn-read');
-  const btnClear = document.getElementById('btn-clear');
-  const btnFile = document.getElementById('btn-file');
-  const fileInput = document.getElementById('file-input');
-  const btnLibrary = document.getElementById('btn-library');
-  const btnToc = document.getElementById('btn-toc');
-  const btnTheme = document.getElementById('btn-theme');
-  const readerControls = document.getElementById('reader-controls');
-  const progressBar = document.getElementById('progress-bar');
-  const footerLeft = document.getElementById('footer-left');
-  const footerRight = document.getElementById('footer-right');
-  const logo = document.getElementById('logo');
-
-  const sideProgress = document.getElementById('side-progress');
-  const sideThumb = document.getElementById('side-thumb');
-  const toTop = document.getElementById('to-top');
-
-  const jumpBox = document.getElementById('jump-box');
-  const jumpInput = document.getElementById('jump-input');
-  const jumpGo = document.getElementById('jump-go');
-  const jumpCancel = document.getElementById('jump-cancel');
-
-  const tocPanel = document.getElementById('toc-panel');
-  const tocList = document.getElementById('toc-list');
-  const tocClose = document.getElementById('toc-close');
-  const tocOverlay = document.getElementById('toc-overlay');
-
-  const palette = document.getElementById('palette');
-  const paletteGrid = document.getElementById('palette-grid');
-  const colBg = document.getElementById('col-bg');
-  const colFg = document.getElementById('col-fg');
-  const colAccent = document.getElementById('col-accent');
-  const resetTheme = document.getElementById('reset-theme');
-
-  const fontDec = document.getElementById('font-dec');
-  const fontInc = document.getElementById('font-inc');
-  const sizeLabel = document.getElementById('size-label');
-
-  const widthDec = document.getElementById('width-dec');
-  const widthInc = document.getElementById('width-inc');
-  const widthLabel = document.getElementById('width-label');
-
-  const lhDec = document.getElementById('lh-dec');
-  const lhInc = document.getElementById('lh-inc');
-  const lhLabel = document.getElementById('lh-label');
-
-  const libraryList = document.getElementById('library-list');
-  const dropOverlay = document.getElementById('drop-overlay');
-
-  const librarySearch = document.getElementById('library-search');
-  const librarySearchWrap = document.getElementById('library-search-wrap');
-  const librarySearchClear = document.getElementById('library-search-clear');
-  const libraryNoResults = document.getElementById('library-no-results');
-
-  let chapters = [];
-  let activeChapter = -1;
-  let currentBookId = null;
-
-  const DEFAULTS = {
-    bg: '#14161a',
-    fg: '#d4d7dc',
-    accent: '#8b919b',
-    fontSize: 20,
-    colWidth: 720,
-    lineHeight: 1.85
-  };
-
-  const PRESETS = [
-    { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
-    { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
-    { name: 'Сепия', bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
-    { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
-    { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
-    { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
-    { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
-    { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
-    { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
-  ];
-
-  // ---------- Настройки ----------
-  function loadSettings() {
-    try {
-      const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
-      return Object.assign({}, DEFAULTS, s);
-    } catch (e) { return Object.assign({}, DEFAULTS); }
-  }
-  let settings = loadSettings();
-  function saveSettings() {
-    localStorage.setItem('reader_settings', JSON.stringify(settings));
+  function showError(msg) {
+    const box = document.getElementById('boot-error');
+    if (!box) return;
+    box.style.display = 'block';
+    box.textContent = 'Ошибка запуска:\n' + msg;
   }
 
-  function shade(hex, amt) {
-    const n = hex.replace('#','');
-    const num = parseInt(n.length === 3 ? n.split('').map(c=>c+c).join('') : n, 16);
-    let r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
-    r = Math.max(0, Math.min(255, r + amt));
-    g = Math.max(0, Math.min(255, g + amt));
-    b = Math.max(0, Math.min(255, b + amt));
-    return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1);
-  }
+  try {
+    const $ = (id) => document.getElementById(id);
 
-  function mix(c1, c2, t) {
-    const p = (c) => {
-      const n = c.replace('#','');
-      const v = parseInt(n.length === 3 ? n.split('').map(x=>x+x).join('') : n, 16);
-      return [(v>>16)&255, (v>>8)&255, v&255];
+    const root = document.documentElement;
+    const pasteScreen = $('paste-screen');
+    const readerScreen = $('reader-screen');
+    const input = $('input');
+    const content = $('content');
+    const btnRead = $('btn-read');
+    const btnClear = $('btn-clear');
+    const btnFile = $('btn-file');
+    const fileInput = $('file-input');
+    const btnLibrary = $('btn-library');
+    const btnToc = $('btn-toc');
+    const btnTheme = $('btn-theme');
+    const readerControls = $('reader-controls');
+    const progressBar = $('progress-bar');
+    const footerLeft = $('footer-left');
+    const footerRight = $('footer-right');
+    const logo = $('logo');
+
+    const sideProgress = $('side-progress');
+    const sideThumb = $('side-thumb');
+    const toTop = $('to-top');
+
+    const jumpBox = $('jump-box');
+    const jumpInput = $('jump-input');
+    const jumpGo = $('jump-go');
+    const jumpCancel = $('jump-cancel');
+
+    const tocPanel = $('toc-panel');
+    const tocList = $('toc-list');
+    const tocClose = $('toc-close');
+    const tocOverlay = $('toc-overlay');
+
+    const palette = $('palette');
+    const paletteGrid = $('palette-grid');
+    const colBg = $('col-bg');
+    const colFg = $('col-fg');
+    const colAccent = $('col-accent');
+    const resetTheme = $('reset-theme');
+
+    const fontDec = $('font-dec');
+    const fontInc = $('font-inc');
+    const sizeLabel = $('size-label');
+
+    const widthDec = $('width-dec');
+    const widthInc = $('width-inc');
+    const widthLabel = $('width-label');
+
+    const lhDec = $('lh-dec');
+    const lhInc = $('lh-inc');
+    const lhLabel = $('lh-label');
+
+    const libraryList = $('library-list');
+    const dropOverlay = $('drop-overlay');
+
+    const librarySearch = $('library-search');
+    const librarySearchWrap = $('library-search-wrap');
+    const librarySearchClear = $('library-search-clear');
+    const libraryNoResults = $('library-no-results');
+
+    const btnMenu = $('btn-menu');
+    const mobileSheet = $('mobile-sheet');
+    const sheetOverlay = $('sheet-overlay');
+    const sheetClose = $('sheet-close');
+    const sheetHandle = $('sheet-handle');
+    const mFontDec = $('m-font-dec');
+    const mFontInc = $('m-font-inc');
+    const mSizeLabel = $('m-size-label');
+    const mWidthDec = $('m-width-dec');
+    const mWidthInc = $('m-width-inc');
+    const mWidthLabel = $('m-width-label');
+    const mLhDec = $('m-lh-dec');
+    const mLhInc = $('m-lh-inc');
+    const mLhLabel = $('m-lh-label');
+    const mTheme = $('m-theme');
+    const mToc = $('m-toc');
+    const mJump = $('m-jump');
+    const mLibrary = $('m-library');
+    const mClose = $('m-close');
+
+    let chapters = [];
+    let activeChapter = -1;
+    let currentBookId = null;
+
+    const DEFAULTS = {
+      bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
+      fontSize: 20, colWidth: 720, lineHeight: 1.85
     };
-    const a = p(c1), b = p(c2);
-    const r = a.map((v,i)=>Math.round(v*(1-t) + b[i]*t));
-    return '#' + r.map(x=>x.toString(16).padStart(2,'0')).join('');
-  }
 
-  function applySettings() {
-    const { bg, fg, accent } = settings;
-    root.style.setProperty('--bg', bg);
-    root.style.setProperty('--fg', fg);
-    root.style.setProperty('--accent', accent);
-    root.style.setProperty('--bg-header', shade(bg, 6));
-    root.style.setProperty('--bg-panel', shade(bg, 10));
-    root.style.setProperty('--bg-input', shade(bg, 6));
-    root.style.setProperty('--border', shade(bg, 14));
-    root.style.setProperty('--border-strong', shade(bg, 22));
-    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
-    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
-
-    root.style.setProperty('--col-width', settings.colWidth + 'px');
-    root.style.setProperty('--line-height', settings.lineHeight);
-
-    content.style.fontSize = settings.fontSize + 'px';
-    sizeLabel.textContent = settings.fontSize;
-    widthLabel.textContent = settings.colWidth;
-    lhLabel.textContent = settings.lineHeight.toFixed(2);
-
-    colBg.value = settings.bg;
-    colFg.value = settings.fg;
-    colAccent.value = settings.accent;
-
-    document.querySelectorAll('.palette-item').forEach(el => {
-      el.classList.toggle('active',
-        el.dataset.bg === settings.bg &&
-        el.dataset.fg === settings.fg &&
-        el.dataset.accent === settings.accent
-      );
-    });
-
-    setTimeout(updateProgress, 20);
-  }
-
-  function buildPresets() {
-    paletteGrid.innerHTML = '';
-    PRESETS.forEach(pr => {
-      const el = document.createElement('div');
-      el.className = 'palette-item';
-      el.dataset.bg = pr.bg;
-      el.dataset.fg = pr.fg;
-      el.dataset.accent = pr.accent;
-      el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
-      el.addEventListener('click', () => {
-        settings.bg = pr.bg;
-        settings.fg = pr.fg;
-        settings.accent = pr.accent;
-        saveSettings();
-        applySettings();
-      });
-      paletteGrid.appendChild(el);
-    });
-  }
-
-  function changeFont(delta) {
-    let s = settings.fontSize + delta;
-    s = Math.max(12, Math.min(48, s));
-    settings.fontSize = s;
-    saveSettings();
-    applySettings();
-  }
-  fontDec.addEventListener('click', () => changeFont(-2));
-  fontInc.addEventListener('click', () => changeFont(2));
-
-  function changeWidth(delta) {
-    let w = settings.colWidth + delta;
-    w = Math.max(400, Math.min(1600, w));
-    settings.colWidth = w;
-    saveSettings();
-    applySettings();
-  }
-  widthDec.addEventListener('click', () => changeWidth(-40));
-  widthInc.addEventListener('click', () => changeWidth(40));
-
-  function changeLineHeight(delta) {
-    let lh = Math.round((settings.lineHeight + delta) * 100) / 100;
-    lh = Math.max(1.2, Math.min(3.0, lh));
-    settings.lineHeight = lh;
-    saveSettings();
-    applySettings();
-  }
-  lhDec.addEventListener('click', () => changeLineHeight(-0.1));
-  lhInc.addEventListener('click', () => changeLineHeight(0.1));
-
-  btnTheme.addEventListener('click', (e) => {
-    e.stopPropagation();
-    palette.classList.toggle('open');
-  });
-  document.addEventListener('click', (e) => {
-    if (!palette.contains(e.target) && e.target !== btnTheme) {
-      palette.classList.remove('open');
-    }
-  });
-  palette.addEventListener('click', e => e.stopPropagation());
-
-  colBg.addEventListener('input', e => { settings.bg = e.target.value; saveSettings(); applySettings(); });
-  colFg.addEventListener('input', e => { settings.fg = e.target.value; saveSettings(); applySettings(); });
-  colAccent.addEventListener('input', e => { settings.accent = e.target.value; saveSettings(); applySettings(); });
-
-  resetTheme.addEventListener('click', () => {
-    settings.bg = DEFAULTS.bg;
-    settings.fg = DEFAULTS.fg;
-    settings.accent = DEFAULTS.accent;
-    saveSettings();
-    applySettings();
-  });
-
-  // ---------- Разбиение на абзацы ----------
-  function splitIntoParagraphs(text) {
-    const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
-    if (blocks.length <= 1) {
-      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-      if (lines.length > 1) return lines;
-      return [text.trim()];
-    }
-    return blocks;
-  }
-
-  function isChapterTitle(text) {
-    if (!text) return false;
-    const t = text.trim();
-    if (t.length > 90 || t.length < 2) return false;
-    const patterns = [
-      /^(глава|часть|книга|том|chapter|part|book|volume)\s+[\divxlcdm]+/i,
-      /^[IVXLCDM]{1,7}\.?\s*$/,
-      /^\d+\.?\s*$/,
-      /^#{1,3}\s+/,
-      /^\*{3,}$/
+    const PRESETS = [
+      { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
+      { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
+      { name: 'Сепия', bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
+      { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
+      { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
+      { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
+      { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
+      { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
+      { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
     ];
-    for (const p of patterns) if (p.test(t)) return true;
-    if (t.length < 70 && !/[.!?…]$/.test(t)) {
-      const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
-      if (upperRatio > 0.6) return true;
+
+    function loadSettings() {
+      try {
+        const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
+        return Object.assign({}, DEFAULTS, s);
+      } catch (e) { return Object.assign({}, DEFAULTS); }
     }
-    return false;
-  }
-
-  function render(text) {
-    content.innerHTML = '';
-    chapters = [];
-    const paragraphs = splitIntoParagraphs(text);
-    let chapterCount = 0;
-
-    paragraphs.forEach(p => {
-      const el = document.createElement('p');
-      el.textContent = p;
-
-      if (isChapterTitle(p)) {
-        el.classList.add('chapter-title');
-        el.style.color = mix(settings.fg, settings.bg, 0.3);
-        chapterCount++;
-        chapters.push({ title: p.trim(), el: el, num: chapterCount });
-      }
-      content.appendChild(el);
-    });
-
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    footerLeft.textContent = words.toLocaleString('ru-RU') + ' слов';
-    footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
-
-    buildToc();
-    updateProgress();
-  }
-
-  // ---------- Содержание ----------
-  function buildToc() {
-    tocList.innerHTML = '';
-    if (chapters.length === 0) {
-      const empty = document.createElement('div');
-      empty.id = 'toc-empty';
-      empty.textContent = 'Главы не найдены. Попробуйте оформить заголовки как «Глава 1», «Часть I» или капсом.';
-      tocList.appendChild(empty);
-      return;
+    let settings = loadSettings();
+    function saveSettings() {
+      try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {}
     }
-    chapters.forEach((ch, i) => {
-      const el = document.createElement('div');
-      el.className = 'toc-item';
-      el.textContent = ch.title;
-      el.dataset.index = i;
-      el.addEventListener('click', () => {
-        goToChapter(i);
-        closeToc();
+
+    function shade(hex, amt) {
+      const n = hex.replace('#','');
+      const num = parseInt(n.length === 3 ? n.split('').map(c=>c+c).join('') : n, 16);
+      let r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+      r = Math.max(0, Math.min(255, r + amt));
+      g = Math.max(0, Math.min(255, g + amt));
+      b = Math.max(0, Math.min(255, b + amt));
+      return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1);
+    }
+
+    function mix(c1, c2, t) {
+      const p = (c) => {
+        const n = c.replace('#','');
+        const v = parseInt(n.length === 3 ? n.split('').map(x=>x+x).join('') : n, 16);
+        return [(v>>16)&255, (v>>8)&255, v&255];
+      };
+      const a = p(c1), b = p(c2);
+      const r = a.map((v,i)=>Math.round(v*(1-t) + b[i]*t));
+      return '#' + r.map(x=>x.toString(16).padStart(2,'0')).join('');
+    }
+
+    function applySettings() {
+      const { bg, fg, accent } = settings;
+      root.style.setProperty('--bg', bg);
+      root.style.setProperty('--fg', fg);
+      root.style.setProperty('--accent', accent);
+      root.style.setProperty('--bg-header', shade(bg, 6));
+      root.style.setProperty('--bg-panel', shade(bg, 10));
+      root.style.setProperty('--bg-input', shade(bg, 6));
+      root.style.setProperty('--border', shade(bg, 14));
+      root.style.setProperty('--border-strong', shade(bg, 22));
+      root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
+      root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+      root.style.setProperty('--col-width', settings.colWidth + 'px');
+      root.style.setProperty('--line-height', settings.lineHeight);
+
+      if (content) content.style.fontSize = settings.fontSize + 'px';
+      if (sizeLabel) sizeLabel.textContent = settings.fontSize;
+      if (widthLabel) widthLabel.textContent = settings.colWidth;
+      if (lhLabel) lhLabel.textContent = settings.lineHeight.toFixed(2);
+      if (mSizeLabel) mSizeLabel.textContent = settings.fontSize;
+      if (mWidthLabel) mWidthLabel.textContent = settings.colWidth;
+      if (mLhLabel) mLhLabel.textContent = settings.lineHeight.toFixed(2);
+
+      if (colBg) colBg.value = settings.bg;
+      if (colFg) colFg.value = settings.fg;
+      if (colAccent) colAccent.value = settings.accent;
+
+      document.querySelectorAll('.palette-item').forEach(el => {
+        el.classList.toggle('active',
+          el.dataset.bg === settings.bg &&
+          el.dataset.fg === settings.fg &&
+          el.dataset.accent === settings.accent
+        );
       });
-      tocList.appendChild(el);
+
+      setTimeout(updateProgress, 20);
+    }
+
+    function buildPresets() {
+      if (!paletteGrid) return;
+      paletteGrid.innerHTML = '';
+      PRESETS.forEach(pr => {
+        const el = document.createElement('div');
+        el.className = 'palette-item';
+        el.dataset.bg = pr.bg;
+        el.dataset.fg = pr.fg;
+        el.dataset.accent = pr.accent;
+        el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
+        el.addEventListener('click', () => {
+          settings.bg = pr.bg;
+          settings.fg = pr.fg;
+          settings.accent = pr.accent;
+          saveSettings();
+          applySettings();
+        });
+        paletteGrid.appendChild(el);
+      });
+    }
+
+    function changeFont(delta) {
+      settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta));
+      saveSettings(); applySettings();
+    }
+    function changeWidth(delta) {
+      settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta));
+      saveSettings(); applySettings();
+    }
+    function changeLineHeight(delta) {
+      settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100));
+      saveSettings(); applySettings();
+    }
+
+    if (fontDec) fontDec.addEventListener('click', () => changeFont(-2));
+    if (fontInc) fontInc.addEventListener('click', () => changeFont(2));
+    if (mFontDec) mFontDec.addEventListener('click', () => changeFont(-2));
+    if (mFontInc) mFontInc.addEventListener('click', () => changeFont(2));
+
+    if (widthDec) widthDec.addEventListener('click', () => changeWidth(-40));
+    if (widthInc) widthInc.addEventListener('click', () => changeWidth(40));
+    if (mWidthDec) mWidthDec.addEventListener('click', () => changeWidth(-40));
+    if (mWidthInc) mWidthInc.addEventListener('click', () => changeWidth(40));
+
+    if (lhDec) lhDec.addEventListener('click', () => changeLineHeight(-0.1));
+    if (lhInc) lhInc.addEventListener('click', () => changeLineHeight(0.1));
+    if (mLhDec) mLhDec.addEventListener('click', () => changeLineHeight(-0.1));
+    if (mLhInc) mLhInc.addEventListener('click', () => changeLineHeight(0.1));
+
+    if (btnTheme) btnTheme.addEventListener('click', (e) => {
+      e.stopPropagation();
+      palette.classList.toggle('open');
     });
-  }
-
-  function openToc() {
-    tocPanel.classList.add('open');
-    tocOverlay.classList.add('open');
-    highlightActiveToc();
-  }
-  function closeToc() {
-    tocPanel.classList.remove('open');
-    tocOverlay.classList.remove('open');
-  }
-  function toggleToc() {
-    if (tocPanel.classList.contains('open')) closeToc();
-    else openToc();
-  }
-  btnToc.addEventListener('click', toggleToc);
-  tocClose.addEventListener('click', closeToc);
-  tocOverlay.addEventListener('click', closeToc);
-
-  function highlightActiveToc() {
-    const items = tocList.querySelectorAll('.toc-item');
-    items.forEach((el, i) => el.classList.toggle('active', i === activeChapter));
-    if (activeChapter >= 0 && items[activeChapter]) {
-      items[activeChapter].scrollIntoView({ block: 'nearest' });
-    }
-  }
-
-  function goToChapter(i) {
-    if (i < 0 || i >= chapters.length) return;
-    activeChapter = i;
-    chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    highlightActiveToc();
-  }
-
-  // ---------- Прогресс и автоскрытие ползунка ----------
-  let hideTimer = null;
-  function showScroller() {
-    if (readerScreen.style.display !== 'block') return;
-    sideProgress.classList.add('visible');
-    if (hideTimer) clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => {
-      if (!sideProgress.classList.contains('dragging')) {
-        sideProgress.classList.remove('visible');
+    document.addEventListener('click', (e) => {
+      if (palette && !palette.contains(e.target) && e.target !== btnTheme) {
+        palette.classList.remove('open');
       }
-    }, 500);
-  }
+    });
+    if (palette) palette.addEventListener('click', e => e.stopPropagation());
 
-  function updateProgress() {
-    const scrollTop = readerScreen.scrollTop;
-    const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
-    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-    progressBar.style.width = pct + '%';
+    if (colBg) colBg.addEventListener('input', e => { settings.bg = e.target.value; saveSettings(); applySettings(); });
+    if (colFg) colFg.addEventListener('input', e => { settings.fg = e.target.value; saveSettings(); applySettings(); });
+    if (colAccent) colAccent.addEventListener('input', e => { settings.accent = e.target.value; saveSettings(); applySettings(); });
 
-    const trackH = sideProgress.clientHeight;
-    const thumbH = sideThumb.offsetHeight || 40;
-    const top = (pct / 100) * Math.max(0, trackH - thumbH);
-    sideThumb.style.top = top + 'px';
+    if (resetTheme) resetTheme.addEventListener('click', () => {
+      settings.bg = DEFAULTS.bg;
+      settings.fg = DEFAULTS.fg;
+      settings.accent = DEFAULTS.accent;
+      saveSettings(); applySettings();
+    });
 
-    if (scrollTop > 400) toTop.classList.add('show');
-    else toTop.classList.remove('show');
-
-    if (chapters.length) {
-      let idx = -1;
-      for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].el.offsetTop - 80 <= scrollTop) idx = i;
-        else break;
-      }
-      if (idx !== activeChapter) {
-        activeChapter = idx;
-        highlightActiveToc();
-      }
+    // Нижняя панель
+    function openSheet() {
+      if (!mobileSheet) return;
+      mobileSheet.classList.add('open');
+      sheetOverlay.classList.add('open');
     }
-
-    if (currentBookId) {
-      const books = loadBooks();
-      const b = books.find(x => x.id === currentBookId);
-      if (b) {
-        b.scroll = scrollTop;
-        b.chapter = activeChapter;
-        saveBooks(books);
-      }
+    function closeSheet() {
+      if (!mobileSheet) return;
+      mobileSheet.classList.remove('open');
+      sheetOverlay.classList.remove('open');
     }
-  }
-
-  readerScreen.addEventListener('scroll', () => {
-    updateProgress();
-    showScroller();
-  });
-  window.addEventListener('resize', updateProgress);
-
-  // Показываем ползунок при наведении/касании
-  sideProgress.addEventListener('mouseenter', () => {
-    sideProgress.classList.add('visible');
-    if (hideTimer) clearTimeout(hideTimer);
-  });
-  sideProgress.addEventListener('mouseleave', () => {
-    if (!sideProgress.classList.contains('dragging')) showScroller();
-  });
-
-  // ---------- Перетаскивание ползунка (scrubbing) ----------
-  let dragging = false;
-
-  function scrollFromPointer(clientY) {
-    const rect = sideProgress.getBoundingClientRect();
-    const trackH = rect.height;
-    const thumbH = sideThumb.offsetHeight || 40;
-    const usable = Math.max(1, trackH - thumbH);
-    let y = clientY - rect.top - thumbH / 2;
-    y = Math.max(0, Math.min(usable, y));
-    const pct = y / usable;
-    const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-    readerScreen.scrollTop = pct * max;
-  }
-
-  function startDrag(e) {
-    dragging = true;
-    sideProgress.classList.add('dragging');
-    sideProgress.classList.add('visible');
-    if (hideTimer) clearTimeout(hideTimer);
-    e.preventDefault();
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    scrollFromPointer(y);
-    document.addEventListener('mousemove', onDragMove, { passive: false });
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchmove', onDragMove, { passive: false });
-    document.addEventListener('touchend', endDrag);
-    document.addEventListener('touchcancel', endDrag);
-  }
-
-  function onDragMove(e) {
-    if (!dragging) return;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    scrollFromPointer(y);
-    if (e.cancelable) e.preventDefault();
-  }
-
-  function endDrag() {
-    if (!dragging) return;
-    dragging = false;
-    sideProgress.classList.remove('dragging');
-    document.removeEventListener('mousemove', onDragMove);
-    document.removeEventListener('mouseup', endDrag);
-    document.removeEventListener('touchmove', onDragMove);
-    document.removeEventListener('touchend', endDrag);
-    document.removeEventListener('touchcancel', endDrag);
-    showScroller();
-  }
-
-  sideProgress.addEventListener('mousedown', startDrag);
-  sideProgress.addEventListener('touchstart', startDrag, { passive: false });
-
-  // ---------- Кнопка наверх ----------
-  toTop.addEventListener('click', () => {
-    readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  // ---------- Переход к главе ----------
-  function openJump() {
-    if (chapters.length === 0) return;
-    jumpBox.classList.add('show');
-    jumpInput.value = (activeChapter >= 0 ? activeChapter + 1 : 1);
-    jumpInput.max = chapters.length;
-    jumpInput.focus();
-    jumpInput.select();
-  }
-  function closeJump() { jumpBox.classList.remove('show'); }
-
-  jumpGo.addEventListener('click', () => {
-    const n = parseInt(jumpInput.value, 10);
-    if (!isNaN(n)) goToChapter(n - 1);
-    closeJump();
-  });
-  jumpCancel.addEventListener('click', closeJump);
-  jumpInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') jumpGo.click();
-    if (e.key === 'Escape') closeJump();
-  });
-
-  // ---------- Экран чтения ----------
-  function showReader() {
-    pasteScreen.style.display = 'none';
-    readerScreen.style.display = 'block';
-    readerControls.style.display = 'flex';
-  }
-  function showPaste() {
-    pasteScreen.style.display = 'flex';
-    readerScreen.style.display = 'none';
-    readerControls.style.display = 'none';
-    progressBar.style.width = '0%';
-    sideProgress.classList.remove('visible');
-    toTop.classList.remove('show');
-    closeToc();
-    closeJump();
-    currentBookId = null;
-  }
-
-  logo.addEventListener('click', () => {
-    if (readerScreen.style.display === 'block') {
-      showPaste();
-      renderLibrary();
+    function toggleSheet() {
+      if (!mobileSheet) return;
+      if (mobileSheet.classList.contains('open')) closeSheet(); else openSheet();
     }
-  });
+    if (btnMenu) btnMenu.addEventListener('click', toggleSheet);
+    if (sheetClose) sheetClose.addEventListener('click', closeSheet);
+    if (mClose) mClose.addEventListener('click', closeSheet);
+    if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
 
-  btnLibrary.addEventListener('click', () => {
-    showPaste();
-    renderLibrary();
-  });
-
-  // ---------- Библиотека ----------
-  function loadBooks() {
-    try {
-      return JSON.parse(localStorage.getItem('reader_books') || '[]');
-    } catch (e) { return []; }
-  }
-  function saveBooks(books) {
-    localStorage.setItem('reader_books', JSON.stringify(books));
-  }
-
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function highlightMatch(title, query) {
-    const safe = escapeHtml(title);
-    if (!query) return safe;
-    const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return safe.replace(new RegExp('(' + q + ')', 'ig'), '<mark>$1</mark>');
-  }
-
-  function renderLibrary() {
-    const books = loadBooks();
-    const query = (librarySearch.value || '').trim().toLowerCase();
-
-    librarySearchWrap.classList.toggle('has-value', !!query);
-
-    libraryList.innerHTML = '';
-
-    if (books.length === 0) {
-      libraryNoResults.classList.remove('show');
-      const empty = document.createElement('div');
-      empty.id = 'library-empty';
-      empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
-      libraryList.appendChild(empty);
-      return;
-    }
-
-    const filtered = query
-      ? books.filter(b => b.title.toLowerCase().includes(query))
-      : books;
-
-    if (filtered.length === 0) {
-      libraryNoResults.classList.add('show');
-      return;
-    }
-    libraryNoResults.classList.remove('show');
-
-    filtered.forEach(b => {
-      const el = document.createElement('div');
-      el.className = 'book-item';
-
-      const title = document.createElement('div');
-      title.className = 'title';
-      title.innerHTML = highlightMatch(b.title, query);
-
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      const words = b.words || 0;
-      const min = Math.max(1, Math.round(words / 200));
-      meta.textContent = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
-
-      const del = document.createElement('button');
-      del.className = 'del';
-      del.title = 'Удалить';
-      del.textContent = '✕';
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm('Удалить «' + b.title + '»?')) {
-          const arr = loadBooks().filter(x => x.id !== b.id);
-          saveBooks(arr);
-          renderLibrary();
+    let sheetTouchStartY = null;
+    if (sheetHandle) {
+      sheetHandle.addEventListener('touchstart', (e) => {
+        sheetTouchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      sheetHandle.addEventListener('touchmove', (e) => {
+        if (sheetTouchStartY === null) return;
+        if (e.touches[0].clientY - sheetTouchStartY > 60) {
+          closeSheet();
+          sheetTouchStartY = null;
         }
+      }, { passive: true });
+      sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
+    }
+
+    if (mTheme) mTheme.addEventListener('click', () => {
+      closeSheet();
+      setTimeout(() => { if (palette) palette.classList.add('open'); }, 200);
+    });
+    if (mToc) mToc.addEventListener('click', () => { closeSheet(); setTimeout(openToc, 180); });
+    if (mJump) mJump.addEventListener('click', () => { closeSheet(); setTimeout(openJump, 180); });
+    if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
+
+    // Разбиение текста
+    function splitIntoParagraphs(text) {
+      const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+      if (blocks.length <= 1) {
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length > 1) return lines;
+        return [text.trim()];
+      }
+      return blocks;
+    }
+
+    function isChapterTitle(text) {
+      if (!text) return false;
+      const t = text.trim();
+      if (t.length > 90 || t.length < 2) return false;
+      const patterns = [
+        /^(глава|часть|книга|том|chapter|part|book|volume)\s+[\divxlcdm]+/i,
+        /^[IVXLCDM]{1,7}\.?\s*$/,
+        /^\d+\.?\s*$/,
+        /^#{1,3}\s+/,
+        /^\*{3,}$/
+      ];
+      for (const p of patterns) if (p.test(t)) return true;
+      if (t.length < 70 && !/[.!?…]$/.test(t)) {
+        const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
+        if (upperRatio > 0.6) return true;
+      }
+      return false;
+    }
+
+    function render(text) {
+      content.innerHTML = '';
+      chapters = [];
+      const paragraphs = splitIntoParagraphs(text);
+      let chapterCount = 0;
+
+      paragraphs.forEach(p => {
+        const el = document.createElement('p');
+        el.textContent = p;
+        if (isChapterTitle(p)) {
+          el.classList.add('chapter-title');
+          el.style.color = mix(settings.fg, settings.bg, 0.3);
+          chapterCount++;
+          chapters.push({ title: p.trim(), el: el, num: chapterCount });
+        }
+        content.appendChild(el);
       });
 
-      el.appendChild(title);
-      el.appendChild(meta);
-      el.appendChild(del);
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      if (footerLeft) footerLeft.textContent = words.toLocaleString('ru-RU') + ' слов';
+      if (footerRight) footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
 
-      el.addEventListener('click', () => openBook(b.id));
-
-      libraryList.appendChild(el);
-    });
-  }
-
-  function openBook(id) {
-    const books = loadBooks();
-    const b = books.find(x => x.id === id);
-    if (!b) return;
-    currentBookId = id;
-    input.value = b.text;
-    startReading(b.text, true);
-    setTimeout(() => {
-      if (typeof b.scroll === 'number' && b.scroll > 0) {
-        readerScreen.scrollTop = b.scroll;
-      } else if (typeof b.chapter === 'number' && b.chapter >= 0 && chapters[b.chapter]) {
-        chapters[b.chapter].el.scrollIntoView({ block: 'start' });
-      }
+      buildToc();
       updateProgress();
+    }
+
+    function buildToc() {
+      if (!tocList) return;
+      tocList.innerHTML = '';
+      if (chapters.length === 0) {
+        const empty = document.createElement('div');
+        empty.id = 'toc-empty';
+        empty.textContent = 'Главы не найдены. Оформите заголовки как «Глава 1», «Часть I» или капсом.';
+        tocList.appendChild(empty);
+        return;
+      }
+      chapters.forEach((ch, i) => {
+        const el = document.createElement('div');
+        el.className = 'toc-item';
+        el.textContent = ch.title;
+        el.addEventListener('click', () => { goToChapter(i); closeToc(); });
+        tocList.appendChild(el);
+      });
+    }
+
+    function openToc() {
+      if (!tocPanel) return;
+      tocPanel.classList.add('open');
+      tocOverlay.classList.add('open');
+      highlightActiveToc();
+    }
+    function closeToc() {
+      if (!tocPanel) return;
+      tocPanel.classList.remove('open');
+      tocOverlay.classList.remove('open');
+    }
+    function toggleToc() { tocPanel.classList.contains('open') ? closeToc() : openToc(); }
+
+    if (btnToc) btnToc.addEventListener('click', toggleToc);
+    if (tocClose) tocClose.addEventListener('click', closeToc);
+    if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
+
+    function highlightActiveToc() {
+      if (!tocList) return;
+      const items = tocList.querySelectorAll('.toc-item');
+      items.forEach((el, i) => el.classList.toggle('active', i === activeChapter));
+      if (activeChapter >= 0 && items[activeChapter]) {
+        items[activeChapter].scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function goToChapter(i) {
+      if (i < 0 || i >= chapters.length) return;
+      activeChapter = i;
+      chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      highlightActiveToc();
+    }
+
+    let hideTimer = null;
+    function showScroller() {
+      if (!sideProgress || readerScreen.style.display !== 'block') return;
+      sideProgress.classList.add('visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (!sideProgress.classList.contains('dragging')) {
+          sideProgress.classList.remove('visible');
+        }
+      }, 500);
+    }
+
+    function updateProgress() {
+      if (!readerScreen || !progressBar) return;
+      const scrollTop = readerScreen.scrollTop;
+      const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
+      const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progressBar.style.width = pct + '%';
+
+      if (sideProgress && sideThumb) {
+        const trackH = sideProgress.clientHeight;
+        const thumbH = sideThumb.offsetHeight || 40;
+        const top = (pct / 100) * Math.max(0, trackH - thumbH);
+        sideThumb.style.top = top + 'px';
+      }
+
+      if (toTop) {
+        if (scrollTop > 400) toTop.classList.add('show');
+        else toTop.classList.remove('show');
+      }
+
+      if (chapters.length) {
+        let idx = -1;
+        for (let i = 0; i < chapters.length; i++) {
+          if (chapters[i].el.offsetTop - 80 <= scrollTop) idx = i;
+          else break;
+        }
+        if (idx !== activeChapter) {
+          activeChapter = idx;
+          highlightActiveToc();
+        }
+      }
+
+      if (currentBookId) {
+        const books = loadBooks();
+        const b = books.find(x => x.id === currentBookId);
+        if (b) { b.scroll = scrollTop; b.chapter = activeChapter; saveBooks(books); }
+      }
+    }
+
+    if (readerScreen) {
+      readerScreen.addEventListener('scroll', () => { updateProgress(); showScroller(); });
+    }
+    window.addEventListener('resize', updateProgress);
+
+    if (sideProgress) {
+      sideProgress.addEventListener('mouseenter', () => {
+        sideProgress.classList.add('visible');
+        if (hideTimer) clearTimeout(hideTimer);
+      });
+      sideProgress.addEventListener('mouseleave', () => {
+        if (!sideProgress.classList.contains('dragging')) showScroller();
+      });
+    }
+
+    let dragging = false;
+    function scrollFromPointer(clientY) {
+      if (!sideProgress) return;
+      const rect = sideProgress.getBoundingClientRect();
+      const trackH = rect.height;
+      const thumbH = (sideThumb && sideThumb.offsetHeight) || 40;
+      const usable = Math.max(1, trackH - thumbH);
+      let y = clientY - rect.top - thumbH / 2;
+      y = Math.max(0, Math.min(usable, y));
+      const pct = y / usable;
+      const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+      readerScreen.scrollTop = pct * max;
+    }
+    function startDrag(e) {
+      dragging = true;
+      sideProgress.classList.add('dragging', 'visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      e.preventDefault();
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+      scrollFromPointer(y);
+      document.addEventListener('mousemove', onDragMove, { passive: false });
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchmove', onDragMove, { passive: false });
+      document.addEventListener('touchend', endDrag);
+      document.addEventListener('touchcancel', endDrag);
+    }
+    function onDragMove(e) {
+      if (!dragging) return;
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+      scrollFromPointer(y);
+      if (e.cancelable) e.preventDefault();
+    }
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      sideProgress.classList.remove('dragging');
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', endDrag);
+      document.removeEventListener('touchmove', onDragMove);
+      document.removeEventListener('touchend', endDrag);
+      document.removeEventListener('touchcancel', endDrag);
       showScroller();
-    }, 60);
-  }
-
-  function addBook(title, text) {
-    const books = loadBooks();
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
-    books.unshift({ id, title, text, words, scroll: 0, chapter: -1, added: Date.now() });
-    if (books.length > 50) books.length = 50;
-    saveBooks(books);
-    renderLibrary();
-    return id;
-  }
-
-  librarySearch.addEventListener('input', renderLibrary);
-  librarySearchClear.addEventListener('click', () => {
-    librarySearch.value = '';
-    renderLibrary();
-    librarySearch.focus();
-  });
-
-  // ---------- Чтение ----------
-  function startReading(text, fromBook) {
-    if (!text || !text.trim()) {
-      alert('Нет текста для чтения.');
-      return;
     }
-    render(text);
-    showReader();
-    readerScreen.scrollTop = 0;
-    if (!fromBook) currentBookId = null;
-    setTimeout(() => { updateProgress(); showScroller(); }, 30);
-  }
-
-  btnRead.addEventListener('click', () => {
-    const text = input.value;
-    if (!text.trim()) { alert('Вставьте текст книги.'); return; }
-    const title = guessTitle(text);
-    const id = addBook(title, text);
-    currentBookId = id;
-    startReading(text, true);
-  });
-
-  function guessTitle(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    for (const l of lines.slice(0, 10)) {
-      if (l.length >= 3 && l.length <= 80) return l;
+    if (sideProgress) {
+      sideProgress.addEventListener('mousedown', startDrag);
+      sideProgress.addEventListener('touchstart', startDrag, { passive: false });
     }
-    return 'Без названия';
-  }
 
-  btnClear.addEventListener('click', () => {
-    if (!input.value.trim() || confirm('Очистить поле?')) {
-      input.value = '';
-      input.focus();
+    if (toTop) toTop.addEventListener('click', () => {
+      readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function openJump() {
+      if (!jumpBox || chapters.length === 0) return;
+      jumpBox.classList.add('show');
+      jumpInput.value = (activeChapter >= 0 ? activeChapter + 1 : 1);
+      jumpInput.max = chapters.length;
+      jumpInput.focus();
+      jumpInput.select();
     }
-  });
+    function closeJump() { if (jumpBox) jumpBox.classList.remove('show'); }
 
-  btnFile.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (f) readFile(f);
-    fileInput.value = '';
-  });
+    if (jumpGo) jumpGo.addEventListener('click', () => {
+      const n = parseInt(jumpInput.value, 10);
+      if (!isNaN(n)) goToChapter(n - 1);
+      closeJump();
+    });
+    if (jumpCancel) jumpCancel.addEventListener('click', closeJump);
+    if (jumpInput) jumpInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') jumpGo.click();
+      if (e.key === 'Escape') closeJump();
+    });
 
-  function readFile(file) {
-    const name = file.name.replace(/\.[^.]+$/, '');
-    const reader = new FileReader();
-    reader.onload = () => {
-      let text = String(reader.result || '');
+    function showReader() {
+      pasteScreen.style.display = 'none';
+      readerScreen.style.display = 'block';
+      readerControls.style.display = 'flex';
+    }
+    function showPaste() {
+      pasteScreen.style.display = 'flex';
+      readerScreen.style.display = 'none';
+      readerControls.style.display = 'none';
+      progressBar.style.width = '0%';
+      if (sideProgress) sideProgress.classList.remove('visible');
+      if (toTop) toTop.classList.remove('show');
+      closeToc();
+      closeJump();
+      closeSheet();
+      currentBookId = null;
+    }
 
-      if (/\.html?$/i.test(file.name) || /\.fb2$/i.test(file.name)) {
-        text = stripHtml(text);
-      } else if (/\.epub$/i.test(file.name)) {
-        alert('EPUB — бинарный формат. Откройте его в другой программе и скопируйте текст, либо сохраните как .txt.');
+    if (logo) logo.addEventListener('click', () => {
+      if (readerScreen.style.display === 'block') { showPaste(); renderLibrary(); }
+    });
+    if (btnLibrary) btnLibrary.addEventListener('click', () => { showPaste(); renderLibrary(); });
+
+    function loadBooks() {
+      try { return JSON.parse(localStorage.getItem('reader_books') || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveBooks(books) {
+      try { localStorage.setItem('reader_books', JSON.stringify(books)); } catch (e) {}
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function highlightMatch(title, query) {
+      const safe = escapeHtml(title);
+      if (!query) return safe;
+      const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return safe.replace(new RegExp('(' + q + ')', 'ig'), '<mark>$1</mark>');
+    }
+
+    function renderLibrary() {
+      if (!libraryList) return;
+      const books = loadBooks();
+      const query = (librarySearch.value || '').trim().toLowerCase();
+      librarySearchWrap.classList.toggle('has-value', !!query);
+      libraryList.innerHTML = '';
+
+      if (books.length === 0) {
+        if (libraryNoResults) libraryNoResults.classList.remove('show');
+        const empty = document.createElement('div');
+        empty.id = 'library-empty';
+        empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
+        libraryList.appendChild(empty);
         return;
       }
 
-      text = text.replace(/\r\n?/g, '\n').trim();
-      if (!text) { alert('Файл пуст.'); return; }
-      const title = name || guessTitle(text);
+      const filtered = query ? books.filter(b => b.title.toLowerCase().includes(query)) : books;
+      if (filtered.length === 0) {
+        if (libraryNoResults) libraryNoResults.classList.add('show');
+        return;
+      }
+      if (libraryNoResults) libraryNoResults.classList.remove('show');
+
+      filtered.forEach(b => {
+        const el = document.createElement('div');
+        el.className = 'book-item';
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.innerHTML = highlightMatch(b.title, query);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const words = b.words || 0;
+        const min = Math.max(1, Math.round(words / 200));
+        meta.textContent = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
+
+        const del = document.createElement('button');
+        del.className = 'del';
+        del.title = 'Удалить';
+        del.textContent = '✕';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('Удалить «' + b.title + '»?')) {
+            const arr = loadBooks().filter(x => x.id !== b.id);
+            saveBooks(arr);
+            renderLibrary();
+          }
+        });
+
+        el.appendChild(title);
+        el.appendChild(meta);
+        el.appendChild(del);
+        el.addEventListener('click', () => openBook(b.id));
+        libraryList.appendChild(el);
+      });
+    }
+
+    function openBook(id) {
+      const books = loadBooks();
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+      currentBookId = id;
+      input.value = b.text;
+      startReading(b.text, true);
+      setTimeout(() => {
+        if (typeof b.scroll === 'number' && b.scroll > 0) readerScreen.scrollTop = b.scroll;
+        else if (typeof b.chapter === 'number' && b.chapter >= 0 && chapters[b.chapter]) {
+          chapters[b.chapter].el.scrollIntoView({ block: 'start' });
+        }
+        updateProgress(); showScroller();
+      }, 60);
+    }
+
+    function addBook(title, text) {
+      const books = loadBooks();
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
+      books.unshift({ id, title, text, words, scroll: 0, chapter: -1, added: Date.now() });
+      if (books.length > 50) books.length = 50;
+      saveBooks(books);
+      renderLibrary();
+      return id;
+    }
+
+    if (librarySearch) librarySearch.addEventListener('input', renderLibrary);
+    if (librarySearchClear) librarySearchClear.addEventListener('click', () => {
+      librarySearch.value = '';
+      renderLibrary();
+      librarySearch.focus();
+    });
+
+    function startReading(text, fromBook) {
+      if (!text || !text.trim()) { alert('Нет текста для чтения.'); return; }
+      render(text);
+      showReader();
+      readerScreen.scrollTop = 0;
+      if (!fromBook) currentBookId = null;
+      setTimeout(() => { updateProgress(); showScroller(); }, 30);
+    }
+
+    if (btnRead) btnRead.addEventListener('click', () => {
+      const text = input.value;
+      if (!text.trim()) { alert('Вставьте текст книги.'); return; }
+      const title = guessTitle(text);
       const id = addBook(title, text);
-      input.value = text;
       currentBookId = id;
       startReading(text, true);
-    };
-    reader.onerror = () => alert('Не удалось прочитать файл.');
-    reader.readAsText(file, 'UTF-8');
-  }
-
-  function stripHtml(html) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    doc.querySelectorAll('script,style,noscript').forEach(n => n.remove());
-    doc.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,br,li').forEach(n => {
-      n.appendChild(doc.createTextNode('\n'));
     });
-    let text = doc.body ? doc.body.textContent : html;
-    return text.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
-  }
 
-  // ---------- Drag & Drop ----------
-  let dragCounter = 0;
-  window.addEventListener('dragenter', (e) => {
-    if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-      dragCounter++;
-      dropOverlay.classList.add('show');
+    function guessTitle(text) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      for (const l of lines.slice(0, 10)) {
+        if (l.length >= 3 && l.length <= 80) return l;
+      }
+      return 'Без названия';
     }
-  });
-  window.addEventListener('dragover', (e) => {
-    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-    e.preventDefault();
-  });
-  window.addEventListener('dragleave', () => {
-    dragCounter = Math.max(0, dragCounter - 1);
-    if (dragCounter === 0) dropOverlay.classList.remove('show');
-  });
-  window.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dragCounter = 0;
-    dropOverlay.classList.remove('show');
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (f) readFile(f);
-  });
 
-  // ---------- Горячие клавиши ----------
-  document.addEventListener('keydown', (e) => {
-    if (readerScreen.style.display !== 'block') return;
-    const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П')) {
-      e.preventDefault(); openJump();
-    } else if (ctrl && (e.key === 'o' || e.key === 'O' || e.key === 'щ' || e.key === 'Щ')) {
-      e.preventDefault(); toggleToc();
-    } else if (ctrl && (e.key === '=' || e.key === '+' || e.key === ']')) {
-      e.preventDefault(); changeFont(2);
-    } else if (ctrl && (e.key === '-' || e.key === '_' || e.key === '[')) {
-      e.preventDefault(); changeFont(-2);
-    } else if (e.key === 'Escape') {
-      closeJump(); closeToc(); palette.classList.remove('open');
+    if (btnClear) btnClear.addEventListener('click', () => {
+      if (!input.value.trim() || confirm('Очистить поле?')) {
+        input.value = '';
+        input.focus();
+      }
+    });
+
+    if (btnFile) btnFile.addEventListener('click', () => fileInput.click());
+    if (fileInput) fileInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) readFile(f);
+      fileInput.value = '';
+    });
+
+    function readFile(file) {
+      const name = file.name.replace(/\.[^.]+$/, '');
+      const reader = new FileReader();
+      reader.onload = () => {
+        let text = String(reader.result || '');
+        if (/\.html?$/i.test(file.name) || /\.fb2$/i.test(file.name)) {
+          text = stripHtml(text);
+        }
+        text = text.replace(/\r\n?/g, '\n').trim();
+        if (!text) { alert('Файл пуст.'); return; }
+        const title = name || guessTitle(text);
+        const id = addBook(title, text);
+        input.value = text;
+        currentBookId = id;
+        startReading(text, true);
+      };
+      reader.onerror = () => alert('Не удалось прочитать файл.');
+      reader.readAsText(file, 'UTF-8');
     }
-  });
 
-  // ---------- Инициализация ----------
-  buildPresets();
-  applySettings();
-  renderLibrary();
+    function stripHtml(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('script,style,noscript').forEach(n => n.remove());
+      doc.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,br,li').forEach(n => {
+        n.appendChild(doc.createTextNode('\n'));
+      });
+      let text = doc.body ? doc.body.textContent : html;
+      return text.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
+    }
 
-  if (window.matchMedia('(max-width: 640px)').matches) {
-    const hintEl = document.getElementById('hint');
-    if (hintEl) hintEl.style.display = 'none';
+    let dragCounter = 0;
+    window.addEventListener('dragenter', (e) => {
+      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
+        dragCounter++;
+        dropOverlay.classList.add('show');
+      }
+    });
+    window.addEventListener('dragover', (e) => {
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+      e.preventDefault();
+    });
+    window.addEventListener('dragleave', () => {
+      dragCounter = Math.max(0, dragCounter - 1);
+      if (dragCounter === 0) dropOverlay.classList.remove('show');
+    });
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      dropOverlay.classList.remove('show');
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) readFile(f);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (readerScreen.style.display !== 'block') return;
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (ctrl && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); openJump(); }
+      else if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
+      else if (ctrl && (e.key === '=' || e.key === '+')) { e.preventDefault(); changeFont(2); }
+      else if (ctrl && (e.key === '-' || e.key === '_')) { e.preventDefault(); changeFont(-2); }
+      else if (e.key === 'Escape') {
+        closeJump(); closeToc();
+        if (palette) palette.classList.remove('open');
+        closeSheet();
+      }
+    });
+
+    // Инициализация
+    buildPresets();
+    applySettings();
+    renderLibrary();
+
+    if (window.matchMedia('(max-width: 640px)').matches) {
+      const hintEl = document.getElementById('hint');
+      if (hintEl) hintEl.style.display = 'none';
+    }
+  } catch (err) {
+    showError((err && err.message) ? err.message : String(err));
   }
 })();
 </script>
