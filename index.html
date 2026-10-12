@@ -28,6 +28,7 @@
     --accent: #8b919b;
     --col-width: 720px;
     --line-height: 1.85;
+    --mark-color: #e0b84a;
   }
 
   #app { display: flex; flex-direction: column; height: 100%; }
@@ -221,6 +222,7 @@
   #content p {
     margin-bottom: 1.15em; text-indent: 2em;
     text-align: justify; orphans: 2; widows: 2;
+    position: relative;
   }
   #content p:first-child { text-indent: 0; }
   #content .chapter-title {
@@ -252,7 +254,6 @@
   }
   #side-progress.dragging #side-thumb { opacity: 1; }
 
-  /* Метка закладки на полосе прокрутки */
   #side-marks {
     position: absolute;
     right: 0; top: 0; bottom: 0;
@@ -264,7 +265,7 @@
     right: 3px;
     width: 10px;
     height: 3px;
-    background: #e0b84a;
+    background: var(--mark-color);
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7);
     transform: translateY(-50%);
@@ -343,7 +344,7 @@
   #marks-header {
     padding: 16px 20px; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--accent);
+    font-size: 13px; color: var(--mark-color);
     letter-spacing: 1px; text-transform: uppercase;
   }
   #marks-header-actions { display: flex; gap: 6px; }
@@ -388,11 +389,6 @@
     border-radius: 4px; cursor: pointer;
   }
   .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
-  .mark-item .mark-pos {
-    font-size: 10px;
-    color: var(--accent);
-    margin-left: 8px;
-  }
 
   #marks-empty {
     padding: 24px 20px;
@@ -417,7 +413,7 @@
     border-radius: 50%;
     background: var(--bg-panel);
     border: 1px solid var(--border-strong);
-    color: #e0b84a;
+    color: var(--mark-color);
     cursor: pointer;
     display: none;
     align-items: center; justify-content: center;
@@ -426,9 +422,9 @@
   }
   #btn-add-mark.show { display: flex; }
   #btn-add-mark.saved {
-    background: #e0b84a;
+    background: var(--mark-color);
     color: var(--bg);
-    border-color: #e0b84a;
+    border-color: var(--mark-color);
   }
   #btn-add-mark.pulse {
     animation: markPulse .5s ease;
@@ -538,7 +534,7 @@
     background: var(--bg-input); border: 1px solid var(--border-strong);
   }
   .sheet-grid button.wide { grid-column: 1 / -1; }
-  .sheet-grid button.mark-btn { color: #e0b84a; border-color: rgba(224,184,74,.4); }
+  .sheet-grid button.mark-btn { color: var(--mark-color); border-color: rgba(224,184,74,.4); }
   #sheet-close {
     display: block; margin: 4px auto 0; padding: 8px 20px;
     font-size: 12px; background: transparent;
@@ -642,7 +638,7 @@
         <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
       <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
-      <button id="btn-marks">🔖 Закладки</button>
+      <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
       <button id="btn-theme">Цвет</button>
       <button id="btn-toc">Содержание</button>
       <button id="btn-library">Библиотека</button>
@@ -665,7 +661,7 @@
 
   <div id="paste-screen">
     <div class="inner">
-      <p>Вставьте текст книги, загрузите файл или перетащите его в окно</p>
+      <p>Вставьте текст книги, загрузите файл или перетащите его в окно.<br>Двойной клик по тексту — закладка.</p>
       <textarea id="input" placeholder="Сюда текст..." spellcheck="false"></textarea>
       <div class="actions">
         <button id="btn-read">Читать</button>
@@ -712,7 +708,7 @@
   <button id="jump-cancel">✕</button>
 </div>
 
-<div id="hint">Ctrl+G — глава · Ctrl+O — содержание · Ctrl+B — закладка</div>
+<div id="hint">Двойной клик по тексту — 🔖 закладка · Ctrl+B — закладка · Ctrl+G — глава · Ctrl+O — содержание</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
@@ -905,10 +901,7 @@
     let chapters = [];
     let activeChapter = -1;
     let currentBookId = null;
-    let currentMarks = [];  // закладки текущей книги
-
-    // ===== НОВОЕ: сохранение позиции чтения =====
-    let anchorRestorePending = false; // нужно ли восстановить позицию после пересчёта раскладки
+    let currentMarks = [];
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -961,56 +954,44 @@
       return '#' + r.map(x=>x.toString(16).padStart(2,'0')).join('');
     }
 
-    // ==== НОВОЕ: получить якорь текущей позиции чтения ====
     function getReadingAnchor() {
       if (!readerScreen || readerScreen.style.display !== 'block') return null;
       const scrollTop = readerScreen.scrollTop;
       const paras = content.querySelectorAll('p');
       if (!paras.length) return null;
 
-      // ищем абзац, который виден в верхней части экрана
       let target = null;
       let targetIndex = -1;
       for (let i = 0; i < paras.length; i++) {
         const el = paras[i];
-        const top = el.offsetTop;
-        const bottom = top + el.offsetHeight;
-        if (bottom > scrollTop + 8) {
-          target = el;
-          targetIndex = i;
-          break;
-        }
+        const bottom = el.offsetTop + el.offsetHeight;
+        if (bottom > scrollTop + 8) { target = el; targetIndex = i; break; }
       }
       if (!target) { target = paras[paras.length - 1]; targetIndex = paras.length - 1; }
 
       const offsetInPara = Math.max(0, scrollTop - target.offsetTop);
       const paraHeight = Math.max(1, target.offsetHeight);
       const ratio = Math.min(1, Math.max(0, offsetInPara / paraHeight));
-
       return { index: targetIndex, ratio: ratio, offsetInPara: offsetInPara };
     }
 
-    // ==== НОВОЕ: восстановить позицию чтения по якорю ====
     function restoreReadingAnchor(anchor) {
       if (!anchor || !readerScreen || readerScreen.style.display !== 'block') return;
       const paras = content.querySelectorAll('p');
       if (!paras.length) return;
       const idx = Math.max(0, Math.min(paras.length - 1, anchor.index));
       const el = paras[idx];
-      const top = el.offsetTop;
       const h = Math.max(1, el.offsetHeight);
       let offset = anchor.offsetInPara;
       if (typeof offset !== 'number' || isNaN(offset)) {
         offset = (anchor.ratio || 0) * h;
       } else {
-        // ограничиваем пропорционально, чтобы не вылететь за абзац после пересчёта
         offset = Math.min(offset, h);
       }
-      readerScreen.scrollTop = top + offset;
+      readerScreen.scrollTop = el.offsetTop + offset;
     }
 
     function applySettings() {
-      // Запоминаем позицию до изменения раскладки
       const anchor = getReadingAnchor();
 
       const { bg, fg, accent } = settings;
@@ -1047,7 +1028,6 @@
         );
       });
 
-      // Восстанавливаем позицию после пересчёта
       requestAnimationFrame(() => {
         restoreReadingAnchor(anchor);
         updateProgress();
@@ -1213,7 +1193,7 @@
       paragraphs.forEach((p, idx) => {
         const el = document.createElement('p');
         el.textContent = p;
-        el.dataset.pIndex = idx; // НОВОЕ: индекс абзаца
+        el.dataset.pIndex = idx;
         if (isChapterTitle(p)) {
           el.classList.add('chapter-title');
           el.style.color = mix(settings.fg, settings.bg, 0.3);
@@ -1286,9 +1266,7 @@
     // ============================================================
     //  ЗАКЛАДКИ
     // ============================================================
-    function marksKey(bookId) {
-      return 'reader_marks_' + (bookId || 'scratch');
-    }
+    function marksKey(bookId) { return 'reader_marks_' + (bookId || 'scratch'); }
     function loadMarks(bookId) {
       try { return JSON.parse(localStorage.getItem(marksKey(bookId)) || '[]'); }
       catch (e) { return []; }
@@ -1297,77 +1275,56 @@
       try { localStorage.setItem(marksKey(bookId), JSON.stringify(arr)); } catch (e) {}
     }
 
-    // ==== НОВОЕ: получить информацию о месте под курсором/в позиции ====
-    function getSnippetAt(posY) {
-      const scrollTop = readerScreen.scrollTop;
-      const y = (typeof posY === 'number' && !isNaN(posY)) ? posY : scrollTop + 40;
+    function getCurrentSnippet() {
+      const y = readerScreen.scrollTop + 40;
       const paras = content.querySelectorAll('p');
-      let target = null;
-      let targetIndex = -1;
+      let target = null, targetIndex = -1;
       for (let i = 0; i < paras.length; i++) {
         const el = paras[i];
-        const top = el.offsetTop;
-        const bottom = top + el.offsetHeight;
-        if (y >= top && y <= bottom) {
-          target = el;
-          targetIndex = i;
-          break;
-        }
-      }
-      if (!target) {
-        // берём ближайший
-        for (let i = 0; i < paras.length; i++) {
-          const el = paras[i];
-          if (el.offsetTop + el.offsetHeight > y) { target = el; targetIndex = i; break; }
-        }
+        if (el.offsetTop + el.offsetHeight > y) { target = el; targetIndex = i; break; }
       }
       if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
       if (!target) return { text: '', chapter: '', pIndex: 0, offsetInPara: 0, ratio: 0 };
-
       const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
-      const paraHeight = Math.max(1, target.offsetHeight);
-      const ratio = offsetInPara / paraHeight;
-
+      const ratio = offsetInPara / Math.max(1, target.offsetHeight);
       const text = (target.textContent || '').trim();
       const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
-
-      // ближайший заголовок выше
       let chapterTitle = '';
       for (let i = 0; i < chapters.length; i++) {
         if (chapters[i].el.offsetTop <= y) chapterTitle = chapters[i].title;
         else break;
       }
-
-      return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara: offsetInPara, ratio: ratio };
+      return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio };
     }
 
-    // ==== ОБНОВЛЕНО: текущий сниппет для закладки ====
-    function getCurrentSnippet() {
-      return getSnippetAt(readerScreen.scrollTop + 40);
-    }
-
-    // ==== ОБНОВЛЕНО: создание закладки с якорем ====
     function addMark(posY) {
       if (readerScreen.style.display !== 'block') return;
-      const anchor = (typeof posY === 'number') ? getSnippetAt(posY) : getCurrentSnippet();
+      const anchor = (typeof posY === 'number') ? (function(){
+        const paras = content.querySelectorAll('p');
+        let target=null, ti=-1;
+        for (let i=0;i<paras.length;i++){const el=paras[i]; if (posY>=el.offsetTop && posY<=el.offsetTop+el.offsetHeight){target=el;ti=i;break;}}
+        if(!target){for (let i=0;i<paras.length;i++){const el=paras[i]; if(el.offsetTop+el.offsetHeight>posY){target=el;ti=i;break;}}}
+        if(!target&&paras.length){target=paras[0];ti=0;}
+        if(!target) return {text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0};
+        const off=Math.max(0,Math.min(target.offsetHeight,posY-target.offsetTop));
+        const ratio=off/Math.max(1,target.offsetHeight);
+        const text=(target.textContent||'').trim();
+        const snippet=text.length>140?text.slice(0,140)+'…':text;
+        let ch='';
+        for (let i=0;i<chapters.length;i++){if(chapters[i].el.offsetTop<=posY) ch=chapters[i].title; else break;}
+        return {text:snippet,chapter:ch,pIndex:ti,offsetInPara:off,ratio};
+      })() : getCurrentSnippet();
+
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
 
       const mark = {
         id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
-        // старые поля (для совместимости)
-        pos: scrollTop,
-        pct: pct,
-        // НОВОЕ: якорь для восстановления после изменения размера
-        pIndex: anchor.pIndex,
-        offsetInPara: anchor.offsetInPara,
-        ratio: anchor.ratio,
-        chapter: anchor.chapter,
-        text: anchor.text,
-        date: Date.now()
+        pos: scrollTop, pct,
+        pIndex: anchor.pIndex, offsetInPara: anchor.offsetInPara, ratio: anchor.ratio,
+        chapter: anchor.chapter, text: anchor.text, date: Date.now()
       };
-
       currentMarks.push(mark);
       saveMarks(currentBookId, currentMarks);
       renderSideMarks();
@@ -1397,26 +1354,22 @@
       renderMarksList();
     }
 
-    // ==== ОБНОВЛЕНО: переход к закладке через якорь ====
-    function goToMark(id) {
-      const m = currentMarks.find(x => x.id === id);
-      if (!m) return;
+    function goToMark(id) { const m = currentMarks.find(x => x.id === id); if (m) { scrollToAnchor(m); closeMarks(); } }
+
+    function scrollToAnchor(item) {
       const paras = content.querySelectorAll('p');
       let top;
-      if (typeof m.pIndex === 'number' && paras[m.pIndex]) {
-        const el = paras[m.pIndex];
+      if (typeof item.pIndex === 'number' && paras[item.pIndex]) {
+        const el = paras[item.pIndex];
         const h = Math.max(1, el.offsetHeight);
-        let offset = m.offsetInPara;
-        if (typeof offset !== 'number' || isNaN(offset)) {
-          offset = (m.ratio || 0) * h;
-        }
+        let offset = item.offsetInPara;
+        if (typeof offset !== 'number' || isNaN(offset)) offset = (item.ratio || 0) * h;
         offset = Math.min(offset, h);
         top = el.offsetTop + offset;
       } else {
-        top = m.pos || 0;
+        top = item.pos || 0;
       }
       readerScreen.scrollTo({ top: top, behavior: 'smooth' });
-      closeMarks();
     }
 
     function formatDate(ts) {
@@ -1434,80 +1387,60 @@
       if (currentMarks.length === 0) {
         const empty = document.createElement('div');
         empty.id = 'marks-empty';
-        empty.textContent = 'Пока нет закладок. Нажмите «🔖 Закладка», чтобы сохранить текущее место.';
+        empty.textContent = 'Пока нет закладок. Двойной клик по слову — закладка.';
         marksList.appendChild(empty);
         return;
       }
-
-      // Сортируем по позиции
       const sorted = currentMarks.slice().sort((a, b) => {
         const ai = (typeof a.pIndex === 'number') ? a.pIndex : 0;
         const bi = (typeof b.pIndex === 'number') ? b.pIndex : 0;
         if (ai !== bi) return ai - bi;
         return (a.offsetInPara || 0) - (b.offsetInPara || 0);
       });
-
       sorted.forEach(m => {
         const el = document.createElement('div');
         el.className = 'mark-item';
-
         const title = document.createElement('div');
         title.className = 'mark-title';
         const pct = Math.round((m.pct || 0) * 100);
         title.textContent = (m.chapter || 'Без главы') + ' · ' + pct + '%';
-
         const text = document.createElement('div');
         text.className = 'mark-text';
         text.textContent = m.text || '(пусто)';
-
         const date = document.createElement('div');
         date.className = 'mark-date';
         date.textContent = formatDate(m.date);
-
         const del = document.createElement('button');
-        del.className = 'mark-del';
-        del.title = 'Удалить';
-        del.textContent = '✕';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          removeMark(m.id);
-        });
-
-        el.appendChild(title);
-        el.appendChild(text);
-        el.appendChild(date);
-        el.appendChild(del);
-
+        del.className = 'mark-del'; del.title = 'Удалить'; del.textContent = '✕';
+        del.addEventListener('click', (e) => { e.stopPropagation(); removeMark(m.id); });
+        el.appendChild(title); el.appendChild(text); el.appendChild(date); el.appendChild(del);
         el.addEventListener('click', () => goToMark(m.id));
         marksList.appendChild(el);
       });
     }
 
-    // ==== ОБНОВЛЕНО: метки на полосе с учётом пересчёта ====
     function renderSideMarks() {
       if (!sideMarks) return;
       sideMarks.innerHTML = '';
-      if (currentMarks.length === 0) return;
-      const trackH = sideProgress.clientHeight;
-      if (trackH === 0) return;
       const totalScroll = readerScreen.scrollHeight - readerScreen.clientHeight;
       const paras = content.querySelectorAll('p');
+
+      function pctFor(item) {
+        if (typeof item.pIndex === 'number' && paras[item.pIndex] && totalScroll > 0) {
+          const el = paras[item.pIndex];
+          const h = Math.max(1, el.offsetHeight);
+          let offset = item.offsetInPara;
+          if (typeof offset !== 'number' || isNaN(offset)) offset = (item.ratio || 0) * h;
+          offset = Math.min(offset, h);
+          return (el.offsetTop + offset) / totalScroll;
+        }
+        return item.pct || 0;
+      }
+
       currentMarks.forEach(m => {
         const mark = document.createElement('div');
         mark.className = 'side-mark';
-        let pct = 0;
-        if (typeof m.pIndex === 'number' && paras[m.pIndex] && totalScroll > 0) {
-          const el = paras[m.pIndex];
-          const h = Math.max(1, el.offsetHeight);
-          let offset = m.offsetInPara;
-          if (typeof offset !== 'number' || isNaN(offset)) offset = (m.ratio || 0) * h;
-          offset = Math.min(offset, h);
-          const top = el.offsetTop + offset;
-          pct = top / totalScroll;
-        } else {
-          pct = m.pct || 0;
-        }
-        pct = Math.max(0, Math.min(1, pct));
+        const pct = Math.max(0, Math.min(1, pctFor(m)));
         mark.style.top = (pct * 100) + '%';
         mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
         sideMarks.appendChild(mark);
@@ -1534,16 +1467,30 @@
     if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
     if (marksClear) marksClear.addEventListener('click', clearMarks);
 
-    // ==== НОВОЕ: тройной клик по слову — закладка ====
+    // ============================================================
+    //  ДВОЙНОЙ КЛИК / ДВОЙНОЙ ТАП ПО ТЕКСТУ = ЗАКЛАДКА
+    // ============================================================
     if (content) {
-      content.addEventListener('dblclick', () => { /* оставляем выделение */ });
+      let lastTap = 0;
+
       content.addEventListener('click', (e) => {
-        if (e.detail === 3) {
-          // Тройной клик — ставим закладку в месте клика
+        if (e.detail === 2) {
           const y = e.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
           addMark(y);
         }
       });
+
+      content.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+          const t = (e.changedTouches && e.changedTouches[0]);
+          if (t) {
+            const y = t.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
+            addMark(y);
+          }
+        }
+        lastTap = now;
+      }, { passive: true });
     }
 
     // ============================================================
@@ -1555,9 +1502,7 @@
       sideProgress.classList.add('visible');
       if (hideTimer) clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
-        if (!sideProgress.classList.contains('dragging')) {
-          sideProgress.classList.remove('visible');
-        }
+        if (!sideProgress.classList.contains('dragging')) sideProgress.classList.remove('visible');
       }, 500);
     }
 
@@ -1575,16 +1520,8 @@
         sideThumb.style.top = top + 'px';
       }
 
-      // Показываем плавающую кнопку закладки при прокрутке
-      if (btnAddMark) {
-        if (scrollTop > 100) btnAddMark.classList.add('show');
-        else btnAddMark.classList.remove('show');
-      }
-
-      if (toTop) {
-        if (scrollTop > 400) toTop.classList.add('show');
-        else toTop.classList.remove('show');
-      }
+      if (btnAddMark) scrollTop > 100 ? btnAddMark.classList.add('show') : btnAddMark.classList.remove('show');
+      if (toTop) scrollTop > 400 ? toTop.classList.add('show') : toTop.classList.remove('show');
 
       if (chapters.length) {
         let idx = -1;
@@ -1592,10 +1529,7 @@
           if (chapters[i].el.offsetTop - 80 <= scrollTop) idx = i;
           else break;
         }
-        if (idx !== activeChapter) {
-          activeChapter = idx;
-          highlightActiveToc();
-        }
+        if (idx !== activeChapter) { activeChapter = idx; highlightActiveToc(); }
       }
 
       if (currentBookId) {
@@ -1605,9 +1539,7 @@
       }
     }
 
-    if (readerScreen) {
-      readerScreen.addEventListener('scroll', () => { updateProgress(); showScroller(); });
-    }
+    if (readerScreen) readerScreen.addEventListener('scroll', () => { updateProgress(); showScroller(); });
     window.addEventListener('resize', () => {
       const anchor = getReadingAnchor();
       requestAnimationFrame(() => {
@@ -1687,8 +1619,7 @@
       jumpBox.classList.add('show');
       jumpInput.value = (activeChapter >= 0 ? activeChapter + 1 : 1);
       jumpInput.max = chapters.length;
-      jumpInput.focus();
-      jumpInput.select();
+      jumpInput.focus(); jumpInput.select();
     }
     function closeJump() { if (jumpBox) jumpBox.classList.remove('show'); }
 
@@ -1719,10 +1650,7 @@
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
       if (btnAddMark) btnAddMark.classList.remove('show');
-      closeToc();
-      closeJump();
-      closeSheet();
-      closeMarks();
+      closeToc(); closeJump(); closeSheet(); closeMarks();
       currentBookId = null;
       currentMarks = [];
       if (sideMarks) sideMarks.innerHTML = '';
@@ -1771,7 +1699,6 @@
         libraryList.appendChild(empty);
         return;
       }
-
       const filtered = query ? books.filter(b => b.title.toLowerCase().includes(query)) : books;
       if (filtered.length === 0) {
         if (libraryNoResults) libraryNoResults.classList.add('show');
@@ -1782,11 +1709,9 @@
       filtered.forEach(b => {
         const el = document.createElement('div');
         el.className = 'book-item';
-
         const title = document.createElement('div');
         title.className = 'title';
         title.innerHTML = highlightMatch(b.title, query);
-
         const meta = document.createElement('div');
         meta.className = 'meta';
         const words = b.words || 0;
@@ -1795,11 +1720,8 @@
         let metaText = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
         if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
         meta.textContent = metaText;
-
         const del = document.createElement('button');
-        del.className = 'del';
-        del.title = 'Удалить';
-        del.textContent = '✕';
+        del.className = 'del'; del.title = 'Удалить'; del.textContent = '✕';
         del.addEventListener('click', (e) => {
           e.stopPropagation();
           if (confirm('Удалить «' + b.title + '»?')) {
@@ -1809,10 +1731,7 @@
             renderLibrary();
           }
         });
-
-        el.appendChild(title);
-        el.appendChild(meta);
-        el.appendChild(del);
+        el.appendChild(title); el.appendChild(meta); el.appendChild(del);
         el.addEventListener('click', () => openBook(b.id));
         libraryList.appendChild(el);
       });
@@ -1858,10 +1777,7 @@
       render(text);
       showReader();
       readerScreen.scrollTop = 0;
-      if (!fromBook) {
-        currentBookId = null;
-        currentMarks = [];
-      }
+      if (!fromBook) { currentBookId = null; currentMarks = []; }
       setTimeout(() => { updateProgress(); showScroller(); renderSideMarks(); }, 30);
     }
 
@@ -1902,15 +1818,12 @@
     // ============================================================
     function decodeBuffer(buffer) {
       const bytes = new Uint8Array(buffer);
-      if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+      if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF)
         return new TextDecoder('utf-8').decode(bytes.subarray(3));
-      }
-      if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
+      if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE)
         return new TextDecoder('utf-16le').decode(bytes.subarray(2));
-      }
-      if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
+      if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF)
         return new TextDecoder('utf-16be').decode(bytes.subarray(2));
-      }
       let utf8 = '';
       try {
         utf8 = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
@@ -1945,7 +1858,6 @@
       if (eocd < 0) throw new Error('Не найден ZIP-каталог');
       const cdOffset = view.getUint32(eocd + 16, true);
       const cdCount = view.getUint16(eocd + 10, true);
-
       let p = cdOffset;
       for (let i = 0; i < cdCount; i++) {
         if (view.getUint32(p, true) !== 0x02014b50) break;
@@ -1961,10 +1873,8 @@
         const lhExtraLen = view.getUint16(localOffset + 28, true);
         const dataStart = localOffset + 30 + lhNameLen + lhExtraLen;
         const dataEnd = dataStart + compSize;
-        const data = bytes.subarray(dataStart, dataEnd);
-        files[name] = { data, compMethod };
+        files[name] = { data: bytes.subarray(dataStart, dataEnd), compMethod };
       }
-
       const result = {};
       for (const name in files) {
         const f = files[name];
@@ -1972,9 +1882,7 @@
           if (f.compMethod === 0) {
             result[name] = decodeBuffer(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength));
           } else if (f.compMethod === 8) {
-            if (typeof DecompressionStream === 'undefined') {
-              throw new Error('DecompressionStream недоступен');
-            }
+            if (typeof DecompressionStream === 'undefined') throw new Error('DecompressionStream недоступен');
             const ds = new DecompressionStream('deflate-raw');
             const stream = new Blob([f.data]).stream().pipeThrough(ds);
             const decompressed = await new Response(stream).arrayBuffer();
@@ -1997,9 +1905,7 @@
         n.appendChild(doc.createTextNode('\n\n'));
       });
       let text = body.textContent || '';
-      text = text.replace(/\u00a0/g, ' ');
-      text = text.replace(/[ \t]+\n/g, '\n');
-      text = text.replace(/\n{3,}/g, '\n\n');
+      text = text.replace(/\u00a0/g, ' ').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n');
       return text.trim();
     }
     function textFromFb2(xml) {
@@ -2012,19 +1918,11 @@
       if (!body) return '';
       const out = [];
       body.querySelectorAll('section').forEach(sec => {
-        sec.querySelectorAll('title').forEach(t => {
-          out.push('\n\n' + (t.textContent || '').trim() + '\n\n');
-        });
-        sec.querySelectorAll('p').forEach(p => {
-          const t = (p.textContent || '').trim();
-          if (t) out.push(t + '\n\n');
-        });
+        sec.querySelectorAll('title').forEach(t => out.push('\n\n' + (t.textContent || '').trim() + '\n\n'));
+        sec.querySelectorAll('p').forEach(p => { const t = (p.textContent || '').trim(); if (t) out.push(t + '\n\n'); });
       });
       if (out.length === 0) {
-        body.querySelectorAll('p').forEach(p => {
-          const t = (p.textContent || '').trim();
-          if (t) out.push(t + '\n\n');
-        });
+        body.querySelectorAll('p').forEach(p => { const t = (p.textContent || '').trim(); if (t) out.push(t + '\n\n'); });
       }
       return out.join('').replace(/\n{3,}/g, '\n\n').trim();
     }
@@ -2035,19 +1933,10 @@
       text = text.replace(/\\stylesheet[\s\S]*?\}/g, '');
       text = text.replace(/\\info[\s\S]*?\}/g, '');
       text = text.replace(/\\pict[\s\S]*?\}/g, '');
-      text = text.replace(/\\par[d]?\b/g, '\n');
-      text = text.replace(/\\line\b/g, '\n');
-      text = text.replace(/\\tab\b/g, '\t');
-      text = text.replace(/\\u(-?\d+)\??/g, (m, n) => {
-        let code = parseInt(n, 10);
-        if (code < 0) code += 65536;
-        return String.fromCharCode(code);
-      });
+      text = text.replace(/\\par[d]?\b/g, '\n').replace(/\\line\b/g, '\n').replace(/\\tab\b/g, '\t');
+      text = text.replace(/\\u(-?\d+)\??/g, (m, n) => { let c = parseInt(n, 10); if (c < 0) c += 65536; return String.fromCharCode(c); });
       text = text.replace(/\\'([0-9a-fA-F]{2})/g, (m, h) => String.fromCharCode(parseInt(h, 16)));
-      text = text.replace(/\\[a-zA-Z]+-?\d* ?/g, '');
-      text = text.replace(/[{}]/g, '');
-      text = text.replace(/\r/g, '');
-      text = text.replace(/\n{3,}/g, '\n\n');
+      text = text.replace(/\\[a-zA-Z]+-?\d* ?/g, '').replace(/[{}]/g, '').replace(/\r/g, '').replace(/\n{3,}/g, '\n\n');
       return text.trim();
     }
     function textFromDocx(xml) {
@@ -2068,10 +1957,7 @@
       if (doc.querySelector('parsererror')) return '';
       const paras = doc.querySelectorAll('text\\:p, p');
       const out = [];
-      paras.forEach(p => {
-        const line = (p.textContent || '').trim();
-        if (line) out.push(line);
-      });
+      paras.forEach(p => { const line = (p.textContent || '').trim(); if (line) out.push(line); });
       return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
     }
     function textFromJson(json) {
@@ -2079,19 +1965,13 @@
         const obj = JSON.parse(json);
         if (typeof obj === 'string') return obj;
         const tryFields = ['text', 'content', 'body', 'book', 'story', 'data'];
-        for (const f of tryFields) {
-          if (typeof obj[f] === 'string' && obj[f].length > 20) return obj[f];
-        }
-        if (Array.isArray(obj)) {
-          return obj.map(x => typeof x === 'string' ? x : (x && x.text) || '').join('\n\n');
-        }
+        for (const f of tryFields) if (typeof obj[f] === 'string' && obj[f].length > 20) return obj[f];
+        if (Array.isArray(obj)) return obj.map(x => typeof x === 'string' ? x : (x && x.text) || '').join('\n\n');
         return JSON.stringify(obj, null, 2);
       } catch (e) { return ''; }
     }
     function textFromCsv(csv) {
-      return csv.split(/\r?\n/).map(row => {
-        return row.split(/[,;\t]/).map(c => c.replace(/^"|"$/g, '')).join(' ');
-      }).join('\n');
+      return csv.split(/\r?\n/).map(row => row.split(/[,;\t]/).map(c => c.replace(/^"|"$/g, '')).join(' ')).join('\n');
     }
 
     // ============================================================
@@ -2139,16 +2019,10 @@
               try { path = decodeURIComponent(path); } catch (e) {}
               const full = baseDir + path;
               const raw = files[full] || files[path];
-              if (raw && (/\.x?html?$/i.test(path) || /html|xml/i.test(item.media))) {
-                parts.push(textFromHtml(raw));
-              }
+              if (raw && (/\.x?html?$/i.test(path) || /html|xml/i.test(item.media))) parts.push(textFromHtml(raw));
             }
           }
-          if (parts.length === 0) {
-            for (const n in files) {
-              if (/\.x?html?$/i.test(n)) parts.push(textFromHtml(files[n]));
-            }
-          }
+          if (parts.length === 0) for (const n in files) if (/\.x?html?$/i.test(n)) parts.push(textFromHtml(files[n]));
           text = parts.join('\n\n');
         } else if (ext === 'docx') {
           const files = await unzip(buffer);
@@ -2164,17 +2038,8 @@
           const files = await unzip(buffer);
           const order = ['txt','md','markdown','html','htm','xhtml','fb2','docx','odt','epub','json','csv','rtf'];
           let chosen = null;
-          for (const e of order) {
-            for (const n in files) {
-              if (new RegExp('\\.' + e + '$', 'i').test(n)) { chosen = { name: n, ext: e }; break; }
-            }
-            if (chosen) break;
-          }
-          if (!chosen) {
-            for (const n in files) {
-              if (files[n] && files[n].length > 50) { chosen = { name: n, ext: '' }; break; }
-            }
-          }
+          for (const e of order) { for (const n in files) { if (new RegExp('\\.' + e + '$', 'i').test(n)) { chosen = { name: n, ext: e }; break; } } if (chosen) break; }
+          if (!chosen) for (const n in files) if (files[n] && files[n].length > 50) { chosen = { name: n, ext: '' }; break; }
           if (!chosen) throw new Error('Внутри ZIP не найдено читаемого файла');
           const raw = files[chosen.name];
           if (chosen.ext === 'html' || chosen.ext === 'htm' || chosen.ext === 'xhtml') text = textFromHtml(raw);
@@ -2199,12 +2064,9 @@
           text = decodeBuffer(buffer);
         }
 
-        text = text.replace(/\u0000/g, '');
-        text = text.replace(/\r\n?/g, '\n');
-        text = text.replace(/[ \t]+\n/g, '\n');
-        text = text.replace(/\n{4,}/g, '\n\n\n');
-        text = text.replace(/\u00a0/g, ' ');
-        text = text.trim();
+        text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n')
+                   .replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n')
+                   .replace(/\u00a0/g, ' ').trim();
 
         if (!text) { toast('Не удалось извлечь текст из «' + file.name + '»', true); return; }
 
@@ -2262,8 +2124,7 @@
       else if (e.key === 'Escape') {
         closeJump(); closeToc();
         if (palette) palette.classList.remove('open');
-        closeSheet();
-        closeMarks();
+        closeSheet(); closeMarks();
       }
     });
 
