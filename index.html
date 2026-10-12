@@ -11,7 +11,7 @@
     height: 100%;
     background: var(--bg, #14161a);
     color: var(--fg, #d4d7dc);
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-stack, Georgia, 'Times New Roman', serif);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -28,6 +28,8 @@
     --accent: #8b919b;
     --col-width: 720px;
     --line-height: 1.85;
+    --letter-spacing: 0;
+    --font-stack: Georgia, 'Times New Roman', serif;
     --mark-color: #e0b84a;
   }
 
@@ -81,6 +83,22 @@
     min-width: 34px; text-align: center;
   }
 
+  /* ===== Индикатор прогресса в шапке ===== */
+  #pct-indicator {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 6px 10px;
+    min-width: 66px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .3px;
+    font-weight: 600;
+  }
+
   #btn-menu {
     display: none; background: transparent; border: none;
     padding: 8px 10px; font-size: 22px; line-height: 1;
@@ -131,6 +149,11 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
+  #library-io {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  #library-io button { font-size: 12px; padding: 6px 10px; }
+
   #library-search-wrap { margin-bottom: 12px; position: relative; }
   #library-search {
     width: 100%; background: var(--bg-input); color: var(--fg);
@@ -172,6 +195,15 @@
   .book-item .meta {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim);
+  }
+  .book-item .progress-line {
+    height: 3px; border-radius: 2px;
+    background: var(--border); overflow: hidden;
+    margin-top: 2px;
+  }
+  .book-item .progress-line span {
+    display: block; height: 100%;
+    background: var(--accent);
   }
   .book-item .del {
     position: absolute; top: 8px; right: 8px;
@@ -217,6 +249,7 @@
     padding: 50px 40px 140px;
     font-size: 20px; line-height: var(--line-height);
     color: var(--fg);
+    letter-spacing: var(--letter-spacing);
     hyphens: auto; -webkit-hyphens: auto;
   }
   #content p {
@@ -349,6 +382,19 @@
   }
   #marks-header-actions { display: flex; gap: 6px; }
   #marks-header button { padding: 4px 10px; font-size: 12px; }
+
+  #marks-search-wrap {
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  #marks-search {
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 8px 12px; font-size: 13px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    outline: none;
+  }
+  #marks-search:focus { border-color: var(--accent); }
+
   #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; }
 
   .mark-item {
@@ -379,6 +425,18 @@
   .mark-item .mark-date {
     font-size: 10px;
     color: var(--fg-dim);
+  }
+  .mark-item .mark-note {
+    font-size: 12px;
+    color: var(--mark-color);
+    background: rgba(224,184,74,.08);
+    border-left: 2px solid var(--mark-color);
+    padding: 5px 8px;
+    border-radius: 3px;
+    margin: 6px 0;
+    line-height: 1.35;
+    word-break: break-word;
+    white-space: pre-wrap;
   }
   .mark-item .mark-del {
     position: absolute;
@@ -453,7 +511,8 @@
     opacity: .6; z-index: 80; pointer-events: none;
   }
 
-  .palette {
+  /* ===== Палитра ===== */
+  .palette, .font-panel {
     position: absolute; top: 100%; right: 18px;
     margin-top: 6px; background: var(--bg-panel);
     border: 1px solid var(--border-strong);
@@ -463,8 +522,8 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     width: 240px;
   }
-  .palette.open { display: block; }
-  .palette h4 {
+  .palette.open, .font-panel.open { display: block; }
+  .palette h4, .font-panel h4 {
     font-size: 10px; letter-spacing: 1.5px;
     text-transform: uppercase; color: var(--fg-dim);
     margin-bottom: 10px; font-weight: normal;
@@ -477,9 +536,10 @@
     padding: 6px 4px; border-radius: 6px;
     border: 1px solid var(--border-strong);
     cursor: pointer; text-align: center; font-size: 10px;
+    color: var(--fg-mid);
   }
   .palette-item:hover { border-color: var(--accent); }
-  .palette-item.active { border-color: var(--accent); }
+  .palette-item.active { border-color: var(--accent); color: var(--fg); }
   .palette-item .sw {
     height: 22px; border-radius: 4px; margin-bottom: 4px;
     display: flex; align-items: center; justify-content: center;
@@ -499,8 +559,40 @@
   }
   .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
+  /* ===== Панель шрифтов ===== */
+  .font-panel { width: 280px; }
+  .font-panel .font-row {
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .font-panel .font-item {
+    flex: 1; padding: 8px 4px; border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer; text-align: center; font-size: 11px;
+    color: var(--fg-mid); background: var(--bg-input);
+  }
+  .font-panel .font-item:hover { border-color: var(--accent); }
+  .font-panel .font-item.active { border-color: var(--accent); color: var(--fg); }
+  .font-panel .font-item .sample {
+    font-size: 18px; margin-bottom: 4px; color: var(--fg);
+  }
+  .font-panel .spacing-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .font-panel .spacing-row label {
+    font-size: 12px; color: var(--fg-mid); flex: 1;
+  }
+  .font-panel .spacing-row button {
+    padding: 5px 10px; font-size: 13px;
+  }
+  .font-panel .spacing-label {
+    min-width: 52px; text-align: center;
+    font-size: 11px; color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
   input[type=file] { display: none; }
 
+  /* ===== Нижняя панель ===== */
   #mobile-sheet {
     position: fixed; left: 0; right: 0; bottom: 0;
     background: var(--bg-panel);
@@ -549,6 +641,32 @@
   }
   #sheet-overlay.open { opacity: 1; pointer-events: auto; }
 
+  /* ===== Прогресс в нижнем меню ===== */
+  .m-pct-value {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 13px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    min-width: 62px;
+    text-align: right;
+  }
+  .m-pct-track {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-left: 10px;
+  }
+  .m-pct-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width .15s linear;
+  }
+
   #boot-error {
     display: none; position: fixed;
     left: 12px; right: 12px; top: 12px;
@@ -574,6 +692,57 @@
   }
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
+
+  /* ===== Редактор заметки к закладке ===== */
+  #note-editor {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 340; display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #note-editor.open { display: flex; }
+  #note-editor .box {
+    width: 100%; max-width: 480px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  }
+  #note-editor h4 {
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--mark-color);
+    margin-bottom: 10px; font-weight: normal;
+  }
+  #note-editor .preview {
+    font-size: 12px; color: var(--fg-dim);
+    margin-bottom: 12px; line-height: 1.4;
+    max-height: 60px; overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  #note-editor textarea {
+    width: 100%; min-height: 90px;
+    background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 10px;
+    font-size: 14px; line-height: 1.5;
+    font-family: inherit;
+    resize: vertical; outline: none;
+  }
+  #note-editor textarea:focus { border-color: var(--accent); }
+  #note-editor .actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+    margin-top: 12px;
+  }
+  #note-editor .actions button { padding: 8px 14px; font-size: 13px; }
+  #note-editor .actions .primary {
+    background: var(--mark-color); color: var(--bg);
+    border-color: var(--mark-color);
+  }
 
   @media (max-width: 720px) {
     #content { padding: 36px 22px 120px; font-size: 19px; }
@@ -601,7 +770,7 @@
     #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
     #jump-box { left: 12px; right: 12px; transform: none; padding: 10px 12px; }
     #jump-box input { width: 100px; }
-    .palette { right: 8px; width: calc(100vw - 32px); max-width: 260px; }
+    .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 300px; }
     footer { padding: 6px 12px; font-size: 10px; }
     #side-progress { right: 2px; width: 28px; top: 50px; bottom: 50px; }
     #side-progress::before { right: 12px; }
@@ -637,6 +806,8 @@
         <span class="size-label" id="lh-label">1.85</span>
         <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
+      <span id="pct-indicator" title="Текущий процент прочитанного">0.00%</span>
+      <button id="btn-font" title="Шрифт и интервал">Aa</button>
       <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
       <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
       <button id="btn-theme">Цвет</button>
@@ -657,6 +828,27 @@
         <button class="palette-reset" id="reset-theme">Сбросить цвета</button>
       </div>
     </div>
+
+    <div class="font-panel" id="font-panel">
+      <h4>Шрифт</h4>
+      <div class="font-row" id="font-row">
+        <div class="font-item" data-font="serif">
+          <div class="sample" style="font-family:Georgia,serif">Aa</div>Serif
+        </div>
+        <div class="font-item" data-font="sans">
+          <div class="sample" style="font-family:-apple-system,Segoe UI,Roboto,sans-serif">Aa</div>Sans
+        </div>
+        <div class="font-item" data-font="mono">
+          <div class="sample" style="font-family:'JetBrains Mono','Courier New',monospace">Aa</div>Mono
+        </div>
+      </div>
+      <h4>Межбуквенный интервал</h4>
+      <div class="spacing-row">
+        <button id="ls-dec" class="btn-icon">−</button>
+        <span class="spacing-label" id="ls-label">0.00em</span>
+        <button id="ls-inc" class="btn-icon">+</button>
+      </div>
+    </div>
   </header>
 
   <div id="paste-screen">
@@ -673,6 +865,11 @@
 
       <div id="library">
         <h3>Библиотека</h3>
+        <div id="library-io">
+          <button id="btn-export" title="Скачать JSON со всеми книгами, закладками и настройками">⬇ Экспорт</button>
+          <button id="btn-import" title="Загрузить JSON">⬆ Импорт</button>
+          <input type="file" id="import-input" accept=".json,application/json">
+        </div>
         <div id="library-search-wrap">
           <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off">
           <button id="library-search-clear" title="Очистить">✕</button>
@@ -708,7 +905,7 @@
   <button id="jump-cancel">✕</button>
 </div>
 
-<div id="hint">Двойной клик по тексту — 🔖 закладка · Ctrl+B — закладка · Ctrl+G — глава · Ctrl+O — содержание</div>
+<div id="hint">Двойной клик — 🔖 закладка · Ctrl+B — закладка · Ctrl+G — глава · Ctrl+O — содержание</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
@@ -725,14 +922,39 @@
       <button id="marks-close">✕</button>
     </div>
   </div>
+  <div id="marks-search-wrap">
+    <input type="text" id="marks-search" placeholder="Поиск по закладкам и заметкам..." autocomplete="off">
+  </div>
   <div id="marks-list"></div>
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
 
+<div id="note-editor">
+  <div class="box">
+    <h4 id="note-title">Заметка к закладке</h4>
+    <div class="preview" id="note-preview"></div>
+    <textarea id="note-input" placeholder="Ваш комментарий (необязательно)..." spellcheck="false"></textarea>
+    <div class="actions">
+      <button id="note-cancel">Отмена</button>
+      <button id="note-save" class="primary">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
+
+  <div class="sheet-section">
+    <h5>Прогресс</h5>
+    <div class="sheet-row">
+      <div class="m-pct-track">
+        <span class="m-pct-fill" id="m-pct-bar"></span>
+      </div>
+      <span class="m-pct-value" id="m-pct-indicator">0.00%</span>
+    </div>
+  </div>
 
   <div class="sheet-section">
     <h5>Размер текста</h5>
@@ -770,12 +992,13 @@
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
-      <button id="m-mark" class="mark-btn">🔖 Закладка</button>
-      <button id="m-marks" class="mark-btn">🔖 Закладки</button>
+      <button id="m-font">Aa Шрифт</button>
       <button id="m-theme">🎨 Цвет</button>
       <button id="m-toc">📖 Содержание</button>
       <button id="m-jump">🔢 К главе</button>
-      <button id="m-library">📚 Библиотека</button>
+      <button id="m-mark" class="mark-btn">🔖 Закладка</button>
+      <button id="m-marks" class="mark-btn">🔖 Закладки</button>
+      <button id="m-library" class="wide">📚 Библиотека</button>
       <button id="m-close" class="wide">✕ Закрыть</button>
     </div>
   </div>
@@ -819,11 +1042,13 @@
     const btnLibrary = $('btn-library');
     const btnToc = $('btn-toc');
     const btnTheme = $('btn-theme');
+    const btnFont = $('btn-font');
     const readerControls = $('reader-controls');
     const progressBar = $('progress-bar');
     const footerLeft = $('footer-left');
     const footerRight = $('footer-right');
     const logo = $('logo');
+    const pctIndicator = $('pct-indicator');
 
     const sideProgress = $('side-progress');
     const sideThumb = $('side-thumb');
@@ -838,6 +1063,7 @@
     const marksClose = $('marks-close');
     const marksOverlay = $('marks-overlay');
     const marksClear = $('marks-clear');
+    const marksSearch = $('marks-search');
 
     const jumpBox = $('jump-box');
     const jumpInput = $('jump-input');
@@ -856,6 +1082,12 @@
     const colAccent = $('col-accent');
     const resetTheme = $('reset-theme');
 
+    const fontPanel = $('font-panel');
+    const fontRow = $('font-row');
+    const lsDec = $('ls-dec');
+    const lsInc = $('ls-inc');
+    const lsLabel = $('ls-label');
+
     const fontDec = $('font-dec');
     const fontInc = $('font-inc');
     const sizeLabel = $('size-label');
@@ -870,6 +1102,9 @@
 
     const libraryList = $('library-list');
     const dropOverlay = $('drop-overlay');
+    const btnExport = $('btn-export');
+    const btnImport = $('btn-import');
+    const importInput = $('import-input');
 
     const librarySearch = $('library-search');
     const librarySearchWrap = $('library-search-wrap');
@@ -890,6 +1125,9 @@
     const mLhDec = $('m-lh-dec');
     const mLhInc = $('m-lh-inc');
     const mLhLabel = $('m-lh-label');
+    const mPctIndicator = $('m-pct-indicator');
+    const mPctBar = $('m-pct-bar');
+    const mFont = $('m-font');
     const mTheme = $('m-theme');
     const mToc = $('m-toc');
     const mJump = $('m-jump');
@@ -898,14 +1136,30 @@
     const mMarks = $('m-marks');
     const mClose = $('m-close');
 
+    const noteEditor = $('note-editor');
+    const noteTitle = $('note-title');
+    const notePreview = $('note-preview');
+    const noteInput = $('note-input');
+    const noteCancel = $('note-cancel');
+    const noteSave = $('note-save');
+
     let chapters = [];
     let activeChapter = -1;
     let currentBookId = null;
     let currentMarks = [];
+    let editingMarkId = null;
+    let pendingMarkAnchor = null;
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
-      fontSize: 20, colWidth: 720, lineHeight: 1.85
+      fontSize: 20, colWidth: 720, lineHeight: 1.85,
+      letterSpacing: 0, fontFamily: 'serif'
+    };
+
+    const FONT_STACKS = {
+      serif: "Georgia, 'Times New Roman', serif",
+      sans: "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      mono: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace"
     };
 
     const PRESETS = [
@@ -1007,6 +1261,8 @@
       root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
       root.style.setProperty('--col-width', settings.colWidth + 'px');
       root.style.setProperty('--line-height', settings.lineHeight);
+      root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
+      root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
 
       if (content) content.style.fontSize = settings.fontSize + 'px';
       if (sizeLabel) sizeLabel.textContent = settings.fontSize;
@@ -1015,6 +1271,7 @@
       if (mSizeLabel) mSizeLabel.textContent = settings.fontSize;
       if (mWidthLabel) mWidthLabel.textContent = settings.colWidth;
       if (mLhLabel) mLhLabel.textContent = settings.lineHeight.toFixed(2);
+      if (lsLabel) lsLabel.textContent = settings.letterSpacing.toFixed(2) + 'em';
 
       if (colBg) colBg.value = settings.bg;
       if (colFg) colFg.value = settings.fg;
@@ -1026,6 +1283,9 @@
           el.dataset.fg === settings.fg &&
           el.dataset.accent === settings.accent
         );
+      });
+      document.querySelectorAll('.font-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.font === settings.fontFamily);
       });
 
       requestAnimationFrame(() => {
@@ -1068,6 +1328,10 @@
       settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100));
       saveSettings(); applySettings();
     }
+    function changeLetterSpacing(delta) {
+      settings.letterSpacing = Math.max(-0.05, Math.min(0.3, Math.round((settings.letterSpacing + delta) * 100) / 100));
+      saveSettings(); applySettings();
+    }
 
     if (fontDec) fontDec.addEventListener('click', () => changeFont(-2));
     if (fontInc) fontInc.addEventListener('click', () => changeFont(2));
@@ -1084,16 +1348,37 @@
     if (mLhDec) mLhDec.addEventListener('click', () => changeLineHeight(-0.1));
     if (mLhInc) mLhInc.addEventListener('click', () => changeLineHeight(0.1));
 
+    if (lsDec) lsDec.addEventListener('click', () => changeLetterSpacing(-0.01));
+    if (lsInc) lsInc.addEventListener('click', () => changeLetterSpacing(0.01));
+
+    if (fontRow) fontRow.addEventListener('click', (e) => {
+      const item = e.target.closest('.font-item');
+      if (!item) return;
+      settings.fontFamily = item.dataset.font;
+      saveSettings(); applySettings();
+    });
+
+    // Палитра
     if (btnTheme) btnTheme.addEventListener('click', (e) => {
       e.stopPropagation();
+      fontPanel.classList.remove('open');
       palette.classList.toggle('open');
+    });
+    if (btnFont) btnFont.addEventListener('click', (e) => {
+      e.stopPropagation();
+      palette.classList.remove('open');
+      fontPanel.classList.toggle('open');
     });
     document.addEventListener('click', (e) => {
       if (palette && !palette.contains(e.target) && e.target !== btnTheme) {
         palette.classList.remove('open');
       }
+      if (fontPanel && !fontPanel.contains(e.target) && e.target !== btnFont) {
+        fontPanel.classList.remove('open');
+      }
     });
     if (palette) palette.addEventListener('click', e => e.stopPropagation());
+    if (fontPanel) fontPanel.addEventListener('click', e => e.stopPropagation());
 
     if (colBg) colBg.addEventListener('input', e => { settings.bg = e.target.value; saveSettings(); applySettings(); });
     if (colFg) colFg.addEventListener('input', e => { settings.fg = e.target.value; saveSettings(); applySettings(); });
@@ -1147,11 +1432,71 @@
       closeSheet();
       setTimeout(() => { if (palette) palette.classList.add('open'); }, 200);
     });
+    if (mFont) mFont.addEventListener('click', () => {
+      closeSheet();
+      setTimeout(() => { if (fontPanel) fontPanel.classList.add('open'); }, 200);
+    });
     if (mToc) mToc.addEventListener('click', () => { closeSheet(); setTimeout(openToc, 180); });
     if (mJump) mJump.addEventListener('click', () => { closeSheet(); setTimeout(openJump, 180); });
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
     if (mMark) mMark.addEventListener('click', () => { closeSheet(); addMark(); });
     if (mMarks) mMarks.addEventListener('click', () => { closeSheet(); setTimeout(openMarks, 180); });
+
+    // ============================================================
+    //  СВАЙПЫ НА МОБИЛЬНОМ
+    // ============================================================
+    (function initEdgeSwipes() {
+      const EDGE = 30;
+      const THRESHOLD = 60;
+
+      let active = null;
+      let startX = 0, startY = 0, moved = false;
+
+      function onStart(e) {
+        if (e.touches.length !== 1) return;
+        const t = e.touches[0];
+        const x = t.clientX;
+        const y = t.clientY;
+        const w = window.innerWidth;
+        if (x <= EDGE) active = 'left';
+        else if (x >= w - EDGE) active = 'right';
+        else active = null;
+        if (!active) return;
+        startX = x; startY = y; moved = false;
+      }
+
+      function onMove(e) {
+        if (!active) return;
+        const t = e.touches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+
+        if (!moved) {
+          if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx)) { active = null; return; }
+        }
+
+        if (active === 'left' && dx > THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
+          moved = true;
+          openSheet();
+          active = null;
+        } else if (active === 'right' && dx < -THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
+          moved = true;
+          if (readerScreen.style.display === 'block') {
+            openMarks();
+          } else {
+            openSheet();
+          }
+          active = null;
+        }
+      }
+
+      function onEnd() { active = null; moved = false; }
+
+      window.addEventListener('touchstart', onStart, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('touchend', onEnd, { passive: true });
+      window.addEventListener('touchcancel', onEnd, { passive: true });
+    })();
 
     // ============================================================
     //  ТЕКСТ: РАЗБИВКА, РЕНДЕР
@@ -1297,46 +1642,110 @@
       return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio };
     }
 
+    function anchorFromY(posY) {
+      const paras = content.querySelectorAll('p');
+      let target = null, ti = -1;
+      for (let i = 0; i < paras.length; i++) {
+        const el = paras[i];
+        if (posY >= el.offsetTop && posY <= el.offsetTop + el.offsetHeight) { target = el; ti = i; break; }
+      }
+      if (!target) {
+        for (let i = 0; i < paras.length; i++) {
+          const el = paras[i];
+          if (el.offsetTop + el.offsetHeight > posY) { target = el; ti = i; break; }
+        }
+      }
+      if (!target && paras.length) { target = paras[0]; ti = 0; }
+      if (!target) return { text: '', chapter: '', pIndex: 0, offsetInPara: 0, ratio: 0 };
+      const off = Math.max(0, Math.min(target.offsetHeight, posY - target.offsetTop));
+      const ratio = off / Math.max(1, target.offsetHeight);
+      const text = (target.textContent || '').trim();
+      const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
+      let ch = '';
+      for (let i = 0; i < chapters.length; i++) {
+        if (chapters[i].el.offsetTop <= posY) ch = chapters[i].title; else break;
+      }
+      return { text: snippet, chapter: ch, pIndex: ti, offsetInPara: off, ratio };
+    }
+
     function addMark(posY) {
       if (readerScreen.style.display !== 'block') return;
-      const anchor = (typeof posY === 'number') ? (function(){
-        const paras = content.querySelectorAll('p');
-        let target=null, ti=-1;
-        for (let i=0;i<paras.length;i++){const el=paras[i]; if (posY>=el.offsetTop && posY<=el.offsetTop+el.offsetHeight){target=el;ti=i;break;}}
-        if(!target){for (let i=0;i<paras.length;i++){const el=paras[i]; if(el.offsetTop+el.offsetHeight>posY){target=el;ti=i;break;}}}
-        if(!target&&paras.length){target=paras[0];ti=0;}
-        if(!target) return {text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0};
-        const off=Math.max(0,Math.min(target.offsetHeight,posY-target.offsetTop));
-        const ratio=off/Math.max(1,target.offsetHeight);
-        const text=(target.textContent||'').trim();
-        const snippet=text.length>140?text.slice(0,140)+'…':text;
-        let ch='';
-        for (let i=0;i<chapters.length;i++){if(chapters[i].el.offsetTop<=posY) ch=chapters[i].title; else break;}
-        return {text:snippet,chapter:ch,pIndex:ti,offsetInPara:off,ratio};
-      })() : getCurrentSnippet();
-
+      const anchor = (typeof posY === 'number') ? anchorFromY(posY) : getCurrentSnippet();
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
 
-      const mark = {
-        id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
+      pendingMarkAnchor = {
         pos: scrollTop, pct,
         pIndex: anchor.pIndex, offsetInPara: anchor.offsetInPara, ratio: anchor.ratio,
-        chapter: anchor.chapter, text: anchor.text, date: Date.now()
+        chapter: anchor.chapter, text: anchor.text
       };
+      openNoteEditor(null);
+    }
+
+    function commitPendingMark(note) {
+      if (!pendingMarkAnchor) return;
+      const mark = Object.assign({}, pendingMarkAnchor, {
+        id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
+        note: note || '',
+        date: Date.now()
+      });
+      pendingMarkAnchor = null;
       currentMarks.push(mark);
       saveMarks(currentBookId, currentMarks);
       renderSideMarks();
       renderMarksList();
-      toast('Закладка сохранена' + (anchor.chapter ? ' — ' + anchor.chapter : ''));
-
+      toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
       if (btnAddMark) {
         btnAddMark.classList.add('saved', 'pulse');
         setTimeout(() => btnAddMark.classList.remove('pulse'), 500);
         setTimeout(() => btnAddMark.classList.remove('saved'), 1000);
       }
     }
+
+    function openNoteEditor(markId) {
+      editingMarkId = markId;
+      if (markId) {
+        const m = currentMarks.find(x => x.id === markId);
+        if (!m) return;
+        noteTitle.textContent = 'Заметка к закладке';
+        notePreview.textContent = m.text || '';
+        noteInput.value = m.note || '';
+      } else if (pendingMarkAnchor) {
+        noteTitle.textContent = 'Новая закладка — заметка';
+        notePreview.textContent = pendingMarkAnchor.text || '';
+        noteInput.value = '';
+      }
+      noteEditor.classList.add('open');
+      setTimeout(() => { noteInput.focus(); }, 50);
+    }
+
+    function closeNoteEditor(save) {
+      if (save) {
+        const val = noteInput.value.trim();
+        if (editingMarkId) {
+          const m = currentMarks.find(x => x.id === editingMarkId);
+          if (m) { m.note = val; saveMarks(currentBookId, currentMarks); renderMarksList(); }
+        } else if (pendingMarkAnchor) {
+          commitPendingMark(val);
+        }
+      } else {
+        pendingMarkAnchor = null;
+      }
+      editingMarkId = null;
+      noteEditor.classList.remove('open');
+      noteInput.value = '';
+    }
+
+    if (noteCancel) noteCancel.addEventListener('click', () => closeNoteEditor(false));
+    if (noteSave) noteSave.addEventListener('click', () => closeNoteEditor(true));
+    if (noteEditor) noteEditor.addEventListener('click', (e) => {
+      if (e.target === noteEditor) closeNoteEditor(false);
+    });
+    if (noteInput) noteInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(false); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); closeNoteEditor(true); }
+    });
 
     function removeMark(id) {
       currentMarks = currentMarks.filter(m => m.id !== id);
@@ -1383,6 +1792,7 @@
 
     function renderMarksList() {
       if (!marksList) return;
+      const query = (marksSearch && marksSearch.value || '').trim().toLowerCase();
       marksList.innerHTML = '';
       if (currentMarks.length === 0) {
         const empty = document.createElement('div');
@@ -1391,29 +1801,60 @@
         marksList.appendChild(empty);
         return;
       }
-      const sorted = currentMarks.slice().sort((a, b) => {
+      const filtered = query
+        ? currentMarks.filter(m =>
+            (m.text || '').toLowerCase().includes(query) ||
+            (m.chapter || '').toLowerCase().includes(query) ||
+            (m.note || '').toLowerCase().includes(query))
+        : currentMarks;
+
+      if (filtered.length === 0) {
+        const empty = document.createElement('div');
+        empty.id = 'marks-empty';
+        empty.textContent = 'Ничего не найдено';
+        marksList.appendChild(empty);
+        return;
+      }
+
+      const sorted = filtered.slice().sort((a, b) => {
         const ai = (typeof a.pIndex === 'number') ? a.pIndex : 0;
         const bi = (typeof b.pIndex === 'number') ? b.pIndex : 0;
         if (ai !== bi) return ai - bi;
         return (a.offsetInPara || 0) - (b.offsetInPara || 0);
       });
+
       sorted.forEach(m => {
         const el = document.createElement('div');
         el.className = 'mark-item';
         const title = document.createElement('div');
         title.className = 'mark-title';
-        const pct = Math.round((m.pct || 0) * 100);
-        title.textContent = (m.chapter || 'Без главы') + ' · ' + pct + '%';
+        const pct = (m.pct || 0) * 100;
+        title.textContent = (m.chapter || 'Без главы') + ' · ' + pct.toFixed(2) + '%';
         const text = document.createElement('div');
         text.className = 'mark-text';
         text.textContent = m.text || '(пусто)';
+
+        el.appendChild(title); el.appendChild(text);
+
+        if (m.note) {
+          const note = document.createElement('div');
+          note.className = 'mark-note';
+          note.textContent = m.note;
+          note.title = 'Клик — редактировать заметку';
+          note.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openNoteEditor(m.id);
+          });
+          el.appendChild(note);
+        }
+
         const date = document.createElement('div');
         date.className = 'mark-date';
         date.textContent = formatDate(m.date);
         const del = document.createElement('button');
         del.className = 'mark-del'; del.title = 'Удалить'; del.textContent = '✕';
         del.addEventListener('click', (e) => { e.stopPropagation(); removeMark(m.id); });
-        el.appendChild(title); el.appendChild(text); el.appendChild(date); el.appendChild(del);
+        el.appendChild(date); el.appendChild(del);
         el.addEventListener('click', () => goToMark(m.id));
         marksList.appendChild(el);
       });
@@ -1442,7 +1883,8 @@
         mark.className = 'side-mark';
         const pct = Math.max(0, Math.min(1, pctFor(m)));
         mark.style.top = (pct * 100) + '%';
-        mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
+        mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60) +
+                     (m.note ? '\n📝 ' + m.note.slice(0, 80) : '');
         sideMarks.appendChild(mark);
       });
     }
@@ -1466,6 +1908,7 @@
     if (marksClose) marksClose.addEventListener('click', closeMarks);
     if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
     if (marksClear) marksClear.addEventListener('click', clearMarks);
+    if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
 
     // ============================================================
     //  ДВОЙНОЙ КЛИК / ДВОЙНОЙ ТАП ПО ТЕКСТУ = ЗАКЛАДКА
@@ -1511,7 +1954,15 @@
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
       progressBar.style.width = pct + '%';
+
+      // Индикатор процента в шапке — с двумя знаками после запятой
+      if (pctIndicator) pctIndicator.textContent = pct.toFixed(2) + '%';
+
+      // Индикатор и полоска в мобильном меню
+      if (mPctIndicator) mPctIndicator.textContent = pct.toFixed(2) + '%';
+      if (mPctBar) mPctBar.style.width = pct + '%';
 
       if (sideProgress && sideThumb) {
         const trackH = sideProgress.clientHeight;
@@ -1535,7 +1986,12 @@
       if (currentBookId) {
         const books = loadBooks();
         const b = books.find(x => x.id === currentBookId);
-        if (b) { b.scroll = scrollTop; b.chapter = activeChapter; saveBooks(books); }
+        if (b) {
+          b.scroll = scrollTop;
+          b.chapter = activeChapter;
+          b.pct = pct / 100;
+          saveBooks(books);
+        }
       }
     }
 
@@ -1647,6 +2103,9 @@
       readerScreen.style.display = 'none';
       readerControls.style.display = 'none';
       progressBar.style.width = '0%';
+      if (pctIndicator) pctIndicator.textContent = '0.00%';
+      if (mPctIndicator) mPctIndicator.textContent = '0.00%';
+      if (mPctBar) mPctBar.style.width = '0%';
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
       if (btnAddMark) btnAddMark.classList.remove('show');
@@ -1717,9 +2176,24 @@
         const words = b.words || 0;
         const min = Math.max(1, Math.round(words / 200));
         const marksCount = loadMarks(b.id).length;
+        const pct = (b.pct || 0) * 100;
         let metaText = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
         if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
+        if (pct > 0) metaText += ' · ' + pct.toFixed(2) + '%';
         meta.textContent = metaText;
+
+        el.appendChild(title);
+        el.appendChild(meta);
+
+        if (b.pct && b.pct > 0.00005) {
+          const line = document.createElement('div');
+          line.className = 'progress-line';
+          const span = document.createElement('span');
+          span.style.width = Math.min(100, pct) + '%';
+          line.appendChild(span);
+          el.appendChild(line);
+        }
+
         const del = document.createElement('button');
         del.className = 'del'; del.title = 'Удалить'; del.textContent = '✕';
         del.addEventListener('click', (e) => {
@@ -1731,7 +2205,7 @@
             renderLibrary();
           }
         });
-        el.appendChild(title); el.appendChild(meta); el.appendChild(del);
+        el.appendChild(del);
         el.addEventListener('click', () => openBook(b.id));
         libraryList.appendChild(el);
       });
@@ -1758,7 +2232,7 @@
       const books = loadBooks();
       const words = text.trim().split(/\s+/).filter(Boolean).length;
       const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
-      books.unshift({ id, title, text, words, scroll: 0, chapter: -1, added: Date.now() });
+      books.unshift({ id, title, text, words, scroll: 0, chapter: -1, pct: 0, added: Date.now() });
       if (books.length > 50) books.length = 50;
       saveBooks(books);
       renderLibrary();
@@ -1770,6 +2244,93 @@
       librarySearch.value = '';
       renderLibrary();
       librarySearch.focus();
+    });
+
+    // ===== Экспорт / Импорт =====
+    function exportAll() {
+      const books = loadBooks();
+      const marks = {};
+      books.forEach(b => { marks[b.id] = loadMarks(b.id); });
+      const data = {
+        app: 'YVL_BOOKS',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        settings: settings,
+        books: books,
+        marks: marks
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dt = new Date();
+      const pad = (n) => n < 10 ? '0' + n : '' + n;
+      a.href = url;
+      a.download = 'yvl-books-' + dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + '-' +
+                   pad(dt.getHours()) + pad(dt.getMinutes()) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Экспортировано: ' + books.length + ' книг(и)');
+    }
+
+    async function importAll(file) {
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (!data || data.app !== 'YVL_BOOKS') {
+          toast('Это не файл YVL BOOKS', true);
+          return;
+        }
+        const mode = confirm(
+          'Импортировать ' + (data.books ? data.books.length : 0) + ' книг(и).\n\n' +
+          'OK — заменить текущие данные.\n' +
+          'Отмена — слить с текущими (дубликаты по id будут перезаписаны).'
+        );
+        if (mode) {
+          if (Array.isArray(data.books)) saveBooks(data.books);
+          if (data.marks && typeof data.marks === 'object') {
+            Object.keys(data.marks).forEach(bid => {
+              try { localStorage.setItem('reader_marks_' + bid, JSON.stringify(data.marks[bid] || [])); } catch (e) {}
+            });
+          }
+          if (data.settings) {
+            settings = Object.assign({}, DEFAULTS, data.settings);
+            saveSettings();
+            applySettings();
+          }
+          toast('Импорт (замена) завершён');
+        } else {
+          const currentBooks = loadBooks();
+          const byId = {};
+          currentBooks.forEach(b => byId[b.id] = b);
+          (data.books || []).forEach(b => { byId[b.id] = b; });
+          const merged = Object.values(byId).sort((a,b) => (b.added || 0) - (a.added || 0));
+          saveBooks(merged);
+          if (data.marks) {
+            Object.keys(data.marks).forEach(bid => {
+              const existing = loadMarks(bid);
+              const incoming = data.marks[bid] || [];
+              const ids = new Set(existing.map(m => m.id));
+              const mergedMarks = existing.concat(incoming.filter(m => !ids.has(m.id)));
+              try { localStorage.setItem('reader_marks_' + bid, JSON.stringify(mergedMarks)); } catch (e) {}
+            });
+          }
+          toast('Импорт (слияние) завершён');
+        }
+        renderLibrary();
+      } catch (err) {
+        console.error(err);
+        toast('Не удалось прочитать JSON: ' + (err.message || err), true);
+      }
+    }
+
+    if (btnExport) btnExport.addEventListener('click', exportAll);
+    if (btnImport) btnImport.addEventListener('click', () => importInput.click());
+    if (importInput) importInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) importAll(f);
+      importInput.value = '';
     });
 
     function startReading(text, fromBook) {
@@ -2113,6 +2674,7 @@
     //  ГОРЯЧИЕ КЛАВИШИ
     // ============================================================
     document.addEventListener('keydown', (e) => {
+      if (noteEditor && noteEditor.classList.contains('open')) return;
       if (readerScreen.style.display !== 'block') return;
       const ctrl = e.ctrlKey || e.metaKey;
       if (ctrl && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); openJump(); }
@@ -2124,6 +2686,7 @@
       else if (e.key === 'Escape') {
         closeJump(); closeToc();
         if (palette) palette.classList.remove('open');
+        if (fontPanel) fontPanel.classList.remove('open');
         closeSheet(); closeMarks();
       }
     });
