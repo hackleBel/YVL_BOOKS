@@ -83,7 +83,6 @@
     min-width: 34px; text-align: center;
   }
 
-  /* ===== Индикатор прогресса в шапке ===== */
   #pct-indicator {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 12px;
@@ -97,7 +96,74 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: .3px;
     font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s, border-color .15s;
   }
+  #pct-indicator:hover {
+    background: var(--border-strong);
+    border-color: var(--accent);
+  }
+
+  /* ===== Мини-диалог перехода по проценту ===== */
+  #pct-jump {
+    position: fixed;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 12px 14px;
+    z-index: 260;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #pct-jump.show { display: flex; }
+  #pct-jump::before {
+    content: "";
+    position: absolute;
+    top: -6px; left: 50%;
+    width: 10px; height: 10px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border-strong);
+    border-top: 1px solid var(--border-strong);
+  }
+  #pct-jump .lbl {
+    font-size: 12px;
+    color: var(--fg-dim);
+    white-space: nowrap;
+  }
+  #pct-jump input {
+    width: 90px;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    color: var(--fg);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    text-align: right;
+  }
+  #pct-jump input:focus { border-color: var(--accent); }
+  #pct-jump .suffix {
+    font-size: 13px;
+    color: var(--fg-dim);
+    margin-left: -4px;
+  }
+  #pct-jump button {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+  #pct-jump .go {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  #pct-jump .go:hover { background: var(--accent); opacity: .9; }
 
   #btn-menu {
     display: none; background: transparent; border: none;
@@ -313,23 +379,6 @@
     font-size: 16px; z-index: 90;
   }
   #to-top.show { display: flex; }
-
-  #jump-box {
-    position: fixed; bottom: 70px; left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-panel); border: 1px solid var(--border-strong);
-    border-radius: 10px; padding: 14px 18px;
-    display: none; gap: 10px; align-items: center;
-    z-index: 200; box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-  #jump-box.show { display: flex; }
-  #jump-box input {
-    background: var(--bg); border: 1px solid var(--border-strong);
-    color: var(--fg); padding: 7px 10px; border-radius: 6px;
-    width: 130px; font-size: 13px; outline: none;
-  }
-  #jump-box span { font-size: 12px; color: var(--fg-dim); }
 
   #toc-panel {
     position: fixed; top: 0; right: -360px;
@@ -627,12 +676,6 @@
   }
   .sheet-grid button.wide { grid-column: 1 / -1; }
   .sheet-grid button.mark-btn { color: var(--mark-color); border-color: rgba(224,184,74,.4); }
-  #sheet-close {
-    display: block; margin: 4px auto 0; padding: 8px 20px;
-    font-size: 12px; background: transparent;
-    border: 1px solid var(--border-strong);
-    color: var(--fg-dim); border-radius: 20px;
-  }
   #sheet-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.45);
@@ -650,7 +693,13 @@
     font-weight: 600;
     min-width: 62px;
     text-align: right;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background .15s;
   }
+  .m-pct-value:hover { background: var(--border-strong); }
   .m-pct-track {
     flex: 1;
     height: 5px;
@@ -768,8 +817,6 @@
     #marks-panel { width: 88%; right: -88%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
     #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
-    #jump-box { left: 12px; right: 12px; transform: none; padding: 10px 12px; }
-    #jump-box input { width: 100px; }
     .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 300px; }
     footer { padding: 6px 12px; font-size: 10px; }
     #side-progress { right: 2px; width: 28px; top: 50px; bottom: 50px; }
@@ -777,6 +824,15 @@
     #side-thumb { right: 9px; width: 10px; height: 44px; }
     .side-mark { right: 6px; width: 12px; height: 3px; }
     #mobile-sheet { display: block; }
+    #pct-jump {
+      left: 50% !important;
+      right: auto !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: calc(100vw - 32px);
+      max-width: 320px;
+    }
+    #pct-jump::before { display: none; }
   }
 </style>
 </head>
@@ -806,7 +862,7 @@
         <span class="size-label" id="lh-label">1.85</span>
         <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
-      <span id="pct-indicator" title="Текущий процент прочитанного">0.00%</span>
+      <span id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
       <button id="btn-font" title="Шрифт и интервал">Aa</button>
       <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
       <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
@@ -898,14 +954,15 @@
 <button id="to-top" title="Наверх">↑</button>
 <button id="btn-add-mark" title="Поставить закладку">🔖</button>
 
-<div id="jump-box">
-  <span>Перейти к главе:</span>
-  <input type="number" id="jump-input" min="1" value="1">
-  <button id="jump-go">→</button>
-  <button id="jump-cancel">✕</button>
+<div id="pct-jump">
+  <span class="lbl">Перейти на</span>
+  <input type="number" id="pct-jump-input" min="0" max="100" step="0.01" inputmode="decimal" value="0">
+  <span class="suffix">%</span>
+  <button id="pct-jump-go" class="go" title="Перейти">→</button>
+  <button id="pct-jump-cancel" title="Отмена">✕</button>
 </div>
 
-<div id="hint">Двойной клик — 🔖 закладка · Ctrl+B — закладка · Ctrl+G — глава · Ctrl+O — содержание</div>
+<div id="hint">Двойной клик — 🔖 закладка · Ctrl+B — закладка · Ctrl+O — содержание</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
@@ -952,7 +1009,7 @@
       <div class="m-pct-track">
         <span class="m-pct-fill" id="m-pct-bar"></span>
       </div>
-      <span class="m-pct-value" id="m-pct-indicator">0.00%</span>
+      <span class="m-pct-value" id="m-pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
     </div>
   </div>
 
@@ -995,15 +1052,12 @@
       <button id="m-font">Aa Шрифт</button>
       <button id="m-theme">🎨 Цвет</button>
       <button id="m-toc">📖 Содержание</button>
-      <button id="m-jump">🔢 К главе</button>
       <button id="m-mark" class="mark-btn">🔖 Закладка</button>
       <button id="m-marks" class="mark-btn">🔖 Закладки</button>
       <button id="m-library" class="wide">📚 Библиотека</button>
       <button id="m-close" class="wide">✕ Закрыть</button>
     </div>
   </div>
-
-  <button id="sheet-close">Свернуть</button>
 </div>
 
 <script>
@@ -1065,11 +1119,6 @@
     const marksClear = $('marks-clear');
     const marksSearch = $('marks-search');
 
-    const jumpBox = $('jump-box');
-    const jumpInput = $('jump-input');
-    const jumpGo = $('jump-go');
-    const jumpCancel = $('jump-cancel');
-
     const tocPanel = $('toc-panel');
     const tocList = $('toc-list');
     const tocClose = $('toc-close');
@@ -1114,7 +1163,6 @@
     const btnMenu = $('btn-menu');
     const mobileSheet = $('mobile-sheet');
     const sheetOverlay = $('sheet-overlay');
-    const sheetClose = $('sheet-close');
     const sheetHandle = $('sheet-handle');
     const mFontDec = $('m-font-dec');
     const mFontInc = $('m-font-inc');
@@ -1130,7 +1178,6 @@
     const mFont = $('m-font');
     const mTheme = $('m-theme');
     const mToc = $('m-toc');
-    const mJump = $('m-jump');
     const mLibrary = $('m-library');
     const mMark = $('m-mark');
     const mMarks = $('m-marks');
@@ -1142,6 +1189,11 @@
     const noteInput = $('note-input');
     const noteCancel = $('note-cancel');
     const noteSave = $('note-save');
+
+    const pctJump = $('pct-jump');
+    const pctJumpInput = $('pct-jump-input');
+    const pctJumpGo = $('pct-jump-go');
+    const pctJumpCancel = $('pct-jump-cancel');
 
     let chapters = [];
     let activeChapter = -1;
@@ -1409,7 +1461,6 @@
       if (mobileSheet.classList.contains('open')) closeSheet(); else openSheet();
     }
     if (btnMenu) btnMenu.addEventListener('click', toggleSheet);
-    if (sheetClose) sheetClose.addEventListener('click', closeSheet);
     if (mClose) mClose.addEventListener('click', closeSheet);
     if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
 
@@ -1437,7 +1488,6 @@
       setTimeout(() => { if (fontPanel) fontPanel.classList.add('open'); }, 200);
     });
     if (mToc) mToc.addEventListener('click', () => { closeSheet(); setTimeout(openToc, 180); });
-    if (mJump) mJump.addEventListener('click', () => { closeSheet(); setTimeout(openJump, 180); });
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
     if (mMark) mMark.addEventListener('click', () => { closeSheet(); addMark(); });
     if (mMarks) mMarks.addEventListener('click', () => { closeSheet(); setTimeout(openMarks, 180); });
@@ -1499,6 +1549,88 @@
     })();
 
     // ============================================================
+    //  ПЕРЕХОД ПО ПРОЦЕНТУ
+    // ============================================================
+    function getCurrentPercent() {
+      if (!readerScreen || readerScreen.style.display !== 'block') return 0;
+      const scrollTop = readerScreen.scrollTop;
+      const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
+      return scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    }
+
+    function openPctJump(anchorEl) {
+      if (readerScreen.style.display !== 'block') return;
+      const cur = getCurrentPercent();
+      pctJumpInput.value = cur.toFixed(2);
+      pctJump.classList.add('show');
+
+      // позиционируем относительно anchorEl
+      requestAnimationFrame(() => {
+        if (!anchorEl) return;
+        const rect = anchorEl.getBoundingClientRect();
+        const popW = pctJump.offsetWidth || 280;
+        let left = rect.left + rect.width / 2 - popW / 2;
+        let top = rect.bottom + 8;
+        // не вылезаем за пределы
+        left = Math.max(8, Math.min(window.innerWidth - popW - 8, left));
+        if (top + 60 > window.innerHeight) {
+          top = rect.top - (pctJump.offsetHeight || 50) - 8;
+          if (top < 8) top = 8;
+        }
+        pctJump.style.left = left + 'px';
+        pctJump.style.top = top + 'px';
+      });
+
+      setTimeout(() => {
+        pctJumpInput.focus();
+        pctJumpInput.select();
+      }, 50);
+    }
+
+    function closePctJump() {
+      pctJump.classList.remove('show');
+    }
+
+    function applyPctJump() {
+      let v = parseFloat(pctJumpInput.value.replace(',', '.'));
+      if (isNaN(v)) { closePctJump(); return; }
+      v = Math.max(0, Math.min(100, v));
+      const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+      readerScreen.scrollTop = (v / 100) * Math.max(0, max);
+      updateProgress();
+      showScroller();
+      closePctJump();
+    }
+
+    if (pctIndicator) {
+      pctIndicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openPctJump(pctIndicator);
+      });
+    }
+    if (mPctIndicator) {
+      mPctIndicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // На мобильном — открываем диалог по центру
+        openPctJump(null);
+      });
+    }
+    if (pctJumpGo) pctJumpGo.addEventListener('click', applyPctJump);
+    if (pctJumpCancel) pctJumpCancel.addEventListener('click', closePctJump);
+    if (pctJumpInput) {
+      pctJumpInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); applyPctJump(); }
+        if (e.key === 'Escape') { e.preventDefault(); closePctJump(); }
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (!pctJump.classList.contains('show')) return;
+      if (pctJump.contains(e.target)) return;
+      if (e.target === pctIndicator || e.target === mPctIndicator) return;
+      closePctJump();
+    });
+
+    // ============================================================
     //  ТЕКСТ: РАЗБИВКА, РЕНДЕР
     // ============================================================
     function splitIntoParagraphs(text) {
@@ -1550,11 +1682,25 @@
 
       const words = text.trim().split(/\s+/).filter(Boolean).length;
       if (footerLeft) footerLeft.textContent = words.toLocaleString('ru-RU') + ' слов';
-      if (footerRight) footerRight.textContent = '≈ ' + Math.max(1, Math.round(words / 200)) + ' мин чтения';
+      if (footerRight) {
+        if (chapters.length > 0) {
+          footerRight.textContent = chapters.length + ' ' + pluralChapters(chapters.length);
+        } else {
+          footerRight.textContent = '';
+        }
+      }
 
       buildToc();
       updateProgress();
       renderSideMarks();
+    }
+
+    function pluralChapters(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'глава';
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'главы';
+      return 'глав';
     }
 
     function buildToc() {
@@ -1957,10 +2103,7 @@
 
       progressBar.style.width = pct + '%';
 
-      // Индикатор процента в шапке — с двумя знаками после запятой
       if (pctIndicator) pctIndicator.textContent = pct.toFixed(2) + '%';
-
-      // Индикатор и полоска в мобильном меню
       if (mPctIndicator) mPctIndicator.textContent = pct.toFixed(2) + '%';
       if (mPctBar) mPctBar.style.width = pct + '%';
 
@@ -2002,6 +2145,10 @@
         restoreReadingAnchor(anchor);
         updateProgress();
         renderSideMarks();
+        if (pctJump.classList.contains('show') && pctIndicator) {
+          // перепозиционировать
+          openPctJump(pctIndicator);
+        }
       });
     });
 
@@ -2068,29 +2215,6 @@
     });
 
     // ============================================================
-    //  ПЕРЕХОД К ГЛАВЕ
-    // ============================================================
-    function openJump() {
-      if (!jumpBox || chapters.length === 0) return;
-      jumpBox.classList.add('show');
-      jumpInput.value = (activeChapter >= 0 ? activeChapter + 1 : 1);
-      jumpInput.max = chapters.length;
-      jumpInput.focus(); jumpInput.select();
-    }
-    function closeJump() { if (jumpBox) jumpBox.classList.remove('show'); }
-
-    if (jumpGo) jumpGo.addEventListener('click', () => {
-      const n = parseInt(jumpInput.value, 10);
-      if (!isNaN(n)) goToChapter(n - 1);
-      closeJump();
-    });
-    if (jumpCancel) jumpCancel.addEventListener('click', closeJump);
-    if (jumpInput) jumpInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') jumpGo.click();
-      if (e.key === 'Escape') closeJump();
-    });
-
-    // ============================================================
     //  ЭКРАНЫ
     // ============================================================
     function showReader() {
@@ -2109,7 +2233,7 @@
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
       if (btnAddMark) btnAddMark.classList.remove('show');
-      closeToc(); closeJump(); closeSheet(); closeMarks();
+      closeToc(); closeSheet(); closeMarks(); closePctJump();
       currentBookId = null;
       currentMarks = [];
       if (sideMarks) sideMarks.innerHTML = '';
@@ -2174,10 +2298,9 @@
         const meta = document.createElement('div');
         meta.className = 'meta';
         const words = b.words || 0;
-        const min = Math.max(1, Math.round(words / 200));
         const marksCount = loadMarks(b.id).length;
         const pct = (b.pct || 0) * 100;
-        let metaText = words.toLocaleString('ru-RU') + ' слов · ≈ ' + min + ' мин';
+        let metaText = words.toLocaleString('ru-RU') + ' слов';
         if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
         if (pct > 0) metaText += ' · ' + pct.toFixed(2) + '%';
         meta.textContent = metaText;
@@ -2675,16 +2798,16 @@
     // ============================================================
     document.addEventListener('keydown', (e) => {
       if (noteEditor && noteEditor.classList.contains('open')) return;
+      if (pctJump && pctJump.classList.contains('show')) return;
       if (readerScreen.style.display !== 'block') return;
       const ctrl = e.ctrlKey || e.metaKey;
-      if (ctrl && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); openJump(); }
-      else if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
+      if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
       else if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addMark(); }
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); toggleMarks(); }
       else if (ctrl && (e.key === '=' || e.key === '+')) { e.preventDefault(); changeFont(2); }
       else if (ctrl && (e.key === '-' || e.key === '_')) { e.preventDefault(); changeFont(-2); }
       else if (e.key === 'Escape') {
-        closeJump(); closeToc();
+        closeToc();
         if (palette) palette.classList.remove('open');
         if (fontPanel) fontPanel.classList.remove('open');
         closeSheet(); closeMarks();
