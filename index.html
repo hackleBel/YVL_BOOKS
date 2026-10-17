@@ -152,7 +152,7 @@
     width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 12px 12px;
-    font-size: 16px;               /* 16px — iOS не зумит */
+    font-size: 16px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     outline: none;
     -webkit-appearance: none; appearance: none;
@@ -628,10 +628,10 @@
   }
   #sync-modal.open { display: flex; }
   #sync-modal .box {
-    width: 100%; max-width: 480px; background: var(--bg-panel);
+    width: 100%; max-width: 520px; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 12px;
     padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    max-height: 90vh; overflow-y: auto;
+    max-height: 92vh; overflow-y: auto;
   }
   #sync-modal h4 {
     font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
@@ -653,6 +653,75 @@
   #sync-modal .actions .danger { color: var(--err); border-color: rgba(217,83,79,.4); }
   #sync-modal .actions .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   #sync-modal .status { font-size: 11px; color: var(--fg-dim); margin-top: 10px; min-height: 14px; }
+
+  /* ===== DEVICES ===== */
+  #devices-section { margin-bottom: 16px; }
+  #devices-title {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #devices-count {
+    background: var(--accent); color: var(--bg);
+    border-radius: 10px; padding: 1px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0;
+  }
+  #devices-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 220px; overflow-y: auto;
+  }
+  .device-item {
+    background: var(--bg-input);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--fg-mid);
+  }
+  .device-item.current {
+    border-color: var(--accent);
+    background: var(--bg-panel);
+  }
+  .device-item .dev-name {
+    font-size: 12px;
+    color: var(--fg);
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .device-item .dev-meta {
+    color: var(--fg-dim);
+    font-size: 10px;
+  }
+  .device-item .dev-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .device-item .dev-forget {
+    background: transparent; border: none;
+    color: var(--fg-dim); font-size: 11px;
+    padding: 2px 6px; border-radius: 4px;
+    cursor: pointer; margin-left: 4px;
+  }
+  .device-item .dev-forget:hover { background: var(--border-strong); color: var(--err); }
+  #devices-empty {
+    padding: 12px; font-size: 11px; color: var(--fg-dim);
+    text-align: center; border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+  }
+  #devices-cleanup { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
   @media (max-width: 720px) { #content { padding: 36px 22px 120px; font-size: 19px; } }
   @media (max-width: 640px) {
@@ -919,6 +988,15 @@
     <h4>Аккаунт и синхронизация</h4>
     <div class="info" id="sync-info">—</div>
 
+    <div id="devices-section">
+      <div id="devices-title">
+        <span>Подключённые устройства</span>
+        <span id="devices-count">0</span>
+      </div>
+      <div id="devices-list"></div>
+      <button id="devices-cleanup" type="button">Удалить неактивные (&gt;30 дней)</button>
+    </div>
+
     <div class="row">
       <input type="text" id="sync-gist-id" placeholder="Gist ID" inputmode="text"
              autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -1164,6 +1242,11 @@
     const syncLogout = $('sync-logout');
     const syncClose = $('sync-close');
 
+    // Devices
+    const devicesList = $('devices-list');
+    const devicesCount = $('devices-count');
+    const devicesCleanup = $('devices-cleanup');
+
     // ---- state ----
     let chapters = [];
     let activeChapter = -1;
@@ -1171,6 +1254,7 @@
     let currentMarks = [];
     let editingMarkId = null;
     let pendingMarkAnchor = null;
+    let currentDevices = []; // список устройств из Gist
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -1425,6 +1509,129 @@
     if (mSync) mSync.addEventListener('click', () => { closeSheet(); setTimeout(openSyncModal, 180); });
 
     // ============================================================
+    //  DEVICE MANAGEMENT
+    // ============================================================
+    const DEVICE_ID_KEY = 'reader_device_id';
+
+    function getDeviceId() {
+      try {
+        let id = localStorage.getItem(DEVICE_ID_KEY);
+        if (!id) {
+          id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+          localStorage.setItem(DEVICE_ID_KEY, id);
+        }
+        return id;
+      } catch (e) { return 'd_unknown'; }
+    }
+
+    function guessDeviceName() {
+      const ua = navigator.userAgent || '';
+      if (/iPhone/i.test(ua)) return 'iPhone';
+      if (/iPad/i.test(ua)) return 'iPad';
+      if (/Android/i.test(ua)) {
+        const m = ua.match(/Android[^;]*;\s*([^)]+)\)/);
+        if (m && m[1]) {
+          const parts = m[1].split(';').map(s => s.trim()).filter(Boolean);
+          const model = parts[parts.length - 1];
+          if (model && model.length < 40) return model + ' (Android)';
+        }
+        return /Mobile/i.test(ua) ? 'Android-телефон' : 'Android-планшет';
+      }
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Mac OS/i.test(ua) || /Macintosh/i.test(ua)) return 'macOS';
+      if (/Linux/i.test(ua)) return 'Linux';
+      return 'Устройство';
+    }
+
+    function getThisDeviceInfo() {
+      return {
+        id: getDeviceId(),
+        name: guessDeviceName(),
+        ua: (navigator.userAgent || '').slice(0, 160),
+        platform: navigator.platform || '',
+        lastSeen: Date.now()
+      };
+    }
+
+    function mergeDevices(baseList, thisDevice) {
+      const map = {};
+      (baseList || []).forEach(d => { if (d && d.id) map[d.id] = d; });
+      if (thisDevice) {
+        if (map[thisDevice.id]) map[thisDevice.id] = Object.assign({}, map[thisDevice.id], thisDevice);
+        else map[thisDevice.id] = thisDevice;
+      }
+      return Object.values(map).sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    }
+
+    function renderDevices() {
+      if (!devicesList) return;
+      const myId = getDeviceId();
+      // всегда показываем себя, даже если ещё не было синхронизации
+      let list = mergeDevices(currentDevices, getThisDeviceInfo());
+      devicesList.innerHTML = '';
+      if (devicesCount) devicesCount.textContent = list.length;
+      if (!list.length) {
+        const empty = document.createElement('div');
+        empty.id = 'devices-empty';
+        empty.textContent = 'Пока ни одного устройства.';
+        devicesList.appendChild(empty);
+        return;
+      }
+      list.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'device-item' + (d.id === myId ? ' current' : '');
+        const nameRow = document.createElement('div');
+        nameRow.className = 'dev-name';
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = d.name || 'Устройство';
+        nameRow.appendChild(nameSpan);
+        if (d.id === myId) {
+          const b = document.createElement('span');
+          b.className = 'dev-badge';
+          b.textContent = 'это';
+          nameRow.appendChild(b);
+        } else {
+          const f = document.createElement('button');
+          f.className = 'dev-forget';
+          f.title = 'Забыть это устройство';
+          f.textContent = '✕';
+          f.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!confirm('Убрать «' + (d.name || 'Устройство') + '» из списка?')) return;
+            currentDevices = currentDevices.filter(x => x.id !== d.id);
+            renderDevices();
+            markDirty();
+          });
+          nameRow.appendChild(f);
+        }
+        el.appendChild(nameRow);
+
+        const meta = document.createElement('div');
+        meta.className = 'dev-meta';
+        const when = d.lastSeen ? new Date(d.lastSeen).toLocaleString('ru-RU') : '—';
+        meta.textContent = when + (d.platform ? ' · ' + d.platform : '');
+        el.appendChild(meta);
+
+        devicesList.appendChild(el);
+      });
+    }
+
+    if (devicesCleanup) {
+      devicesCleanup.addEventListener('click', () => {
+        const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        const myId = getDeviceId();
+        const before = currentDevices.length;
+        currentDevices = currentDevices.filter(d =>
+          d.id === myId || (d.lastSeen && d.lastSeen > cutoff)
+        );
+        const removed = before - currentDevices.length;
+        renderDevices();
+        markDirty();
+        toast(removed ? 'Удалено устройств: ' + removed : 'Неактивных устройств нет', 'ok');
+      });
+    }
+
+    // ============================================================
     //  SYNC ENGINE
     // ============================================================
     const AUTH_KEY = 'reader_auth';
@@ -1535,23 +1742,26 @@
       return r.json();
     }
 
-    function collectLocalSnapshot(useNowIfEmpty) {
+    function collectLocalSnapshot(useNowIfEmpty, extraDevices) {
       const books = loadBooks();
       const marks = {};
       books.forEach(b => { marks[b.id] = loadMarks(b.id); });
       const ts = getLocalUpdated() || (useNowIfEmpty ? Date.now() : 0);
+      const thisDev = getThisDeviceInfo();
+      const devices = mergeDevices(extraDevices || currentDevices, thisDev);
       return {
         app: 'YVL_BOOKS_SYNC',
-        version: 2,
+        version: 3,
         updatedAt: ts,
         settings: settings,
         books: books,
-        marks: marks
+        marks: marks,
+        devices: devices
       };
     }
 
     function applyRemoteSnapshot(snap) {
-      if (!snap || snap.app !== 'YVL_BOOKS_SYNC') {
+      if (!snap || (snap.app !== 'YVL_BOOKS_SYNC' && snap.app !== 'YVL_BOOKS')) {
         throw new Error('Неверный формат файла синхронизации');
       }
       if (snap.settings) {
@@ -1578,9 +1788,16 @@
           });
         } catch (e) {}
       }
+      // devices
+      if (Array.isArray(snap.devices)) {
+        currentDevices = mergeDevices(snap.devices, getThisDeviceInfo());
+      } else {
+        currentDevices = mergeDevices(currentDevices, getThisDeviceInfo());
+      }
       setLocalUpdated(snap.updatedAt || 0);
       applySettings();
       renderLibrary();
+      renderDevices();
     }
 
     async function pullFromRemote(silent) {
@@ -1592,7 +1809,6 @@
         const gist = await apiGetGist(auth.gistId);
         const file = gist.files && gist.files[gistFileName];
         if (!file) {
-          // файла нет — сразу пушим
           syncing = false;
           await pushToRemote(true);
           return true;
@@ -1608,6 +1824,12 @@
 
         const remoteUpdated = snap.updatedAt || 0;
         const localUpdated = getLocalUpdated();
+
+        // Всегда подтягиваем список устройств с сервера
+        if (Array.isArray(snap.devices)) {
+          currentDevices = mergeDevices(snap.devices, getThisDeviceInfo());
+          renderDevices();
+        }
 
         if (remoteUpdated > localUpdated) {
           applyRemoteSnapshot(snap);
@@ -1653,6 +1875,9 @@
         const content = JSON.stringify(snap);
         await apiUpdateGist(auth.gistId, content);
         dirty = false;
+        // после push обновим локальный список устройств тем, что отправили
+        currentDevices = snap.devices || currentDevices;
+        renderDevices();
         syncState.lastSync = now;
         syncState.error = null;
         setSyncIndicator('ok', '✓');
@@ -1676,6 +1901,11 @@
       }
       await pullFromRemote(false);
       if (force && dirty) await pushToRemote(true);
+      else if (force && auth && auth.gistId) {
+        // даже если нет dirty — обновим запись о себе (lastSeen)
+        markDirty();
+        await pushToRemote(true);
+      }
     }
 
     async function setupSync() {
@@ -1688,13 +1918,14 @@
           auth.gistId = gist.id;
           saveAuth(auth);
           setLocalUpdated(initial.updatedAt);
+          currentDevices = initial.devices;
           setSyncIndicator('ok', '✓');
           syncState.lastSync = Date.now();
           updateSyncModalInfo();
+          renderDevices();
           toast('Создан новый Gist. Скопируйте Gist ID для второго устройства.', 'ok');
         } else {
           await pullFromRemote(false);
-          // если после pull появились локальные данные и они новее — push
           if (dirty) await pushToRemote(true);
           updateSyncModalInfo();
         }
@@ -1716,6 +1947,7 @@
           (syncState.lastSync ? ' · синх.: ' + new Date(syncState.lastSync).toLocaleTimeString() : '');
       }
       if (syncGistIdInput) syncGistIdInput.value = auth.gistId || '';
+      renderDevices();
     }
 
     function openSyncModal() {
@@ -1724,6 +1956,7 @@
         syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) :
           (auth && auth.gistId ? 'Всё готово. Можно синхронизировать вручную.' : 'Gist не создан — нажмите синхронизировать.');
       }
+      renderDevices();
       syncModal.classList.add('open');
     }
     function closeSyncModal() { syncModal.classList.remove('open'); }
@@ -1765,6 +1998,7 @@
       saveAuth(auth);
       dirty = false;
       setLocalUpdated(0);
+      currentDevices = [];
       if (syncStatus) syncStatus.textContent = 'Подключение...';
       await pullFromRemote(false);
       if (syncStatus) syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) : 'Готово.';
@@ -1787,6 +2021,7 @@
       if (!confirm('Выйти из аккаунта? Локальные данные останутся на этом устройстве, но перестанут синхронизироваться.')) return;
       localStorage.removeItem(AUTH_KEY);
       auth = null;
+      currentDevices = [];
       closeSyncModal();
       showSyncIndicator(false);
       showAuth();
@@ -1802,21 +2037,18 @@
     });
     if (btnSettings) btnSettings.addEventListener('click', openSyncModal);
 
-    // Периодический pull (20 сек) — только если вкладка видима и не идёт синхронизация
     setInterval(() => {
       if (auth && auth.gistId && !syncing && !document.hidden) {
         pullFromRemote(true).catch(() => {});
       }
     }, 20000);
 
-    // Pull при возврате на вкладку
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && auth && auth.gistId && !syncing) {
         pullFromRemote(true).catch(() => {});
       }
     });
 
-    // Сохранение при закрытии вкладки — best effort
     window.addEventListener('beforeunload', () => {
       if (dirty && auth && auth.gistId) {
         try {
@@ -3068,6 +3300,9 @@
     buildPresets();
     applySettings();
     renderLibrary();
+    // на старте покажем своё устройство в списке (даже до синхронизации)
+    currentDevices = mergeDevices(currentDevices, getThisDeviceInfo());
+    renderDevices();
 
     if (auth) {
       hideAuth();
@@ -3078,6 +3313,7 @@
         pullFromRemote(false).then(ok => {
           if (ok) {
             renderLibrary();
+            renderDevices();
             if (dirty) pushToRemote(true).catch(() => {});
           }
         });
