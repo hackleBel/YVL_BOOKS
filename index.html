@@ -16,58 +16,42 @@
   }
 
   :root {
-    --bg: #14161a;
-    --bg-header: #191c21;
-    --bg-panel: #1e2228;
-    --bg-input: #191c21;
-    --border: #23272e;
-    --border-strong: #2e333b;
-    --fg: #d4d7dc;
-    --fg-dim: #6d737d;
-    --fg-mid: #a8adb5;
-    --accent: #8b919b;
-    --col-width: 720px;
-    --line-height: 1.85;
-    --letter-spacing: 0;
+    --bg: #14161a; --bg-header: #191c21; --bg-panel: #1e2228; --bg-input: #191c21;
+    --border: #23272e; --border-strong: #2e333b;
+    --fg: #d4d7dc; --fg-dim: #6d737d; --fg-mid: #a8adb5; --accent: #8b919b;
+    --col-width: 720px; --line-height: 1.85; --letter-spacing: 0;
     --font-stack: Georgia, 'Times New Roman', serif;
-    --mark-color: #e0b84a;
+    --mark-color: #e0b84a; --ok: #4caf7a; --err: #d9534f;
   }
 
   #app { display: flex; flex-direction: column; height: 100%; }
 
   header {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 18px;
-    padding-top: max(10px, env(safe-area-inset-top));
-    background: var(--bg-header);
-    border-bottom: 1px solid var(--border);
+    padding: 10px 18px; padding-top: max(10px, env(safe-area-inset-top));
+    background: var(--bg-header); border-bottom: 1px solid var(--border);
     flex-wrap: wrap; flex-shrink: 0; position: relative;
   }
-
   header h1 {
     font-size: 13px; font-weight: normal; letter-spacing: 2px;
     text-transform: uppercase; color: var(--fg-dim);
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    cursor: pointer;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; cursor: pointer;
   }
-
   .spacer { flex: 1; }
 
   button {
-    background: var(--border); color: var(--fg);
-    border: 1px solid var(--border-strong);
-    padding: 7px 12px; border-radius: 6px;
-    font-size: 13px;
+    background: var(--border); color: var(--fg); border: 1px solid var(--border-strong);
+    padding: 7px 12px; border-radius: 6px; font-size: 13px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     cursor: pointer; line-height: 1;
   }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
 
   .btn-group {
     display: flex; align-items: center; gap: 4px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
     border-radius: 8px; padding: 3px;
   }
   .btn-group button {
@@ -76,7 +60,6 @@
   }
   .btn-group button:hover { background: var(--border-strong); }
   .btn-icon { font-family: Georgia, serif; font-weight: bold; }
-
   .size-label {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim);
@@ -85,85 +68,34 @@
 
   #pct-indicator {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 12px;
-    color: var(--accent);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 6px 10px;
-    min-width: 66px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: .3px;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-    transition: background .15s, border-color .15s;
+    font-size: 12px; color: var(--accent); background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 6px 10px; min-width: 66px; text-align: center;
+    font-variant-numeric: tabular-nums; letter-spacing: .3px; font-weight: 600;
+    cursor: pointer; user-select: none; transition: background .15s, border-color .15s;
   }
-  #pct-indicator:hover {
-    background: var(--border-strong);
-    border-color: var(--accent);
-  }
+  #pct-indicator:hover { background: var(--border-strong); border-color: var(--accent); }
 
-  /* ===== Мини-диалог перехода по проценту ===== */
   #pct-jump {
-    position: fixed;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 12px 14px;
-    z-index: 260;
-    display: none;
-    align-items: center;
-    gap: 8px;
+    position: fixed; background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 12px 14px; z-index: 260;
+    display: none; align-items: center; gap: 8px;
     box-shadow: 0 12px 40px rgba(0,0,0,.55);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #pct-jump.show { display: flex; }
-  #pct-jump::before {
-    content: "";
-    position: absolute;
-    top: -6px; left: 50%;
-    width: 10px; height: 10px;
-    transform: translateX(-50%) rotate(45deg);
-    background: var(--bg-panel);
-    border-left: 1px solid var(--border-strong);
-    border-top: 1px solid var(--border-strong);
-  }
-  #pct-jump .lbl {
-    font-size: 12px;
-    color: var(--fg-dim);
-    white-space: nowrap;
-  }
+  #pct-jump .lbl { font-size: 12px; color: var(--fg-dim); white-space: nowrap; }
   #pct-jump input {
-    width: 90px;
-    background: var(--bg);
-    border: 1px solid var(--border-strong);
-    color: var(--fg);
-    padding: 7px 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-variant-numeric: tabular-nums;
-    outline: none;
-    text-align: right;
+    width: 90px; background: var(--bg); border: 1px solid var(--border-strong);
+    color: var(--fg); padding: 7px 10px; border-radius: 6px;
+    font-size: 14px; font-variant-numeric: tabular-nums; outline: none; text-align: right;
   }
   #pct-jump input:focus { border-color: var(--accent); }
-  #pct-jump .suffix {
-    font-size: 13px;
-    color: var(--fg-dim);
-    margin-left: -4px;
-  }
-  #pct-jump button {
-    padding: 7px 10px;
-    font-size: 13px;
-  }
+  #pct-jump .suffix { font-size: 13px; color: var(--fg-dim); margin-left: -4px; }
+  #pct-jump button { padding: 7px 10px; font-size: 13px; }
   #pct-jump .go {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-    font-weight: 600;
+    background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600;
   }
-  #pct-jump .go:hover { background: var(--accent); opacity: .9; }
 
   #btn-menu {
     display: none; background: transparent; border: none;
@@ -172,81 +104,138 @@
   }
   #btn-menu:hover { background: var(--border-strong); }
 
+  /* ===== Sync indicator in header ===== */
+  #sync-indicator {
+    display: none; align-items: center; gap: 6px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px; color: var(--fg-dim);
+    padding: 5px 9px; border-radius: 6px;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    cursor: pointer; user-select: none;
+  }
+  #sync-indicator.show { display: inline-flex; }
+  #sync-indicator .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--fg-dim); transition: background .2s;
+  }
+  #sync-indicator.ok .dot { background: var(--ok); }
+  #sync-indicator.err .dot { background: var(--err); }
+  #sync-indicator.syncing .dot { background: var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  /* ===== Login screen ===== */
+  #auth-screen {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 24px; overflow-y: auto;
+  }
+  #auth-screen.hidden { display: none; }
+  .auth-box {
+    width: 100%; max-width: 440px;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 14px; padding: 28px 26px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .auth-box h2 {
+    font-size: 16px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 6px; font-weight: 600;
+  }
+  .auth-box .sub {
+    font-size: 12px; color: var(--fg-dim); margin-bottom: 20px; line-height: 1.5;
+  }
+  .auth-box .sub a { color: var(--accent); text-decoration: underline; }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label {
+    display: block; font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--fg-dim); margin-bottom: 6px;
+  }
+  .auth-field input {
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px;
+    font-family: inherit; outline: none;
+  }
+  .auth-field input:focus { border-color: var(--accent); }
+  .auth-field .hint { font-size: 10px; color: var(--fg-dim); margin-top: 4px; line-height: 1.4; }
+  .auth-box .actions {
+    display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap;
+  }
+  .auth-box .actions button { flex: 1; min-width: 120px; padding: 10px 14px; font-size: 13px; font-weight: 600; }
+  .auth-box .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .auth-box .err-msg {
+    font-size: 12px; color: var(--err); margin-top: 10px; min-height: 16px; line-height: 1.4;
+  }
+  .auth-box .toggle-mode {
+    font-size: 12px; color: var(--fg-dim); margin-top: 14px; text-align: center;
+  }
+  .auth-box .toggle-mode a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .auth-box details {
+    margin-top: 16px; font-size: 11px; color: var(--fg-dim);
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+  .auth-box details summary { cursor: pointer; color: var(--fg-mid); margin-bottom: 8px; }
+  .auth-box details ol { padding-left: 18px; line-height: 1.6; }
+  .auth-box details ol li { margin-bottom: 4px; }
+  .auth-box details code {
+    background: var(--bg); padding: 1px 5px; border-radius: 3px;
+    font-family: monospace; font-size: 11px; color: var(--accent);
+  }
+
   #paste-screen {
     flex: 1; display: flex; flex-direction: column;
     padding: 24px; align-items: center; overflow-y: auto;
   }
   #paste-screen .inner {
     width: 100%; max-width: 860px;
-    display: flex; flex-direction: column;
-    flex: 1; min-height: 0;
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
   }
   #paste-screen p {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px; color: var(--fg-dim);
-    margin-bottom: 12px; text-align: center;
+    font-size: 13px; color: var(--fg-dim); margin-bottom: 12px; text-align: center;
   }
-
   textarea {
     flex: 1; width: 100%; min-height: 160px;
     background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 18px;
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 18px;
     font-size: 15px; line-height: 1.6;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     resize: none; outline: none;
   }
   textarea:focus { border-color: var(--accent); }
-
   #paste-screen .actions {
     display: flex; justify-content: center; gap: 12px;
     margin-top: 16px; flex-wrap: wrap; flex-shrink: 0;
   }
 
-  #library {
-    margin-top: 22px;
-    border-top: 1px solid var(--border);
-    padding-top: 18px;
-  }
+  #library { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
   #library h3 {
-    font-size: 11px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--fg-dim);
-    margin-bottom: 12px; font-weight: normal;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 12px; font-weight: normal;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
-
-  #library-io {
-    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
-  }
+  #library-io { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   #library-io button { font-size: 12px; padding: 6px 10px; }
-
   #library-search-wrap { margin-bottom: 12px; position: relative; }
   #library-search {
     width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 10px 34px 10px 12px; font-size: 13px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    outline: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; outline: none;
   }
   #library-search:focus { border-color: var(--accent); }
   #library-search-clear {
-    position: absolute; right: 6px; top: 50%;
-    transform: translateY(-50%);
-    background: transparent; border: none;
-    color: var(--fg-dim); font-size: 14px;
-    padding: 4px 8px; cursor: pointer; display: none;
-    line-height: 1; border-radius: 4px;
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    background: transparent; border: none; color: var(--fg-dim); font-size: 14px;
+    padding: 4px 8px; cursor: pointer; display: none; line-height: 1; border-radius: 4px;
   }
   #library-search-wrap.has-value #library-search-clear { display: block; }
 
   .book-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 10px;
   }
   .book-item {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
     border-radius: 8px; padding: 12px 14px;
     display: flex; flex-direction: column; gap: 6px;
     cursor: pointer; position: relative;
@@ -263,19 +252,14 @@
     font-size: 11px; color: var(--fg-dim);
   }
   .book-item .progress-line {
-    height: 3px; border-radius: 2px;
-    background: var(--border); overflow: hidden;
-    margin-top: 2px;
+    height: 3px; border-radius: 2px; background: var(--border);
+    overflow: hidden; margin-top: 2px;
   }
-  .book-item .progress-line span {
-    display: block; height: 100%;
-    background: var(--accent);
-  }
+  .book-item .progress-line span { display: block; height: 100%; background: var(--accent); }
   .book-item .del {
     position: absolute; top: 8px; right: 8px;
-    background: transparent; border: none;
-    color: var(--fg-dim); font-size: 14px;
-    padding: 2px 6px; line-height: 1;
+    background: transparent; border: none; color: var(--fg-dim);
+    font-size: 14px; padding: 2px 6px; line-height: 1;
     border-radius: 4px; cursor: pointer;
   }
   .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
@@ -284,44 +268,35 @@
   #library-empty, #library-no-results {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 12px; color: var(--fg-dim); text-align: center;
-    padding: 14px; border: 1px dashed var(--border-strong);
-    border-radius: 8px;
+    padding: 14px; border: 1px dashed var(--border-strong); border-radius: 8px;
   }
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
 
   #drop-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.65);
+    position: fixed; inset: 0; background: rgba(0,0,0,.65);
     display: none; align-items: center; justify-content: center;
-    z-index: 500;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 18px; color: var(--fg);
-    pointer-events: none;
+    z-index: 500; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 18px; color: var(--fg); pointer-events: none;
     border: 2px dashed var(--accent);
   }
   #drop-overlay.show { display: flex; }
 
   #reader-screen {
-    flex: 1; display: none;
-    overflow-y: auto; overflow-x: hidden;
-    position: relative;
-    scrollbar-width: none; -ms-overflow-style: none;
+    flex: 1; display: none; overflow-y: auto; overflow-x: hidden;
+    position: relative; scrollbar-width: none; -ms-overflow-style: none;
   }
   #reader-screen::-webkit-scrollbar { width: 0; height: 0; }
-
   #content {
     max-width: var(--col-width); margin: 0 auto;
-    padding: 50px 40px 140px;
-    font-size: 20px; line-height: var(--line-height);
-    color: var(--fg);
+    padding: 50px 40px 140px; font-size: 20px;
+    line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing);
     hyphens: auto; -webkit-hyphens: auto;
   }
   #content p {
-    margin-bottom: 1.15em; text-indent: 2em;
-    text-align: justify; orphans: 2; widows: 2;
-    position: relative;
+    margin-bottom: 1.15em; text-indent: 2em; text-align: justify;
+    orphans: 2; widows: 2; position: relative;
   }
   #content p:first-child { text-indent: 0; }
   #content .chapter-title {
@@ -329,18 +304,15 @@
     margin: 2.2em 0 1.4em; font-size: 1.1em;
     letter-spacing: 1px; font-weight: normal;
   }
-
   #progress-bar {
-    position: fixed; top: 0; left: 0;
-    height: 2px; background: var(--accent);
-    width: 0%; z-index: 100;
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--accent); width: 0%; z-index: 100;
   }
 
   #side-progress {
     position: fixed; right: 6px; top: 60px; bottom: 40px;
     width: 22px; background: transparent; z-index: 90;
-    cursor: pointer; opacity: 0; transition: opacity .35s;
-    touch-action: none;
+    cursor: pointer; opacity: 0; transition: opacity .35s; touch-action: none;
   }
   #side-progress.visible { opacity: 1; }
   #side-progress::before {
@@ -352,22 +324,13 @@
     background: var(--accent); border-radius: 5px; opacity: .6;
   }
   #side-progress.dragging #side-thumb { opacity: 1; }
-
   #side-marks {
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 100%;
-    pointer-events: none;
+    position: absolute; right: 0; top: 0; bottom: 0; width: 100%; pointer-events: none;
   }
   .side-mark {
-    position: absolute;
-    right: 3px;
-    width: 10px;
-    height: 3px;
-    background: var(--mark-color);
-    border-radius: 2px;
-    box-shadow: 0 0 4px rgba(224,184,74,.7);
-    transform: translateY(-50%);
+    position: absolute; right: 3px; width: 10px; height: 3px;
+    background: var(--mark-color); border-radius: 2px;
+    box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%);
   }
 
   #to-top {
@@ -375,16 +338,13 @@
     width: 40px; height: 40px; border-radius: 50%;
     background: var(--bg-panel); border: 1px solid var(--border-strong);
     color: var(--accent); cursor: pointer; display: none;
-    align-items: center; justify-content: center;
-    font-size: 16px; z-index: 90;
+    align-items: center; justify-content: center; font-size: 16px; z-index: 90;
   }
   #to-top.show { display: flex; }
 
   #toc-panel {
-    position: fixed; top: 0; right: -360px;
-    width: 360px; height: 100%;
-    background: var(--bg-header);
-    border-left: 1px solid var(--border);
+    position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
+    background: var(--bg-header); border-left: 1px solid var(--border);
     z-index: 300; transition: right .25s ease;
     display: flex; flex-direction: column;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -393,31 +353,24 @@
   #toc-header {
     padding: 16px 20px; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--accent);
-    letter-spacing: 1px; text-transform: uppercase;
+    font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase;
   }
   #toc-list { flex: 1; overflow-y: auto; padding: 8px 0; }
   .toc-item {
     padding: 10px 20px; font-size: 13px; color: var(--fg-mid);
-    cursor: pointer; line-height: 1.4;
-    border-left: 2px solid transparent;
+    cursor: pointer; line-height: 1.4; border-left: 2px solid transparent;
   }
   .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
   .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
-
   #toc-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5); z-index: 299; display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none;
   }
   #toc-overlay.open { display: block; }
   #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
 
-  /* ===== Панель закладок ===== */
   #marks-panel {
-    position: fixed; top: 0; right: -360px;
-    width: 360px; height: 100%;
-    background: var(--bg-header);
-    border-left: 1px solid var(--border);
+    position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
+    background: var(--bg-header); border-left: 1px solid var(--border);
     z-index: 320; transition: right .25s ease;
     display: flex; flex-direction: column;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -431,126 +384,69 @@
   }
   #marks-header-actions { display: flex; gap: 6px; }
   #marks-header button { padding: 4px 10px; font-size: 12px; }
-
-  #marks-search-wrap {
-    padding: 8px 12px; border-bottom: 1px solid var(--border);
-  }
+  #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); }
   #marks-search {
     width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 8px 12px; font-size: 13px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    outline: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; outline: none;
   }
   #marks-search:focus { border-color: var(--accent); }
-
   #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; }
-
   .mark-item {
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    position: relative;
-    transition: background .15s;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    cursor: pointer; position: relative; transition: background .15s;
   }
   .mark-item:hover { background: var(--bg-panel); }
   .mark-item .mark-title {
-    font-size: 12px;
-    color: var(--fg-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
+    font-size: 12px; color: var(--fg-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
   }
   .mark-item .mark-text {
-    font-size: 13px;
-    color: var(--fg);
-    line-height: 1.4;
-    margin-bottom: 6px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 13px; color: var(--fg); line-height: 1.4; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .mark-item .mark-date {
-    font-size: 10px;
-    color: var(--fg-dim);
-  }
+  .mark-item .mark-date { font-size: 10px; color: var(--fg-dim); }
   .mark-item .mark-note {
-    font-size: 12px;
-    color: var(--mark-color);
-    background: rgba(224,184,74,.08);
-    border-left: 2px solid var(--mark-color);
-    padding: 5px 8px;
-    border-radius: 3px;
-    margin: 6px 0;
-    line-height: 1.35;
-    word-break: break-word;
-    white-space: pre-wrap;
+    font-size: 12px; color: var(--mark-color);
+    background: rgba(224,184,74,.08); border-left: 2px solid var(--mark-color);
+    padding: 5px 8px; border-radius: 3px; margin: 6px 0;
+    line-height: 1.35; word-break: break-word; white-space: pre-wrap;
   }
   .mark-item .mark-del {
-    position: absolute;
-    top: 10px; right: 10px;
-    background: transparent; border: none;
-    color: var(--fg-dim); font-size: 13px;
-    padding: 4px 8px; line-height: 1;
+    position: absolute; top: 10px; right: 10px;
+    background: transparent; border: none; color: var(--fg-dim);
+    font-size: 13px; padding: 4px 8px; line-height: 1;
     border-radius: 4px; cursor: pointer;
   }
   .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
-
   #marks-empty {
-    padding: 24px 20px;
-    font-size: 13px;
-    color: var(--fg-dim);
-    text-align: center;
-    line-height: 1.5;
+    padding: 24px 20px; font-size: 13px; color: var(--fg-dim);
+    text-align: center; line-height: 1.5;
   }
-
   #marks-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5); z-index: 319; display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 319; display: none;
   }
   #marks-overlay.open { display: block; }
 
-  /* Плавающая кнопка добавления закладки */
   #btn-add-mark {
-    position: fixed;
-    right: 28px;
-    bottom: 116px;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    color: var(--mark-color);
-    cursor: pointer;
-    display: none;
-    align-items: center; justify-content: center;
-    font-size: 18px;
-    z-index: 90;
+    position: fixed; right: 28px; bottom: 116px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--mark-color); cursor: pointer; display: none;
+    align-items: center; justify-content: center; font-size: 18px; z-index: 90;
   }
   #btn-add-mark.show { display: flex; }
-  #btn-add-mark.saved {
-    background: var(--mark-color);
-    color: var(--bg);
-    border-color: var(--mark-color);
-  }
-  #btn-add-mark.pulse {
-    animation: markPulse .5s ease;
-  }
-  @keyframes markPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
+  #btn-add-mark.saved { background: var(--mark-color); color: var(--bg); border-color: var(--mark-color); }
+  #btn-add-mark.pulse { animation: markPulse .5s ease; }
+  @keyframes markPulse { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
 
   footer {
-    padding: 8px 20px;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
-    background: var(--bg-header);
-    border-top: 1px solid var(--border);
+    padding: 8px 20px; padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: var(--bg-header); border-top: 1px solid var(--border);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim);
-    display: flex; justify-content: space-between; align-items: center;
-    flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
   }
 
   #hint {
@@ -560,32 +456,22 @@
     opacity: .6; z-index: 80; pointer-events: none;
   }
 
-  /* ===== Палитра ===== */
   .palette, .font-panel {
-    position: absolute; top: 100%; right: 18px;
-    margin-top: 6px; background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px; padding: 12px;
-    display: none; z-index: 250;
+    position: absolute; top: 100%; right: 18px; margin-top: 6px;
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 12px; display: none; z-index: 250;
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    width: 240px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; width: 240px;
   }
   .palette.open, .font-panel.open { display: block; }
   .palette h4, .font-panel h4 {
-    font-size: 10px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--fg-dim);
-    margin-bottom: 10px; font-weight: normal;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
   }
-  .palette-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 6px; margin-bottom: 12px;
-  }
+  .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
   .palette-item {
-    padding: 6px 4px; border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    cursor: pointer; text-align: center; font-size: 10px;
-    color: var(--fg-mid);
+    padding: 6px 4px; border-radius: 6px; border: 1px solid var(--border-strong);
+    cursor: pointer; text-align: center; font-size: 10px; color: var(--fg-mid);
   }
   .palette-item:hover { border-color: var(--accent); }
   .palette-item.active { border-color: var(--accent); color: var(--fg); }
@@ -601,59 +487,39 @@
   .custom-row { display: flex; align-items: center; gap: 8px; }
   .custom-row label { font-size: 12px; color: var(--fg-mid); flex: 1; }
   .custom-row input[type=color] {
-    width: 34px; height: 26px;
-    border: 1px solid var(--border-strong);
-    border-radius: 5px; background: var(--bg);
-    cursor: pointer; padding: 2px;
+    width: 34px; height: 26px; border: 1px solid var(--border-strong);
+    border-radius: 5px; background: var(--bg); cursor: pointer; padding: 2px;
   }
   .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
-  /* ===== Панель шрифтов ===== */
   .font-panel { width: 280px; }
-  .font-panel .font-row {
-    display: flex; gap: 6px; margin-bottom: 14px;
-  }
+  .font-panel .font-row { display: flex; gap: 6px; margin-bottom: 14px; }
   .font-panel .font-item {
     flex: 1; padding: 8px 4px; border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    cursor: pointer; text-align: center; font-size: 11px;
-    color: var(--fg-mid); background: var(--bg-input);
+    border: 1px solid var(--border-strong); cursor: pointer;
+    text-align: center; font-size: 11px; color: var(--fg-mid); background: var(--bg-input);
   }
   .font-panel .font-item:hover { border-color: var(--accent); }
   .font-panel .font-item.active { border-color: var(--accent); color: var(--fg); }
-  .font-panel .font-item .sample {
-    font-size: 18px; margin-bottom: 4px; color: var(--fg);
-  }
-  .font-panel .spacing-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .font-panel .spacing-row label {
-    font-size: 12px; color: var(--fg-mid); flex: 1;
-  }
-  .font-panel .spacing-row button {
-    padding: 5px 10px; font-size: 13px;
-  }
+  .font-panel .font-item .sample { font-size: 18px; margin-bottom: 4px; color: var(--fg); }
+  .font-panel .spacing-row { display: flex; align-items: center; gap: 8px; }
+  .font-panel .spacing-row label { font-size: 12px; color: var(--fg-mid); flex: 1; }
+  .font-panel .spacing-row button { padding: 5px 10px; font-size: 13px; }
   .font-panel .spacing-label {
-    min-width: 52px; text-align: center;
-    font-size: 11px; color: var(--fg-dim);
-    font-variant-numeric: tabular-nums;
+    min-width: 52px; text-align: center; font-size: 11px;
+    color: var(--fg-dim); font-variant-numeric: tabular-nums;
   }
 
   input[type=file] { display: none; }
 
-  /* ===== Нижняя панель ===== */
   #mobile-sheet {
     position: fixed; left: 0; right: 0; bottom: 0;
-    background: var(--bg-panel);
-    border-top: 1px solid var(--border-strong);
+    background: var(--bg-panel); border-top: 1px solid var(--border-strong);
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 -12px 40px rgba(0,0,0,.55);
-    z-index: 400;
-    transform: translateY(110%);
-    transition: transform .28s ease;
+    box-shadow: 0 -12px 40px rgba(0,0,0,.55); z-index: 400;
+    transform: translateY(110%); transition: transform .28s ease;
     padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
-    display: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     max-height: 80vh; overflow-y: auto;
   }
   #mobile-sheet.open { transform: translateY(0); }
@@ -663,9 +529,8 @@
   }
   .sheet-section { margin-bottom: 14px; }
   .sheet-section h5 {
-    font-size: 10px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--fg-dim);
-    font-weight: normal; margin-bottom: 8px;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--fg-dim); font-weight: normal; margin-bottom: 8px;
   }
   .sheet-row { display: flex; align-items: center; gap: 8px; }
   .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; }
@@ -677,129 +542,116 @@
   .sheet-grid button.wide { grid-column: 1 / -1; }
   .sheet-grid button.mark-btn { color: var(--mark-color); border-color: rgba(224,184,74,.4); }
   #sheet-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.45);
-    z-index: 399; opacity: 0; pointer-events: none;
-    transition: opacity .25s;
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    z-index: 399; opacity: 0; pointer-events: none; transition: opacity .25s;
   }
   #sheet-overlay.open { opacity: 1; pointer-events: auto; }
 
-  /* ===== Прогресс в нижнем меню ===== */
   .m-pct-value {
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px;
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    min-width: 62px;
-    text-align: right;
-    cursor: pointer;
-    user-select: none;
-    padding: 4px 6px;
-    border-radius: 6px;
+    font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums;
+    font-weight: 600; min-width: 62px; text-align: right;
+    cursor: pointer; user-select: none; padding: 4px 6px; border-radius: 6px;
     transition: background .15s;
   }
   .m-pct-value:hover { background: var(--border-strong); }
   .m-pct-track {
-    flex: 1;
-    height: 5px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-left: 10px;
+    flex: 1; height: 5px; background: var(--border);
+    border-radius: 3px; overflow: hidden; margin-left: 10px;
   }
   .m-pct-fill {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: var(--accent);
+    display: block; height: 100%; width: 0%; background: var(--accent);
     transition: width .15s linear;
   }
 
   #boot-error {
-    display: none; position: fixed;
-    left: 12px; right: 12px; top: 12px;
-    background: #3a1a1a; color: #ffd0d0;
-    border: 1px solid #7a2a2a;
+    display: none; position: fixed; left: 12px; right: 12px; top: 12px;
+    background: #3a1a1a; color: #ffd0d0; border: 1px solid #7a2a2a;
     border-radius: 8px; padding: 12px 14px;
     font-family: monospace; font-size: 12px;
     white-space: pre-wrap; z-index: 999;
   }
-
   #file-toast {
-    position: fixed; left: 50%; top: 24px;
-    transform: translateX(-50%);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    color: var(--fg);
-    border-radius: 10px; padding: 12px 18px;
+    position: fixed; left: 50%; top: 24px; transform: translateX(-50%);
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--fg); border-radius: 10px; padding: 12px 18px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 13px; z-index: 1000;
     box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    display: none; max-width: 90vw;
-    text-align: center; line-height: 1.4;
+    display: none; max-width: 90vw; text-align: center; line-height: 1.4;
   }
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
+  #file-toast.ok { background: #1a3a1f; border-color: #2a7a3a; color: #d0ffd0; }
 
-  /* ===== Редактор заметки к закладке ===== */
   #note-editor {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.55);
-    z-index: 340; display: none;
-    align-items: center; justify-content: center;
-    padding: 20px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    z-index: 340; display: none; align-items: center; justify-content: center;
+    padding: 20px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
   #note-editor.open { display: flex; }
   #note-editor .box {
-    width: 100%; max-width: 480px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
-    border-radius: 12px;
-    padding: 18px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    width: 100%; max-width: 480px; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 12px;
+    padding: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
   }
   #note-editor h4 {
-    font-size: 12px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--mark-color);
-    margin-bottom: 10px; font-weight: normal;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--mark-color); margin-bottom: 10px; font-weight: normal;
   }
   #note-editor .preview {
-    font-size: 12px; color: var(--fg-dim);
-    margin-bottom: 12px; line-height: 1.4;
-    max-height: 60px; overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-size: 12px; color: var(--fg-dim); margin-bottom: 12px;
+    line-height: 1.4; max-height: 60px; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   }
   #note-editor textarea {
-    width: 100%; min-height: 90px;
-    background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 10px;
-    font-size: 14px; line-height: 1.5;
-    font-family: inherit;
-    resize: vertical; outline: none;
+    width: 100%; min-height: 90px; background: var(--bg-input);
+    color: var(--fg); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 10px; font-size: 14px;
+    line-height: 1.5; font-family: inherit; resize: vertical; outline: none;
   }
   #note-editor textarea:focus { border-color: var(--accent); }
-  #note-editor .actions {
-    display: flex; gap: 8px; justify-content: flex-end;
-    margin-top: 12px;
-  }
+  #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
   #note-editor .actions button { padding: 8px 14px; font-size: 13px; }
-  #note-editor .actions .primary {
-    background: var(--mark-color); color: var(--bg);
-    border-color: var(--mark-color);
-  }
+  #note-editor .actions .primary { background: var(--mark-color); color: var(--bg); border-color: var(--mark-color); }
 
-  @media (max-width: 720px) {
-    #content { padding: 36px 22px 120px; font-size: 19px; }
+  /* Sync modal */
+  #sync-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    z-index: 350; display: none; align-items: center; justify-content: center;
+    padding: 20px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
+  #sync-modal.open { display: flex; }
+  #sync-modal .box {
+    width: 100%; max-width: 460px; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 12px;
+    padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  }
+  #sync-modal h4 {
+    font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px; font-weight: 600;
+  }
+  #sync-modal .info { font-size: 12px; color: var(--fg-dim); line-height: 1.5; margin-bottom: 14px; }
+  #sync-modal .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  #sync-modal .row input {
+    flex: 1; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 9px 12px; font-size: 12px; font-family: monospace; outline: none;
+  }
+  #sync-modal .row input:focus { border-color: var(--accent); }
+  #sync-modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+  #sync-modal .actions button { padding: 8px 14px; font-size: 13px; }
+  #sync-modal .actions .danger { color: var(--err); border-color: rgba(217,83,79,.4); }
+  #sync-modal .actions .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  #sync-modal .status { font-size: 11px; color: var(--fg-dim); margin-top: 10px; min-height: 14px; }
+
+  @media (max-width: 720px) { #content { padding: 36px 22px 120px; font-size: 19px; } }
   @media (max-width: 640px) {
     #hint { display: none !important; }
     #reader-controls { display: none !important; }
     #btn-menu { display: inline-flex; align-items: center; justify-content: center; }
+    #sync-indicator { font-size: 10px; padding: 4px 7px; }
+    #sync-indicator .lbl-full { display: none; }
     header { padding: 8px 12px; gap: 8px; }
     header h1 { font-size: 12px; }
     #paste-screen { padding: 14px; }
@@ -809,10 +661,7 @@
     .book-list { grid-template-columns: 1fr; gap: 10px; }
     .book-item { padding: 14px 44px 14px 16px; border-radius: 12px; gap: 4px; }
     .book-item .title { font-size: 15px; white-space: normal; padding-right: 0; line-height: 1.3; }
-    .book-item .del {
-      top: 50%; right: 10px; transform: translateY(-50%);
-      font-size: 16px; padding: 8px 10px; border-radius: 8px;
-    }
+    .book-item .del { top: 50%; right: 10px; transform: translateY(-50%); font-size: 16px; padding: 8px 10px; border-radius: 8px; }
     #toc-panel { width: 88%; right: -88%; }
     #marks-panel { width: 88%; right: -88%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
@@ -824,15 +673,9 @@
     #side-thumb { right: 9px; width: 10px; height: 44px; }
     .side-mark { right: 6px; width: 12px; height: 3px; }
     #mobile-sheet { display: block; }
-    #pct-jump {
-      left: 50% !important;
-      right: auto !important;
-      top: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      width: calc(100vw - 32px);
-      max-width: 320px;
-    }
+    #pct-jump { left: 50% !important; right: auto !important; top: 50% !important; transform: translate(-50%, -50%) !important; width: calc(100vw - 32px); max-width: 320px; }
     #pct-jump::before { display: none; }
+    .auth-box { padding: 22px 18px; }
   }
 </style>
 </head>
@@ -871,6 +714,12 @@
       <button id="btn-library">Библиотека</button>
     </div>
 
+    <div id="sync-indicator" title="Синхронизация">
+      <span class="dot"></span>
+      <span class="lbl-full">Синх.</span>
+      <span class="lbl-short" id="sync-short">—</span>
+    </div>
+
     <button id="btn-menu" title="Меню">☰</button>
 
     <div class="palette" id="palette">
@@ -907,7 +756,56 @@
     </div>
   </header>
 
-  <div id="paste-screen">
+  <!-- ========== AUTH SCREEN ========== -->
+  <div id="auth-screen">
+    <div class="auth-box">
+      <h2>Вход в аккаунт</h2>
+      <div class="sub">
+        Ваша библиотека синхронизируется между устройствами через приватный GitHub Gist.
+        Данные хранятся только у вас — на вашем GitHub-аккаунте.
+      </div>
+
+      <div class="auth-field">
+        <label>GitHub username</label>
+        <input type="text" id="auth-user" placeholder="ваш-логин" autocomplete="username" autocapitalize="off" spellcheck="false">
+      </div>
+
+      <div class="auth-field">
+        <label>Personal Access Token</label>
+        <input type="password" id="auth-token" placeholder="ghp_..." autocomplete="current-password" spellcheck="false">
+        <div class="hint">Классический токен со scope <code>gist</code>. Хранится только в этом браузере.</div>
+      </div>
+
+      <div class="auth-field" id="auth-gist-wrap" style="display:none;">
+        <label>Gist ID <span style="text-transform:none;letter-spacing:0;opacity:.7">(для подключения ко второму устройству)</span></label>
+        <input type="text" id="auth-gist" placeholder="оставьте пустым чтобы создать новый" spellcheck="false">
+        <div class="hint">На первом устройстве Gist создастся автоматически. Скопируйте Gist ID из окна синхронизации и вставьте сюда на втором устройстве.</div>
+      </div>
+
+      <div class="actions">
+        <button id="auth-submit" class="primary">Войти</button>
+      </div>
+      <div class="err-msg" id="auth-err"></div>
+
+      <div class="toggle-mode">
+        <a id="auth-toggle-gist">Подключить существующий Gist</a>
+      </div>
+
+      <details>
+        <summary>Как получить токен?</summary>
+        <ol>
+          <li>Откройте <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a></li>
+          <li>Нажмите <b>Generate new token (classic)</b></li>
+          <li>Поставьте галочку только напротив <code>gist</code></li>
+          <li>Скопируйте токен (<code>ghp_...</code>) и вставьте сюда</li>
+          <li>Токен хранится только в вашем браузере, никуда не отправляется</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+
+  <!-- ========== PASTE / LIBRARY ========== -->
+  <div id="paste-screen" style="display:none;">
     <div class="inner">
       <p>Вставьте текст книги, загрузите файл или перетащите его в окно.<br>Двойной клик по тексту — закладка.</p>
       <textarea id="input" placeholder="Сюда текст..." spellcheck="false"></textarea>
@@ -920,10 +818,12 @@
       </div>
 
       <div id="library">
-        <h3>Библиотека</h3>
+        <h3>Библиотека <span id="library-count" style="opacity:.6;text-transform:none;letter-spacing:0"></span></h3>
         <div id="library-io">
           <button id="btn-export" title="Скачать JSON со всеми книгами, закладками и настройками">⬇ Экспорт</button>
           <button id="btn-import" title="Загрузить JSON">⬆ Импорт</button>
+          <button id="btn-sync-now" title="Принудительная синхронизация с GitHub">⟳ Синх.</button>
+          <button id="btn-settings" title="Настройки аккаунта и Gist">⚙ Аккаунт</button>
           <input type="file" id="import-input" accept=".json,application/json">
         </div>
         <div id="library-search-wrap">
@@ -999,6 +899,27 @@
   </div>
 </div>
 
+<!-- ========== SYNC MODAL ========== -->
+<div id="sync-modal">
+  <div class="box">
+    <h4>Аккаунт и синхронизация</h4>
+    <div class="info" id="sync-info">—</div>
+    <div class="row">
+      <input type="text" id="sync-gist-id" readonly placeholder="Gist ID">
+      <button id="sync-copy-gist" title="Скопировать">Копир.</button>
+    </div>
+    <div class="info">
+      Чтобы подключить второе устройство: войдите там тем же токеном и вставьте этот Gist ID.
+    </div>
+    <div class="status" id="sync-status"></div>
+    <div class="actions">
+      <button id="sync-now" class="primary">Синхронизировать сейчас</button>
+      <button id="sync-logout" class="danger">Выйти</button>
+      <button id="sync-close">Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
@@ -1006,13 +927,10 @@
   <div class="sheet-section">
     <h5>Прогресс</h5>
     <div class="sheet-row">
-      <div class="m-pct-track">
-        <span class="m-pct-fill" id="m-pct-bar"></span>
-      </div>
+      <div class="m-pct-track"><span class="m-pct-fill" id="m-pct-bar"></span></div>
       <span class="m-pct-value" id="m-pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Размер текста</h5>
     <div class="sheet-row">
@@ -1023,7 +941,6 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Ширина колонки</h5>
     <div class="sheet-row">
@@ -1034,7 +951,6 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Межстрочный интервал</h5>
     <div class="sheet-row">
@@ -1045,7 +961,6 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
@@ -1054,6 +969,7 @@
       <button id="m-toc">📖 Содержание</button>
       <button id="m-mark" class="mark-btn">🔖 Закладка</button>
       <button id="m-marks" class="mark-btn">🔖 Закладки</button>
+      <button id="m-sync">☁️ Синхронизация</button>
       <button id="m-library" class="wide">📚 Библиотека</button>
       <button id="m-close" class="wide">✕ Закрыть</button>
     </div>
@@ -1071,14 +987,16 @@
     box.textContent = 'Ошибка запуска:\n' + msg;
   }
 
-  function toast(msg, isError) {
+  function toast(msg, type) {
     const el = document.getElementById('file-toast');
     if (!el) return;
     el.textContent = msg;
-    el.classList.toggle('error', !!isError);
+    el.classList.remove('error', 'ok');
+    if (type === 'error') el.classList.add('error');
+    else if (type === 'ok') el.classList.add('ok');
     el.classList.add('show');
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+    el._t = setTimeout(() => el.classList.remove('show'), type === 'error' ? 4500 : 2500);
   }
 
   try {
@@ -1154,11 +1072,14 @@
     const btnExport = $('btn-export');
     const btnImport = $('btn-import');
     const importInput = $('import-input');
+    const btnSyncNow = $('btn-sync-now');
+    const btnSettings = $('btn-settings');
 
     const librarySearch = $('library-search');
     const librarySearchWrap = $('library-search-wrap');
     const librarySearchClear = $('library-search-clear');
     const libraryNoResults = $('library-no-results');
+    const libraryCount = $('library-count');
 
     const btnMenu = $('btn-menu');
     const mobileSheet = $('mobile-sheet');
@@ -1181,6 +1102,7 @@
     const mLibrary = $('m-library');
     const mMark = $('m-mark');
     const mMarks = $('m-marks');
+    const mSync = $('m-sync');
     const mClose = $('m-close');
 
     const noteEditor = $('note-editor');
@@ -1195,6 +1117,29 @@
     const pctJumpGo = $('pct-jump-go');
     const pctJumpCancel = $('pct-jump-cancel');
 
+    // Auth
+    const authScreen = $('auth-screen');
+    const authUser = $('auth-user');
+    const authToken = $('auth-token');
+    const authGist = $('auth-gist');
+    const authGistWrap = $('auth-gist-wrap');
+    const authSubmit = $('auth-submit');
+    const authErr = $('auth-err');
+    const authToggleGist = $('auth-toggle-gist');
+
+    // Sync
+    const syncIndicator = $('sync-indicator');
+    const syncShort = $('sync-short');
+    const syncModal = $('sync-modal');
+    const syncInfo = $('sync-info');
+    const syncGistIdInput = $('sync-gist-id');
+    const syncCopyGist = $('sync-copy-gist');
+    const syncStatus = $('sync-status');
+    const syncNowBtn = $('sync-now');
+    const syncLogout = $('sync-logout');
+    const syncClose = $('sync-close');
+
+    // ---- state ----
     let chapters = [];
     let activeChapter = -1;
     let currentBookId = null;
@@ -1207,13 +1152,11 @@
       fontSize: 20, colWidth: 720, lineHeight: 1.85,
       letterSpacing: 0, fontFamily: 'serif'
     };
-
     const FONT_STACKS = {
       serif: "Georgia, 'Times New Roman', serif",
       sans: "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
       mono: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace"
     };
-
     const PRESETS = [
       { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
       { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
@@ -1227,7 +1170,7 @@
     ];
 
     // ============================================================
-    //  НАСТРОЙКИ
+    //  SETTINGS
     // ============================================================
     function loadSettings() {
       try {
@@ -1238,6 +1181,7 @@
     let settings = loadSettings();
     function saveSettings() {
       try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {}
+      markDirty();
     }
 
     function shade(hex, amt) {
@@ -1265,22 +1209,18 @@
       const scrollTop = readerScreen.scrollTop;
       const paras = content.querySelectorAll('p');
       if (!paras.length) return null;
-
-      let target = null;
-      let targetIndex = -1;
+      let target = null, targetIndex = -1;
       for (let i = 0; i < paras.length; i++) {
         const el = paras[i];
         const bottom = el.offsetTop + el.offsetHeight;
         if (bottom > scrollTop + 8) { target = el; targetIndex = i; break; }
       }
       if (!target) { target = paras[paras.length - 1]; targetIndex = paras.length - 1; }
-
       const offsetInPara = Math.max(0, scrollTop - target.offsetTop);
       const paraHeight = Math.max(1, target.offsetHeight);
       const ratio = Math.min(1, Math.max(0, offsetInPara / paraHeight));
       return { index: targetIndex, ratio: ratio, offsetInPara: offsetInPara };
     }
-
     function restoreReadingAnchor(anchor) {
       if (!anchor || !readerScreen || readerScreen.style.display !== 'block') return;
       const paras = content.querySelectorAll('p');
@@ -1289,17 +1229,13 @@
       const el = paras[idx];
       const h = Math.max(1, el.offsetHeight);
       let offset = anchor.offsetInPara;
-      if (typeof offset !== 'number' || isNaN(offset)) {
-        offset = (anchor.ratio || 0) * h;
-      } else {
-        offset = Math.min(offset, h);
-      }
+      if (typeof offset !== 'number' || isNaN(offset)) offset = (anchor.ratio || 0) * h;
+      else offset = Math.min(offset, h);
       readerScreen.scrollTop = el.offsetTop + offset;
     }
 
     function applySettings() {
       const anchor = getReadingAnchor();
-
       const { bg, fg, accent } = settings;
       root.style.setProperty('--bg', bg);
       root.style.setProperty('--fg', fg);
@@ -1315,7 +1251,6 @@
       root.style.setProperty('--line-height', settings.lineHeight);
       root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
       root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
-
       if (content) content.style.fontSize = settings.fontSize + 'px';
       if (sizeLabel) sizeLabel.textContent = settings.fontSize;
       if (widthLabel) widthLabel.textContent = settings.colWidth;
@@ -1324,22 +1259,18 @@
       if (mWidthLabel) mWidthLabel.textContent = settings.colWidth;
       if (mLhLabel) mLhLabel.textContent = settings.lineHeight.toFixed(2);
       if (lsLabel) lsLabel.textContent = settings.letterSpacing.toFixed(2) + 'em';
-
       if (colBg) colBg.value = settings.bg;
       if (colFg) colFg.value = settings.fg;
       if (colAccent) colAccent.value = settings.accent;
-
       document.querySelectorAll('.palette-item').forEach(el => {
         el.classList.toggle('active',
           el.dataset.bg === settings.bg &&
           el.dataset.fg === settings.fg &&
-          el.dataset.accent === settings.accent
-        );
+          el.dataset.accent === settings.accent);
       });
       document.querySelectorAll('.font-item').forEach(el => {
         el.classList.toggle('active', el.dataset.font === settings.fontFamily);
       });
-
       requestAnimationFrame(() => {
         restoreReadingAnchor(anchor);
         updateProgress();
@@ -1353,16 +1284,11 @@
       PRESETS.forEach(pr => {
         const el = document.createElement('div');
         el.className = 'palette-item';
-        el.dataset.bg = pr.bg;
-        el.dataset.fg = pr.fg;
-        el.dataset.accent = pr.accent;
+        el.dataset.bg = pr.bg; el.dataset.fg = pr.fg; el.dataset.accent = pr.accent;
         el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
         el.addEventListener('click', () => {
-          settings.bg = pr.bg;
-          settings.fg = pr.fg;
-          settings.accent = pr.accent;
-          saveSettings();
-          applySettings();
+          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+          saveSettings(); applySettings();
         });
         paletteGrid.appendChild(el);
       });
@@ -1389,20 +1315,16 @@
     if (fontInc) fontInc.addEventListener('click', () => changeFont(2));
     if (mFontDec) mFontDec.addEventListener('click', () => changeFont(-2));
     if (mFontInc) mFontInc.addEventListener('click', () => changeFont(2));
-
     if (widthDec) widthDec.addEventListener('click', () => changeWidth(-40));
     if (widthInc) widthInc.addEventListener('click', () => changeWidth(40));
     if (mWidthDec) mWidthDec.addEventListener('click', () => changeWidth(-40));
     if (mWidthInc) mWidthInc.addEventListener('click', () => changeWidth(40));
-
     if (lhDec) lhDec.addEventListener('click', () => changeLineHeight(-0.1));
     if (lhInc) lhInc.addEventListener('click', () => changeLineHeight(0.1));
     if (mLhDec) mLhDec.addEventListener('click', () => changeLineHeight(-0.1));
     if (mLhInc) mLhInc.addEventListener('click', () => changeLineHeight(0.1));
-
     if (lsDec) lsDec.addEventListener('click', () => changeLetterSpacing(-0.01));
     if (lsInc) lsInc.addEventListener('click', () => changeLetterSpacing(0.01));
-
     if (fontRow) fontRow.addEventListener('click', (e) => {
       const item = e.target.closest('.font-item');
       if (!item) return;
@@ -1410,7 +1332,6 @@
       saveSettings(); applySettings();
     });
 
-    // Палитра
     if (btnTheme) btnTheme.addEventListener('click', (e) => {
       e.stopPropagation();
       fontPanel.classList.remove('open');
@@ -1422,39 +1343,29 @@
       fontPanel.classList.toggle('open');
     });
     document.addEventListener('click', (e) => {
-      if (palette && !palette.contains(e.target) && e.target !== btnTheme) {
-        palette.classList.remove('open');
-      }
-      if (fontPanel && !fontPanel.contains(e.target) && e.target !== btnFont) {
-        fontPanel.classList.remove('open');
-      }
+      if (palette && !palette.contains(e.target) && e.target !== btnTheme) palette.classList.remove('open');
+      if (fontPanel && !fontPanel.contains(e.target) && e.target !== btnFont) fontPanel.classList.remove('open');
     });
     if (palette) palette.addEventListener('click', e => e.stopPropagation());
     if (fontPanel) fontPanel.addEventListener('click', e => e.stopPropagation());
-
     if (colBg) colBg.addEventListener('input', e => { settings.bg = e.target.value; saveSettings(); applySettings(); });
     if (colFg) colFg.addEventListener('input', e => { settings.fg = e.target.value; saveSettings(); applySettings(); });
     if (colAccent) colAccent.addEventListener('input', e => { settings.accent = e.target.value; saveSettings(); applySettings(); });
-
     if (resetTheme) resetTheme.addEventListener('click', () => {
-      settings.bg = DEFAULTS.bg;
-      settings.fg = DEFAULTS.fg;
-      settings.accent = DEFAULTS.accent;
+      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
       saveSettings(); applySettings();
     });
 
     // ============================================================
-    //  НИЖНЯЯ ПАНЕЛЬ
+    //  MOBILE SHEET
     // ============================================================
     function openSheet() {
       if (!mobileSheet) return;
-      mobileSheet.classList.add('open');
-      sheetOverlay.classList.add('open');
+      mobileSheet.classList.add('open'); sheetOverlay.classList.add('open');
     }
     function closeSheet() {
       if (!mobileSheet) return;
-      mobileSheet.classList.remove('open');
-      sheetOverlay.classList.remove('open');
+      mobileSheet.classList.remove('open'); sheetOverlay.classList.remove('open');
     }
     function toggleSheet() {
       if (!mobileSheet) return;
@@ -1466,15 +1377,10 @@
 
     let sheetTouchStartY = null;
     if (sheetHandle) {
-      sheetHandle.addEventListener('touchstart', (e) => {
-        sheetTouchStartY = e.touches[0].clientY;
-      }, { passive: true });
+      sheetHandle.addEventListener('touchstart', (e) => { sheetTouchStartY = e.touches[0].clientY; }, { passive: true });
       sheetHandle.addEventListener('touchmove', (e) => {
         if (sheetTouchStartY === null) return;
-        if (e.touches[0].clientY - sheetTouchStartY > 60) {
-          closeSheet();
-          sheetTouchStartY = null;
-        }
+        if (e.touches[0].clientY - sheetTouchStartY > 60) { closeSheet(); sheetTouchStartY = null; }
       }, { passive: true });
       sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
     }
@@ -1491,147 +1397,428 @@
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
     if (mMark) mMark.addEventListener('click', () => { closeSheet(); addMark(); });
     if (mMarks) mMarks.addEventListener('click', () => { closeSheet(); setTimeout(openMarks, 180); });
+    if (mSync) mSync.addEventListener('click', () => { closeSheet(); setTimeout(openSyncModal, 180); });
 
     // ============================================================
-    //  СВАЙПЫ НА МОБИЛЬНОМ
+    //  SYNC ENGINE (GitHub Gist)
     // ============================================================
-    (function initEdgeSwipes() {
-      const EDGE = 30;
-      const THRESHOLD = 60;
+    const AUTH_KEY = 'reader_auth';
+    let auth = loadAuth();
+    let gistFileName = 'yvl-books-sync.json';
+    let syncState = { status: 'idle', lastSync: 0, error: null };
+    let dirty = false;
+    let debounceTimer = null;
+    let syncing = false;
+    let lastKnownRemoteUpdatedAt = null;
 
-      let active = null;
-      let startX = 0, startY = 0, moved = false;
+    function loadAuth() {
+      try {
+        const a = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+        if (!a || !a.token) return null;
+        return a;
+      } catch (e) { return null; }
+    }
+    function saveAuth(a) {
+      if (a) localStorage.setItem(AUTH_KEY, JSON.stringify(a));
+      else localStorage.removeItem(AUTH_KEY);
+    }
 
-      function onStart(e) {
-        if (e.touches.length !== 1) return;
-        const t = e.touches[0];
-        const x = t.clientX;
-        const y = t.clientY;
-        const w = window.innerWidth;
-        if (x <= EDGE) active = 'left';
-        else if (x >= w - EDGE) active = 'right';
-        else active = null;
-        if (!active) return;
-        startX = x; startY = y; moved = false;
+    function setSyncIndicator(status, text) {
+      if (!syncIndicator) return;
+      syncIndicator.classList.remove('ok', 'err', 'syncing');
+      if (status === 'ok') syncIndicator.classList.add('ok');
+      else if (status === 'err') syncIndicator.classList.add('err');
+      else if (status === 'syncing') syncIndicator.classList.add('syncing');
+      if (syncShort) syncShort.textContent = text || '—';
+    }
+
+    function showSyncIndicator(show) {
+      if (!syncIndicator) return;
+      syncIndicator.classList.toggle('show', !!show);
+    }
+
+    function markDirty() {
+      dirty = true;
+      if (!auth) return;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        pushToRemote().catch(err => console.warn('auto-sync failed', err));
+      }, 2500);
+    }
+
+    function apiHeaders() {
+      return {
+        'Authorization': 'Bearer ' + auth.token,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
+    }
+
+    async function apiGetGist(gistId) {
+      const r = await fetch('https://api.github.com/gists/' + encodeURIComponent(gistId), {
+        headers: apiHeaders()
+      });
+      if (!r.ok) {
+        if (r.status === 401) throw new Error('Токен недействителен или отозван (401)');
+        if (r.status === 404) throw new Error('Gist не найден (404). Проверьте ID.');
+        const t = await r.text().catch(() => '');
+        throw new Error('GitHub API ' + r.status + ': ' + t.slice(0, 120));
       }
+      return r.json();
+    }
 
-      function onMove(e) {
-        if (!active) return;
-        const t = e.touches[0];
-        const dx = t.clientX - startX;
-        const dy = t.clientY - startY;
-
-        if (!moved) {
-          if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx)) { active = null; return; }
-        }
-
-        if (active === 'left' && dx > THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
-          moved = true;
-          openSheet();
-          active = null;
-        } else if (active === 'right' && dx < -THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
-          moved = true;
-          if (readerScreen.style.display === 'block') {
-            openMarks();
-          } else {
-            openSheet();
-          }
-          active = null;
-        }
+    async function apiCreateGist(description, fileContent) {
+      const body = {
+        description: description || 'YVL BOOKS — library sync',
+        public: false,
+        files: {}
+      };
+      body.files[gistFileName] = { content: fileContent };
+      const r = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        if (r.status === 401) throw new Error('Токен недействителен (401)');
+        const t = await r.text().catch(() => '');
+        throw new Error('Не удалось создать Gist: ' + r.status + ' ' + t.slice(0, 120));
       }
-
-      function onEnd() { active = null; moved = false; }
-
-      window.addEventListener('touchstart', onStart, { passive: true });
-      window.addEventListener('touchmove', onMove, { passive: true });
-      window.addEventListener('touchend', onEnd, { passive: true });
-      window.addEventListener('touchcancel', onEnd, { passive: true });
-    })();
-
-    // ============================================================
-    //  ПЕРЕХОД ПО ПРОЦЕНТУ
-    // ============================================================
-    function getCurrentPercent() {
-      if (!readerScreen || readerScreen.style.display !== 'block') return 0;
-      const scrollTop = readerScreen.scrollTop;
-      const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
-      return scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      return r.json();
     }
 
-    function openPctJump(anchorEl) {
-      if (readerScreen.style.display !== 'block') return;
-      const cur = getCurrentPercent();
-      pctJumpInput.value = cur.toFixed(2);
-      pctJump.classList.add('show');
+    async function apiUpdateGist(gistId, fileContent) {
+      const body = { files: {} };
+      body.files[gistFileName] = { content: fileContent };
+      const r = await fetch('https://api.github.com/gists/' + encodeURIComponent(gistId), {
+        method: 'PATCH',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        if (r.status === 401) throw new Error('Токен недействителен (401)');
+        if (r.status === 404) throw new Error('Gist не найден (404)');
+        const t = await r.text().catch(() => '');
+        throw new Error('Не удалось обновить Gist: ' + r.status + ' ' + t.slice(0, 120));
+      }
+      return r.json();
+    }
 
-      // позиционируем относительно anchorEl
-      requestAnimationFrame(() => {
-        if (!anchorEl) return;
-        const rect = anchorEl.getBoundingClientRect();
-        const popW = pctJump.offsetWidth || 280;
-        let left = rect.left + rect.width / 2 - popW / 2;
-        let top = rect.bottom + 8;
-        // не вылезаем за пределы
-        left = Math.max(8, Math.min(window.innerWidth - popW - 8, left));
-        if (top + 60 > window.innerHeight) {
-          top = rect.top - (pctJump.offsetHeight || 50) - 8;
-          if (top < 8) top = 8;
+    function collectLocalSnapshot() {
+      const books = loadBooks();
+      const marks = {};
+      books.forEach(b => { marks[b.id] = loadMarks(b.id); });
+      return {
+        app: 'YVL_BOOKS_SYNC',
+        version: 2,
+        updatedAt: Date.now(),
+        settings: settings,
+        books: books,
+        marks: marks
+      };
+    }
+
+    function applyRemoteSnapshot(snap) {
+      if (!snap || snap.app !== 'YVL_BOOKS_SYNC') {
+        throw new Error('Неверный формат файла синхронизации');
+      }
+      if (snap.settings) {
+        settings = Object.assign({}, DEFAULTS, snap.settings);
+        localStorage.setItem('reader_settings', JSON.stringify(settings));
+      }
+      if (Array.isArray(snap.books)) {
+        saveBooks(snap.books);
+      }
+      if (snap.marks && typeof snap.marks === 'object') {
+        // clear old marks that are no longer present
+        const booksNow = loadBooks();
+        const validIds = new Set(booksNow.map(b => b.id));
+        booksNow.forEach(b => {
+          const remote = snap.marks[b.id];
+          if (Array.isArray(remote)) localStorage.setItem('reader_marks_' + b.id, JSON.stringify(remote));
+          else localStorage.setItem('reader_marks_' + b.id, '[]');
+        });
+        // remove marks for books not in list
+        try {
+          Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('reader_marks_')) {
+              const bid = k.replace('reader_marks_', '');
+              if (!validIds.has(bid)) localStorage.removeItem(k);
+            }
+          });
+        } catch (e) {}
+      }
+      applySettings();
+      renderLibrary();
+    }
+
+    async function pullFromRemote() {
+      if (!auth || !auth.gistId) return false;
+      syncing = true;
+      setSyncIndicator('syncing', '...');
+      try {
+        const gist = await apiGetGist(auth.gistId);
+        const file = gist.files && gist.files[gistFileName];
+        if (!file) {
+          // remote exists but file missing -> push our state
+          await pushToRemote(true);
+          return true;
         }
-        pctJump.style.left = left + 'px';
-        pctJump.style.top = top + 'px';
-      });
+        let remoteContent = file.content;
+        if (file.truncated && file.raw_url) {
+          const rr = await fetch(file.raw_url, { headers: apiHeaders() });
+          remoteContent = await rr.text();
+        }
+        let snap;
+        try { snap = JSON.parse(remoteContent); }
+        catch (e) { throw new Error('Не удалось разобрать JSON из Gist'); }
 
-      setTimeout(() => {
-        pctJumpInput.focus();
-        pctJumpInput.select();
-      }, 50);
+        const remoteUpdated = snap.updatedAt || 0;
+        const localSnap = collectLocalSnapshot();
+        const localUpdated = localSnap.updatedAt || 0;
+
+        // Decide: pull if remote is newer than our local snapshot AND we are not dirty
+        if (remoteUpdated > localUpdated && !dirty) {
+          applyRemoteSnapshot(snap);
+          lastKnownRemoteUpdatedAt = remoteUpdated;
+          setSyncIndicator('ok', '✓');
+          syncState.lastSync = Date.now();
+          return true;
+        }
+        // If remote is newer AND we have local changes, merge by preferring newest per-book, but for simplicity prefer remote on pull to avoid data loss
+        if (remoteUpdated > localUpdated && dirty) {
+          // conflict: pull, then re-mark dirty so user's pending changes (if any) are re-pushed
+          applyRemoteSnapshot(snap);
+          lastKnownRemoteUpdatedAt = remoteUpdated;
+          setSyncIndicator('ok', '✓');
+          syncState.lastSync = Date.now();
+          return true;
+        }
+        // else remote is older or equal — push if dirty
+        if (dirty) {
+          await pushToRemote(true);
+        } else {
+          setSyncIndicator('ok', '✓');
+          syncState.lastSync = Date.now();
+        }
+        return true;
+      } catch (e) {
+        setSyncIndicator('err', '!');
+        syncState.error = e.message;
+        console.error('pull failed', e);
+        return false;
+      } finally {
+        syncing = false;
+      }
     }
 
-    function closePctJump() {
-      pctJump.classList.remove('show');
+    async function pushToRemote(force) {
+      if (!auth || !auth.gistId) return false;
+      if (syncing) return false;
+      if (!dirty && !force) return false;
+      syncing = true;
+      setSyncIndicator('syncing', '...');
+      try {
+        const snap = collectLocalSnapshot();
+        const content = JSON.stringify(snap);
+        await apiUpdateGist(auth.gistId, content);
+        dirty = false;
+        syncState.lastSync = Date.now();
+        syncState.error = null;
+        setSyncIndicator('ok', '✓');
+        return true;
+      } catch (e) {
+        setSyncIndicator('err', '!');
+        syncState.error = e.message;
+        console.error('push failed', e);
+        toast('Синхронизация не удалась: ' + e.message, 'error');
+        return false;
+      } finally {
+        syncing = false;
+      }
     }
 
-    function applyPctJump() {
-      let v = parseFloat(pctJumpInput.value.replace(',', '.'));
-      if (isNaN(v)) { closePctJump(); return; }
-      v = Math.max(0, Math.min(100, v));
-      const max = readerScreen.scrollHeight - readerScreen.clientHeight;
-      readerScreen.scrollTop = (v / 100) * Math.max(0, max);
-      updateProgress();
-      showScroller();
-      closePctJump();
+    async function fullSync(force) {
+      if (!auth || !auth.gistId) return;
+      await pullFromRemote();
+      if (force) await pushToRemote(true);
     }
 
-    if (pctIndicator) {
-      pctIndicator.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openPctJump(pctIndicator);
-      });
+    // init sync after login
+    async function setupSync() {
+      showSyncIndicator(true);
+      setSyncIndicator('syncing', '...');
+      try {
+        if (!auth.gistId) {
+          // create new gist
+          const initial = collectLocalSnapshot();
+          const gist = await apiCreateGist('YVL BOOKS — library sync', JSON.stringify(initial));
+          auth.gistId = gist.id;
+          saveAuth(auth);
+        } else {
+          // verify access & pull
+          await pullFromRemote();
+        }
+        setSyncIndicator('ok', '✓');
+        syncState.lastSync = Date.now();
+        updateSyncModalInfo();
+      } catch (e) {
+        setSyncIndicator('err', '!');
+        toast('Не удалось инициализировать синхронизацию: ' + e.message, 'error');
+        console.error(e);
+      }
     }
-    if (mPctIndicator) {
-      mPctIndicator.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // На мобильном — открываем диалог по центру
-        openPctJump(null);
-      });
+
+    function updateSyncModalInfo() {
+      if (!auth) {
+        if (syncInfo) syncInfo.textContent = 'Не выполнен вход.';
+        return;
+      }
+      if (syncInfo) {
+        syncInfo.textContent = 'Аккаунт: ' + auth.user + ' · Gist: ' +
+          (auth.gistId ? auth.gistId.slice(0, 8) + '…' : 'не создан') +
+          (syncState.lastSync ? ' · последняя синх.: ' + new Date(syncState.lastSync).toLocaleTimeString() : '');
+      }
+      if (syncGistIdInput) syncGistIdInput.value = auth.gistId || '';
     }
-    if (pctJumpGo) pctJumpGo.addEventListener('click', applyPctJump);
-    if (pctJumpCancel) pctJumpCancel.addEventListener('click', closePctJump);
-    if (pctJumpInput) {
-      pctJumpInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); applyPctJump(); }
-        if (e.key === 'Escape') { e.preventDefault(); closePctJump(); }
-      });
+
+    function openSyncModal() {
+      updateSyncModalInfo();
+      if (syncStatus) {
+        syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) :
+          (auth && auth.gistId ? 'Всё готово. Нажмите «Синхронизировать», если нужно вручную.' : 'Gist не создан — нажмите синхронизировать.');
+      }
+      syncModal.classList.add('open');
     }
-    document.addEventListener('click', (e) => {
-      if (!pctJump.classList.contains('show')) return;
-      if (pctJump.contains(e.target)) return;
-      if (e.target === pctIndicator || e.target === mPctIndicator) return;
-      closePctJump();
+    function closeSyncModal() { syncModal.classList.remove('open'); }
+
+    if (syncClose) syncClose.addEventListener('click', closeSyncModal);
+    if (syncModal) syncModal.addEventListener('click', (e) => { if (e.target === syncModal) closeSyncModal(); });
+    if (syncNowBtn) syncNowBtn.addEventListener('click', async () => {
+      if (syncStatus) syncStatus.textContent = 'Синхронизация...';
+      await fullSync(true);
+      if (syncStatus) syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) : 'Готово.';
+      updateSyncModalInfo();
+    });
+    if (syncCopyGist) syncCopyGist.addEventListener('click', async () => {
+      if (!auth || !auth.gistId) return;
+      try {
+        await navigator.clipboard.writeText(auth.gistId);
+        toast('Gist ID скопирован', 'ok');
+      } catch (e) {
+        syncGistIdInput.select();
+        document.execCommand && document.execCommand('copy');
+        toast('Gist ID скопирован', 'ok');
+      }
+    });
+    if (syncLogout) syncLogout.addEventListener('click', () => {
+      if (!confirm('Выйти из аккаунта? Локальные данные останутся на этом устройстве, но перестанут синхронизироваться.')) return;
+      localStorage.removeItem(AUTH_KEY);
+      auth = null;
+      closeSyncModal();
+      showSyncIndicator(false);
+      showAuth();
+    });
+
+    if (syncIndicator) syncIndicator.addEventListener('click', openSyncModal);
+    if (btnSyncNow) btnSyncNow.addEventListener('click', async () => {
+      if (!auth) { showAuth(); return; }
+      toast('Синхронизация...');
+      await fullSync(true);
+      if (syncState.error) toast('Ошибка: ' + syncState.error, 'error');
+      else toast('Синхронизировано', 'ok');
+    });
+    if (btnSettings) btnSettings.addEventListener('click', openSyncModal);
+
+    // Periodic pull to catch remote changes from other devices
+    setInterval(() => {
+      if (auth && auth.gistId && !syncing && !document.hidden) {
+        pullFromRemote().catch(() => {});
+      }
+    }, 30000);
+
+    // Sync on tab visibility
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && auth && auth.gistId) {
+        pullFromRemote().catch(() => {});
+      }
     });
 
     // ============================================================
-    //  ТЕКСТ: РАЗБИВКА, РЕНДЕР
+    //  AUTH
+    // ============================================================
+    function showAuth() {
+      authScreen.classList.remove('hidden');
+      pasteScreen.style.display = 'none';
+      readerScreen.style.display = 'none';
+      readerControls.style.display = 'none';
+    }
+    function hideAuth() {
+      authScreen.classList.add('hidden');
+      pasteScreen.style.display = 'flex';
+    }
+
+    if (authToggleGist) authToggleGist.addEventListener('click', (e) => {
+      e.preventDefault();
+      const shown = authGistWrap.style.display !== 'none';
+      authGistWrap.style.display = shown ? 'none' : 'block';
+      authToggleGist.textContent = shown ? 'Подключить существующий Gist' : 'Скрыть поле Gist ID';
+    });
+
+    async function doLogin() {
+      const user = (authUser.value || '').trim();
+      const token = (authToken.value || '').trim();
+      const gist = (authGist.value || '').trim();
+      authErr.textContent = '';
+      if (!user) { authErr.textContent = 'Введите GitHub username.'; return; }
+      if (!token) { authErr.textContent = 'Введите Personal Access Token.'; return; }
+
+      authSubmit.disabled = true;
+      authSubmit.textContent = 'Проверка...';
+
+      try {
+        // validate token by /user
+        const r = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+        });
+        if (!r.ok) throw new Error(r.status === 401 ? 'Неверный токен (401)' : 'GitHub API ' + r.status);
+        const me = await r.json();
+        if (me.login && me.login.toLowerCase() !== user.toLowerCase()) {
+          throw new Error('Username не совпадает с владельцем токена (' + me.login + ')');
+        }
+
+        auth = { user: me.login, token, gistId: gist || null };
+        saveAuth(auth);
+        hideAuth();
+        showSyncIndicator(true);
+        updateSyncModalInfo();
+
+        // load local first (in case we already have data)
+        renderLibrary();
+
+        // if gistId provided -> pull, else create new
+        await setupSync();
+
+        renderLibrary();
+        toast('Вход выполнен: ' + me.login, 'ok');
+      } catch (err) {
+        console.error(err);
+        authErr.textContent = err.message || String(err);
+        auth = null;
+        saveAuth(null);
+      } finally {
+        authSubmit.disabled = false;
+        authSubmit.textContent = 'Войти';
+      }
+    }
+
+    if (authSubmit) authSubmit.addEventListener('click', doLogin);
+    if (authToken) authToken.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+    if (authUser) authUser.addEventListener('keydown', (e) => { if (e.key === 'Enter') authToken.focus(); });
+    if (authGist) authGist.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+    // ============================================================
+    //  TEXT: SPLIT, RENDER
     // ============================================================
     function splitIntoParagraphs(text) {
       const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
@@ -1666,7 +1853,6 @@
       chapters = [];
       const paragraphs = splitIntoParagraphs(text);
       let chapterCount = 0;
-
       paragraphs.forEach((p, idx) => {
         const el = document.createElement('p');
         el.textContent = p;
@@ -1679,25 +1865,18 @@
         }
         content.appendChild(el);
       });
-
       const words = text.trim().split(/\s+/).filter(Boolean).length;
       if (footerLeft) footerLeft.textContent = words.toLocaleString('ru-RU') + ' слов';
       if (footerRight) {
-        if (chapters.length > 0) {
-          footerRight.textContent = chapters.length + ' ' + pluralChapters(chapters.length);
-        } else {
-          footerRight.textContent = '';
-        }
+        if (chapters.length > 0) footerRight.textContent = chapters.length + ' ' + pluralChapters(chapters.length);
+        else footerRight.textContent = '';
       }
-
       buildToc();
       updateProgress();
       renderSideMarks();
     }
-
     function pluralChapters(n) {
-      const mod10 = n % 10;
-      const mod100 = n % 100;
+      const mod10 = n % 10, mod100 = n % 100;
       if (mod10 === 1 && mod100 !== 11) return 'глава';
       if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'главы';
       return 'глав';
@@ -1724,17 +1903,14 @@
 
     function openToc() {
       if (!tocPanel) return;
-      tocPanel.classList.add('open');
-      tocOverlay.classList.add('open');
+      tocPanel.classList.add('open'); tocOverlay.classList.add('open');
       highlightActiveToc();
     }
     function closeToc() {
       if (!tocPanel) return;
-      tocPanel.classList.remove('open');
-      tocOverlay.classList.remove('open');
+      tocPanel.classList.remove('open'); tocOverlay.classList.remove('open');
     }
     function toggleToc() { tocPanel.classList.contains('open') ? closeToc() : openToc(); }
-
     if (btnToc) btnToc.addEventListener('click', toggleToc);
     if (tocClose) tocClose.addEventListener('click', closeToc);
     if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
@@ -1743,9 +1919,7 @@
       if (!tocList) return;
       const items = tocList.querySelectorAll('.toc-item');
       items.forEach((el, i) => el.classList.toggle('active', i === activeChapter));
-      if (activeChapter >= 0 && items[activeChapter]) {
-        items[activeChapter].scrollIntoView({ block: 'nearest' });
-      }
+      if (activeChapter >= 0 && items[activeChapter]) items[activeChapter].scrollIntoView({ block: 'nearest' });
     }
     function goToChapter(i) {
       if (i < 0 || i >= chapters.length) return;
@@ -1755,7 +1929,7 @@
     }
 
     // ============================================================
-    //  ЗАКЛАДКИ
+    //  MARKS
     // ============================================================
     function marksKey(bookId) { return 'reader_marks_' + (bookId || 'scratch'); }
     function loadMarks(bookId) {
@@ -1764,6 +1938,7 @@
     }
     function saveMarks(bookId, arr) {
       try { localStorage.setItem(marksKey(bookId), JSON.stringify(arr)); } catch (e) {}
+      markDirty();
     }
 
     function getCurrentSnippet() {
@@ -1787,7 +1962,6 @@
       }
       return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio };
     }
-
     function anchorFromY(posY) {
       const paras = content.querySelectorAll('p');
       let target = null, ti = -1;
@@ -1820,7 +1994,6 @@
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
-
       pendingMarkAnchor = {
         pos: scrollTop, pct,
         pIndex: anchor.pIndex, offsetInPara: anchor.offsetInPara, ratio: anchor.ratio,
@@ -1828,7 +2001,6 @@
       };
       openNoteEditor(null);
     }
-
     function commitPendingMark(note) {
       if (!pendingMarkAnchor) return;
       const mark = Object.assign({}, pendingMarkAnchor, {
@@ -1841,14 +2013,13 @@
       saveMarks(currentBookId, currentMarks);
       renderSideMarks();
       renderMarksList();
-      toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
+      toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''), 'ok');
       if (btnAddMark) {
         btnAddMark.classList.add('saved', 'pulse');
         setTimeout(() => btnAddMark.classList.remove('pulse'), 500);
         setTimeout(() => btnAddMark.classList.remove('saved'), 1000);
       }
     }
-
     function openNoteEditor(markId) {
       editingMarkId = markId;
       if (markId) {
@@ -1865,7 +2036,6 @@
       noteEditor.classList.add('open');
       setTimeout(() => { noteInput.focus(); }, 50);
     }
-
     function closeNoteEditor(save) {
       if (save) {
         const val = noteInput.value.trim();
@@ -1882,12 +2052,9 @@
       noteEditor.classList.remove('open');
       noteInput.value = '';
     }
-
     if (noteCancel) noteCancel.addEventListener('click', () => closeNoteEditor(false));
     if (noteSave) noteSave.addEventListener('click', () => closeNoteEditor(true));
-    if (noteEditor) noteEditor.addEventListener('click', (e) => {
-      if (e.target === noteEditor) closeNoteEditor(false);
-    });
+    if (noteEditor) noteEditor.addEventListener('click', (e) => { if (e.target === noteEditor) closeNoteEditor(false); });
     if (noteInput) noteInput.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(false); }
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); closeNoteEditor(true); }
@@ -1899,7 +2066,6 @@
       renderSideMarks();
       renderMarksList();
     }
-
     function clearMarks() {
       if (currentMarks.length === 0) return;
       if (!confirm('Удалить все закладки этой книги?')) return;
@@ -1908,9 +2074,7 @@
       renderSideMarks();
       renderMarksList();
     }
-
     function goToMark(id) { const m = currentMarks.find(x => x.id === id); if (m) { scrollToAnchor(m); closeMarks(); } }
-
     function scrollToAnchor(item) {
       const paras = content.querySelectorAll('p');
       let top;
@@ -1926,13 +2090,11 @@
       }
       readerScreen.scrollTo({ top: top, behavior: 'smooth' });
     }
-
     function formatDate(ts) {
       try {
         const d = new Date(ts);
         const pad = (n) => n < 10 ? '0' + n : '' + n;
-        return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear() +
-               ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
       } catch (e) { return ''; }
     }
 
@@ -1953,7 +2115,6 @@
             (m.chapter || '').toLowerCase().includes(query) ||
             (m.note || '').toLowerCase().includes(query))
         : currentMarks;
-
       if (filtered.length === 0) {
         const empty = document.createElement('div');
         empty.id = 'marks-empty';
@@ -1961,14 +2122,12 @@
         marksList.appendChild(empty);
         return;
       }
-
       const sorted = filtered.slice().sort((a, b) => {
         const ai = (typeof a.pIndex === 'number') ? a.pIndex : 0;
         const bi = (typeof b.pIndex === 'number') ? b.pIndex : 0;
         if (ai !== bi) return ai - bi;
         return (a.offsetInPara || 0) - (b.offsetInPara || 0);
       });
-
       sorted.forEach(m => {
         const el = document.createElement('div');
         el.className = 'mark-item';
@@ -1979,21 +2138,15 @@
         const text = document.createElement('div');
         text.className = 'mark-text';
         text.textContent = m.text || '(пусто)';
-
         el.appendChild(title); el.appendChild(text);
-
         if (m.note) {
           const note = document.createElement('div');
           note.className = 'mark-note';
           note.textContent = m.note;
           note.title = 'Клик — редактировать заметку';
-          note.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openNoteEditor(m.id);
-          });
+          note.addEventListener('click', (e) => { e.stopPropagation(); openNoteEditor(m.id); });
           el.appendChild(note);
         }
-
         const date = document.createElement('div');
         date.className = 'mark-date';
         date.textContent = formatDate(m.date);
@@ -2011,7 +2164,6 @@
       sideMarks.innerHTML = '';
       const totalScroll = readerScreen.scrollHeight - readerScreen.clientHeight;
       const paras = content.querySelectorAll('p');
-
       function pctFor(item) {
         if (typeof item.pIndex === 'number' && paras[item.pIndex] && totalScroll > 0) {
           const el = paras[item.pIndex];
@@ -2023,14 +2175,12 @@
         }
         return item.pct || 0;
       }
-
       currentMarks.forEach(m => {
         const mark = document.createElement('div');
         mark.className = 'side-mark';
         const pct = Math.max(0, Math.min(1, pctFor(m)));
         mark.style.top = (pct * 100) + '%';
-        mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60) +
-                     (m.note ? '\n📝 ' + m.note.slice(0, 80) : '');
+        mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60) + (m.note ? '\n📝 ' + m.note.slice(0, 80) : '');
         sideMarks.appendChild(mark);
       });
     }
@@ -2038,16 +2188,13 @@
     function openMarks() {
       if (!marksPanel) return;
       renderMarksList();
-      marksPanel.classList.add('open');
-      marksOverlay.classList.add('open');
+      marksPanel.classList.add('open'); marksOverlay.classList.add('open');
     }
     function closeMarks() {
       if (!marksPanel) return;
-      marksPanel.classList.remove('open');
-      marksOverlay.classList.remove('open');
+      marksPanel.classList.remove('open'); marksOverlay.classList.remove('open');
     }
     function toggleMarks() { marksPanel.classList.contains('open') ? closeMarks() : openMarks(); }
-
     if (btnMark) btnMark.addEventListener('click', () => addMark());
     if (btnAddMark) btnAddMark.addEventListener('click', () => addMark());
     if (btnMarks) btnMarks.addEventListener('click', toggleMarks);
@@ -2057,18 +2204,16 @@
     if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
 
     // ============================================================
-    //  ДВОЙНОЙ КЛИК / ДВОЙНОЙ ТАП ПО ТЕКСТУ = ЗАКЛАДКА
+    //  DOUBLE CLICK / TAP
     // ============================================================
     if (content) {
       let lastTap = 0;
-
       content.addEventListener('click', (e) => {
         if (e.detail === 2) {
           const y = e.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
           addMark(y);
         }
       });
-
       content.addEventListener('touchend', (e) => {
         const now = Date.now();
         if (now - lastTap < 300) {
@@ -2083,7 +2228,7 @@
     }
 
     // ============================================================
-    //  ПРОГРЕСС
+    //  PROGRESS
     // ============================================================
     let hideTimer = null;
     function showScroller() {
@@ -2095,28 +2240,24 @@
       }, 500);
     }
 
+    let progressSaveTimer = null;
     function updateProgress() {
       if (!readerScreen || !progressBar) return;
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-
       progressBar.style.width = pct + '%';
-
       if (pctIndicator) pctIndicator.textContent = pct.toFixed(2) + '%';
       if (mPctIndicator) mPctIndicator.textContent = pct.toFixed(2) + '%';
       if (mPctBar) mPctBar.style.width = pct + '%';
-
       if (sideProgress && sideThumb) {
         const trackH = sideProgress.clientHeight;
         const thumbH = sideThumb.offsetHeight || 40;
         const top = (pct / 100) * Math.max(0, trackH - thumbH);
         sideThumb.style.top = top + 'px';
       }
-
       if (btnAddMark) scrollTop > 100 ? btnAddMark.classList.add('show') : btnAddMark.classList.remove('show');
       if (toTop) scrollTop > 400 ? toTop.classList.add('show') : toTop.classList.remove('show');
-
       if (chapters.length) {
         let idx = -1;
         for (let i = 0; i < chapters.length; i++) {
@@ -2125,7 +2266,6 @@
         }
         if (idx !== activeChapter) { activeChapter = idx; highlightActiveToc(); }
       }
-
       if (currentBookId) {
         const books = loadBooks();
         const b = books.find(x => x.id === currentBookId);
@@ -2134,6 +2274,8 @@
           b.chapter = activeChapter;
           b.pct = pct / 100;
           saveBooks(books);
+          if (progressSaveTimer) clearTimeout(progressSaveTimer);
+          progressSaveTimer = setTimeout(() => markDirty(), 1200);
         }
       }
     }
@@ -2145,11 +2287,25 @@
         restoreReadingAnchor(anchor);
         updateProgress();
         renderSideMarks();
-        if (pctJump.classList.contains('show') && pctIndicator) {
-          // перепозиционировать
-          openPctJump(pctIndicator);
-        }
+        if (pctJump.classList.contains('show') && pctIndicator) openPctJump(pctIndicator);
       });
+    });
+
+    // Save on page hide
+    window.addEventListener('beforeunload', () => {
+      if (dirty && auth && auth.gistId) {
+        // navigator.sendBeacon can't send PATCH; use sync fetch as best-effort
+        try {
+          const snap = collectLocalSnapshot();
+          const content = JSON.stringify(snap);
+          fetch('https://api.github.com/gists/' + encodeURIComponent(auth.gistId), {
+            method: 'PATCH',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
+            body: JSON.stringify({ files: { [gistFileName]: { content } } }),
+            keepalive: true
+          }).catch(() => {});
+        } catch (e) {}
+      }
     });
 
     if (sideProgress) {
@@ -2161,7 +2317,6 @@
         if (!sideProgress.classList.contains('dragging')) showScroller();
       });
     }
-
     let dragging = false;
     function scrollFromPointer(clientY) {
       if (!sideProgress) return;
@@ -2209,13 +2364,65 @@
       sideProgress.addEventListener('mousedown', startDrag);
       sideProgress.addEventListener('touchstart', startDrag, { passive: false });
     }
+    if (toTop) toTop.addEventListener('click', () => { readerScreen.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-    if (toTop) toTop.addEventListener('click', () => {
-      readerScreen.scrollTo({ top: 0, behavior: 'smooth' });
+    // ============================================================
+    //  Pct jump
+    // ============================================================
+    function getCurrentPercent() {
+      if (!readerScreen || readerScreen.style.display !== 'block') return 0;
+      const scrollTop = readerScreen.scrollTop;
+      const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
+      return scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    }
+    function openPctJump(anchorEl) {
+      if (readerScreen.style.display !== 'block') return;
+      pctJumpInput.value = getCurrentPercent().toFixed(2);
+      pctJump.classList.add('show');
+      requestAnimationFrame(() => {
+        if (!anchorEl) return;
+        const rect = anchorEl.getBoundingClientRect();
+        const popW = pctJump.offsetWidth || 280;
+        let left = rect.left + rect.width / 2 - popW / 2;
+        let top = rect.bottom + 8;
+        left = Math.max(8, Math.min(window.innerWidth - popW - 8, left));
+        if (top + 60 > window.innerHeight) {
+          top = rect.top - (pctJump.offsetHeight || 50) - 8;
+          if (top < 8) top = 8;
+        }
+        pctJump.style.left = left + 'px';
+        pctJump.style.top = top + 'px';
+      });
+      setTimeout(() => { pctJumpInput.focus(); pctJumpInput.select(); }, 50);
+    }
+    function closePctJump() { pctJump.classList.remove('show'); }
+    function applyPctJump() {
+      let v = parseFloat(pctJumpInput.value.replace(',', '.'));
+      if (isNaN(v)) { closePctJump(); return; }
+      v = Math.max(0, Math.min(100, v));
+      const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+      readerScreen.scrollTop = (v / 100) * Math.max(0, max);
+      updateProgress();
+      showScroller();
+      closePctJump();
+    }
+    if (pctIndicator) pctIndicator.addEventListener('click', (e) => { e.stopPropagation(); openPctJump(pctIndicator); });
+    if (mPctIndicator) mPctIndicator.addEventListener('click', (e) => { e.stopPropagation(); openPctJump(null); });
+    if (pctJumpGo) pctJumpGo.addEventListener('click', applyPctJump);
+    if (pctJumpCancel) pctJumpCancel.addEventListener('click', closePctJump);
+    if (pctJumpInput) pctJumpInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyPctJump(); }
+      if (e.key === 'Escape') { e.preventDefault(); closePctJump(); }
+    });
+    document.addEventListener('click', (e) => {
+      if (!pctJump.classList.contains('show')) return;
+      if (pctJump.contains(e.target)) return;
+      if (e.target === pctIndicator || e.target === mPctIndicator) return;
+      closePctJump();
     });
 
     // ============================================================
-    //  ЭКРАНЫ
+    //  SCREENS
     // ============================================================
     function showReader() {
       pasteScreen.style.display = 'none';
@@ -2245,7 +2452,7 @@
     if (btnLibrary) btnLibrary.addEventListener('click', () => { showPaste(); renderLibrary(); });
 
     // ============================================================
-    //  БИБЛИОТЕКА
+    //  LIBRARY
     // ============================================================
     function loadBooks() {
       try { return JSON.parse(localStorage.getItem('reader_books') || '[]'); }
@@ -2253,11 +2460,11 @@
     }
     function saveBooks(books) {
       try { localStorage.setItem('reader_books', JSON.stringify(books)); } catch (e) {}
+      // NOTE: do not mark dirty here every scroll; caller decides
     }
 
     function escapeHtml(s) {
-      return String(s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
     function highlightMatch(title, query) {
@@ -2273,12 +2480,12 @@
       const query = (librarySearch.value || '').trim().toLowerCase();
       librarySearchWrap.classList.toggle('has-value', !!query);
       libraryList.innerHTML = '';
-
+      if (libraryCount) libraryCount.textContent = books.length ? '· ' + books.length : '';
       if (books.length === 0) {
         if (libraryNoResults) libraryNoResults.classList.remove('show');
         const empty = document.createElement('div');
         empty.id = 'library-empty';
-        empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
+        empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь и синхронизируется.';
         libraryList.appendChild(empty);
         return;
       }
@@ -2288,7 +2495,6 @@
         return;
       }
       if (libraryNoResults) libraryNoResults.classList.remove('show');
-
       filtered.forEach(b => {
         const el = document.createElement('div');
         el.className = 'book-item';
@@ -2304,10 +2510,7 @@
         if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
         if (pct > 0) metaText += ' · ' + pct.toFixed(2) + '%';
         meta.textContent = metaText;
-
-        el.appendChild(title);
-        el.appendChild(meta);
-
+        el.appendChild(title); el.appendChild(meta);
         if (b.pct && b.pct > 0.00005) {
           const line = document.createElement('div');
           line.className = 'progress-line';
@@ -2316,7 +2519,6 @@
           line.appendChild(span);
           el.appendChild(line);
         }
-
         const del = document.createElement('button');
         del.className = 'del'; del.title = 'Удалить'; del.textContent = '✕';
         del.addEventListener('click', (e) => {
@@ -2325,6 +2527,7 @@
             try { localStorage.removeItem(marksKey(b.id)); } catch (e) {}
             const arr = loadBooks().filter(x => x.id !== b.id);
             saveBooks(arr);
+            markDirty();
             renderLibrary();
           }
         });
@@ -2359,56 +2562,44 @@
       if (books.length > 50) books.length = 50;
       saveBooks(books);
       renderLibrary();
+      markDirty();
       return id;
     }
 
     if (librarySearch) librarySearch.addEventListener('input', renderLibrary);
     if (librarySearchClear) librarySearchClear.addEventListener('click', () => {
-      librarySearch.value = '';
-      renderLibrary();
-      librarySearch.focus();
+      librarySearch.value = ''; renderLibrary(); librarySearch.focus();
     });
 
-    // ===== Экспорт / Импорт =====
+    // ===== Export / Import =====
     function exportAll() {
-      const books = loadBooks();
-      const marks = {};
-      books.forEach(b => { marks[b.id] = loadMarks(b.id); });
-      const data = {
-        app: 'YVL_BOOKS',
-        version: 1,
-        exportedAt: new Date().toISOString(),
-        settings: settings,
-        books: books,
-        marks: marks
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const snap = collectLocalSnapshot();
+      const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       const dt = new Date();
       const pad = (n) => n < 10 ? '0' + n : '' + n;
       a.href = url;
-      a.download = 'yvl-books-' + dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + '-' +
-                   pad(dt.getHours()) + pad(dt.getMinutes()) + '.json';
+      a.download = 'yvl-books-' + dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + '-' + pad(dt.getHours()) + pad(dt.getMinutes()) + '.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      toast('Экспортировано: ' + books.length + ' книг(и)');
+      toast('Экспортировано: ' + loadBooks().length + ' книг(и)', 'ok');
     }
 
     async function importAll(file) {
       try {
         const text = await file.text();
         const data = JSON.parse(text);
-        if (!data || data.app !== 'YVL_BOOKS') {
-          toast('Это не файл YVL BOOKS', true);
+        if (!data || (data.app !== 'YVL_BOOKS_SYNC' && data.app !== 'YVL_BOOKS')) {
+          toast('Это не файл YVL BOOKS', 'error');
           return;
         }
         const mode = confirm(
           'Импортировать ' + (data.books ? data.books.length : 0) + ' книг(и).\n\n' +
           'OK — заменить текущие данные.\n' +
-          'Отмена — слить с текущими (дубликаты по id будут перезаписаны).'
+          'Отмена — слить с текущими.'
         );
         if (mode) {
           if (Array.isArray(data.books)) saveBooks(data.books);
@@ -2419,10 +2610,8 @@
           }
           if (data.settings) {
             settings = Object.assign({}, DEFAULTS, data.settings);
-            saveSettings();
-            applySettings();
+            saveSettings(); applySettings();
           }
-          toast('Импорт (замена) завершён');
         } else {
           const currentBooks = loadBooks();
           const byId = {};
@@ -2439,15 +2628,15 @@
               try { localStorage.setItem('reader_marks_' + bid, JSON.stringify(mergedMarks)); } catch (e) {}
             });
           }
-          toast('Импорт (слияние) завершён');
         }
         renderLibrary();
+        markDirty();
+        toast('Импорт завершён', 'ok');
       } catch (err) {
         console.error(err);
-        toast('Не удалось прочитать JSON: ' + (err.message || err), true);
+        toast('Не удалось прочитать JSON: ' + (err.message || err), 'error');
       }
     }
-
     if (btnExport) btnExport.addEventListener('click', exportAll);
     if (btnImport) btnImport.addEventListener('click', () => importInput.click());
     if (importInput) importInput.addEventListener('change', (e) => {
@@ -2457,7 +2646,7 @@
     });
 
     function startReading(text, fromBook) {
-      if (!text || !text.trim()) { toast('Нет текста для чтения.', true); return; }
+      if (!text || !text.trim()) { toast('Нет текста для чтения.', 'error'); return; }
       render(text);
       showReader();
       readerScreen.scrollTop = 0;
@@ -2467,7 +2656,7 @@
 
     if (btnRead) btnRead.addEventListener('click', () => {
       const text = input.value;
-      if (!text.trim()) { toast('Вставьте текст книги.', true); return; }
+      if (!text.trim()) { toast('Вставьте текст книги.', 'error'); return; }
       const title = guessTitle(text);
       const id = addBook(title, text);
       currentBookId = id;
@@ -2477,19 +2666,13 @@
 
     function guessTitle(text) {
       const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-      for (const l of lines.slice(0, 10)) {
-        if (l.length >= 3 && l.length <= 80) return l;
-      }
+      for (const l of lines.slice(0, 10)) if (l.length >= 3 && l.length <= 80) return l;
       return 'Без названия';
     }
 
     if (btnClear) btnClear.addEventListener('click', () => {
-      if (!input.value.trim() || confirm('Очистить поле?')) {
-        input.value = '';
-        input.focus();
-      }
+      if (!input.value.trim() || confirm('Очистить поле?')) { input.value = ''; input.focus(); }
     });
-
     if (btnFile) btnFile.addEventListener('click', () => fileInput.click());
     if (fileInput) fileInput.addEventListener('change', (e) => {
       const f = e.target.files && e.target.files[0];
@@ -2498,7 +2681,7 @@
     });
 
     // ============================================================
-    //  КОДИРОВКИ
+    //  ENCODINGS
     // ============================================================
     function decodeBuffer(buffer) {
       const bytes = new Uint8Array(buffer);
@@ -2578,7 +2761,7 @@
     }
 
     // ============================================================
-    //  ПАРСЕРЫ
+    //  PARSERS
     // ============================================================
     function textFromHtml(html) {
       const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -2659,21 +2842,19 @@
     }
 
     // ============================================================
-    //  ЧТЕНИЕ ФАЙЛА
+    //  FILE READ
     // ============================================================
     async function readFile(file) {
       toast('Обработка: ' + file.name);
       const name = file.name.replace(/\.[^.]+$/, '') || 'Без названия';
       const ext = (file.name.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
-
       try {
         const buffer = await file.arrayBuffer();
         let text = '';
-
         if (ext === 'epub') {
           const files = await unzip(buffer);
           let opfPath = null;
-          for (const n in files) { if (/\.opf$/i.test(n)) { opfPath = n; break; } }
+          for (const n in files) if (/\.opf$/i.test(n)) { opfPath = n; break; }
           if (!opfPath) {
             const container = files['META-INF/container.xml'] || files['meta-inf/container.xml'];
             if (container) {
@@ -2722,11 +2903,11 @@
           const files = await unzip(buffer);
           const order = ['txt','md','markdown','html','htm','xhtml','fb2','docx','odt','epub','json','csv','rtf'];
           let chosen = null;
-          for (const e of order) { for (const n in files) { if (new RegExp('\\.' + e + '$', 'i').test(n)) { chosen = { name: n, ext: e }; break; } } if (chosen) break; }
+          for (const e of order) { for (const n in files) if (new RegExp('\\.' + e + '$', 'i').test(n)) { chosen = { name: n, ext: e }; break; } if (chosen) break; }
           if (!chosen) for (const n in files) if (files[n] && files[n].length > 50) { chosen = { name: n, ext: '' }; break; }
           if (!chosen) throw new Error('Внутри ZIP не найдено читаемого файла');
           const raw = files[chosen.name];
-          if (chosen.ext === 'html' || chosen.ext === 'htm' || chosen.ext === 'xhtml') text = textFromHtml(raw);
+          if (['html','htm','xhtml'].includes(chosen.ext)) text = textFromHtml(raw);
           else if (chosen.ext === 'fb2') text = textFromFb2(raw);
           else if (chosen.ext === 'docx') text = textFromDocx(raw);
           else if (chosen.ext === 'odt') text = textFromOdt(raw);
@@ -2736,7 +2917,7 @@
           else text = raw;
         } else if (ext === 'fb2') {
           text = textFromFb2(decodeBuffer(buffer));
-        } else if (ext === 'html' || ext === 'htm' || ext === 'xhtml') {
+        } else if (['html','htm','xhtml'].includes(ext)) {
           text = textFromHtml(decodeBuffer(buffer));
         } else if (ext === 'rtf') {
           text = textFromRtf(decodeBuffer(buffer));
@@ -2747,23 +2928,18 @@
         } else {
           text = decodeBuffer(buffer);
         }
-
-        text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n')
-                   .replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n')
-                   .replace(/\u00a0/g, ' ').trim();
-
-        if (!text) { toast('Не удалось извлечь текст из «' + file.name + '»', true); return; }
-
+        text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n').replace(/\u00a0/g, ' ').trim();
+        if (!text) { toast('Не удалось извлечь текст из «' + file.name + '»', 'error'); return; }
         const finalTitle = name || guessTitle(text);
         const id = addBook(finalTitle, text);
         input.value = text;
         currentBookId = id;
         currentMarks = [];
         startReading(text, true);
-        toast('Загружено: ' + finalTitle);
+        toast('Загружено: ' + finalTitle, 'ok');
       } catch (err) {
         console.error(err);
-        toast('Ошибка: ' + (err && err.message ? err.message : 'не удалось прочитать файл'), true);
+        toast('Ошибка: ' + (err && err.message ? err.message : 'не удалось прочитать файл'), 'error');
       }
     }
 
@@ -2773,8 +2949,7 @@
     let dragCounter = 0;
     window.addEventListener('dragenter', (e) => {
       if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-        dragCounter++;
-        dropOverlay.classList.add('show');
+        dragCounter++; dropOverlay.classList.add('show');
       }
     });
     window.addEventListener('dragover', (e) => {
@@ -2794,11 +2969,12 @@
     });
 
     // ============================================================
-    //  ГОРЯЧИЕ КЛАВИШИ
+    //  HOTKEYS
     // ============================================================
     document.addEventListener('keydown', (e) => {
       if (noteEditor && noteEditor.classList.contains('open')) return;
       if (pctJump && pctJump.classList.contains('show')) return;
+      if (syncModal && syncModal.classList.contains('open')) return;
       if (readerScreen.style.display !== 'block') return;
       const ctrl = e.ctrlKey || e.metaKey;
       if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
@@ -2810,16 +2986,45 @@
         closeToc();
         if (palette) palette.classList.remove('open');
         if (fontPanel) fontPanel.classList.remove('open');
-        closeSheet(); closeMarks();
+        closeSheet(); closeMarks(); closeSyncModal();
       }
     });
 
     // ============================================================
-    //  ИНИЦИАЛИЗАЦИЯ
+    //  INIT
     // ============================================================
     buildPresets();
     applySettings();
     renderLibrary();
+
+    if (auth) {
+      hideAuth();
+      showSyncIndicator(true);
+      updateSyncModalInfo();
+      // try initial sync
+      if (auth.gistId) {
+        setSyncIndicator('syncing', '...');
+        pullFromRemote().then(ok => {
+          if (ok) {
+            renderLibrary();
+            setSyncIndicator('ok', '✓');
+          }
+        });
+      } else {
+        setupSync();
+      }
+    } else {
+      showAuth();
+      // Prefill user if saved
+      try {
+        const savedUser = localStorage.getItem('reader_last_user');
+        if (savedUser && authUser) authUser.value = savedUser;
+      } catch (e) {}
+    }
+    // Save last user on login
+    if (authUser) authUser.addEventListener('change', () => {
+      try { localStorage.setItem('reader_last_user', authUser.value.trim()); } catch (e) {}
+    });
 
     if (window.matchMedia('(max-width: 640px)').matches) {
       const hintEl = document.getElementById('hint');
