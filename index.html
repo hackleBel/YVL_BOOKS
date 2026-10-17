@@ -2304,6 +2304,8 @@
       currentBookId = null;
       currentMarks = [];
       if (sideMarks) sideMarks.innerHTML = '';
+      // Очищаем поле ввода — текст прочитанной книги не должен оставаться в меню
+      if (input) input.value = '';
     }
 
     if (logo) logo.addEventListener('click', () => {
