@@ -21,7 +21,7 @@
     --fg: #d4d7dc; --fg-dim: #6d737d; --fg-mid: #a8adb5; --accent: #8b919b;
     --col-width: 720px; --line-height: 1.85; --letter-spacing: 0;
     --font-stack: Georgia, 'Times New Roman', serif;
-    --mark-color: #e0b84a; --ok: #4caf7a; --err: #d9534f;
+    --mark-color: #e0b84a; --ok: #4caf7a; --err: #d9534f; --warn: #e0a03a;
   }
 
   #app { display: flex; flex-direction: column; height: 100%; }
@@ -120,6 +120,7 @@
   }
   #sync-indicator.ok .dot { background: var(--ok); }
   #sync-indicator.err .dot { background: var(--err); }
+  #sync-indicator.warn .dot { background: var(--warn); }
   #sync-indicator.syncing .dot { background: var(--accent); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
@@ -171,6 +172,7 @@
   .auth-box .actions button { flex: 1; min-width: 120px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
   .auth-box .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   .auth-box .err-msg { font-size: 12px; color: var(--err); margin-top: 10px; min-height: 16px; line-height: 1.4; }
+  .auth-box .info-msg { font-size: 12px; color: var(--fg-dim); margin-top: 10px; min-height: 16px; line-height: 1.4; }
   .auth-box details {
     margin-top: 16px; font-size: 11px; color: var(--fg-dim);
     border-top: 1px solid var(--border); padding-top: 12px;
@@ -182,6 +184,14 @@
     background: var(--bg); padding: 1px 5px; border-radius: 3px;
     font-family: monospace; font-size: 11px; color: var(--accent);
   }
+  .auth-box .conn-test {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px; color: var(--fg-dim);
+  }
+  .auth-box .conn-test button { padding: 6px 10px; font-size: 11px; }
+  .auth-box .conn-test .res { flex: 1; }
 
   /* ===== PASTE / LIBRARY ===== */
   #paste-screen {
@@ -588,6 +598,7 @@
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
   #file-toast.ok { background: #1a3a1f; border-color: #2a7a3a; color: #d0ffd0; }
+  #file-toast.warn { background: #3a2f1a; border-color: #7a5f2a; color: #ffe6b0; }
 
   #note-editor {
     position: fixed; inset: 0; background: rgba(0,0,0,.55);
@@ -652,7 +663,10 @@
   #sync-modal .actions button { padding: 8px 14px; font-size: 13px; }
   #sync-modal .actions .danger { color: var(--err); border-color: rgba(217,83,79,.4); }
   #sync-modal .actions .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  #sync-modal .status { font-size: 11px; color: var(--fg-dim); margin-top: 10px; min-height: 14px; }
+  #sync-modal .status { font-size: 11px; color: var(--fg-dim); margin-top: 10px; min-height: 14px; line-height: 1.5; }
+  #sync-modal .status.err { color: var(--err); }
+  #sync-modal .status.ok { color: var(--ok); }
+  #sync-modal .status.warn { color: var(--warn); }
 
   /* ===== DEVICES ===== */
   #devices-section { margin-bottom: 16px; }
@@ -722,6 +736,16 @@
     border-radius: 8px;
   }
   #devices-cleanup { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
+
+  #conn-test-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+    font-size: 11px; color: var(--fg-dim);
+  }
+  #conn-test-row button { padding: 6px 10px; font-size: 11px; }
+  #conn-test-row .res { flex: 1; }
 
   @media (max-width: 720px) { #content { padding: 36px 22px 120px; font-size: 19px; } }
   @media (max-width: 640px) {
@@ -874,6 +898,12 @@
         <button id="auth-submit" class="primary" type="button">Войти</button>
       </div>
       <div class="err-msg" id="auth-err"></div>
+      <div class="info-msg" id="auth-info"></div>
+
+      <div class="conn-test">
+        <button id="auth-conn-test" type="button">Проверить связь с GitHub</button>
+        <span class="res" id="auth-conn-res"></span>
+      </div>
 
       <details>
         <summary>Как получить токен?</summary>
@@ -988,6 +1018,11 @@
     <h4>Аккаунт и синхронизация</h4>
     <div class="info" id="sync-info">—</div>
 
+    <div id="conn-test-row">
+      <button id="sync-conn-test" type="button">Проверить связь</button>
+      <span class="res" id="sync-conn-res">—</span>
+    </div>
+
     <div id="devices-section">
       <div id="devices-title">
         <span>Подключённые устройства</span>
@@ -1092,12 +1127,13 @@
     const el = document.getElementById('file-toast');
     if (!el) return;
     el.textContent = msg;
-    el.classList.remove('error', 'ok');
+    el.classList.remove('error', 'ok', 'warn');
     if (type === 'error') el.classList.add('error');
     else if (type === 'ok') el.classList.add('ok');
+    else if (type === 'warn') el.classList.add('warn');
     el.classList.add('show');
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), type === 'error' ? 4500 : 2500);
+    el._t = setTimeout(() => el.classList.remove('show'), type === 'error' ? 5500 : 3000);
   }
 
   try {
@@ -1226,6 +1262,9 @@
     const authGistPaste = $('auth-gist-paste');
     const authSubmit = $('auth-submit');
     const authErr = $('auth-err');
+    const authInfo = $('auth-info');
+    const authConnTest = $('auth-conn-test');
+    const authConnRes = $('auth-conn-res');
 
     // Sync
     const syncIndicator = $('sync-indicator');
@@ -1241,6 +1280,8 @@
     const syncNowBtn = $('sync-now');
     const syncLogout = $('sync-logout');
     const syncClose = $('sync-close');
+    const syncConnTest = $('sync-conn-test');
+    const syncConnRes = $('sync-conn-res');
 
     // Devices
     const devicesList = $('devices-list');
@@ -1254,7 +1295,8 @@
     let currentMarks = [];
     let editingMarkId = null;
     let pendingMarkAnchor = null;
-    let currentDevices = []; // список устройств из Gist
+    let currentDevices = [];
+    let lastNetworkError = 0;
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -1277,6 +1319,93 @@
       { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
       { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
     ];
+
+    // ============================================================
+    //  NETWORK HELPERS (retry + timeout)
+    // ============================================================
+    const API_TIMEOUT_MS = 15000;
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    async function fetchWithTimeout(url, opts) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+      try {
+        const res = await fetch(url, Object.assign({}, opts, { signal: controller.signal }));
+        return res;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchRetry(url, opts, attempts) {
+      const n = attempts || 3;
+      let lastErr;
+      for (let i = 0; i < n; i++) {
+        try {
+          const res = await fetchWithTimeout(url, opts);
+          // Не ретраим 4xx, кроме 429
+          if (res.status === 429 || res.status >= 500) {
+            if (i < n - 1) { await sleep(800 * Math.pow(2, i)); continue; }
+          }
+          return res;
+        } catch (e) {
+          lastErr = e;
+          if (i < n - 1) await sleep(800 * Math.pow(2, i));
+        }
+      }
+      throw lastErr || new Error('Сетевая ошибка');
+    }
+
+    function isNetworkError(e) {
+      if (!e) return false;
+      const msg = String(e.message || e);
+      return /Failed to fetch|NetworkError|Load failed|network request failed|aborted|timeout|Timeout/i.test(msg);
+    }
+
+    function humanizeNetworkError(e) {
+      if (!isNetworkError(e)) return e && e.message ? e.message : String(e);
+      return 'Нет связи с api.github.com. Проверьте интернет, отключите VPN/блокировщик и попробуйте снова.';
+    }
+
+    async function testApiConnection() {
+      try {
+        const r = await fetchWithTimeout('https://api.github.com/', {
+          method: 'GET',
+          headers: { 'Accept': 'application/vnd.github+json' }
+        });
+        // любой HTTP-статус означает, что сеть работает
+        return { ok: true, status: r.status };
+      } catch (e) {
+        return { ok: false, error: e };
+      }
+    }
+
+    function showConnResult(el, result) {
+      if (!el) return;
+      if (result.ok) {
+        el.textContent = '✓ Связь с GitHub есть (HTTP ' + result.status + ')';
+        el.style.color = 'var(--ok)';
+      } else {
+        el.textContent = '✗ Нет связи с api.github.com. Отключите VPN/блокировщик или смените сеть.';
+        el.style.color = 'var(--err)';
+      }
+    }
+
+    if (authConnTest) {
+      authConnTest.addEventListener('click', async () => {
+        if (authConnRes) { authConnRes.textContent = 'Проверка...'; authConnRes.style.color = 'var(--fg-dim)'; }
+        const r = await testApiConnection();
+        showConnResult(authConnRes, r);
+      });
+    }
+    if (syncConnTest) {
+      syncConnTest.addEventListener('click', async () => {
+        if (syncConnRes) { syncConnRes.textContent = 'Проверка...'; syncConnRes.style.color = 'var(--fg-dim)'; }
+        const r = await testApiConnection();
+        showConnResult(syncConnRes, r);
+      });
+    }
 
     // ============================================================
     //  SETTINGS
@@ -1566,7 +1695,6 @@
     function renderDevices() {
       if (!devicesList) return;
       const myId = getDeviceId();
-      // всегда показываем себя, даже если ещё не было синхронизации
       let list = mergeDevices(currentDevices, getThisDeviceInfo());
       devicesList.innerHTML = '';
       if (devicesCount) devicesCount.textContent = list.length;
@@ -1665,9 +1793,10 @@
 
     function setSyncIndicator(status, text) {
       if (!syncIndicator) return;
-      syncIndicator.classList.remove('ok', 'err', 'syncing');
+      syncIndicator.classList.remove('ok', 'err', 'warn', 'syncing');
       if (status === 'ok') syncIndicator.classList.add('ok');
       else if (status === 'err') syncIndicator.classList.add('err');
+      else if (status === 'warn') syncIndicator.classList.add('warn');
       else if (status === 'syncing') syncIndicator.classList.add('syncing');
       if (syncShort) syncShort.textContent = text || '—';
     }
@@ -1695,7 +1824,8 @@
     }
 
     async function apiGetGist(gistId) {
-      const r = await fetch('https://api.github.com/gists/' + encodeURIComponent(gistId), {
+      const r = await fetchRetry('https://api.github.com/gists/' + encodeURIComponent(gistId), {
+        method: 'GET',
         headers: apiHeaders()
       });
       if (!r.ok) {
@@ -1713,7 +1843,7 @@
         files: {}
       };
       body.files[gistFileName] = { content: fileContent };
-      const r = await fetch('https://api.github.com/gists', {
+      const r = await fetchRetry('https://api.github.com/gists', {
         method: 'POST',
         headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
         body: JSON.stringify(body)
@@ -1728,7 +1858,7 @@
     async function apiUpdateGist(gistId, fileContent) {
       const body = { files: {} };
       body.files[gistFileName] = { content: fileContent };
-      const r = await fetch('https://api.github.com/gists/' + encodeURIComponent(gistId), {
+      const r = await fetchRetry('https://api.github.com/gists/' + encodeURIComponent(gistId), {
         method: 'PATCH',
         headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
         body: JSON.stringify(body)
@@ -1788,7 +1918,6 @@
           });
         } catch (e) {}
       }
-      // devices
       if (Array.isArray(snap.devices)) {
         currentDevices = mergeDevices(snap.devices, getThisDeviceInfo());
       } else {
@@ -1815,7 +1944,7 @@
         }
         let remoteContent = file.content;
         if (file.truncated && file.raw_url) {
-          const rr = await fetch(file.raw_url, { headers: apiHeaders() });
+          const rr = await fetchRetry(file.raw_url, { headers: apiHeaders() });
           remoteContent = await rr.text();
         }
         let snap;
@@ -1825,7 +1954,6 @@
         const remoteUpdated = snap.updatedAt || 0;
         const localUpdated = getLocalUpdated();
 
-        // Всегда подтягиваем список устройств с сервера
         if (Array.isArray(snap.devices)) {
           currentDevices = mergeDevices(snap.devices, getThisDeviceInfo());
           renderDevices();
@@ -1853,10 +1981,13 @@
         syncing = false;
         return true;
       } catch (e) {
+        const msg = humanizeNetworkError(e);
         setSyncIndicator('err', '!');
-        syncState.error = e.message;
+        syncState.error = msg;
         syncing = false;
         console.error('pull failed', e);
+        if (!silent && !isNetworkError(e)) toast(msg, 'error');
+        if (isNetworkError(e)) lastNetworkError = Date.now();
         return false;
       }
     }
@@ -1875,7 +2006,6 @@
         const content = JSON.stringify(snap);
         await apiUpdateGist(auth.gistId, content);
         dirty = false;
-        // после push обновим локальный список устройств тем, что отправили
         currentDevices = snap.devices || currentDevices;
         renderDevices();
         syncState.lastSync = now;
@@ -1884,11 +2014,18 @@
         syncing = false;
         return true;
       } catch (e) {
+        const msg = humanizeNetworkError(e);
         setSyncIndicator('err', '!');
-        syncState.error = e.message;
+        syncState.error = msg;
         syncing = false;
         console.error('push failed', e);
-        toast('Синхронизация не удалась: ' + e.message, 'error');
+        if (isNetworkError(e)) {
+          lastNetworkError = Date.now();
+          // тихий warn, без тоста — иначе спамит
+          console.warn('Нет связи с GitHub, повтор позже');
+        } else {
+          toast(msg, 'error');
+        }
         return false;
       }
     }
@@ -1902,7 +2039,6 @@
       await pullFromRemote(false);
       if (force && dirty) await pushToRemote(true);
       else if (force && auth && auth.gistId) {
-        // даже если нет dirty — обновим запись о себе (lastSeen)
         markDirty();
         await pushToRemote(true);
       }
@@ -1930,8 +2066,13 @@
           updateSyncModalInfo();
         }
       } catch (e) {
+        const msg = humanizeNetworkError(e);
         setSyncIndicator('err', '!');
-        toast('Не удалось инициализировать синхронизацию: ' + e.message, 'error');
+        if (isNetworkError(e)) {
+          toast('Нет связи с GitHub. Приложение работает локально, синхронизация повторится автоматически.', 'warn');
+        } else {
+          toast('Не удалось инициализировать синхронизацию: ' + msg, 'error');
+        }
         console.error(e);
       }
     }
@@ -1953,8 +2094,15 @@
     function openSyncModal() {
       updateSyncModalInfo();
       if (syncStatus) {
-        syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) :
-          (auth && auth.gistId ? 'Всё готово. Можно синхронизировать вручную.' : 'Gist не создан — нажмите синхронизировать.');
+        syncStatus.classList.remove('err', 'ok', 'warn');
+        if (syncState.error) {
+          syncStatus.classList.add('err');
+          syncStatus.textContent = 'Ошибка: ' + syncState.error;
+        } else if (auth && auth.gistId) {
+          syncStatus.textContent = 'Всё готово. Можно синхронизировать вручную.';
+        } else {
+          syncStatus.textContent = 'Gist не создан — нажмите синхронизировать.';
+        }
       }
       renderDevices();
       syncModal.classList.add('open');
@@ -1964,9 +2112,21 @@
     if (syncClose) syncClose.addEventListener('click', closeSyncModal);
     if (syncModal) syncModal.addEventListener('click', (e) => { if (e.target === syncModal) closeSyncModal(); });
     if (syncNowBtn) syncNowBtn.addEventListener('click', async () => {
-      if (syncStatus) syncStatus.textContent = 'Синхронизация...';
+      if (syncStatus) {
+        syncStatus.classList.remove('err', 'ok', 'warn');
+        syncStatus.textContent = 'Синхронизация...';
+      }
       await fullSync(true);
-      if (syncStatus) syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) : 'Готово.';
+      if (syncStatus) {
+        syncStatus.classList.remove('err', 'ok', 'warn');
+        if (syncState.error) {
+          syncStatus.classList.add('err');
+          syncStatus.textContent = 'Ошибка: ' + syncState.error;
+        } else {
+          syncStatus.classList.add('ok');
+          syncStatus.textContent = 'Готово.';
+        }
+      }
       updateSyncModalInfo();
     });
     if (syncCopyGist) syncCopyGist.addEventListener('click', async () => {
@@ -1999,9 +2159,13 @@
       dirty = false;
       setLocalUpdated(0);
       currentDevices = [];
-      if (syncStatus) syncStatus.textContent = 'Подключение...';
+      if (syncStatus) { syncStatus.classList.remove('err', 'ok', 'warn'); syncStatus.textContent = 'Подключение...'; }
       await pullFromRemote(false);
-      if (syncStatus) syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) : 'Готово.';
+      if (syncStatus) {
+        syncStatus.classList.remove('err', 'ok', 'warn');
+        if (syncState.error) { syncStatus.classList.add('err'); syncStatus.textContent = 'Ошибка: ' + syncState.error; }
+        else { syncStatus.classList.add('ok'); syncStatus.textContent = 'Готово.'; }
+      }
       updateSyncModalInfo();
     });
     if (syncDownloadGist) syncDownloadGist.addEventListener('click', () => {
@@ -2039,12 +2203,15 @@
 
     setInterval(() => {
       if (auth && auth.gistId && !syncing && !document.hidden) {
+        // при недавней сетевой ошибке — не спамим, попробуем не чаще раза в 60 сек
+        if (lastNetworkError && Date.now() - lastNetworkError < 60000) return;
         pullFromRemote(true).catch(() => {});
       }
     }, 20000);
 
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && auth && auth.gistId && !syncing) {
+        if (lastNetworkError && Date.now() - lastNetworkError < 5000) return;
         pullFromRemote(true).catch(() => {});
       }
     });
@@ -2097,6 +2264,7 @@
       const token = (authToken.value || '').trim();
       const gist = (authGist.value || '').trim();
       authErr.textContent = '';
+      if (authInfo) authInfo.textContent = '';
       if (!user) { authErr.textContent = 'Введите GitHub username.'; return; }
       if (!token) { authErr.textContent = 'Введите Personal Access Token.'; return; }
 
@@ -2104,7 +2272,14 @@
       authSubmit.textContent = 'Проверка...';
 
       try {
-        const r = await fetch('https://api.github.com/user', {
+        // проверка сети перед запросом
+        const conn = await testApiConnection();
+        if (!conn.ok) {
+          throw new Error('Нет связи с api.github.com. Отключите VPN/блокировщик или смените сеть.');
+        }
+
+        const r = await fetchRetry('https://api.github.com/user', {
+          method: 'GET',
           headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
         });
         if (!r.ok) throw new Error(r.status === 401 ? 'Неверный токен (401)' : 'GitHub API ' + r.status);
@@ -2125,7 +2300,7 @@
         toast('Вход выполнен: ' + me.login, 'ok');
       } catch (err) {
         console.error(err);
-        authErr.textContent = err.message || String(err);
+        authErr.textContent = humanizeNetworkError(err);
         auth = null;
         saveAuth(null);
       } finally {
@@ -2140,7 +2315,7 @@
     if (authGist) authGist.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
 
     // ============================================================
-    //  TEXT: SPLIT, RENDER
+    //  TEXT
     // ============================================================
     function splitIntoParagraphs(text) {
       const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
@@ -3300,7 +3475,6 @@
     buildPresets();
     applySettings();
     renderLibrary();
-    // на старте покажем своё устройство в списке (даже до синхронизации)
     currentDevices = mergeDevices(currentDevices, getThisDeviceInfo());
     renderDevices();
 
