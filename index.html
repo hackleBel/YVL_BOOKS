@@ -88,7 +88,8 @@
   #pct-jump input {
     width: 90px; background: var(--bg); border: 1px solid var(--border-strong);
     color: var(--fg); padding: 7px 10px; border-radius: 6px;
-    font-size: 14px; font-variant-numeric: tabular-nums; outline: none; text-align: right;
+    font-size: 16px; font-variant-numeric: tabular-nums; outline: none; text-align: right;
+    -webkit-appearance: none; appearance: none;
   }
   #pct-jump input:focus { border-color: var(--accent); }
   #pct-jump .suffix { font-size: 13px; color: var(--fg-dim); margin-left: -4px; }
@@ -104,7 +105,6 @@
   }
   #btn-menu:hover { background: var(--border-strong); }
 
-  /* ===== Sync indicator in header ===== */
   #sync-indicator {
     display: none; align-items: center; gap: 6px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -123,14 +123,14 @@
   #sync-indicator.syncing .dot { background: var(--accent); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
-  /* ===== Login screen ===== */
+  /* ===== AUTH ===== */
   #auth-screen {
     flex: 1; display: flex; align-items: center; justify-content: center;
     padding: 24px; overflow-y: auto;
   }
   #auth-screen.hidden { display: none; }
   .auth-box {
-    width: 100%; max-width: 440px;
+    width: 100%; max-width: 480px;
     background: var(--bg-panel); border: 1px solid var(--border-strong);
     border-radius: 14px; padding: 28px 26px;
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
@@ -143,8 +143,7 @@
   .auth-box .sub {
     font-size: 12px; color: var(--fg-dim); margin-bottom: 20px; line-height: 1.5;
   }
-  .auth-box .sub a { color: var(--accent); text-decoration: underline; }
-  .auth-field { margin-bottom: 12px; }
+  .auth-field { margin-bottom: 14px; }
   .auth-field label {
     display: block; font-size: 11px; letter-spacing: 1px;
     text-transform: uppercase; color: var(--fg-dim); margin-bottom: 6px;
@@ -152,23 +151,26 @@
   .auth-field input {
     width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 10px 12px; font-size: 14px;
-    font-family: inherit; outline: none;
+    padding: 12px 12px;
+    font-size: 16px;               /* 16px — iOS не зумит */
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    outline: none;
+    -webkit-appearance: none; appearance: none;
+    -webkit-user-select: text; user-select: text;
+    touch-action: manipulation;
   }
   .auth-field input:focus { border-color: var(--accent); }
-  .auth-field .hint { font-size: 10px; color: var(--fg-dim); margin-top: 4px; line-height: 1.4; }
-  .auth-box .actions {
-    display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap;
+  .auth-field .hint { font-size: 10px; color: var(--fg-dim); margin-top: 5px; line-height: 1.4; }
+  .auth-field .input-row { display: flex; gap: 6px; align-items: stretch; }
+  .auth-field .input-row input { flex: 1; min-width: 0; }
+  .auth-field .input-row button {
+    flex-shrink: 0; padding: 10px 12px; font-size: 12px;
+    white-space: nowrap;
   }
-  .auth-box .actions button { flex: 1; min-width: 120px; padding: 10px 14px; font-size: 13px; font-weight: 600; }
+  .auth-box .actions { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+  .auth-box .actions button { flex: 1; min-width: 120px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
   .auth-box .primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .auth-box .err-msg {
-    font-size: 12px; color: var(--err); margin-top: 10px; min-height: 16px; line-height: 1.4;
-  }
-  .auth-box .toggle-mode {
-    font-size: 12px; color: var(--fg-dim); margin-top: 14px; text-align: center;
-  }
-  .auth-box .toggle-mode a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .auth-box .err-msg { font-size: 12px; color: var(--err); margin-top: 10px; min-height: 16px; line-height: 1.4; }
   .auth-box details {
     margin-top: 16px; font-size: 11px; color: var(--fg-dim);
     border-top: 1px solid var(--border); padding-top: 12px;
@@ -181,6 +183,7 @@
     font-family: monospace; font-size: 11px; color: var(--accent);
   }
 
+  /* ===== PASTE / LIBRARY ===== */
   #paste-screen {
     flex: 1; display: flex; flex-direction: column;
     padding: 24px; align-items: center; overflow-y: auto;
@@ -206,7 +209,6 @@
     display: flex; justify-content: center; gap: 12px;
     margin-top: 16px; flex-wrap: wrap; flex-shrink: 0;
   }
-
   #library { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
   #library h3 {
     font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
@@ -282,6 +284,7 @@
   }
   #drop-overlay.show { display: flex; }
 
+  /* ===== READER ===== */
   #reader-screen {
     flex: 1; display: none; overflow-y: auto; overflow-x: hidden;
     position: relative; scrollbar-width: none; -ms-overflow-style: none;
@@ -342,6 +345,7 @@
   }
   #to-top.show { display: flex; }
 
+  /* ===== TOC ===== */
   #toc-panel {
     position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
@@ -368,6 +372,7 @@
   #toc-overlay.open { display: block; }
   #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
 
+  /* ===== MARKS ===== */
   #marks-panel {
     position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
@@ -388,7 +393,7 @@
   #marks-search {
     width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 8px 12px; font-size: 13px;
+    padding: 8px 12px; font-size: 16px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; outline: none;
   }
   #marks-search:focus { border-color: var(--accent); }
@@ -607,7 +612,7 @@
   #note-editor textarea {
     width: 100%; min-height: 90px; background: var(--bg-input);
     color: var(--fg); border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 10px; font-size: 14px;
+    border-radius: 8px; padding: 10px; font-size: 16px;
     line-height: 1.5; font-family: inherit; resize: vertical; outline: none;
   }
   #note-editor textarea:focus { border-color: var(--accent); }
@@ -615,7 +620,7 @@
   #note-editor .actions button { padding: 8px 14px; font-size: 13px; }
   #note-editor .actions .primary { background: var(--mark-color); color: var(--bg); border-color: var(--mark-color); }
 
-  /* Sync modal */
+  /* ===== SYNC MODAL ===== */
   #sync-modal {
     position: fixed; inset: 0; background: rgba(0,0,0,.55);
     z-index: 350; display: none; align-items: center; justify-content: center;
@@ -623,22 +628,26 @@
   }
   #sync-modal.open { display: flex; }
   #sync-modal .box {
-    width: 100%; max-width: 460px; background: var(--bg-panel);
+    width: 100%; max-width: 480px; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 12px;
     padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    max-height: 90vh; overflow-y: auto;
   }
   #sync-modal h4 {
     font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--accent); margin-bottom: 12px; font-weight: 600;
   }
-  #sync-modal .info { font-size: 12px; color: var(--fg-dim); line-height: 1.5; margin-bottom: 14px; }
-  #sync-modal .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  #sync-modal .info { font-size: 12px; color: var(--fg-dim); line-height: 1.5; margin-bottom: 12px; }
+  #sync-modal .row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
   #sync-modal .row input {
-    flex: 1; background: var(--bg-input); color: var(--fg);
+    flex: 1; min-width: 140px; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 9px 12px; font-size: 12px; font-family: monospace; outline: none;
+    padding: 10px 12px; font-size: 14px; font-family: monospace; outline: none;
+    -webkit-appearance: none; appearance: none;
+    -webkit-user-select: text; user-select: text;
   }
   #sync-modal .row input:focus { border-color: var(--accent); }
+  #sync-modal .row button { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
   #sync-modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
   #sync-modal .actions button { padding: 8px 14px; font-size: 13px; }
   #sync-modal .actions .danger { color: var(--err); border-color: rgba(217,83,79,.4); }
@@ -655,7 +664,7 @@
     header { padding: 8px 12px; gap: 8px; }
     header h1 { font-size: 12px; }
     #paste-screen { padding: 14px; }
-    textarea { padding: 14px; font-size: 15px; }
+    textarea { padding: 14px; font-size: 16px; }
     #paste-screen .actions button { flex: 1 1 auto; min-width: 100px; }
     #content { padding: 28px 16px 100px; font-size: 18px; }
     .book-list { grid-template-columns: 1fr; gap: 10px; }
@@ -676,6 +685,7 @@
     #pct-jump { left: 50% !important; right: auto !important; top: 50% !important; transform: translate(-50%, -50%) !important; width: calc(100vw - 32px); max-width: 320px; }
     #pct-jump::before { display: none; }
     .auth-box { padding: 22px 18px; }
+    #sync-modal .box { padding: 16px; }
   }
 </style>
 </head>
@@ -756,40 +766,45 @@
     </div>
   </header>
 
-  <!-- ========== AUTH SCREEN ========== -->
+  <!-- AUTH -->
   <div id="auth-screen">
     <div class="auth-box">
       <h2>Вход в аккаунт</h2>
       <div class="sub">
-        Ваша библиотека синхронизируется между устройствами через приватный GitHub Gist.
-        Данные хранятся только у вас — на вашем GitHub-аккаунте.
+        Библиотека синхронизируется между устройствами через приватный GitHub Gist.
+        Данные хранятся только на вашем GitHub-аккаунте.
       </div>
 
       <div class="auth-field">
-        <label>GitHub username</label>
-        <input type="text" id="auth-user" placeholder="ваш-логин" autocomplete="username" autocapitalize="off" spellcheck="false">
+        <label for="auth-user">GitHub username</label>
+        <input type="text" id="auth-user" placeholder="ваш-логин" inputmode="text"
+               autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" enterkeyhint="next">
       </div>
 
       <div class="auth-field">
-        <label>Personal Access Token</label>
-        <input type="password" id="auth-token" placeholder="ghp_..." autocomplete="current-password" spellcheck="false">
+        <label for="auth-token">Personal Access Token</label>
+        <input type="text" id="auth-token" placeholder="ghp_..." inputmode="text"
+               autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" enterkeyhint="next">
         <div class="hint">Классический токен со scope <code>gist</code>. Хранится только в этом браузере.</div>
       </div>
 
-      <div class="auth-field" id="auth-gist-wrap" style="display:none;">
-        <label>Gist ID <span style="text-transform:none;letter-spacing:0;opacity:.7">(для подключения ко второму устройству)</span></label>
-        <input type="text" id="auth-gist" placeholder="оставьте пустым чтобы создать новый" spellcheck="false">
-        <div class="hint">На первом устройстве Gist создастся автоматически. Скопируйте Gist ID из окна синхронизации и вставьте сюда на втором устройстве.</div>
+      <div class="auth-field">
+        <label for="auth-gist">Gist ID <span style="text-transform:none;letter-spacing:0;opacity:.7">(необязательно)</span></label>
+        <div class="input-row">
+          <input type="text" id="auth-gist" placeholder="вставьте сюда, если уже есть" inputmode="text"
+                 autocomplete="off" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" enterkeyhint="go">
+          <button id="auth-gist-paste" type="button" title="Вставить из буфера">Вставить</button>
+        </div>
+        <div class="hint">Оставьте пустым на первом устройстве — Gist создастся автоматически. На втором устройстве вставьте Gist ID с первого.</div>
       </div>
 
       <div class="actions">
-        <button id="auth-submit" class="primary">Войти</button>
+        <button id="auth-submit" class="primary" type="button">Войти</button>
       </div>
       <div class="err-msg" id="auth-err"></div>
-
-      <div class="toggle-mode">
-        <a id="auth-toggle-gist">Подключить существующий Gist</a>
-      </div>
 
       <details>
         <summary>Как получить токен?</summary>
@@ -804,7 +819,7 @@
     </div>
   </div>
 
-  <!-- ========== PASTE / LIBRARY ========== -->
+  <!-- PASTE / LIBRARY -->
   <div id="paste-screen" style="display:none;">
     <div class="inner">
       <p>Вставьте текст книги, загрузите файл или перетащите его в окно.<br>Двойной клик по тексту — закладка.</p>
@@ -899,19 +914,27 @@
   </div>
 </div>
 
-<!-- ========== SYNC MODAL ========== -->
 <div id="sync-modal">
   <div class="box">
     <h4>Аккаунт и синхронизация</h4>
     <div class="info" id="sync-info">—</div>
+
     <div class="row">
-      <input type="text" id="sync-gist-id" readonly placeholder="Gist ID">
+      <input type="text" id="sync-gist-id" placeholder="Gist ID" inputmode="text"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <button id="sync-copy-gist" title="Скопировать">Копир.</button>
+      <button id="sync-paste-gist" title="Вставить">Вставить</button>
+    </div>
+    <div class="row">
+      <button id="sync-apply-gist" style="flex:1">Применить Gist ID</button>
+      <button id="sync-download-gist" title="Сохранить Gist ID в файл">Скачать ID</button>
     </div>
     <div class="info">
-      Чтобы подключить второе устройство: войдите там тем же токеном и вставьте этот Gist ID.
+      Чтобы подключить второе устройство: войдите там тем же токеном и вставьте Gist ID.
+      На первом устройстве Gist ID можно вставить сюда и нажать «Применить», чтобы переключиться на другую библиотеку.
     </div>
     <div class="status" id="sync-status"></div>
+
     <div class="actions">
       <button id="sync-now" class="primary">Синхронизировать сейчас</button>
       <button id="sync-logout" class="danger">Выйти</button>
@@ -1122,10 +1145,9 @@
     const authUser = $('auth-user');
     const authToken = $('auth-token');
     const authGist = $('auth-gist');
-    const authGistWrap = $('auth-gist-wrap');
+    const authGistPaste = $('auth-gist-paste');
     const authSubmit = $('auth-submit');
     const authErr = $('auth-err');
-    const authToggleGist = $('auth-toggle-gist');
 
     // Sync
     const syncIndicator = $('sync-indicator');
@@ -1134,6 +1156,9 @@
     const syncInfo = $('sync-info');
     const syncGistIdInput = $('sync-gist-id');
     const syncCopyGist = $('sync-copy-gist');
+    const syncPasteGist = $('sync-paste-gist');
+    const syncApplyGist = $('sync-apply-gist');
+    const syncDownloadGist = $('sync-download-gist');
     const syncStatus = $('sync-status');
     const syncNowBtn = $('sync-now');
     const syncLogout = $('sync-logout');
@@ -1400,16 +1425,17 @@
     if (mSync) mSync.addEventListener('click', () => { closeSheet(); setTimeout(openSyncModal, 180); });
 
     // ============================================================
-    //  SYNC ENGINE (GitHub Gist)
+    //  SYNC ENGINE
     // ============================================================
     const AUTH_KEY = 'reader_auth';
+    const LOCAL_UPDATED_KEY = 'reader_local_updated';
+    const gistFileName = 'yvl-books-sync.json';
+
     let auth = loadAuth();
-    let gistFileName = 'yvl-books-sync.json';
-    let syncState = { status: 'idle', lastSync: 0, error: null };
+    let syncState = { lastSync: 0, error: null };
     let dirty = false;
     let debounceTimer = null;
     let syncing = false;
-    let lastKnownRemoteUpdatedAt = null;
 
     function loadAuth() {
       try {
@@ -1422,6 +1448,13 @@
       if (a) localStorage.setItem(AUTH_KEY, JSON.stringify(a));
       else localStorage.removeItem(AUTH_KEY);
     }
+    function getLocalUpdated() {
+      try { return parseInt(localStorage.getItem(LOCAL_UPDATED_KEY) || '0', 10) || 0; }
+      catch (e) { return 0; }
+    }
+    function setLocalUpdated(ts) {
+      try { localStorage.setItem(LOCAL_UPDATED_KEY, String(ts)); } catch (e) {}
+    }
 
     function setSyncIndicator(status, text) {
       if (!syncIndicator) return;
@@ -1431,7 +1464,6 @@
       else if (status === 'syncing') syncIndicator.classList.add('syncing');
       if (syncShort) syncShort.textContent = text || '—';
     }
-
     function showSyncIndicator(show) {
       if (!syncIndicator) return;
       syncIndicator.classList.toggle('show', !!show);
@@ -1439,11 +1471,12 @@
 
     function markDirty() {
       dirty = true;
+      setLocalUpdated(Date.now());
       if (!auth) return;
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        pushToRemote().catch(err => console.warn('auto-sync failed', err));
-      }, 2500);
+        pushToRemote(false).catch(err => console.warn('auto-sync failed', err));
+      }, 2000);
     }
 
     function apiHeaders() {
@@ -1466,7 +1499,6 @@
       }
       return r.json();
     }
-
     async function apiCreateGist(description, fileContent) {
       const body = {
         description: description || 'YVL BOOKS — library sync',
@@ -1486,7 +1518,6 @@
       }
       return r.json();
     }
-
     async function apiUpdateGist(gistId, fileContent) {
       const body = { files: {} };
       body.files[gistFileName] = { content: fileContent };
@@ -1504,14 +1535,15 @@
       return r.json();
     }
 
-    function collectLocalSnapshot() {
+    function collectLocalSnapshot(useNowIfEmpty) {
       const books = loadBooks();
       const marks = {};
       books.forEach(b => { marks[b.id] = loadMarks(b.id); });
+      const ts = getLocalUpdated() || (useNowIfEmpty ? Date.now() : 0);
       return {
         app: 'YVL_BOOKS_SYNC',
         version: 2,
-        updatedAt: Date.now(),
+        updatedAt: ts,
         settings: settings,
         books: books,
         marks: marks
@@ -1530,7 +1562,6 @@
         saveBooks(snap.books);
       }
       if (snap.marks && typeof snap.marks === 'object') {
-        // clear old marks that are no longer present
         const booksNow = loadBooks();
         const validIds = new Set(booksNow.map(b => b.id));
         booksNow.forEach(b => {
@@ -1538,7 +1569,6 @@
           if (Array.isArray(remote)) localStorage.setItem('reader_marks_' + b.id, JSON.stringify(remote));
           else localStorage.setItem('reader_marks_' + b.id, '[]');
         });
-        // remove marks for books not in list
         try {
           Object.keys(localStorage).forEach(k => {
             if (k.startsWith('reader_marks_')) {
@@ -1548,19 +1578,22 @@
           });
         } catch (e) {}
       }
+      setLocalUpdated(snap.updatedAt || 0);
       applySettings();
       renderLibrary();
     }
 
-    async function pullFromRemote() {
+    async function pullFromRemote(silent) {
       if (!auth || !auth.gistId) return false;
+      if (syncing) return false;
       syncing = true;
       setSyncIndicator('syncing', '...');
       try {
         const gist = await apiGetGist(auth.gistId);
         const file = gist.files && gist.files[gistFileName];
         if (!file) {
-          // remote exists but file missing -> push our state
+          // файла нет — сразу пушим
+          syncing = false;
           await pushToRemote(true);
           return true;
         }
@@ -1574,41 +1607,35 @@
         catch (e) { throw new Error('Не удалось разобрать JSON из Gist'); }
 
         const remoteUpdated = snap.updatedAt || 0;
-        const localSnap = collectLocalSnapshot();
-        const localUpdated = localSnap.updatedAt || 0;
+        const localUpdated = getLocalUpdated();
 
-        // Decide: pull if remote is newer than our local snapshot AND we are not dirty
-        if (remoteUpdated > localUpdated && !dirty) {
+        if (remoteUpdated > localUpdated) {
           applyRemoteSnapshot(snap);
-          lastKnownRemoteUpdatedAt = remoteUpdated;
-          setSyncIndicator('ok', '✓');
           syncState.lastSync = Date.now();
+          syncState.error = null;
+          setSyncIndicator('ok', '✓');
+          dirty = false;
+          if (!silent) toast('Получены обновления с другого устройства', 'ok');
+          syncing = false;
           return true;
         }
-        // If remote is newer AND we have local changes, merge by preferring newest per-book, but for simplicity prefer remote on pull to avoid data loss
-        if (remoteUpdated > localUpdated && dirty) {
-          // conflict: pull, then re-mark dirty so user's pending changes (if any) are re-pushed
-          applyRemoteSnapshot(snap);
-          lastKnownRemoteUpdatedAt = remoteUpdated;
-          setSyncIndicator('ok', '✓');
-          syncState.lastSync = Date.now();
-          return true;
-        }
-        // else remote is older or equal — push if dirty
+
         if (dirty) {
+          syncing = false;
           await pushToRemote(true);
         } else {
-          setSyncIndicator('ok', '✓');
           syncState.lastSync = Date.now();
+          syncState.error = null;
+          setSyncIndicator('ok', '✓');
         }
+        syncing = false;
         return true;
       } catch (e) {
         setSyncIndicator('err', '!');
         syncState.error = e.message;
+        syncing = false;
         console.error('pull failed', e);
         return false;
-      } finally {
-        syncing = false;
       }
     }
 
@@ -1619,49 +1646,58 @@
       syncing = true;
       setSyncIndicator('syncing', '...');
       try {
-        const snap = collectLocalSnapshot();
+        const now = Date.now();
+        setLocalUpdated(now);
+        const snap = collectLocalSnapshot(false);
+        snap.updatedAt = now;
         const content = JSON.stringify(snap);
         await apiUpdateGist(auth.gistId, content);
         dirty = false;
-        syncState.lastSync = Date.now();
+        syncState.lastSync = now;
         syncState.error = null;
         setSyncIndicator('ok', '✓');
+        syncing = false;
         return true;
       } catch (e) {
         setSyncIndicator('err', '!');
         syncState.error = e.message;
+        syncing = false;
         console.error('push failed', e);
         toast('Синхронизация не удалась: ' + e.message, 'error');
         return false;
-      } finally {
-        syncing = false;
       }
     }
 
     async function fullSync(force) {
-      if (!auth || !auth.gistId) return;
-      await pullFromRemote();
-      if (force) await pushToRemote(true);
+      if (!auth) return;
+      if (!auth.gistId) {
+        await setupSync();
+        return;
+      }
+      await pullFromRemote(false);
+      if (force && dirty) await pushToRemote(true);
     }
 
-    // init sync after login
     async function setupSync() {
       showSyncIndicator(true);
       setSyncIndicator('syncing', '...');
       try {
         if (!auth.gistId) {
-          // create new gist
-          const initial = collectLocalSnapshot();
+          const initial = collectLocalSnapshot(true);
           const gist = await apiCreateGist('YVL BOOKS — library sync', JSON.stringify(initial));
           auth.gistId = gist.id;
           saveAuth(auth);
+          setLocalUpdated(initial.updatedAt);
+          setSyncIndicator('ok', '✓');
+          syncState.lastSync = Date.now();
+          updateSyncModalInfo();
+          toast('Создан новый Gist. Скопируйте Gist ID для второго устройства.', 'ok');
         } else {
-          // verify access & pull
-          await pullFromRemote();
+          await pullFromRemote(false);
+          // если после pull появились локальные данные и они новее — push
+          if (dirty) await pushToRemote(true);
+          updateSyncModalInfo();
         }
-        setSyncIndicator('ok', '✓');
-        syncState.lastSync = Date.now();
-        updateSyncModalInfo();
       } catch (e) {
         setSyncIndicator('err', '!');
         toast('Не удалось инициализировать синхронизацию: ' + e.message, 'error');
@@ -1676,8 +1712,8 @@
       }
       if (syncInfo) {
         syncInfo.textContent = 'Аккаунт: ' + auth.user + ' · Gist: ' +
-          (auth.gistId ? auth.gistId.slice(0, 8) + '…' : 'не создан') +
-          (syncState.lastSync ? ' · последняя синх.: ' + new Date(syncState.lastSync).toLocaleTimeString() : '');
+          (auth.gistId ? auth.gistId.slice(0, 10) + '…' : 'не создан') +
+          (syncState.lastSync ? ' · синх.: ' + new Date(syncState.lastSync).toLocaleTimeString() : '');
       }
       if (syncGistIdInput) syncGistIdInput.value = auth.gistId || '';
     }
@@ -1686,7 +1722,7 @@
       updateSyncModalInfo();
       if (syncStatus) {
         syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) :
-          (auth && auth.gistId ? 'Всё готово. Нажмите «Синхронизировать», если нужно вручную.' : 'Gist не создан — нажмите синхронизировать.');
+          (auth && auth.gistId ? 'Всё готово. Можно синхронизировать вручную.' : 'Gist не создан — нажмите синхронизировать.');
       }
       syncModal.classList.add('open');
     }
@@ -1711,6 +1747,42 @@
         toast('Gist ID скопирован', 'ok');
       }
     });
+    if (syncPasteGist) syncPasteGist.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) { syncGistIdInput.value = text.trim(); }
+      } catch (e) {
+        syncGistIdInput.focus();
+        toast('Не удалось вставить из буфера. Вставьте вручную.', 'error');
+      }
+    });
+    if (syncApplyGist) syncApplyGist.addEventListener('click', async () => {
+      if (!auth) { showAuth(); return; }
+      const id = (syncGistIdInput.value || '').trim();
+      if (!id) { toast('Введите Gist ID', 'error'); return; }
+      if (!confirm('Переключиться на этот Gist? Текущая библиотека будет заменена данными из Gist.')) return;
+      auth.gistId = id;
+      saveAuth(auth);
+      dirty = false;
+      setLocalUpdated(0);
+      if (syncStatus) syncStatus.textContent = 'Подключение...';
+      await pullFromRemote(false);
+      if (syncStatus) syncStatus.textContent = syncState.error ? ('Ошибка: ' + syncState.error) : 'Готово.';
+      updateSyncModalInfo();
+    });
+    if (syncDownloadGist) syncDownloadGist.addEventListener('click', () => {
+      if (!auth || !auth.gistId) return;
+      const blob = new Blob([auth.gistId], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'yvl-gist-id.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Gist ID сохранён', 'ok');
+    });
     if (syncLogout) syncLogout.addEventListener('click', () => {
       if (!confirm('Выйти из аккаунта? Локальные данные останутся на этом устройстве, но перестанут синхронизироваться.')) return;
       localStorage.removeItem(AUTH_KEY);
@@ -1730,17 +1802,36 @@
     });
     if (btnSettings) btnSettings.addEventListener('click', openSyncModal);
 
-    // Periodic pull to catch remote changes from other devices
+    // Периодический pull (20 сек) — только если вкладка видима и не идёт синхронизация
     setInterval(() => {
       if (auth && auth.gistId && !syncing && !document.hidden) {
-        pullFromRemote().catch(() => {});
+        pullFromRemote(true).catch(() => {});
       }
-    }, 30000);
+    }, 20000);
 
-    // Sync on tab visibility
+    // Pull при возврате на вкладку
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && auth && auth.gistId) {
-        pullFromRemote().catch(() => {});
+      if (!document.hidden && auth && auth.gistId && !syncing) {
+        pullFromRemote(true).catch(() => {});
+      }
+    });
+
+    // Сохранение при закрытии вкладки — best effort
+    window.addEventListener('beforeunload', () => {
+      if (dirty && auth && auth.gistId) {
+        try {
+          const now = Date.now();
+          const snap = collectLocalSnapshot(false);
+          snap.updatedAt = now;
+          setLocalUpdated(now);
+          const content = JSON.stringify(snap);
+          fetch('https://api.github.com/gists/' + encodeURIComponent(auth.gistId), {
+            method: 'PATCH',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
+            body: JSON.stringify({ files: { [gistFileName]: { content } } }),
+            keepalive: true
+          }).catch(() => {});
+        } catch (e) {}
       }
     });
 
@@ -1758,12 +1849,16 @@
       pasteScreen.style.display = 'flex';
     }
 
-    if (authToggleGist) authToggleGist.addEventListener('click', (e) => {
-      e.preventDefault();
-      const shown = authGistWrap.style.display !== 'none';
-      authGistWrap.style.display = shown ? 'none' : 'block';
-      authToggleGist.textContent = shown ? 'Подключить существующий Gist' : 'Скрыть поле Gist ID';
-    });
+    async function pasteInto(el) {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) { el.value = text.trim(); }
+      } catch (e) {
+        el.focus();
+        toast('Не удалось вставить из буфера. Вставьте вручную.', 'error');
+      }
+    }
+    if (authGistPaste) authGistPaste.addEventListener('click', () => pasteInto(authGist));
 
     async function doLogin() {
       const user = (authUser.value || '').trim();
@@ -1777,7 +1872,6 @@
       authSubmit.textContent = 'Проверка...';
 
       try {
-        // validate token by /user
         const r = await fetch('https://api.github.com/user', {
           headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
         });
@@ -1792,13 +1886,9 @@
         hideAuth();
         showSyncIndicator(true);
         updateSyncModalInfo();
-
-        // load local first (in case we already have data)
         renderLibrary();
 
-        // if gistId provided -> pull, else create new
         await setupSync();
-
         renderLibrary();
         toast('Вход выполнен: ' + me.login, 'ok');
       } catch (err) {
@@ -2291,23 +2381,6 @@
       });
     });
 
-    // Save on page hide
-    window.addEventListener('beforeunload', () => {
-      if (dirty && auth && auth.gistId) {
-        // navigator.sendBeacon can't send PATCH; use sync fetch as best-effort
-        try {
-          const snap = collectLocalSnapshot();
-          const content = JSON.stringify(snap);
-          fetch('https://api.github.com/gists/' + encodeURIComponent(auth.gistId), {
-            method: 'PATCH',
-            headers: Object.assign({ 'Content-Type': 'application/json' }, apiHeaders()),
-            body: JSON.stringify({ files: { [gistFileName]: { content } } }),
-            keepalive: true
-          }).catch(() => {});
-        } catch (e) {}
-      }
-    });
-
     if (sideProgress) {
       sideProgress.addEventListener('mouseenter', () => {
         sideProgress.classList.add('visible');
@@ -2367,7 +2440,7 @@
     if (toTop) toTop.addEventListener('click', () => { readerScreen.scrollTo({ top: 0, behavior: 'smooth' }); });
 
     // ============================================================
-    //  Pct jump
+    //  PCT JUMP
     // ============================================================
     function getCurrentPercent() {
       if (!readerScreen || readerScreen.style.display !== 'block') return 0;
@@ -2460,7 +2533,6 @@
     }
     function saveBooks(books) {
       try { localStorage.setItem('reader_books', JSON.stringify(books)); } catch (e) {}
-      // NOTE: do not mark dirty here every scroll; caller decides
     }
 
     function escapeHtml(s) {
@@ -2573,7 +2645,7 @@
 
     // ===== Export / Import =====
     function exportAll() {
-      const snap = collectLocalSnapshot();
+      const snap = collectLocalSnapshot(true);
       const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -3001,13 +3073,12 @@
       hideAuth();
       showSyncIndicator(true);
       updateSyncModalInfo();
-      // try initial sync
       if (auth.gistId) {
         setSyncIndicator('syncing', '...');
-        pullFromRemote().then(ok => {
+        pullFromRemote(false).then(ok => {
           if (ok) {
             renderLibrary();
-            setSyncIndicator('ok', '✓');
+            if (dirty) pushToRemote(true).catch(() => {});
           }
         });
       } else {
@@ -3015,13 +3086,11 @@
       }
     } else {
       showAuth();
-      // Prefill user if saved
       try {
         const savedUser = localStorage.getItem('reader_last_user');
         if (savedUser && authUser) authUser.value = savedUser;
       } catch (e) {}
     }
-    // Save last user on login
     if (authUser) authUser.addEventListener('change', () => {
       try { localStorage.setItem('reader_last_user', authUser.value.trim()); } catch (e) {}
     });
