@@ -220,6 +220,61 @@
   }
   #library-io button { font-size: 12px; padding: 6px 10px; }
 
+  /* ===== Архивы (коллекции) ===== */
+  #collections-bar {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .collection-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 5px 10px 5px 12px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 12px;
+    color: var(--fg-mid);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color .15s, color .15s, background .15s;
+    max-width: 100%;
+  }
+  .collection-chip > span:first-child {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .collection-chip:hover { border-color: var(--accent); color: var(--fg); }
+  .collection-chip.active {
+    border-color: var(--accent);
+    color: var(--fg);
+    background: var(--border-strong);
+  }
+  .collection-chip .count {
+    font-size: 10px;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .collection-chip.active .count { color: var(--accent); }
+  .collection-chip .chip-actions {
+    display: inline-flex; align-items: center; gap: 1px;
+    flex-shrink: 0;
+  }
+  .collection-chip .chip-edit,
+  .collection-chip .chip-del {
+    background: transparent; border: none; color: var(--fg-dim);
+    padding: 0 3px; font-size: 11px; line-height: 1; cursor: pointer;
+    border-radius: 3px; flex-shrink: 0;
+  }
+  .collection-chip .chip-edit:hover { color: var(--fg); background: var(--border); }
+  .collection-chip .chip-del:hover { color: #ff9a9a; background: #3a1a1a; }
+  .collection-chip.add-chip {
+    border-style: dashed;
+    color: var(--fg-dim);
+    padding: 5px 12px;
+  }
+  .collection-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
+
   #library-search-wrap { margin-bottom: 12px; position: relative; }
   #library-search {
     width: 100%; background: var(--bg-input); color: var(--fg);
@@ -262,6 +317,31 @@
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim);
   }
+  .book-item .book-collection {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: rgba(139,145,155,.12);
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+  .book-item .book-collection:hover { border-color: var(--accent); }
+  .book-item .book-collection.none {
+    color: var(--fg-dim);
+    background: transparent;
+    border-style: dashed;
+  }
   .book-item .progress-line {
     height: 3px; border-radius: 2px;
     background: var(--border); overflow: hidden;
@@ -289,6 +369,39 @@
   }
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
+
+  /* ===== Меню выбора архива ===== */
+  #collection-menu {
+    position: fixed;
+    z-index: 350;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 6px;
+    min-width: 180px;
+    max-width: 260px;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    display: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #collection-menu.show { display: block; }
+  #collection-menu .cm-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--fg-mid);
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #collection-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
+  #collection-menu .cm-item.active { color: var(--accent); }
+  #collection-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
+  #collection-menu .cm-item.danger { color: #c97a7a; }
+  #collection-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
 
   #drop-overlay {
     position: fixed; inset: 0;
@@ -809,6 +922,7 @@
     .book-list { grid-template-columns: 1fr; gap: 10px; }
     .book-item { padding: 14px 44px 14px 16px; border-radius: 12px; gap: 4px; }
     .book-item .title { font-size: 15px; white-space: normal; padding-right: 0; line-height: 1.3; }
+    .book-item .book-collection { font-size: 10px; }
     .book-item .del {
       top: 50%; right: 10px; transform: translateY(-50%);
       font-size: 16px; padding: 8px 10px; border-radius: 8px;
@@ -909,7 +1023,7 @@
 
   <div id="paste-screen">
     <div class="inner">
-      <p>Вставьте текст книги, загрузите файл или перетащите его в окно.<br>Двойной клик по тексту — закладка.</p>
+      <p>Вставьте текст книги, загрузите файл или перетащите его в окно.</p>
       <textarea id="input" placeholder="Сюда текст..." spellcheck="false"></textarea>
       <div class="actions">
         <button id="btn-read">Читать</button>
@@ -922,10 +1036,11 @@
       <div id="library">
         <h3>Библиотека</h3>
         <div id="library-io">
-          <button id="btn-export" title="Скачать JSON со всеми книгами, закладками и настройками">⬇ Экспорт</button>
+          <button id="btn-export" title="Скачать JSON со всеми книгами, архивами, закладками и настройками">⬇ Экспорт</button>
           <button id="btn-import" title="Загрузить JSON">⬆ Импорт</button>
           <input type="file" id="import-input" accept=".json,application/json">
         </div>
+        <div id="collections-bar"></div>
         <div id="library-search-wrap">
           <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off">
           <button id="library-search-clear" title="Очистить">✕</button>
@@ -962,7 +1077,7 @@
   <button id="pct-jump-cancel" title="Отмена">✕</button>
 </div>
 
-<div id="hint">Двойной клик — 🔖 закладка · Ctrl+B — закладка · Ctrl+O — содержание</div>
+<div id="hint">Ctrl+B — 🔖 закладка · Ctrl+O — содержание</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
@@ -986,6 +1101,8 @@
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
+
+<div id="collection-menu"></div>
 
 <div id="note-editor">
   <div class="box">
@@ -1160,6 +1277,9 @@
     const librarySearchClear = $('library-search-clear');
     const libraryNoResults = $('library-no-results');
 
+    const collectionsBar = $('collections-bar');
+    const collectionMenu = $('collection-menu');
+
     const btnMenu = $('btn-menu');
     const mobileSheet = $('mobile-sheet');
     const sheetOverlay = $('sheet-overlay');
@@ -1201,6 +1321,8 @@
     let currentMarks = [];
     let editingMarkId = null;
     let pendingMarkAnchor = null;
+    let activeCollection = null;
+    let cmBookId = null;
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -1564,14 +1686,12 @@
       pctJumpInput.value = cur.toFixed(2);
       pctJump.classList.add('show');
 
-      // позиционируем относительно anchorEl
       requestAnimationFrame(() => {
         if (!anchorEl) return;
         const rect = anchorEl.getBoundingClientRect();
         const popW = pctJump.offsetWidth || 280;
         let left = rect.left + rect.width / 2 - popW / 2;
         let top = rect.bottom + 8;
-        // не вылезаем за пределы
         left = Math.max(8, Math.min(window.innerWidth - popW - 8, left));
         if (top + 60 > window.innerHeight) {
           top = rect.top - (pctJump.offsetHeight || 50) - 8;
@@ -1611,7 +1731,6 @@
     if (mPctIndicator) {
       mPctIndicator.addEventListener('click', (e) => {
         e.stopPropagation();
-        // На мобильном — открываем диалог по центру
         openPctJump(null);
       });
     }
@@ -1788,35 +1907,9 @@
       return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio };
     }
 
-    function anchorFromY(posY) {
-      const paras = content.querySelectorAll('p');
-      let target = null, ti = -1;
-      for (let i = 0; i < paras.length; i++) {
-        const el = paras[i];
-        if (posY >= el.offsetTop && posY <= el.offsetTop + el.offsetHeight) { target = el; ti = i; break; }
-      }
-      if (!target) {
-        for (let i = 0; i < paras.length; i++) {
-          const el = paras[i];
-          if (el.offsetTop + el.offsetHeight > posY) { target = el; ti = i; break; }
-        }
-      }
-      if (!target && paras.length) { target = paras[0]; ti = 0; }
-      if (!target) return { text: '', chapter: '', pIndex: 0, offsetInPara: 0, ratio: 0 };
-      const off = Math.max(0, Math.min(target.offsetHeight, posY - target.offsetTop));
-      const ratio = off / Math.max(1, target.offsetHeight);
-      const text = (target.textContent || '').trim();
-      const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
-      let ch = '';
-      for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].el.offsetTop <= posY) ch = chapters[i].title; else break;
-      }
-      return { text: snippet, chapter: ch, pIndex: ti, offsetInPara: off, ratio };
-    }
-
-    function addMark(posY) {
+    function addMark() {
       if (readerScreen.style.display !== 'block') return;
-      const anchor = (typeof posY === 'number') ? anchorFromY(posY) : getCurrentSnippet();
+      const anchor = getCurrentSnippet();
       const scrollTop = readerScreen.scrollTop;
       const scrollHeight = readerScreen.scrollHeight - readerScreen.clientHeight;
       const pct = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
@@ -1943,7 +2036,7 @@
       if (currentMarks.length === 0) {
         const empty = document.createElement('div');
         empty.id = 'marks-empty';
-        empty.textContent = 'Пока нет закладок. Двойной клик по слову — закладка.';
+        empty.textContent = 'Пока нет закладок. Нажмите 🔖 или Ctrl+B.';
         marksList.appendChild(empty);
         return;
       }
@@ -2057,32 +2150,6 @@
     if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
 
     // ============================================================
-    //  ДВОЙНОЙ КЛИК / ДВОЙНОЙ ТАП ПО ТЕКСТУ = ЗАКЛАДКА
-    // ============================================================
-    if (content) {
-      let lastTap = 0;
-
-      content.addEventListener('click', (e) => {
-        if (e.detail === 2) {
-          const y = e.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
-          addMark(y);
-        }
-      });
-
-      content.addEventListener('touchend', (e) => {
-        const now = Date.now();
-        if (now - lastTap < 300) {
-          const t = (e.changedTouches && e.changedTouches[0]);
-          if (t) {
-            const y = t.clientY - readerScreen.getBoundingClientRect().top + readerScreen.scrollTop;
-            addMark(y);
-          }
-        }
-        lastTap = now;
-      }, { passive: true });
-    }
-
-    // ============================================================
     //  ПРОГРЕСС
     // ============================================================
     let hideTimer = null;
@@ -2146,9 +2213,9 @@
         updateProgress();
         renderSideMarks();
         if (pctJump.classList.contains('show') && pctIndicator) {
-          // перепозиционировать
           openPctJump(pctIndicator);
         }
+        closeCollectionMenu();
       });
     });
 
@@ -2233,7 +2300,7 @@
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
       if (btnAddMark) btnAddMark.classList.remove('show');
-      closeToc(); closeSheet(); closeMarks(); closePctJump();
+      closeToc(); closeSheet(); closeMarks(); closePctJump(); closeCollectionMenu();
       currentBookId = null;
       currentMarks = [];
       if (sideMarks) sideMarks.innerHTML = '';
@@ -2267,14 +2334,245 @@
       return safe.replace(new RegExp('(' + q + ')', 'ig'), '<mark>$1</mark>');
     }
 
+    // ===== Архивы =====
+    const COLLECTIONS_KEY = 'reader_collections';
+    function loadCollections() {
+      try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveCollections(arr) {
+      try { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function createCollection(name) {
+      const cols = loadCollections();
+      const id = 'c' + Date.now() + Math.random().toString(36).slice(2, 6);
+      cols.push({ id, name: name.trim() || 'Без названия', created: Date.now() });
+      saveCollections(cols);
+      return id;
+    }
+    function renameCollection(id, name) {
+      const cols = loadCollections();
+      const c = cols.find(x => x.id === id);
+      if (!c) return;
+      c.name = name.trim() || c.name;
+      saveCollections(cols);
+    }
+    function deleteCollection(id) {
+      const cols = loadCollections().filter(x => x.id !== id);
+      saveCollections(cols);
+      const books = loadBooks();
+      books.forEach(b => { if (b.collection === id) b.collection = ''; });
+      saveBooks(books);
+    }
+    function getCollectionName(id) {
+      if (!id) return '';
+      const c = loadCollections().find(x => x.id === id);
+      return c ? c.name : '';
+    }
+    function setBookCollection(bookId, collectionId) {
+      const books = loadBooks();
+      const b = books.find(x => x.id === bookId);
+      if (!b) return;
+      b.collection = collectionId || '';
+      saveBooks(books);
+      renderLibrary();
+    }
+
+    function renderCollectionsBar() {
+      if (!collectionsBar) return;
+      const cols = loadCollections();
+      const books = loadBooks();
+      collectionsBar.innerHTML = '';
+
+      function makeChip(label, count, isActive, onClick, extra) {
+        const el = document.createElement('div');
+        el.className = 'collection-chip' + (isActive ? ' active' : '');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = label;
+        nameSpan.title = label;
+        el.appendChild(nameSpan);
+        const cnt = document.createElement('span');
+        cnt.className = 'count';
+        cnt.textContent = count;
+        el.appendChild(cnt);
+        if (extra) extra(el);
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.chip-actions')) return;
+          onClick();
+        });
+        collectionsBar.appendChild(el);
+        return el;
+      }
+
+      makeChip('Все', books.length, activeCollection === null, () => {
+        activeCollection = null; renderLibrary();
+      });
+
+      const noneCount = books.filter(b => !b.collection).length;
+      if (noneCount > 0) {
+        makeChip('Без архива', noneCount, activeCollection === '', () => {
+          activeCollection = ''; renderLibrary();
+        });
+      }
+
+      cols.forEach(c => {
+        const cnt = books.filter(b => b.collection === c.id).length;
+        makeChip(c.name, cnt, activeCollection === c.id, () => {
+          activeCollection = (activeCollection === c.id) ? null : c.id;
+          renderLibrary();
+        }, (el) => {
+          const actions = document.createElement('span');
+          actions.className = 'chip-actions';
+
+          const edit = document.createElement('button');
+          edit.className = 'chip-edit';
+          edit.title = 'Переименовать';
+          edit.textContent = '✎';
+          edit.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const n = prompt('Название архива:', c.name);
+            if (n !== null) {
+              renameCollection(c.id, n);
+              renderLibrary();
+            }
+          });
+          actions.appendChild(edit);
+
+          const del = document.createElement('button');
+          del.className = 'chip-del';
+          del.title = 'Удалить архив';
+          del.textContent = '✕';
+          del.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const inside = loadBooks().filter(b => b.collection === c.id).length;
+            const msg = inside > 0
+              ? 'Удалить архив «' + c.name + '»? Книги (' + inside + ') останутся, но перейдут в «Без архива».'
+              : 'Удалить архив «' + c.name + '»?';
+            if (confirm(msg)) {
+              deleteCollection(c.id);
+              if (activeCollection === c.id) activeCollection = null;
+              renderLibrary();
+            }
+          });
+          actions.appendChild(del);
+
+          el.appendChild(actions);
+        });
+      });
+
+      const addChip = makeChip('+ Архив', '', false, () => {
+        const n = prompt('Название нового архива:');
+        if (n !== null && n.trim()) {
+          const id = createCollection(n);
+          activeCollection = id;
+          renderLibrary();
+        }
+      });
+      addChip.classList.add('add-chip');
+    }
+
+    function openCollectionMenu(anchorEl, bookId) {
+      if (!collectionMenu) return;
+      cmBookId = bookId;
+      const books = loadBooks();
+      const b = books.find(x => x.id === bookId);
+      const cur = b ? (b.collection || '') : '';
+      const cols = loadCollections();
+      collectionMenu.innerHTML = '';
+
+      const all = document.createElement('div');
+      all.className = 'cm-item' + (cur === '' ? ' active' : '');
+      all.textContent = 'Без архива';
+      all.addEventListener('click', () => { setBookCollection(cmBookId, ''); closeCollectionMenu(); });
+      collectionMenu.appendChild(all);
+
+      if (cols.length) {
+        const sep = document.createElement('div');
+        sep.className = 'cm-sep';
+        collectionMenu.appendChild(sep);
+        cols.forEach(c => {
+          const it = document.createElement('div');
+          it.className = 'cm-item' + (cur === c.id ? ' active' : '');
+          it.textContent = '📁 ' + c.name;
+          it.title = c.name;
+          it.addEventListener('click', () => { setBookCollection(cmBookId, c.id); closeCollectionMenu(); });
+          collectionMenu.appendChild(it);
+        });
+      }
+
+      const sep2 = document.createElement('div');
+      sep2.className = 'cm-sep';
+      collectionMenu.appendChild(sep2);
+
+      const newIt = document.createElement('div');
+      newIt.className = 'cm-item';
+      newIt.textContent = '+ Новый архив…';
+      newIt.addEventListener('click', () => {
+        const n = prompt('Название нового архива:');
+        if (n !== null && n.trim()) {
+          const id = createCollection(n);
+          setBookCollection(cmBookId, id);
+        }
+        closeCollectionMenu();
+      });
+      collectionMenu.appendChild(newIt);
+
+      if (cur) {
+        const sep3 = document.createElement('div');
+        sep3.className = 'cm-sep';
+        collectionMenu.appendChild(sep3);
+        const delIt = document.createElement('div');
+        delIt.className = 'cm-item danger';
+        delIt.textContent = '🗑 Удалить архив «' + getCollectionName(cur) + '»';
+        delIt.addEventListener('click', () => {
+          if (confirm('Удалить архив «' + getCollectionName(cur) + '»? Книги останутся, но без архива.')) {
+            deleteCollection(cur);
+            if (activeCollection === cur) activeCollection = null;
+            renderLibrary();
+          }
+          closeCollectionMenu();
+        });
+        collectionMenu.appendChild(delIt);
+      }
+
+      const rect = anchorEl.getBoundingClientRect();
+      const mw = 220;
+      let left = Math.min(rect.left, window.innerWidth - mw - 8);
+      left = Math.max(8, left);
+      let top = rect.bottom + 6;
+      collectionMenu.style.left = left + 'px';
+      collectionMenu.style.top = top + 'px';
+      collectionMenu.classList.add('show');
+
+      requestAnimationFrame(() => {
+        const mh = collectionMenu.offsetHeight || 200;
+        if (top + mh > window.innerHeight - 8) {
+          collectionMenu.style.top = Math.max(8, rect.top - mh - 6) + 'px';
+        }
+      });
+    }
+    function closeCollectionMenu() {
+      if (collectionMenu) collectionMenu.classList.remove('show');
+      cmBookId = null;
+    }
+    document.addEventListener('click', (e) => {
+      if (!collectionMenu || !collectionMenu.classList.contains('show')) return;
+      if (collectionMenu.contains(e.target)) return;
+      if (e.target.closest && e.target.closest('.book-collection')) return;
+      closeCollectionMenu();
+    });
+    if (readerScreen) readerScreen.addEventListener('scroll', closeCollectionMenu);
+
     function renderLibrary() {
       if (!libraryList) return;
-      const books = loadBooks();
+      renderCollectionsBar();
+
+      const allBooks = loadBooks();
       const query = (librarySearch.value || '').trim().toLowerCase();
       librarySearchWrap.classList.toggle('has-value', !!query);
       libraryList.innerHTML = '';
 
-      if (books.length === 0) {
+      if (allBooks.length === 0) {
         if (libraryNoResults) libraryNoResults.classList.remove('show');
         const empty = document.createElement('div');
         empty.id = 'library-empty';
@@ -2282,9 +2580,20 @@
         libraryList.appendChild(empty);
         return;
       }
+
+      let books = allBooks;
+      if (activeCollection === '') books = books.filter(b => !b.collection);
+      else if (activeCollection) books = books.filter(b => b.collection === activeCollection);
+
       const filtered = query ? books.filter(b => b.title.toLowerCase().includes(query)) : books;
+
       if (filtered.length === 0) {
-        if (libraryNoResults) libraryNoResults.classList.add('show');
+        if (libraryNoResults) {
+          libraryNoResults.textContent = query
+            ? 'Ничего не найдено'
+            : 'В этом архиве пока нет книг';
+          libraryNoResults.classList.add('show');
+        }
         return;
       }
       if (libraryNoResults) libraryNoResults.classList.remove('show');
@@ -2306,6 +2615,17 @@
         meta.textContent = metaText;
 
         el.appendChild(title);
+
+        const colEl = document.createElement('div');
+        colEl.className = 'book-collection' + (b.collection ? '' : ' none');
+        colEl.textContent = b.collection ? '📁 ' + getCollectionName(b.collection) : '📁 Без архива';
+        colEl.title = 'Сменить архив';
+        colEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openCollectionMenu(colEl, b.id);
+        });
+        el.appendChild(colEl);
+
         el.appendChild(meta);
 
         if (b.pct && b.pct > 0.00005) {
@@ -2355,8 +2675,14 @@
       const books = loadBooks();
       const words = text.trim().split(/\s+/).filter(Boolean).length;
       const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
-      books.unshift({ id, title, text, words, scroll: 0, chapter: -1, pct: 0, added: Date.now() });
-      if (books.length > 50) books.length = 50;
+      const collection = (typeof activeCollection === 'string' && activeCollection) ? activeCollection : '';
+      books.unshift({
+        id, title, text, words,
+        scroll: 0, chapter: -1, pct: 0,
+        added: Date.now(),
+        collection
+      });
+      if (books.length > 100) books.length = 100;
       saveBooks(books);
       renderLibrary();
       return id;
@@ -2376,9 +2702,10 @@
       books.forEach(b => { marks[b.id] = loadMarks(b.id); });
       const data = {
         app: 'YVL_BOOKS',
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
         settings: settings,
+        collections: loadCollections(),
         books: books,
         marks: marks
       };
@@ -2412,6 +2739,7 @@
         );
         if (mode) {
           if (Array.isArray(data.books)) saveBooks(data.books);
+          if (Array.isArray(data.collections)) saveCollections(data.collections);
           if (data.marks && typeof data.marks === 'object') {
             Object.keys(data.marks).forEach(bid => {
               try { localStorage.setItem('reader_marks_' + bid, JSON.stringify(data.marks[bid] || [])); } catch (e) {}
@@ -2430,6 +2758,15 @@
           (data.books || []).forEach(b => { byId[b.id] = b; });
           const merged = Object.values(byId).sort((a,b) => (b.added || 0) - (a.added || 0));
           saveBooks(merged);
+
+          if (Array.isArray(data.collections)) {
+            const cur = loadCollections();
+            const cById = {};
+            cur.forEach(c => cById[c.id] = c);
+            data.collections.forEach(c => { if (c && c.id) cById[c.id] = c; });
+            saveCollections(Object.values(cById));
+          }
+
           if (data.marks) {
             Object.keys(data.marks).forEach(bid => {
               const existing = loadMarks(bid);
@@ -2810,7 +3147,7 @@
         closeToc();
         if (palette) palette.classList.remove('open');
         if (fontPanel) fontPanel.classList.remove('open');
-        closeSheet(); closeMarks();
+        closeSheet(); closeMarks(); closeCollectionMenu();
       }
     });
 
