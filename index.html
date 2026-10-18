@@ -518,9 +518,23 @@
     padding: 10px 20px; font-size: 13px; color: var(--fg-mid);
     cursor: pointer; line-height: 1.4;
     border-left: 2px solid transparent;
+    display: flex; justify-content: space-between; gap: 10px;
+    align-items: baseline;
   }
   .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
   .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
+  .toc-item .toc-name {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    flex: 1; min-width: 0;
+  }
+  .toc-item .toc-pct {
+    font-size: 11px;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    letter-spacing: .2px;
+  }
+  .toc-item.active .toc-pct { color: var(--accent); }
 
   #toc-overlay {
     position: fixed; inset: 0;
@@ -910,6 +924,7 @@
     border-color: var(--mark-color);
   }
 
+  /* ================= МОБИЛЬНЫЕ ПРАВКИ ================= */
   @media (max-width: 720px) {
     #content { padding: 36px 22px 120px; font-size: 19px; }
   }
@@ -940,10 +955,8 @@
     #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
     .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 300px; }
     footer { padding: 6px 12px; font-size: 10px; }
-    #side-progress { right: 2px; width: 28px; top: 50px; bottom: 50px; }
-    #side-progress::before { right: 12px; }
-    #side-thumb { right: 9px; width: 10px; height: 44px; }
-    .side-mark { right: 6px; width: 12px; height: 3px; }
+    /* На телефонах боковой ползунок не нужен вовсе — прогресс есть в меню и в шапке */
+    #side-progress { display: none !important; }
     #mobile-sheet { display: block; }
     #pct-jump {
       left: 50% !important;
@@ -954,6 +967,15 @@
       max-width: 320px;
     }
     #pct-jump::before { display: none; }
+  }
+
+  /* Прячем системные полосы прокрутки на телефонах везде */
+  @media (max-width: 900px), (hover: none) and (pointer: coarse) {
+    * { scrollbar-width: none; -ms-overflow-style: none; }
+    *::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    #paste-screen, #toc-list, #marks-list, #mobile-sheet, #collection-menu, #reader-screen {
+      overscroll-behavior: contain;
+    }
   }
 </style>
 </head>
@@ -1473,6 +1495,7 @@
         restoreReadingAnchor(anchor);
         updateProgress();
         renderSideMarks();
+        updateTocPercents();
       });
     }
 
@@ -1829,6 +1852,9 @@
       return 'глав';
     }
 
+    // ============================================================
+    //  ОГЛАВЛЕНИЕ С ПРОЦЕНТАМИ
+    // ============================================================
     function buildToc() {
       if (!tocList) return;
       tocList.innerHTML = '';
@@ -1842,14 +1868,51 @@
       chapters.forEach((ch, i) => {
         const el = document.createElement('div');
         el.className = 'toc-item';
-        el.textContent = ch.title;
+        el.dataset.chapterIndex = i;
+
+        const name = document.createElement('span');
+        name.className = 'toc-name';
+        name.textContent = ch.title;
+
+        const pct = document.createElement('span');
+        pct.className = 'toc-pct';
+        pct.textContent = '0.00%';
+
+        el.appendChild(name);
+        el.appendChild(pct);
+
         el.addEventListener('click', () => { goToChapter(i); closeToc(); });
         tocList.appendChild(el);
+      });
+      // Проценты считаем после того, как браузер разложит текст
+      requestAnimationFrame(updateTocPercents);
+    }
+
+    function updateTocPercents() {
+      if (!tocList || !chapters.length) return;
+      const items = tocList.querySelectorAll('.toc-item');
+      if (!items.length) return;
+      const max = readerScreen.scrollHeight - readerScreen.clientHeight;
+      if (max <= 0) {
+        items.forEach(item => {
+          const p = item.querySelector('.toc-pct');
+          if (p) p.textContent = '0.00%';
+        });
+        return;
+      }
+      chapters.forEach((ch, i) => {
+        const item = items[i];
+        if (!item) return;
+        const pctEl = item.querySelector('.toc-pct');
+        if (!pctEl) return;
+        const p = Math.max(0, Math.min(100, (ch.el.offsetTop / max) * 100));
+        pctEl.textContent = p.toFixed(2) + '%';
       });
     }
 
     function openToc() {
       if (!tocPanel) return;
+      updateTocPercents();
       tocPanel.classList.add('open');
       tocOverlay.classList.add('open');
       highlightActiveToc();
@@ -2162,6 +2225,9 @@
     let hideTimer = null;
     function showScroller() {
       if (!sideProgress || readerScreen.style.display !== 'block') return;
+      // На тач-устройствах и узких экранах боковой ползунок не показываем
+      if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+      if (window.matchMedia('(max-width: 640px)').matches) return;
       sideProgress.classList.add('visible');
       if (hideTimer) clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
@@ -2219,6 +2285,7 @@
         restoreReadingAnchor(anchor);
         updateProgress();
         renderSideMarks();
+        updateTocPercents();
         if (pctJump.classList.contains('show') && pctIndicator) {
           openPctJump(pctIndicator);
         }
@@ -2311,7 +2378,6 @@
       currentBookId = null;
       currentMarks = [];
       if (sideMarks) sideMarks.innerHTML = '';
-      // Очищаем поле ввода — текст прочитанной книги не должен оставаться в меню
       if (input) input.value = '';
     }
 
@@ -2699,7 +2765,7 @@
         else if (typeof b.chapter === 'number' && b.chapter >= 0 && chapters[b.chapter]) {
           chapters[b.chapter].el.scrollIntoView({ block: 'start' });
         }
-        updateProgress(); showScroller(); renderSideMarks();
+        updateProgress(); showScroller(); renderSideMarks(); updateTocPercents();
       }, 60);
     }
 
@@ -2831,7 +2897,7 @@
       showReader();
       readerScreen.scrollTop = 0;
       if (!fromBook) { currentBookId = null; currentMarks = []; }
-      setTimeout(() => { updateProgress(); showScroller(); renderSideMarks(); }, 30);
+      setTimeout(() => { updateProgress(); showScroller(); renderSideMarks(); updateTocPercents(); }, 30);
     }
 
     if (btnRead) btnRead.addEventListener('click', () => {
