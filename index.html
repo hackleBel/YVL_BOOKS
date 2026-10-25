@@ -591,19 +591,6 @@
   .side-mark { position: absolute; right: 3px; width: 10px; height: 3px;
     background: var(--mark-color); border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%); }
-  #to-top { position: fixed; right: 28px; bottom: 60px; width: 40px; height: 40px;
-    border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border-strong);
-    color: var(--accent); cursor: pointer; display: none; align-items: center;
-    justify-content: center; font-size: 16px; z-index: 90; }
-  #to-top.show { display: flex; }
-  #btn-add-mark { position: fixed; right: 28px; bottom: 116px; width: 40px; height: 40px;
-    border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border-strong);
-    color: var(--mark-color); cursor: pointer; display: none; align-items: center;
-    justify-content: center; font-size: 18px; z-index: 90; }
-  #btn-add-mark.show { display: flex; }
-  #btn-add-mark.saved { background: var(--mark-color); color: var(--bg); border-color: var(--mark-color); }
-  #btn-add-mark.pulse { animation: markPulse .5s ease; }
-  @keyframes markPulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
   /* ============ МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ ============ */
   #mobile-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-panel);
@@ -947,10 +934,6 @@
 
     .panel { width: 100%; }
     .panel-header { padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); }
-    #to-top { right: 14px; bottom: calc(50px + env(safe-area-inset-bottom));
-      width: 40px; height: 40px; }
-    #btn-add-mark { right: 14px; bottom: calc(102px + env(safe-area-inset-bottom));
-      width: 40px; height: 40px; }
     #side-progress { display: none !important; }
 
     #paste-screen { padding: 12px; }
@@ -1231,8 +1214,6 @@
   </div>
 
   <div id="side-progress"><div id="side-thumb"></div><div id="side-marks"></div></div>
-  <button id="to-top" title="Наверх">↑</button>
-  <button id="btn-add-mark" title="Поставить закладку">🔖</button>
 </div>
 
 <div id="sheet-overlay"></div>
@@ -1564,7 +1545,6 @@
     return 'Без названия';
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
-  // Discord-канал: slug из названия
   function dcSlug(title) {
     return String(title || 'book').toLowerCase()
       .replace(/ё/g, 'е')
@@ -1823,12 +1803,6 @@
     currentMarks.push(mark); saveMarks(currentBookId, currentMarks);
     renderSideMarks(); renderMarksList();
     toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
-    const fab = $('btn-add-mark');
-    if (fab) {
-      fab.classList.add('saved', 'pulse');
-      setTimeout(() => fab.classList.remove('pulse'), 500);
-      setTimeout(() => fab.classList.remove('saved'), 1000);
-    }
   }
   function openNoteEditor(markId) {
     editingMarkId = markId;
@@ -2112,8 +2086,6 @@
     const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
     const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
     const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
-    const top = $('to-top'); if (top) top.classList.toggle('show', st > 400);
-    const addBtn = $('btn-add-mark'); if (addBtn) addBtn.classList.toggle('show', st > 100 && !!currentBookId);
     if (chapters.length && el) {
       let idx = -1;
       for (let i = 0; i < chapters.length; i++) {
@@ -2362,7 +2334,6 @@
         }
       }
     }
-    // КЛАССИКА: обновляем библиотеку после изменения настроек (было багом)
     if (settings.uiStyle === 'classic') {
       try { renderClassicLibrary(); } catch (e) {}
     }
@@ -2379,7 +2350,6 @@
     if (e.target === settingsModal) closeSettingsModal();
   });
 
-  // ---- Классика: палитра ----
   function renderPaletteClassic() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2435,7 +2405,6 @@
     settingsModalBody.appendChild(reset);
   }
 
-  // ---- Telegram: палитра ----
   function renderPaletteTg() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2491,7 +2460,6 @@
     settingsModalBody.appendChild(reset);
   }
 
-  // ---- YouTube: палитра ----
   function renderPaletteYt() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2551,7 +2519,6 @@
     settingsModalBody.appendChild(reset);
   }
 
-  // ---- Discord: палитра ----
   function renderPaletteDc() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2608,7 +2575,6 @@
     settingsModalBody.appendChild(reset);
   }
 
-  // ---- Классика: шрифты ----
   function renderFontsClassic() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2657,7 +2623,6 @@
     settingsModalBody.appendChild(row2);
   }
 
-  // ---- Telegram: шрифты ----
   function renderFontsTg() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2706,7 +2671,6 @@
     settingsModalBody.appendChild(row2);
   }
 
-  // ---- YouTube: шрифты ----
   function renderFontsYt() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2753,7 +2717,6 @@
     settingsModalBody.appendChild(row);
   }
 
-  // ---- Discord: шрифты ----
   function renderFontsDc() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2802,7 +2765,6 @@
     settingsModalBody.appendChild(row2);
   }
 
-  // ГЛАВНОЕ: правильный выбор рендера палитры/шрифтов по стилю
   function openSettingsModal(kind) {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
@@ -2911,7 +2873,6 @@
     });
   }
 
-  // Drag&drop
   let dragState = null;
   function clearDragHighlights(container) {
     if (!container) return;
@@ -3162,7 +3123,6 @@
     chips.appendChild(add);
   }
 
-  // ---- Discord: каналы ----
   function renderDcChannels() {
     const list = $('dc-channels-list'); if (!list) return;
     list.innerHTML = '';
@@ -3307,7 +3267,6 @@
     menu.classList.remove('show');
   });
 
-  // ГЛАВНОЕ: универсальное открытие книги в текущем стиле с восстановлением позиции
   function openBookInCurrentStyle(id, savedPos) {
     const b = loadMeta().find(x => x.id === id);
     if (!b) return;
@@ -3908,7 +3867,7 @@
     bindIf('yt-btn-mark', addMark); bindIf('yt-add-mark-fab', addMark);
     // Classic
     bindIf('btn-toc', openToc); bindIf('btn-marks', openMarks); bindIf('btn-search', openSearch);
-    bindIf('btn-mark', addMark); bindIf('btn-add-mark', addMark);
+    bindIf('btn-mark', addMark);
     // DC
     bindIf('dc-btn-toc', openToc); bindIf('dc-btn-marks', openMarks); bindIf('dc-btn-search', openSearch);
     bindIf('dc-btn-mark', addMark); bindIf('dc-add-mark-fab', addMark);
@@ -3993,11 +3952,6 @@
       el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); });
     });
 
-    const toTop = $('to-top');
-    if (toTop) toTop.addEventListener('click', () => {
-      const el = getActiveReaderEl(); if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
     const sp = $('side-progress'); const sideThumb = $('side-thumb');
     if (sp && sideThumb) {
       let dragging = false;
@@ -4058,7 +4012,6 @@
       tgArea.addEventListener('touchend', () => { touchTracking = false; });
     }
 
-    // Discord свайп "назад" на мобиле
     const dcChat = $('dc-chat');
     if (dcChat) {
       let dsx = 0, dsy = 0, dtr = false;
