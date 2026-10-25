@@ -486,6 +486,17 @@
     box-shadow: 0 0 4px rgba(224,184,74,.7);
     transform: translateY(-50%);
   }
+  .side-search-mark {
+    position: absolute;
+    right: 15px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: .8;
+    transform: translateY(-50%);
+    box-shadow: 0 0 6px var(--accent);
+  }
 
   #to-top {
     position: fixed; right: 28px; bottom: 60px;
@@ -924,6 +935,140 @@
     border-color: var(--mark-color);
   }
 
+  /* ===== Панель поиска по книге ===== */
+  #search-panel {
+    position: fixed; top: 0; right: -400px;
+    width: 400px; height: 100%;
+    background: var(--bg-header);
+    border-left: 1px solid var(--border);
+    z-index: 330; transition: right .25s ease;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #search-panel.open { right: 0; }
+  #search-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  #search-header-actions { display: flex; gap: 6px; }
+  #search-header button { padding: 4px 10px; font-size: 12px; }
+
+  #search-input-wrap {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  #book-search-input {
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 34px 10px 12px; font-size: 14px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    outline: none;
+  }
+  #book-search-input:focus { border-color: var(--accent); }
+  #book-search-clear {
+    position: absolute; right: 22px; top: 50%;
+    transform: translateY(-50%);
+    background: transparent; border: none;
+    color: var(--fg-dim); font-size: 14px;
+    padding: 4px 8px; cursor: pointer; display: none;
+    line-height: 1; border-radius: 4px;
+  }
+  #search-input-wrap.has-value #book-search-clear { display: block; }
+
+  #search-meta {
+    padding: 8px 16px 12px;
+    font-size: 12px;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--border);
+    min-height: 20px;
+  }
+  #search-meta strong { color: var(--accent); font-weight: 600; }
+
+  #search-results {
+    flex: 1; overflow-y: auto;
+    padding: 6px 0;
+  }
+  .search-item {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    transition: background .15s;
+  }
+  .search-item:hover { background: var(--bg-panel); }
+  .search-item.active { background: var(--bg-panel); border-left: 2px solid var(--accent); }
+  .search-item .s-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  .search-item .s-chapter {
+    font-size: 11px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+  .search-item .s-pct {
+    font-size: 12px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    flex-shrink: 0;
+    background: rgba(139,145,155,.12);
+    padding: 2px 7px;
+    border-radius: 8px;
+  }
+  .search-item.active .s-pct { background: var(--accent); color: var(--bg); }
+  .search-item .s-text {
+    font-size: 12px;
+    color: var(--fg-mid);
+    line-height: 1.45;
+    word-break: break-word;
+  }
+  .search-item .s-text mark {
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+
+  #search-empty {
+    padding: 24px 18px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  #search-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 329; display: none;
+  }
+  #search-overlay.open { display: block; }
+
+  /* Подсветка совпадения в тексте */
+  .find-hit {
+    background: rgba(139,145,155,.35);
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--accent);
+    transition: background .4s;
+  }
+  .find-hit.current {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
   /* ================= МОБИЛЬНЫЕ ПРАВКИ ================= */
   @media (max-width: 720px) {
     #content { padding: 36px 22px 120px; font-size: 19px; }
@@ -951,11 +1096,11 @@
     .book-item .rename { right: 46px; font-size: 15px; }
     #toc-panel { width: 88%; right: -88%; }
     #marks-panel { width: 88%; right: -88%; }
+    #search-panel { width: 92%; right: -92%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
     #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
     .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 300px; }
     footer { padding: 6px 12px; font-size: 10px; }
-    /* На телефонах боковой ползунок не нужен вовсе — прогресс есть в меню и в шапке */
     #side-progress { display: none !important; }
     #mobile-sheet { display: block; }
     #pct-jump {
@@ -969,11 +1114,10 @@
     #pct-jump::before { display: none; }
   }
 
-  /* Прячем системные полосы прокрутки на телефонах везде */
   @media (max-width: 900px), (hover: none) and (pointer: coarse) {
     * { scrollbar-width: none; -ms-overflow-style: none; }
     *::-webkit-scrollbar { width: 0; height: 0; display: none; }
-    #paste-screen, #toc-list, #marks-list, #mobile-sheet, #collection-menu, #reader-screen {
+    #paste-screen, #toc-list, #marks-list, #search-results, #mobile-sheet, #collection-menu, #reader-screen {
       overscroll-behavior: contain;
     }
   }
@@ -1006,6 +1150,7 @@
         <button id="lh-inc" class="btn-icon">⇕+</button>
       </div>
       <span id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
+      <button id="btn-search" title="Поиск по книге (Ctrl+F)">🔍 Поиск</button>
       <button id="btn-font" title="Шрифт и интервал">Aa</button>
       <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
       <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
@@ -1106,7 +1251,7 @@
   <button id="pct-jump-cancel" title="Отмена">✕</button>
 </div>
 
-<div id="hint">Ctrl+B — 🔖 закладка · Ctrl+O — содержание</div>
+<div id="hint">Ctrl+B — 🔖 закладка · Ctrl+O — содержание · Ctrl+F — поиск</div>
 
 <div id="toc-overlay"></div>
 <div id="toc-panel">
@@ -1127,6 +1272,23 @@
     <input type="text" id="marks-search" placeholder="Поиск по закладкам и заметкам..." autocomplete="off">
   </div>
   <div id="marks-list"></div>
+</div>
+
+<!-- ===== Панель поиска по книге ===== -->
+<div id="search-overlay"></div>
+<div id="search-panel">
+  <div id="search-header">
+    <span>🔍 Поиск по книге</span>
+    <div id="search-header-actions">
+      <button id="search-close">✕</button>
+    </div>
+  </div>
+  <div id="search-input-wrap">
+    <input type="text" id="book-search-input" placeholder="Слово или фраза…" autocomplete="off" spellcheck="false">
+    <button id="book-search-clear" title="Очистить">✕</button>
+  </div>
+  <div id="search-meta"></div>
+  <div id="search-results"></div>
 </div>
 
 <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
@@ -1195,6 +1357,7 @@
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
+      <button id="m-search">🔍 Поиск</button>
       <button id="m-font">Aa Шрифт</button>
       <button id="m-theme">🎨 Цвет</button>
       <button id="m-toc">📖 Содержание</button>
@@ -1243,6 +1406,7 @@
     const btnToc = $('btn-toc');
     const btnTheme = $('btn-theme');
     const btnFont = $('btn-font');
+    const btnSearch = $('btn-search');
     const readerControls = $('reader-controls');
     const progressBar = $('progress-bar');
     const footerLeft = $('footer-left');
@@ -1330,6 +1494,7 @@
     const mLibrary = $('m-library');
     const mMark = $('m-mark');
     const mMarks = $('m-marks');
+    const mSearch = $('m-search');
     const mClose = $('m-close');
 
     const noteEditor = $('note-editor');
@@ -1344,6 +1509,16 @@
     const pctJumpGo = $('pct-jump-go');
     const pctJumpCancel = $('pct-jump-cancel');
 
+    // Поиск по книге
+    const searchPanel = $('search-panel');
+    const searchOverlay = $('search-overlay');
+    const searchClose = $('search-close');
+    const bookSearchInput = $('book-search-input');
+    const bookSearchClear = $('book-search-clear');
+    const searchInputWrap = $('search-input-wrap');
+    const searchMeta = $('search-meta');
+    const searchResults = $('search-results');
+
     let chapters = [];
     let activeChapter = -1;
     let currentBookId = null;
@@ -1352,6 +1527,11 @@
     let pendingMarkAnchor = null;
     let activeCollection = null;
     let cmBookId = null;
+
+    // ==== Состояние поиска ====
+    let currentSearchHits = [];    // { pIndex, charStart, charEnd, snippet, pct, chapter }
+    let currentSearchIndex = -1;   // индекс активного результата
+    let searchDebounceTimer = null;
 
     const DEFAULTS = {
       bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
@@ -1496,6 +1676,7 @@
         updateProgress();
         renderSideMarks();
         updateTocPercents();
+        if (currentSearchHits.length) renderSearchResults();
       });
     }
 
@@ -1562,7 +1743,6 @@
       saveSettings(); applySettings();
     });
 
-    // Палитра
     if (btnTheme) btnTheme.addEventListener('click', (e) => {
       e.stopPropagation();
       fontPanel.classList.remove('open');
@@ -1643,6 +1823,7 @@
     if (mLibrary) mLibrary.addEventListener('click', () => { closeSheet(); showPaste(); renderLibrary(); });
     if (mMark) mMark.addEventListener('click', () => { closeSheet(); addMark(); });
     if (mMarks) mMarks.addEventListener('click', () => { closeSheet(); setTimeout(openMarks, 180); });
+    if (mSearch) mSearch.addEventListener('click', () => { closeSheet(); setTimeout(openSearch, 180); });
 
     // ============================================================
     //  СВАЙПЫ НА МОБИЛЬНОМ
@@ -1813,6 +1994,13 @@
     function render(text) {
       content.innerHTML = '';
       chapters = [];
+      // сброс результатов поиска при новом рендере
+      currentSearchHits = [];
+      currentSearchIndex = -1;
+      searchResults.innerHTML = '';
+      searchMeta.textContent = '';
+      searchInputWrap.classList.remove('has-value');
+
       const paragraphs = splitIntoParagraphs(text);
       let chapterCount = 0;
 
@@ -1884,7 +2072,6 @@
         el.addEventListener('click', () => { goToChapter(i); closeToc(); });
         tocList.appendChild(el);
       });
-      // Проценты считаем после того, как браузер разложит текст
       requestAnimationFrame(updateTocPercents);
     }
 
@@ -2187,6 +2374,7 @@
         return item.pct || 0;
       }
 
+      // закладки
       currentMarks.forEach(m => {
         const mark = document.createElement('div');
         mark.className = 'side-mark';
@@ -2194,6 +2382,16 @@
         mark.style.top = (pct * 100) + '%';
         mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60) +
                      (m.note ? '\n📝 ' + m.note.slice(0, 80) : '');
+        sideMarks.appendChild(mark);
+      });
+
+      // результаты поиска
+      currentSearchHits.forEach(h => {
+        const mark = document.createElement('div');
+        mark.className = 'side-search-mark';
+        const pct = Math.max(0, Math.min(1, h.pct));
+        mark.style.top = (pct * 100) + '%';
+        mark.title = h.chapter ? h.chapter + ' · ' + (h.pct * 100).toFixed(2) + '%' : (h.pct * 100).toFixed(2) + '%';
         sideMarks.appendChild(mark);
       });
     }
@@ -2220,12 +2418,296 @@
     if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
 
     // ============================================================
+    //  ПОИСК ПО КНИГЕ
+    // ============================================================
+    function normalizeSearch(str) {
+      return String(str).toLowerCase().replace(/ё/g, 'е');
+    }
+
+    /**
+     * Ищет все вхождения query в тексте. Возвращает массив хит-объектов с
+     * привязкой к абзацу, сникетом контекста и процентом прогресса.
+     */
+    function findInBook(query) {
+      const result = [];
+      if (!query) return result;
+      const q = normalizeSearch(query.trim());
+      if (!q) return result;
+
+      const paras = content.querySelectorAll('p');
+      const maxScroll = readerScreen.scrollHeight - readerScreen.clientHeight;
+
+      // Заголовок главы для быстрого поиска — по позиции абзаца
+      const chapterRanges = chapters.map(ch => ({
+        title: ch.title,
+        startIndex: ch.pIndex,
+        el: ch.el
+      }));
+
+      function chapterForPara(pIndex) {
+        let title = '';
+        for (let i = 0; i < chapterRanges.length; i++) {
+          if (chapterRanges[i].startIndex <= pIndex) title = chapterRanges[i].title;
+          else break;
+        }
+        return title;
+      }
+
+      for (let i = 0; i < paras.length; i++) {
+        const el = paras[i];
+        const rawText = el.textContent || '';
+        if (!rawText) continue;
+        const hay = normalizeSearch(rawText);
+        let from = 0;
+        while (from <= hay.length) {
+          const pos = hay.indexOf(q, from);
+          if (pos === -1) break;
+          const endPos = pos + q.length;
+
+          // Контекст: ±60 символов
+          const cStart = Math.max(0, pos - 60);
+          const cEnd = Math.min(rawText.length, endPos + 60);
+          const before = rawText.slice(cStart, pos);
+          const hitText = rawText.slice(pos, endPos);
+          const after = rawText.slice(endPos, cEnd);
+          const prefix = cStart > 0 ? '…' : '';
+          const suffix = cEnd < rawText.length ? '…' : '';
+          const snippet = prefix + before + '\u0001' + hitText + '\u0002' + after + suffix;
+
+          // Процент прогресса: расстояние до абзаца + доля внутри абзаца
+          let pct = 0;
+          if (maxScroll > 0) {
+            const h = Math.max(1, el.offsetHeight);
+            // линейная доля внутри абзаца по charStart/totalChars
+            const totalChars = Math.max(1, rawText.length);
+            const fracInside = (pos + hitText.length / 2) / totalChars;
+            const offset = Math.min(h, fracInside * h);
+            pct = (el.offsetTop + offset) / maxScroll;
+            pct = Math.max(0, Math.min(1, pct));
+          }
+
+          result.push({
+            pIndex: i,
+            charStart: pos,
+            charEnd: endPos,
+            snippet: snippet,
+            pct: pct,
+            chapter: chapterForPara(i)
+          });
+
+          from = pos + Math.max(1, q.length);
+          // Не больше 300 результатов — чтобы не вешать UI
+          if (result.length >= 300) return result;
+        }
+      }
+      return result;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function renderSearchResults() {
+      if (!searchResults) return;
+      searchResults.innerHTML = '';
+
+      if (!bookSearchInput || !bookSearchInput.value.trim()) {
+        searchInputWrap.classList.remove('has-value');
+        searchMeta.textContent = '';
+        const empty = document.createElement('div');
+        empty.id = 'search-empty';
+        empty.textContent = 'Введите слово или фразу — покажу все вхождения с процентом места в книге.';
+        searchResults.appendChild(empty);
+        return;
+      }
+
+      searchInputWrap.classList.add('has-value');
+
+      if (currentSearchHits.length === 0) {
+        searchMeta.innerHTML = 'Ничего не найдено';
+        const empty = document.createElement('div');
+        empty.id = 'search-empty';
+        empty.textContent = 'По запросу «' + bookSearchInput.value.trim() + '» в книге ничего нет.';
+        searchResults.appendChild(empty);
+        return;
+      }
+
+      // мета: сколько найдено + какой сейчас активный
+      const activeNum = currentSearchIndex >= 0 ? currentSearchIndex + 1 : 0;
+      searchMeta.innerHTML = 'Найдено: <strong>' + currentSearchHits.length + '</strong>' +
+        (activeNum ? ' · активный: <strong>' + activeNum + '</strong>' : '');
+
+      currentSearchHits.forEach((h, idx) => {
+        const el = document.createElement('div');
+        el.className = 'search-item' + (idx === currentSearchIndex ? ' active' : '');
+
+        const head = document.createElement('div');
+        head.className = 's-head';
+
+        const chap = document.createElement('div');
+        chap.className = 's-chapter';
+        chap.textContent = h.chapter || 'Без главы';
+
+        const pct = document.createElement('span');
+        pct.className = 's-pct';
+        pct.textContent = (h.pct * 100).toFixed(2) + '%';
+
+        head.appendChild(chap);
+        head.appendChild(pct);
+
+        const text = document.createElement('div');
+        text.className = 's-text';
+        // в сникете \u0001 ... \u0002 — границы совпадения
+        const parts = h.snippet.split(/(\u0001|\u0002)/);
+        let inside = false;
+        parts.forEach(p => {
+          if (p === '\u0001') { inside = true; return; }
+          if (p === '\u0002') { inside = false; return; }
+          if (!p) return;
+          if (inside) {
+            const m = document.createElement('mark');
+            m.textContent = p;
+            text.appendChild(m);
+          } else {
+            text.appendChild(document.createTextNode(p));
+          }
+        });
+
+        el.appendChild(head);
+        el.appendChild(text);
+        el.addEventListener('click', () => {
+          goToSearchHit(idx);
+          closeSearch();
+        });
+
+        searchResults.appendChild(el);
+      });
+
+      // Прокрутить активный в видимую область
+      if (currentSearchIndex >= 0) {
+        const activeEl = searchResults.children[currentSearchIndex];
+        if (activeEl && activeEl.scrollIntoView) {
+          activeEl.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    }
+
+    function clearFindHighlights() {
+      content.querySelectorAll('mark.find-hit').forEach(m => {
+        const parent = m.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    function scrollToSearchHit(index) {
+      if (index < 0 || index >= currentSearchHits.length) return;
+      const hit = currentSearchHits[index];
+      const paras = content.querySelectorAll('p');
+      const el = paras[hit.pIndex];
+      if (!el) return;
+
+      currentSearchIndex = index;
+      // Подсветить абзац (сам текст не размечаем — чтобы не сломать offsetTop и проценты)
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Плавная подсветка
+      el.classList.add('find-hit');
+      setTimeout(() => el.classList.remove('find-hit'), 1200);
+      renderSearchResults();
+    }
+
+    function goToSearchHit(index) {
+      scrollToSearchHit(index);
+    }
+
+    function openSearch() {
+      if (readerScreen.style.display !== 'block') return;
+      searchPanel.classList.add('open');
+      searchOverlay.classList.add('open');
+      renderSearchResults();
+      setTimeout(() => {
+        if (bookSearchInput) {
+          bookSearchInput.focus();
+          bookSearchInput.select();
+        }
+      }, 60);
+    }
+    function closeSearch() {
+      if (!searchPanel) return;
+      searchPanel.classList.remove('open');
+      searchOverlay.classList.remove('open');
+      clearFindHighlights();
+    }
+    function toggleSearch() {
+      if (searchPanel.classList.contains('open')) closeSearch(); else openSearch();
+    }
+
+    if (btnSearch) btnSearch.addEventListener('click', toggleSearch);
+    if (searchClose) searchClose.addEventListener('click', closeSearch);
+    if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
+
+    if (bookSearchClear) {
+      bookSearchClear.addEventListener('click', () => {
+        bookSearchInput.value = '';
+        currentSearchHits = [];
+        currentSearchIndex = -1;
+        renderSearchResults();
+        renderSideMarks();
+        bookSearchInput.focus();
+      });
+    }
+
+    if (bookSearchInput) {
+      bookSearchInput.addEventListener('input', () => {
+        searchInputWrap.classList.toggle('has-value', !!bookSearchInput.value.trim());
+        if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          if (readerScreen.style.display !== 'block') return;
+          currentSearchHits = findInBook(bookSearchInput.value);
+          currentSearchIndex = -1;
+          renderSearchResults();
+          renderSideMarks();
+        }, 220);
+      });
+      bookSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (!currentSearchHits.length) return;
+          // Enter — переход к следующему (или к первому, если ещё не было активного)
+          let next;
+          if (currentSearchIndex < 0) next = 0;
+          else next = (currentSearchIndex + 1) % currentSearchHits.length;
+          goToSearchHit(next);
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeSearch();
+        }
+        // Стрелки вверх/вниз — по результатам
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          if (!currentSearchHits.length) return;
+          e.preventDefault();
+          let next;
+          if (currentSearchIndex < 0) next = 0;
+          else {
+            next = currentSearchIndex + (e.key === 'ArrowDown' ? 1 : -1);
+            if (next < 0) next = currentSearchHits.length - 1;
+            if (next >= currentSearchHits.length) next = 0;
+          }
+          goToSearchHit(next);
+        }
+      });
+    }
+
+    // ============================================================
     //  ПРОГРЕСС
     // ============================================================
     let hideTimer = null;
     function showScroller() {
       if (!sideProgress || readerScreen.style.display !== 'block') return;
-      // На тач-устройствах и узких экранах боковой ползунок не показываем
       if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
       if (window.matchMedia('(max-width: 640px)').matches) return;
       sideProgress.classList.add('visible');
@@ -2290,6 +2772,13 @@
           openPctJump(pctIndicator);
         }
         closeCollectionMenu();
+        if (currentSearchHits.length) {
+          // пересчитать проценты после ре-лейаута
+          const q = bookSearchInput.value;
+          currentSearchHits = findInBook(q);
+          renderSearchResults();
+          renderSideMarks();
+        }
       });
     });
 
@@ -2374,11 +2863,16 @@
       if (sideProgress) sideProgress.classList.remove('visible');
       if (toTop) toTop.classList.remove('show');
       if (btnAddMark) btnAddMark.classList.remove('show');
-      closeToc(); closeSheet(); closeMarks(); closePctJump(); closeCollectionMenu();
+      closeToc(); closeSheet(); closeMarks(); closePctJump(); closeCollectionMenu(); closeSearch();
       currentBookId = null;
       currentMarks = [];
+      currentSearchHits = [];
+      currentSearchIndex = -1;
       if (sideMarks) sideMarks.innerHTML = '';
       if (input) input.value = '';
+      if (bookSearchInput) bookSearchInput.value = '';
+      if (searchResults) searchResults.innerHTML = '';
+      if (searchMeta) searchMeta.textContent = '';
     }
 
     if (logo) logo.addEventListener('click', () => {
@@ -2397,11 +2891,6 @@
       try { localStorage.setItem('reader_books', JSON.stringify(books)); } catch (e) {}
     }
 
-    function escapeHtml(s) {
-      return String(s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
     function highlightMatch(title, query) {
       const safe = escapeHtml(title);
       if (!query) return safe;
@@ -2453,7 +2942,6 @@
       renderLibrary();
     }
 
-    // ===== Переименование книги =====
     function renameBook(bookId) {
       const books = loadBooks();
       const b = books.find(x => x.id === bookId);
@@ -3235,8 +3723,27 @@
       if (noteEditor && noteEditor.classList.contains('open')) return;
       if (pctJump && pctJump.classList.contains('show')) return;
       if (readerScreen.style.display !== 'block') return;
+
       const ctrl = e.ctrlKey || e.metaKey;
+
+      // Пока панель поиска открыта — даём ей обработать Enter/стрелки
+      if (searchPanel && searchPanel.classList.contains('open')) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeSearch();
+          return;
+        }
+        // Ctrl+F — закрыть (toggle)
+        if (ctrl && (e.key === 'f' || e.key === 'F')) {
+          e.preventDefault();
+          closeSearch();
+          return;
+        }
+        return;
+      }
+
       if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); toggleToc(); }
+      else if (ctrl && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); openSearch(); }
       else if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addMark(); }
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); toggleMarks(); }
       else if (ctrl && (e.key === '=' || e.key === '+')) { e.preventDefault(); changeFont(2); }
