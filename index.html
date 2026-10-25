@@ -19,12 +19,14 @@
     --mark-color: #e0b84a;
   }
   html, body { height: 100%; background: var(--bg); color: var(--fg);
-    font-family: var(--font-stack); -webkit-tap-highlight-color: transparent; overflow: hidden; }
-  #app { display: flex; flex-direction: column; height: 100%; }
+    font-family: var(--font-stack); -webkit-tap-highlight-color: transparent; overflow: hidden;
+    -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  #app { display: flex; flex-direction: column; height: 100%; width: 100%; }
 
   button { background: var(--border); color: var(--fg); border: 1px solid var(--border-strong);
     padding: 7px 12px; border-radius: 6px; font-size: 13px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; cursor: pointer; line-height: 1; }
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; cursor: pointer; line-height: 1.2;
+    max-width: 100%; }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
   input[type=file] { display: none; }
@@ -36,11 +38,11 @@
     background: var(--bg-panel); border: 1px solid var(--border-strong); color: var(--fg);
     border-radius: 10px; padding: 12px 18px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 13px; z-index: 1000; box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    display: none; max-width: 90vw; text-align: center; line-height: 1.4; }
+    display: none; max-width: 90vw; text-align: center; line-height: 1.4; word-break: break-word; }
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
 
-  .screen { flex: 1; display: none; overflow: hidden; position: relative; }
+  .screen { flex: 1; display: none; overflow: hidden; position: relative; min-height: 0; }
   .screen.active { display: flex; }
 
   @media (max-width: 900px), (hover: none) and (pointer: coarse) {
@@ -48,40 +50,48 @@
     *::-webkit-scrollbar { width: 0; height: 0; display: none; }
   }
 
+  /* ============ ОБЩЕЕ ДЛЯ ТЕКСТА ============ */
+  .reader-text { overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto; }
+  .reader-text p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; orphans: 2; widows: 2; }
+  .reader-text p:first-child { text-indent: 0; }
+  .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
+    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
+
   /* ============ КЛАССИКА ============ */
-  #classic-root { flex-direction: column; }
-  #paste-screen { display: none; flex: 1; flex-direction: column; padding: 24px;
-    align-items: center; overflow-y: auto; }
+  #classic-root { flex-direction: column; min-height: 0; }
+  #paste-screen { display: none; flex: 1; flex-direction: column; padding: 16px;
+    align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; }
   #paste-screen.active { display: flex; }
   #paste-screen .inner { width: 100%; max-width: 860px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
   #paste-screen p.lead { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 13px; color: var(--fg-dim); margin-bottom: 12px; text-align: center; }
   textarea#input { flex: 1; width: 100%; min-height: 160px; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 18px;
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 14px;
     font-size: 15px; line-height: 1.6; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    resize: none; outline: none; }
+    resize: none; outline: none; max-width: 100%; }
   textarea#input:focus { border-color: var(--accent); }
-  #paste-screen .actions { display: flex; justify-content: center; gap: 12px; margin-top: 16px;
+  #paste-screen .actions { display: flex; justify-content: center; gap: 10px; margin-top: 14px;
     flex-wrap: wrap; flex-shrink: 0; }
-  #library { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
+  #library { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
   #library h3 { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--fg-dim); margin-bottom: 12px; font-weight: normal;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #library-search-wrap { margin-bottom: 12px; position: relative; }
-  #library-search { width: 100%; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 34px 10px 12px;
-    font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+  #library-search-wrap { margin-bottom: 12px; display: flex; gap: 6px; align-items: center; }
+  #library-search { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 12px;
+    font-size: 14px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    max-width: 100%; }
   #library-search:focus { border-color: var(--accent); }
-  #library-search-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-    background: transparent; border: none; color: var(--fg-dim); font-size: 14px;
-    padding: 4px 8px; cursor: pointer; display: none; line-height: 1; border-radius: 4px; }
+  #library-search-clear { background: transparent; border: 1px solid var(--border-strong);
+    color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer; line-height: 1;
+    border-radius: 8px; display: none; flex-shrink: 0; }
   #library-search-wrap.has-value #library-search-clear { display: block; }
 
-  .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
   .book-item { background: var(--bg-panel); border: 1px solid var(--border-strong);
     border-radius: 8px; padding: 12px 14px 12px 34px; display: flex; flex-direction: column;
     gap: 6px; cursor: pointer; position: relative; transition: border-color .15s, background .15s;
-    touch-action: pan-y; user-select: none; }
+    touch-action: pan-y; user-select: none; min-width: 0; }
   .book-item:hover { border-color: var(--accent); }
   .book-item .grip { position: absolute; left: 4px; top: 50%; transform: translateY(-50%);
     width: 22px; height: 38px; display: flex; flex-direction: column; align-items: center;
@@ -94,9 +104,9 @@
   .book-item.drop-after { box-shadow: inset -3px 0 0 0 var(--accent); }
   .book-item .title { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 14px; color: var(--fg); font-weight: 600; overflow: hidden;
-    text-overflow: ellipsis; white-space: nowrap; padding-right: 52px; }
+    text-overflow: ellipsis; white-space: nowrap; padding-right: 52px; min-width: 0; }
   .book-item .meta { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 11px; color: var(--fg-dim); }
+    font-size: 11px; color: var(--fg-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .book-item .book-collection { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 10px; color: var(--accent); letter-spacing: .3px; text-transform: uppercase;
     margin-top: 2px; display: inline-block; padding: 1px 6px; border-radius: 8px;
@@ -143,7 +153,7 @@
 
   #collection-menu { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 180px; max-width: 260px; max-height: 60vh; overflow-y: auto;
+    min-width: 180px; max-width: min(260px, calc(100vw - 24px)); max-height: 60vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #collection-menu.show { display: block; }
@@ -156,7 +166,7 @@
   #collection-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
 
   /* ============ ЧИТАЛКА ============ */
-  #reader-shell { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  #reader-shell { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   #reader-shell.active { display: flex; }
   #reader-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 14px;
     flex-wrap: wrap; flex-shrink: 0; border-bottom: 1px solid var(--border); background: var(--bg-header); }
@@ -174,34 +184,32 @@
     font-weight: 600; cursor: pointer; user-select: none;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #reader-screen { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
-    scrollbar-width: none; -ms-overflow-style: none; }
+    scrollbar-width: none; -ms-overflow-style: none; min-height: 0; }
   #reader-screen::-webkit-scrollbar { width: 0; height: 0; }
-  #content { max-width: var(--col-width); margin: 0 auto; padding: 50px 40px 140px;
+  #content { max-width: var(--col-width); margin: 0 auto;
+    padding: 32px 20px 120px;
     font-size: 20px; line-height: var(--line-height); color: var(--fg);
-    letter-spacing: var(--letter-spacing); hyphens: auto; -webkit-hyphens: auto; }
-  #content p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; orphans: 2; widows: 2; }
-  #content p:first-child { text-indent: 0; }
-  #content .chapter-title { text-indent: 0 !important; text-align: center;
-    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
+    letter-spacing: var(--letter-spacing); width: 100%; }
 
   /* ============ TELEGRAM ============ */
-  #tg-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); }
+  #tg-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); min-height: 0; }
   #tg-sidebar { width: 340px; flex-shrink: 0; background: var(--bg-header);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
   #tg-side-head { padding: 12px 14px; display: flex; align-items: center; gap: 10px;
-    border-bottom: 1px solid var(--border); }
+    border-bottom: 1px solid var(--border); flex-shrink: 0; }
   #tg-side-head h1 { font-size: 17px; font-weight: 700; flex: 1; color: var(--fg); }
   #tg-search { margin: 8px 12px; background: var(--bg-input); border-radius: 20px;
-    padding: 9px 14px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--fg-dim); }
+    padding: 9px 14px; font-size: 14px; display: flex; align-items: center; gap: 8px;
+    color: var(--fg-dim); min-width: 0; }
   #tg-search input { background: transparent; border: none; outline: none;
-    color: var(--fg); font-size: 14px; flex: 1; font-family: inherit; }
+    color: var(--fg); font-size: 14px; flex: 1; font-family: inherit; min-width: 0; width: 100%; }
   #tg-add-book { margin: 0 12px 10px; padding: 9px; background: var(--accent);
     color: var(--accent-contrast); border: none; border-radius: 8px;
     font-size: 13px; font-weight: 600; cursor: pointer; }
   #tg-add-book:hover { opacity: .9; }
-  #tg-chat-list { flex: 1; overflow-y: auto; }
+  #tg-chat-list { flex: 1; overflow-y: auto; min-height: 0; }
   .tg-chat-item { display: flex; align-items: center; gap: 12px; padding: 9px 14px;
-    cursor: pointer; transition: background .12s; }
+    cursor: pointer; transition: background .12s; min-width: 0; }
   .tg-chat-item:hover { background: var(--bg-panel); }
   .tg-chat-item.active { background: var(--bg-panel); }
   .tg-avatar { width: 48px; height: 48px; border-radius: 50%;
@@ -216,13 +224,14 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 
   #tg-collections-bar { padding: 6px 12px 10px; display: flex; flex-wrap: wrap; gap: 6px;
-    border-bottom: 1px solid var(--border); }
+    border-bottom: 1px solid var(--border); flex-shrink: 0; }
   #tg-collections-bar .collection-chip { font-size: 12px; padding: 4px 9px 4px 11px; }
 
   #tg-chat-area { flex: 1; display: flex; flex-direction: column; min-width: 0;
-    position: relative; background: var(--bg); }
+    position: relative; background: var(--bg); min-height: 0; }
   #tg-chat-header { padding: 10px 16px; background: var(--bg-header);
-    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; min-height: 56px; }
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; min-height: 56px;
+    flex-shrink: 0; }
   #tg-chat-header .name { font-size: 15px; font-weight: 600; }
   #tg-chat-header .sub { font-size: 12px; color: var(--fg-dim); }
   #tg-chat-header .actions { margin-left: auto; display: flex; gap: 4px; }
@@ -235,16 +244,14 @@
   #tg-empty .big { font-size: 44px; }
   #tg-empty p { font-size: 14px; max-width: 340px; line-height: 1.5; }
   #tg-reader-screen { display: none; flex: 1; overflow-y: auto;
-    scrollbar-width: none; -ms-overflow-style: none; background: var(--bg); }
+    scrollbar-width: none; -ms-overflow-style: none; background: var(--bg); min-height: 0; }
   #tg-reader-screen.active { display: block; }
   #tg-reader-screen::-webkit-scrollbar { width: 0; height: 0; }
-  #tg-content { max-width: var(--col-width); margin: 0 auto; padding: 20px 24px 120px;
+  #tg-content { max-width: var(--col-width); margin: 0 auto;
+    padding: 20px 18px 120px;
     font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
-    color: var(--fg); letter-spacing: var(--letter-spacing); }
-  #tg-content p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; }
-  #tg-content .chapter-title { text-indent: 0 !important; text-align: center;
-    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px;
-    font-weight: normal; color: var(--accent); }
+    color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
+  #tg-content .chapter-title { color: var(--accent); }
   .tg-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
     border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
     border: none; font-size: 24px; display: none; align-items: center; justify-content: center;
@@ -252,33 +259,37 @@
   #tg-chat-area.has-book .tg-fab { display: flex; }
 
   /* ============ YOUTUBE ============ */
-  #yt-app { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-  #yt-header { height: 56px; flex-shrink: 0; display: flex; align-items: center;
-    gap: 16px; padding: 0 16px; background: var(--bg-header);
-    border-bottom: 1px solid var(--border); position: relative; z-index: 30; }
+  #yt-app { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
+  #yt-header { min-height: 56px; flex-shrink: 0; display: flex; align-items: center;
+    gap: 12px; padding: 8px 16px; background: var(--bg-header);
+    border-bottom: 1px solid var(--border); position: relative; z-index: 30; flex-wrap: wrap; }
   #yt-header .yt-logo { display: flex; align-items: center; gap: 8px;
-    font-size: 18px; font-weight: 700; letter-spacing: -.5px; color: var(--fg); }
+    font-size: 18px; font-weight: 700; letter-spacing: -.5px; color: var(--fg); flex-shrink: 0; }
   #yt-header .yt-logo .play { background: var(--accent); color: var(--accent-contrast);
     width: 30px; height: 21px; border-radius: 6px; display: flex;
     align-items: center; justify-content: center; font-size: 11px; }
-  #yt-search-box { flex: 1; max-width: 600px; margin: 0 auto; display: flex; }
-  #yt-search-box input { flex: 1; background: var(--bg-input);
+  #yt-search-box { flex: 1; max-width: 600px; margin: 0 auto; display: flex; min-width: 0; }
+  #yt-search-box input { flex: 1; min-width: 0; background: var(--bg-input);
     border: 1px solid var(--border-strong); border-right: none;
     border-radius: 20px 0 0 20px; padding: 8px 16px; color: var(--fg);
-    font-size: 14px; outline: none; font-family: inherit; }
+    font-size: 14px; outline: none; font-family: inherit; width: 100%; }
   #yt-search-box input:focus { border-color: var(--accent); }
   #yt-search-box button { background: var(--bg-panel); border: 1px solid var(--border-strong);
-    border-radius: 0 20px 20px 0; padding: 0 20px; color: var(--fg); cursor: pointer; font-size: 15px; }
-  #yt-layout { display: flex; flex: 1; overflow: hidden; }
+    border-radius: 0 20px 20px 0; padding: 0 16px; color: var(--fg); cursor: pointer; font-size: 15px;
+    flex-shrink: 0; }
+  #yt-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
   #yt-sidebar { width: 220px; flex-shrink: 0; background: var(--bg);
-    padding: 10px 8px; overflow-y: auto; border-right: 1px solid var(--border); }
+    padding: 10px 8px; overflow-y: auto; border-right: 1px solid var(--border); min-height: 0; }
   .yt-side-item { display: flex; align-items: center; gap: 16px; padding: 9px 12px;
-    border-radius: 9px; font-size: 14px; color: var(--fg); cursor: pointer; margin-bottom: 2px; }
+    border-radius: 9px; font-size: 14px; color: var(--fg); cursor: pointer; margin-bottom: 2px;
+    min-width: 0; }
   .yt-side-item:hover { background: var(--bg-panel); }
   .yt-side-item.active { background: var(--bg-panel); font-weight: 600; }
-  .yt-side-item .icon { font-size: 19px; width: 24px; text-align: center; }
+  .yt-side-item .icon { font-size: 19px; width: 24px; text-align: center; flex-shrink: 0; }
+  .yt-side-item > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .yt-side-sep { height: 1px; background: var(--border); margin: 10px 6px; }
-  #yt-main { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; background: var(--bg); }
+  #yt-main { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; background: var(--bg);
+    min-height: 0; min-width: 0; }
   #yt-chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 14px;
     margin-bottom: 4px; scrollbar-width: none; }
   #yt-chips::-webkit-scrollbar { display: none; }
@@ -286,9 +297,9 @@
     color: var(--fg); border-radius: 8px; padding: 7px 13px; font-size: 13px;
     cursor: pointer; white-space: nowrap; }
   .yt-chip.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-  #yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  #yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 18px 14px; }
-  .yt-card { cursor: pointer; display: flex; flex-direction: column; }
+  .yt-card { cursor: pointer; display: flex; flex-direction: column; min-width: 0; }
   .yt-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
     display: flex; align-items: center; justify-content: center; padding: 18px;
     background: linear-gradient(135deg, var(--bg-panel), var(--bg-header));
@@ -299,35 +310,33 @@
   .yt-thumb .dur { position: absolute; right: 8px; bottom: 8px;
     background: rgba(0,0,0,.8); color: #fff; font-size: 11px; padding: 2px 5px;
     border-radius: 4px; font-weight: 600; }
-  .yt-card-body { display: flex; gap: 12px; padding-top: 10px; }
+  .yt-card-body { display: flex; gap: 12px; padding-top: 10px; min-width: 0; }
   .yt-card-avatar { width: 36px; height: 36px; border-radius: 50%;
     background: var(--bg-panel); border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     color: var(--fg); font-weight: 600; flex-shrink: 0; }
   .yt-card-title { font-size: 14px; font-weight: 600; line-height: 1.3;
     color: var(--fg); display: -webkit-box; -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical; overflow: hidden; }
+    -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
   .yt-card-meta { font-size: 12px; color: var(--fg-dim); margin-top: 4px; line-height: 1.4; }
   #yt-watch { position: absolute; inset: 0; background: var(--bg);
     display: none; flex-direction: column; z-index: 25; overflow: hidden; }
   #yt-watch.show { display: flex; }
   #yt-watch-top { display: flex; align-items: center; gap: 14px; padding: 10px 16px;
-    background: var(--bg-header); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    background: var(--bg-header); border-bottom: 1px solid var(--border); flex-shrink: 0;
+    flex-wrap: nowrap; min-height: 56px; }
   #yt-watch-top .back { background: transparent; border: none; color: var(--fg);
-    font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 50%; }
+    font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 50%; flex-shrink: 0; }
   #yt-watch-top .back:hover { background: var(--bg-panel); }
   #yt-watch-top .title { font-size: 16px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #yt-watch-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+  #yt-watch-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+    min-height: 0; }
   #yt-watch-scroll::-webkit-scrollbar { width: 0; height: 0; }
   #yt-watch-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
   #yt-reader-content { font-family: var(--font-stack); font-size: 19px; line-height: 1.75;
     color: var(--fg); letter-spacing: var(--letter-spacing);
-    max-width: var(--col-width); margin: 0 auto; padding: 0 8px; }
-  #yt-reader-content p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; }
-  #yt-reader-content .chapter-title { text-indent: 0 !important; text-align: center;
-    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px;
-    font-weight: normal; color: var(--fg); }
+    max-width: var(--col-width); margin: 0 auto; padding: 0 8px; width: 100%; }
   #yt-add-mark-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
     border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
     border: none; font-size: 24px; display: none; align-items: center;
@@ -335,17 +344,109 @@
     cursor: pointer; z-index: 20; }
   #yt-watch.show #yt-add-mark-fab { display: flex; }
 
+  /* ============ DISCORD ============ */
+  #dc-app { display: flex; flex: 1; overflow: hidden; background: #313338; min-height: 0;
+    font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #dbdee1; }
+  #dc-servers { width: 72px; flex-shrink: 0; background: #1e1f22;
+    display: flex; flex-direction: column; align-items: center; padding: 12px 0;
+    gap: 8px; overflow-y: auto; min-height: 0; }
+  .dc-server-icon { width: 48px; height: 48px; border-radius: 16px;
+    background: #313338; display: flex; align-items: center; justify-content: center;
+    color: #dbdee1; font-size: 18px; font-weight: 700; cursor: pointer;
+    transition: all .15s; flex-shrink: 0; position: relative; }
+  .dc-server-icon:hover { border-radius: 12px; background: #5865f2; color: #fff; }
+  .dc-server-icon.active { border-radius: 12px; background: #5865f2; color: #fff; }
+  .dc-server-icon.active::before { content: ''; position: absolute; left: -12px; top: 50%;
+    transform: translateY(-50%); width: 4px; height: 32px; background: #fff;
+    border-radius: 0 4px 4px 0; }
+  .dc-server-sep { width: 32px; height: 2px; background: #2b2d31; border-radius: 1px;
+    margin: 4px 0; flex-shrink: 0; }
+  .dc-server-add { color: #3ba55c; font-size: 24px; }
+  .dc-server-add:hover { background: #3ba55c; color: #fff; }
+
+  #dc-channels { width: 240px; flex-shrink: 0; background: #2b2d31;
+    display: flex; flex-direction: column; min-height: 0; }
+  #dc-channels-head { padding: 12px 16px; border-bottom: 1px solid #1e1f22;
+    box-shadow: 0 1px 0 rgba(0,0,0,.2); flex-shrink: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; }
+  #dc-channels-head:hover { background: #35373c; }
+  #dc-channels-head .nm { font-size: 15px; font-weight: 600; color: #f2f3f5;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #dc-channels-search { margin: 8px; padding: 5px 10px; background: #1e1f22;
+    border-radius: 4px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  #dc-channels-search input { background: transparent; border: none; outline: none;
+    color: #dbdee1; font-size: 14px; flex: 1; min-width: 0; font-family: inherit; }
+  #dc-channels-search input::placeholder { color: #6d6f78; }
+  #dc-channels-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 0; }
+  .dc-ch-category { font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: #949ba4; padding: 16px 8px 4px; letter-spacing: .02em;
+    display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .dc-ch-category:first-child { padding-top: 4px; }
+  .dc-ch-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+    border-radius: 4px; color: #949ba4; font-size: 15px; font-weight: 500;
+    cursor: pointer; margin-bottom: 1px; min-width: 0; }
+  .dc-ch-item:hover { background: #35373c; color: #dbdee1; }
+  .dc-ch-item.active { background: #404249; color: #fff; }
+  .dc-ch-item .hash { font-size: 18px; font-weight: 400; color: #80848e; flex-shrink: 0; }
+  .dc-ch-item.active .hash { color: #dbdee1; }
+  .dc-ch-item .ch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    flex: 1; min-width: 0; }
+  .dc-add-book-btn { margin: 8px; padding: 8px; background: #5865f2; color: #fff;
+    border: none; border-radius: 4px; font-size: 14px; font-weight: 600;
+    cursor: pointer; flex-shrink: 0; }
+  .dc-add-book-btn:hover { background: #4752c4; }
+
+  #dc-chat { flex: 1; display: flex; flex-direction: column; min-width: 0;
+    background: #313338; min-height: 0; position: relative; }
+  #dc-chat-header { min-height: 48px; padding: 0 16px; background: #313338;
+    border-bottom: 1px solid #26272b; display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0; box-shadow: 0 1px 0 rgba(0,0,0,.1); }
+  #dc-chat-header .hash-big { font-size: 24px; color: #80848e; }
+  #dc-chat-header .nm { font-size: 16px; font-weight: 700; color: #f2f3f5;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+  #dc-chat-header .actions { display: flex; gap: 4px; flex-shrink: 0; }
+  #dc-chat-header .dc-icon-btn { background: transparent; border: none;
+    color: #b5bac1; width: 32px; height: 32px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer; }
+  #dc-chat-header .dc-icon-btn:hover { background: #35373c; color: #dbdee1; }
+  #dc-empty { flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; color: #949ba4; gap: 12px; text-align: center; padding: 30px; }
+  #dc-empty .big { font-size: 56px; }
+  #dc-empty h2 { color: #f2f3f5; font-size: 20px; font-weight: 700; }
+  #dc-empty p { font-size: 14px; max-width: 360px; line-height: 1.5; }
+  #dc-reader-screen { display: none; flex: 1; overflow-y: auto;
+    scrollbar-width: thin; min-height: 0; background: #313338; }
+  #dc-reader-screen::-webkit-scrollbar { width: 16px; }
+  #dc-reader-screen::-webkit-scrollbar-track { background: #2b2d31; }
+  #dc-reader-screen::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 8px; border: 4px solid #2b2d31; }
+  #dc-reader-screen.active { display: block; }
+  #dc-content { max-width: var(--col-width); margin: 0 auto;
+    padding: 20px 18px 120px;
+    font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
+    color: #dbdee1; letter-spacing: var(--letter-spacing); width: 100%; }
+  #dc-content .chapter-title { color: #f2f3f5; font-weight: 700; }
+  #dc-content p { color: #dbdee1; }
+  .dc-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
+    border-radius: 50%; background: #5865f2; color: #fff;
+    border: none; font-size: 22px; display: none; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.5); cursor: pointer; z-index: 20; }
+  #dc-chat.has-book .dc-fab { display: flex; }
+  .dc-fab:hover { background: #4752c4; }
+
   /* ============ ПАНЕЛИ ============ */
-  .panel { position: fixed; top: 0; right: -380px; width: 380px; height: 100%;
+  .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
-    z-index: 300; transition: right .25s ease; display: flex; flex-direction: column;
+    z-index: 300; transform: translateX(100%); transition: transform .25s ease;
+    display: flex; flex-direction: column;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  .panel.open { right: 0; }
+  .panel.open { transform: translateX(0); }
   .panel-header { padding: 16px 20px; padding-top: max(16px, env(safe-area-inset-top));
     border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;
     align-items: center; font-size: 13px; color: var(--accent);
-    letter-spacing: 1px; text-transform: uppercase; }
-  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; }
+    letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; gap: 8px; }
+  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; }
   .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
   .panel-overlay.open { display: block; }
 
@@ -363,20 +464,20 @@
 
   #marks-header-actions { display: flex; gap: 6px; }
   #marks-header button { padding: 4px 10px; font-size: 12px; }
-  #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   #marks-search { width: 100%; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px; padding: 8px 12px;
     font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #marks-search:focus { border-color: var(--accent); }
-  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; }
   .mark-item { padding: 12px 20px; border-bottom: 1px solid var(--border);
     cursor: pointer; position: relative; transition: background .15s; }
   .mark-item:hover { background: var(--bg-panel); }
   .mark-item .mark-title { font-size: 12px; color: var(--fg-dim);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-right: 28px; }
   .mark-item .mark-text { font-size: 13px; color: var(--fg); line-height: 1.4;
     margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical; overflow: hidden; }
+    -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
   .mark-item .mark-date { font-size: 10px; color: var(--fg-dim); }
   .mark-item .mark-note { font-size: 12px; color: var(--mark-color);
     background: rgba(224,184,74,.08); border-left: 2px solid var(--mark-color);
@@ -389,28 +490,29 @@
   #marks-empty { padding: 24px 20px; font-size: 13px; color: var(--fg-dim);
     text-align: center; line-height: 1.5; }
 
-  #search-panel { width: 400px; right: -400px; }
-  #search-input-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border); position: relative; }
-  #book-search-input { width: 100%; background: var(--bg-input); color: var(--fg);
+  #search-panel { width: min(400px, 100vw); }
+  #search-input-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  #book-search-input { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 10px 34px 10px 12px; font-size: 14px; outline: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+    padding: 10px 12px; font-size: 14px; outline: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 100%; width: 100%; }
   #book-search-input:focus { border-color: var(--accent); }
-  #book-search-clear { position: absolute; right: 22px; top: 50%;
-    transform: translateY(-50%); background: transparent; border: none;
-    color: var(--fg-dim); font-size: 14px; padding: 4px 8px; cursor: pointer;
-    display: none; line-height: 1; border-radius: 4px; }
+  #book-search-clear { background: transparent; border: 1px solid var(--border-strong);
+    color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer;
+    line-height: 1; border-radius: 8px; display: none; flex-shrink: 0; }
   #search-input-wrap.has-value #book-search-clear { display: block; }
   #search-meta { padding: 8px 16px 12px; font-size: 12px; color: var(--fg-dim);
-    font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); min-height: 20px; }
+    font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); min-height: 20px;
+    flex-shrink: 0; }
   #search-meta strong { color: var(--accent); font-weight: 600; }
-  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; }
+  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 0; }
   .search-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
     cursor: pointer; position: relative; transition: background .15s; }
   .search-item:hover { background: var(--bg-panel); }
   .search-item.active { background: var(--bg-panel); border-left: 2px solid var(--accent); }
   .search-item .s-head { display: flex; justify-content: space-between;
-    align-items: baseline; gap: 8px; margin-bottom: 5px; }
+    align-items: baseline; gap: 8px; margin-bottom: 5px; min-width: 0; }
   .search-item .s-chapter { font-size: 11px; color: var(--fg-dim);
     text-transform: uppercase; letter-spacing: 1px; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
@@ -430,7 +532,8 @@
   /* ============ МЕНЮ ============ */
   #menu-pop { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 220px; box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    min-width: 220px; max-width: calc(100vw - 24px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
     display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #menu-pop.show { display: block; }
   #menu-pop .mi { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
@@ -453,11 +556,12 @@
     color: var(--mark-color); margin-bottom: 10px; font-weight: normal; }
   #note-editor .preview { font-size: 12px; color: var(--fg-dim);
     margin-bottom: 12px; line-height: 1.4; max-height: 60px; overflow: hidden;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    word-break: break-word; }
   #note-editor textarea { width: 100%; min-height: 90px; background: var(--bg-input);
     color: var(--fg); border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 10px; font-size: 14px; line-height: 1.5; font-family: inherit;
-    resize: vertical; outline: none; }
+    resize: vertical; outline: none; max-width: 100%; }
   #note-editor textarea:focus { border-color: var(--accent); }
   #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
   #note-editor .actions button { padding: 8px 14px; font-size: 13px; }
@@ -514,8 +618,8 @@
   .sheet-section { margin-bottom: 14px; }
   .sheet-section h5 { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--fg-dim); font-weight: normal; margin-bottom: 8px; }
-  .sheet-row { display: flex; align-items: center; gap: 8px; }
-  .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; }
+  .sheet-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; min-width: 0; }
   .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .sheet-grid button { padding: 12px; font-size: 14px; border-radius: 10px;
     background: var(--bg-input); border: 1px solid var(--border-strong); }
@@ -530,7 +634,7 @@
     user-select: none; padding: 4px 6px; border-radius: 6px; transition: background .15s; }
   .m-pct-value:hover { background: var(--border-strong); }
   .m-pct-track { flex: 1; height: 5px; background: var(--border);
-    border-radius: 3px; overflow: hidden; margin-left: 10px; }
+    border-radius: 3px; overflow: hidden; margin-left: 10px; min-width: 60px; }
   .m-pct-fill { display: block; height: 100%; width: 0%; background: var(--accent);
     transition: width .15s linear; }
 
@@ -543,10 +647,54 @@
     overflow-y: auto; border-radius: 14px; }
   #settings-modal .card-header { display: flex; align-items: center;
     justify-content: space-between; padding: 16px 18px; position: sticky; top: 0;
-    z-index: 2; }
+    z-index: 2; background: inherit; }
   #settings-modal .card-header h3 { font-size: 15px; font-weight: 700; }
   #settings-modal .card-body { padding: 0 0 16px; }
 
+  /* ---- Классика: модалка ---- */
+  body.style-classic #settings-modal .card { background: var(--bg-header);
+    color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    border: 1px solid var(--border-strong); }
+  body.style-classic #settings-modal .card-header { background: var(--bg-header);
+    border-bottom: 1px solid var(--border); }
+  body.style-classic .cl-settings-group-title { font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--fg-dim); font-weight: 600;
+    padding: 14px 18px 6px; }
+  body.style-classic .cl-settings-row { display: flex; align-items: center;
+    gap: 12px; padding: 10px 18px; cursor: pointer; }
+  body.style-classic .cl-settings-row:hover { background: var(--bg-panel); }
+  body.style-classic .cl-settings-row.active { background: var(--bg-panel); }
+  body.style-classic .cl-settings-row .sw { width: 36px; height: 36px;
+    border-radius: 8px; flex-shrink: 0; border: 2px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--fg); font-size: 13px; font-weight: 700; }
+  body.style-classic .cl-settings-row .sw.active { border-color: var(--accent); }
+  body.style-classic .cl-settings-row .info { flex: 1; min-width: 0; }
+  body.style-classic .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
+  body.style-classic .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  body.style-classic .cl-settings-row .check { color: var(--accent); font-size: 16px; }
+  body.style-classic .cl-color-rows { padding: 4px 18px 10px; }
+  body.style-classic .cl-color-row { display: flex; align-items: center;
+    justify-content: space-between; padding: 10px 0;
+    border-bottom: 1px solid var(--border); }
+  body.style-classic .cl-color-row:last-child { border-bottom: none; }
+  body.style-classic .cl-color-row label { font-size: 14px; color: var(--fg); }
+  body.style-classic .cl-color-row input[type=color] { width: 40px; height: 32px;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--bg); padding: 2px; cursor: pointer; }
+  body.style-classic .cl-font-preview { display: flex; align-items: center;
+    gap: 12px; padding: 10px 18px; cursor: pointer; }
+  body.style-classic .cl-font-preview:hover { background: var(--bg-panel); }
+  body.style-classic .cl-font-preview .aa { width: 40px; height: 40px;
+    border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; }
+  body.style-classic .cl-font-preview .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
+  body.style-classic .cl-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  body.style-classic .cl-font-preview.active .aa { border-color: var(--accent); }
+  body.style-classic .cl-font-preview.active .nm { color: var(--accent); }
+
+  /* ---- Telegram: модалка ---- */
   body.style-telegram #settings-modal .card { background: var(--bg-header);
     color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
   body.style-telegram #settings-modal .card-header { background: var(--bg-header);
@@ -587,6 +735,7 @@
   body.style-telegram .tg-font-preview.active .aa { border-color: var(--accent); }
   body.style-telegram .tg-font-preview.active .nm { color: var(--accent); }
 
+  /* ---- YouTube: модалка ---- */
   body.style-youtube #settings-modal .card { background: var(--bg);
     color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
   body.style-youtube #settings-modal .card-header { background: var(--bg);
@@ -617,6 +766,64 @@
   body.style-youtube .yt-font-tile .nm { font-size: 11px; color: var(--fg); font-weight: 600;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 
+  /* ---- Discord: модалка ---- */
+  body.style-discord #settings-modal { font-family: 'gg sans', 'Noto Sans', sans-serif; }
+  body.style-discord #settings-modal .card { background: #313338;
+    color: #dbdee1; box-shadow: 0 20px 60px rgba(0,0,0,.7); border-radius: 8px; }
+  body.style-discord #settings-modal .card-header { background: #313338;
+    border-bottom: 1px solid #26272b; }
+  body.style-discord #settings-modal .card-header h3 { color: #f2f3f5;
+    font-size: 16px; font-weight: 700; }
+  body.style-discord .dc-settings-group-title { font-size: 12px; font-weight: 700;
+    text-transform: uppercase; color: #949ba4; letter-spacing: .02em;
+    padding: 16px 18px 8px; }
+  body.style-discord .dc-settings-grid { display: grid;
+    grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 18px 12px; }
+  body.style-discord .dc-settings-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  body.style-discord .dc-tile { background: #2b2d31; border: 2px solid transparent;
+    border-radius: 8px; padding: 8px 6px; cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    transition: border-color .15s; }
+  body.style-discord .dc-tile:hover { background: #35373c; }
+  body.style-discord .dc-tile.active { border-color: #5865f2; }
+  body.style-discord .dc-tile .sw { width: 100%; height: 52px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, serif; font-size: 18px;
+    border: 1px solid #1e1f22; }
+  body.style-discord .dc-tile .nm { font-size: 11px; color: #dbdee1; font-weight: 600;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  body.style-discord .dc-color-rows { padding: 4px 18px 10px; }
+  body.style-discord .dc-color-row { display: flex; align-items: center;
+    justify-content: space-between; padding: 10px 0;
+    border-bottom: 1px solid #26272b; }
+  body.style-discord .dc-color-row:last-child { border-bottom: none; }
+  body.style-discord .dc-color-row label { font-size: 14px; color: #dbdee1; }
+  body.style-discord .dc-color-row input[type=color] { width: 40px; height: 32px;
+    border: 1px solid #1e1f22; border-radius: 6px;
+    background: #1e1f22; padding: 2px; cursor: pointer; }
+  body.style-discord .dc-font-preview { display: flex; align-items: center;
+    gap: 12px; padding: 10px 18px; cursor: pointer; }
+  body.style-discord .dc-font-preview:hover { background: #35373c; }
+  body.style-discord .dc-font-preview.active { background: #404249; }
+  body.style-discord .dc-font-preview .aa { width: 40px; height: 40px;
+    border-radius: 50%; background: #2b2d31; border: 2px solid #1e1f22;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; color: #dbdee1; }
+  body.style-discord .dc-font-preview.active .aa { border-color: #5865f2; }
+  body.style-discord .dc-font-preview .info { flex: 1; min-width: 0; }
+  body.style-discord .dc-font-preview .nm { font-size: 14px; color: #f2f3f5; font-weight: 500; }
+  body.style-discord .dc-font-preview .sub { font-size: 12px; color: #949ba4; margin-top: 2px; }
+  body.style-discord .dc-font-preview.active .nm { color: #fff; }
+  body.style-discord .dc-reset-row { display: flex; align-items: center;
+    gap: 12px; padding: 10px 18px; cursor: pointer; }
+  body.style-discord .dc-reset-row:hover { background: #35373c; }
+  body.style-discord .dc-reset-row .sw { width: 36px; height: 36px;
+    border-radius: 50%; background: #2b2d31; border: 1px solid #1e1f22;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #dbdee1; }
+  body.style-discord .dc-reset-row .nm { font-size: 14px; color: #f2f3f5; font-weight: 500; }
+  body.style-discord .dc-reset-row .sub { font-size: 12px; color: #949ba4; margin-top: 2px; }
+
+  /* ============ МОБИЛЬНЫЕ ПРАВИЛА ============ */
   @media (max-width: 640px) {
     html, body { overscroll-behavior: none; }
     #reader-toolbar .btn-group,
@@ -625,7 +832,9 @@
     #reader-toolbar { padding: 8px 12px; }
     #btn-menu { display: inline-flex !important; }
 
-    #tg-app { position: relative; }
+    #content { padding: 20px 14px calc(100px + env(safe-area-inset-bottom)); font-size: 18px; }
+
+    #tg-app { position: relative; min-height: 0; }
     #tg-sidebar { width: 100%; position: absolute; inset: 0; border-right: none;
       z-index: 2; transition: transform .25s ease; }
     #tg-chat-area { position: absolute; inset: 0; z-index: 3;
@@ -662,7 +871,7 @@
     #tg-menu-btn { display: inline-flex !important; }
 
     #tg-reader-screen { background: var(--bg); }
-    #tg-content { padding: 14px 18px calc(100px + env(safe-area-inset-bottom));
+    #tg-content { padding: 14px 14px calc(100px + env(safe-area-inset-bottom));
       font-size: 17.5px; line-height: 1.65; }
     #tg-content p { margin-bottom: 1em; text-indent: 1.6em; }
     #tg-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
@@ -673,13 +882,11 @@
       width: 56px; height: 56px; font-size: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.55); }
 
     #yt-sidebar { display: none; }
-    #yt-header { height: auto; padding: 8px 12px;
-      padding-top: max(8px, env(safe-area-inset-top));
-      gap: 8px; flex-wrap: nowrap; }
+    #yt-header { padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top));
+      gap: 8px; flex-wrap: wrap; }
     #yt-header .yt-logo { font-size: 16px; gap: 6px; flex-shrink: 0; }
     #yt-header .yt-logo .play { width: 26px; height: 18px; font-size: 10px; }
-    #yt-search-box { order: 3; flex-basis: 100%; max-width: 100%; margin: 6px 0 0; }
-    #yt-header { flex-wrap: wrap; }
+    #yt-search-box { flex-basis: 100%; max-width: 100%; margin: 0; order: 3; }
     #yt-search-box input { padding: 8px 14px; font-size: 14px; border-radius: 18px 0 0 18px; }
     #yt-search-box button { padding: 0 16px; border-radius: 0 18px 18px 0; font-size: 14px; }
     #yt-header .tg-icon-btn[data-style-btn] { display: none !important; }
@@ -694,8 +901,7 @@
     .yt-card-avatar { width: 36px; height: 36px; font-size: 15px; }
     .yt-card-title { font-size: 14px; line-height: 1.35; }
     .yt-card-meta { font-size: 12px; }
-    #yt-watch-top { padding: 8px 10px;
-      padding-top: max(8px, env(safe-area-inset-top));
+    #yt-watch-top { padding: 8px 10px; padding-top: max(8px, env(safe-area-inset-top));
       gap: 8px; background: var(--bg-header); }
     #yt-watch-top .back { font-size: 20px; padding: 6px 8px; flex-shrink: 0; }
     #yt-watch-top .title { font-size: 15px; white-space: normal;
@@ -706,14 +912,40 @@
     #yt-watch-top #yt-btn-search,
     #yt-watch-top #yt-btn-mark,
     #yt-watch-top #yt-btn-marks { display: none !important; }
-    #yt-watch-container { padding: 14px 14px calc(100px + env(safe-area-inset-bottom)); }
+    #yt-watch-container { padding: 14px 12px calc(100px + env(safe-area-inset-bottom)); }
     #yt-reader-content { font-size: 17.5px; line-height: 1.65; padding: 0; }
     #yt-reader-content p { margin-bottom: 1em; text-indent: 1.6em; }
     #yt-reader-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
     #yt-add-mark-fab { right: 16px; bottom: calc(20px + env(safe-area-inset-bottom));
       width: 56px; height: 56px; font-size: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.55); }
 
-    .panel { width: 94%; right: -94%; border-left: none; }
+    /* Discord mobile */
+    #dc-servers { display: none; }
+    #dc-app { position: relative; min-height: 0; }
+    #dc-channels { width: 100%; position: absolute; inset: 0; z-index: 2;
+      transition: transform .25s ease; }
+    #dc-chat { position: absolute; inset: 0; z-index: 3;
+      transform: translateX(100%); transition: transform .25s ease; display: flex; }
+    #dc-app.chat-open #dc-chat { transform: translateX(0); }
+    #dc-app.chat-open #dc-channels { transform: translateX(-30%); }
+    #dc-channels-head { padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
+      min-height: 52px; }
+    #dc-chat-header { min-height: 52px; padding: 0 12px;
+      padding-top: max(0px, env(safe-area-inset-top)); }
+    #dc-chat-header .nm { font-size: 15px; }
+    #dc-mobile-back { display: flex !important; }
+    #dc-chat-header .dc-icon-btn { width: 36px; height: 36px; font-size: 17px; }
+    #dc-chat-header #dc-btn-toc,
+    #dc-chat-header #dc-btn-search,
+    #dc-chat-header #dc-btn-mark,
+    #dc-chat-header #dc-btn-marks { display: none !important; }
+    #dc-content { padding: 14px 14px calc(100px + env(safe-area-inset-bottom));
+      font-size: 17px; line-height: 1.6; }
+    #dc-content p { margin-bottom: 1em; text-indent: 1.6em; }
+    .dc-fab { right: 16px; bottom: calc(20px + env(safe-area-inset-bottom));
+      width: 52px; height: 52px; font-size: 24px; }
+
+    .panel { width: 100%; }
     .panel-header { padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); }
     #to-top { right: 14px; bottom: calc(50px + env(safe-area-inset-bottom));
       width: 40px; height: 40px; }
@@ -721,10 +953,9 @@
       width: 40px; height: 40px; }
     #side-progress { display: none !important; }
 
-    #paste-screen { padding: 14px; }
-    textarea#input { padding: 14px; font-size: 15px; }
-    #paste-screen .actions button { flex: 1 1 auto; min-width: 100px; }
-    #content { padding: 24px 16px calc(100px + env(safe-area-inset-bottom)); font-size: 18px; }
+    #paste-screen { padding: 12px; }
+    textarea#input { padding: 12px; font-size: 15px; }
+    #paste-screen .actions button { flex: 1 1 auto; min-width: 90px; }
     .book-list { grid-template-columns: 1fr; gap: 10px; }
     .book-item { padding: 14px 76px 14px 38px; border-radius: 12px; gap: 4px; }
     .book-item .grip { left: 6px; width: 24px; height: 44px; }
@@ -740,18 +971,19 @@
     #note-editor .box { padding: 16px; }
     #mobile-sheet { display: block; }
     #settings-modal { padding: 8px; }
+    #settings-modal .card { max-height: 92vh; }
   }
   @media (max-width: 380px) {
     #yt-header .yt-logo span:not(.play) { font-size: 14px; }
     .yt-card-title { font-size: 13.5px; }
-    #tg-content, #yt-reader-content { font-size: 17px; }
+    #tg-content, #yt-reader-content, #content, #dc-content { font-size: 17px; }
   }
-  #btn-menu, #tg-menu-btn, #yt-menu-btn { display: none;
+  #btn-menu, #tg-menu-btn, #yt-menu-btn, #dc-menu-btn { display: none;
     align-items: center; justify-content: center; }
-  #tg-menu-btn, #yt-menu-btn { background: transparent; border: none;
+  #tg-menu-btn, #yt-menu-btn, #dc-menu-btn { background: transparent; border: none;
     color: var(--fg-dim); width: 38px; height: 38px; border-radius: 50%;
     font-size: 20px; cursor: pointer; }
-  #tg-menu-btn:hover, #yt-menu-btn:hover { background: var(--bg-panel); color: var(--fg); }
+  #tg-menu-btn:hover, #yt-menu-btn:hover, #dc-menu-btn:hover { background: var(--bg-panel); color: var(--fg); }
   @media (max-width: 640px) { #btn-menu { display: inline-flex; } }
   #btn-style-classic { display: inline-flex; }
   @media (max-width: 640px) { #btn-style-classic { display: none !important; } }
@@ -811,7 +1043,7 @@
         <button id="btn-library">Библиотека</button>
         <button id="btn-menu" title="Меню">☰</button>
       </div>
-      <div id="reader-screen"><div id="content"></div></div>
+      <div id="reader-screen"><div id="content" class="reader-text"></div></div>
     </div>
   </div>
 
@@ -851,7 +1083,7 @@
           <div class="big">💬</div>
           <p>Выберите книгу из списка, чтобы начать читать.</p>
         </div>
-        <div id="tg-reader-screen"><div id="tg-content"></div></div>
+        <div id="tg-reader-screen"><div id="tg-content" class="reader-text"></div></div>
         <button class="tg-fab" id="tg-add-mark-fab" title="Закладка">🔖</button>
       </div>
     </div>
@@ -895,11 +1127,58 @@
               </div>
             </div>
             <div id="yt-watch-scroll">
-              <div id="yt-watch-container"><div id="yt-reader-content"></div></div>
+              <div id="yt-watch-container"><div id="yt-reader-content" class="reader-text"></div></div>
             </div>
             <button id="yt-add-mark-fab" title="Закладка">🔖</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCORD -->
+  <div id="dc-root" class="screen">
+    <div id="dc-app">
+      <div id="dc-servers">
+        <div class="dc-server-icon active" title="YVL Books">Y</div>
+        <div class="dc-server-sep"></div>
+        <div id="dc-servers-list"></div>
+        <div class="dc-server-sep"></div>
+        <div class="dc-server-icon dc-server-add" id="dc-server-add" title="Добавить книгу">＋</div>
+      </div>
+      <div id="dc-channels">
+        <div id="dc-channels-head" title="YVL Books">
+          <span class="nm">YVL Books</span>
+          <span style="font-size:12px;color:#949ba4;">▾</span>
+        </div>
+        <div id="dc-channels-search">
+          <span style="color:#6d6f78;">🔍</span>
+          <input type="text" id="dc-channels-search-input" placeholder="Поиск книг..." autocomplete="off">
+        </div>
+        <div id="dc-channels-list"></div>
+        <button class="dc-add-book-btn" id="dc-add-book">＋ Добавить книгу</button>
+      </div>
+      <div id="dc-chat">
+        <div id="dc-chat-header">
+          <button class="dc-icon-btn" id="dc-mobile-back" style="display:none;">←</button>
+          <span class="hash-big">#</span>
+          <div class="nm" id="dc-chat-name">добро-пожаловать</div>
+          <div class="actions">
+            <button class="dc-icon-btn" id="dc-menu-btn" title="Меню">☰</button>
+            <button class="dc-icon-btn" data-style-btn title="Стиль">🎭</button>
+            <button class="dc-icon-btn" id="dc-btn-toc" title="Содержание">📖</button>
+            <button class="dc-icon-btn" id="dc-btn-search" title="Поиск">🔍</button>
+            <button class="dc-icon-btn" id="dc-btn-mark" title="Закладка">🔖</button>
+            <button class="dc-icon-btn" id="dc-btn-marks" title="Закладки">🗂</button>
+          </div>
+        </div>
+        <div id="dc-empty">
+          <div class="big">#</div>
+          <h2>Добро пожаловать в YVL Books</h2>
+          <p>Выберите книгу в списке каналов слева, чтобы начать читать.</p>
+        </div>
+        <div id="dc-reader-screen"><div id="dc-content" class="reader-text"></div></div>
+        <button class="dc-fab" id="dc-add-mark-fab" title="Закладка">🔖</button>
       </div>
     </div>
   </div>
@@ -1021,13 +1300,12 @@
     <div class="card-body" id="settings-modal-body"></div>
   </div>
 </div>
-
 <script>
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
   const qsa = (sel, root) => (root || document).querySelectorAll(sel);
-  const root = document.documentElement;   // <-- ИСПРАВЛЕНИЕ: восстановлено
+  const root = document.documentElement;
 
   function showError(msg) {
     const box = $('boot-error'); if (!box) return;
@@ -1091,6 +1369,7 @@
   const FONT_STACKS = {
     telegram: "-apple-system, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     youtube:  "'Roboto', -apple-system, 'Segoe UI', Arial, sans-serif",
+    discord:  "'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
     serif:"Georgia, 'Times New Roman', serif",
     sans:"-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     mono:"'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace",
@@ -1121,6 +1400,7 @@
   const FONTS = [
     {id:'telegram',name:'Telegram',group:'📱 Приложения',sample:"-apple-system, 'Segoe UI', Roboto, sans-serif"},
     {id:'youtube',name:'YouTube',group:'📱 Приложения',sample:"'Roboto', -apple-system, sans-serif"},
+    {id:'discord',name:'Discord (gg sans)',group:'📱 Приложения',sample:"'gg sans', 'Noto Sans', sans-serif"},
     {id:'serif',name:'Georgia',group:'Serif',sample:'Georgia, serif'},
     {id:'literata',name:'Literata',group:'Serif',sample:"'Literata', Georgia, serif"},
     {id:'ptSerif',name:'PT Serif',group:'Serif',sample:"'PT Serif', Georgia, serif"},
@@ -1153,7 +1433,19 @@
       { name: 'Telegram Dark', bg: '#17212b', fg: '#e6e8eb', accent: '#65a9d0' },
       { name: 'Telegram Day',  bg: '#ffffff', fg: '#1c1c1c', accent: '#419fd9' },
       { name: 'YouTube Dark',  bg: '#0f0f0f', fg: '#f1f1f1', accent: '#ff0033' },
-      { name: 'YouTube Light', bg: '#ffffff', fg: '#0f0f0f', accent: '#ff0000' }
+      { name: 'YouTube Light', bg: '#ffffff', fg: '#0f0f0f', accent: '#ff0000' },
+      { name: 'Discord Dark',  bg: '#313338', fg: '#dbdee1', accent: '#5865f2' },
+      { name: 'Discord Light', bg: '#ffffff', fg: '#060607', accent: '#5865f2' },
+      { name: 'Discord OLED',  bg: '#0d0d0d', fg: '#dbdee1', accent: '#5865f2' }
+    ]},
+    { title: '🎮 Discord', presets: [
+      { name: 'Discord Blurple', bg: '#313338', fg: '#dbdee1', accent: '#5865f2' },
+      { name: 'Discord Dark',    bg: '#2b2d31', fg: '#dbdee1', accent: '#5865f2' },
+      { name: 'Discord Darker',  bg: '#1e1f22', fg: '#dbdee1', accent: '#5865f2' },
+      { name: 'Discord Green',   bg: '#313338', fg: '#dbdee1', accent: '#3ba55c' },
+      { name: 'Discord Red',     bg: '#313338', fg: '#dbdee1', accent: '#ed4245' },
+      { name: 'Discord Yellow',  bg: '#313338', fg: '#dbdee1', accent: '#faa61a' },
+      { name: 'Discord Fuchsia', bg: '#313338', fg: '#dbdee1', accent: '#eb459e' }
     ]},
     { title: '🌙 Для сна', presets: [
       { name: 'Сон',        bg: '#14100d', fg: '#c9b6a2', accent: '#8a6f58' },
@@ -1195,7 +1487,7 @@
     try {
       const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
       const m = Object.assign({}, DEFAULTS, s);
-      if (!['classic','telegram','youtube'].includes(m.uiStyle)) m.uiStyle = 'classic';
+      if (!['classic','telegram','youtube','discord'].includes(m.uiStyle)) m.uiStyle = 'classic';
       return m;
     } catch (e) { return Object.assign({}, DEFAULTS); }
   }
@@ -1203,13 +1495,18 @@
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
   // ===== ХРАНИЛИЩЕ =====
-  const META_KEY = 'reader_books_meta_v2';
+  const META_KEY = 'reader_books_meta_v3';
   const TEXT_PREFIX = 'reader_book_text_';
   const OLD_BOOKS_KEY = 'reader_books';
+  const OLD_META_KEY = 'reader_books_meta_v2';
   function loadMeta() {
     try {
       const raw = localStorage.getItem(META_KEY);
       if (raw) return JSON.parse(raw) || [];
+    } catch (e) {}
+    try {
+      const v2 = JSON.parse(localStorage.getItem(OLD_META_KEY) || '[]');
+      if (Array.isArray(v2) && v2.length) { saveMeta(v2); return v2; }
     } catch (e) {}
     try {
       const old = JSON.parse(localStorage.getItem(OLD_BOOKS_KEY) || '[]');
@@ -1267,6 +1564,13 @@
     return 'Без названия';
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
+  // Discord-канал: slug из названия
+  function dcSlug(title) {
+    return String(title || 'book').toLowerCase()
+      .replace(/ё/g, 'е')
+      .replace(/[^\wа-я0-9]+/gi, '-')
+      .replace(/^-+|-+$/g, '').slice(0, 40) || 'book';
+  }
 
   // ===== СОСТОЯНИЕ =====
   let currentBookId = null;
@@ -1312,6 +1616,7 @@
     switch (settings.uiStyle) {
       case 'telegram': return $('tg-reader-screen');
       case 'youtube': return $('yt-watch-scroll');
+      case 'discord': return $('dc-reader-screen');
       default: return $('reader-screen');
     }
   }
@@ -1319,6 +1624,7 @@
     switch (settings.uiStyle) {
       case 'telegram': return $('tg-content');
       case 'youtube': return $('yt-reader-content');
+      case 'discord': return $('dc-content');
       default: return $('content');
     }
   }
@@ -1331,6 +1637,49 @@
     const max = el.scrollHeight - el.clientHeight;
     return max > 0 ? (el.scrollTop / max) * 100 : 0;
   }
+
+  function captureReadingPosition() {
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return null;
+    const y = el.scrollTop + 40;
+    const paras = content.querySelectorAll('p');
+    let targetIdx = -1, offsetInPara = 0;
+    for (let i = 0; i < paras.length; i++) {
+      const p = paras[i];
+      if (p.offsetTop + p.offsetHeight > y) {
+        targetIdx = i;
+        offsetInPara = Math.max(0, Math.min(p.offsetHeight, y - p.offsetTop));
+        break;
+      }
+    }
+    if (targetIdx < 0 && paras.length) { targetIdx = 0; offsetInPara = 0; }
+    const max = el.scrollHeight - el.clientHeight;
+    return {
+      pIndex: targetIdx,
+      offsetInPara: offsetInPara,
+      scrollTop: el.scrollTop,
+      pct: max > 0 ? el.scrollTop / max : 0,
+      chapter: activeChapter
+    };
+  }
+  function restoreReadingPosition(pos) {
+    if (!pos) return;
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return;
+    const paras = content.querySelectorAll('p');
+    if (typeof pos.pIndex === 'number' && paras[pos.pIndex]) {
+      const p = paras[pos.pIndex];
+      const target = Math.max(0, p.offsetTop + (pos.offsetInPara || 0) - 40);
+      el.scrollTop = target;
+    } else if (typeof pos.scrollTop === 'number') {
+      el.scrollTop = pos.scrollTop;
+    } else if (typeof pos.pct === 'number') {
+      const max = el.scrollHeight - el.clientHeight;
+      el.scrollTop = pos.pct * Math.max(0, max);
+    }
+    if (typeof pos.chapter === 'number') activeChapter = pos.chapter;
+  }
+
   function renderBookIntoContent(text, contentEl, accentColor) {
     if (!contentEl) { chapters = []; return; }
     contentEl.innerHTML = ''; chapters = [];
@@ -1746,11 +2095,13 @@
       const list = loadMeta();
       const idx = list.findIndex(x => x.id === currentBookId);
       if (idx < 0) return;
-      const el = getActiveReaderEl(); if (!el) return;
-      const max = el.scrollHeight - el.clientHeight;
-      list[idx].scroll = el.scrollTop;
-      list[idx].pct = max > 0 ? el.scrollTop / max : 0;
-      list[idx].chapter = activeChapter;
+      const pos = captureReadingPosition();
+      if (!pos) return;
+      list[idx].scroll = pos.scrollTop;
+      list[idx].pct = pos.pct;
+      list[idx].chapter = pos.chapter;
+      list[idx].pIndex = pos.pIndex;
+      list[idx].offsetInPara = pos.offsetInPara;
       saveMeta(list);
     }, 400);
   }
@@ -1806,17 +2157,19 @@
   const UI_STYLES = [
     { id: 'classic', name: 'Классика' },
     { id: 'telegram', name: 'Telegram' },
-    { id: 'youtube', name: 'YouTube' }
+    { id: 'youtube', name: 'YouTube' },
+    { id: 'discord', name: 'Discord' }
   ];
   function applyUiStyle() {
     const style = settings.uiStyle || 'classic';
     document.body.className = 'style-' + style;
     qsa('#app > .screen').forEach(el => el.classList.remove('active'));
-    const map = { classic: 'classic-root', telegram: 'tg-root', youtube: 'yt-root' };
+    const map = { classic: 'classic-root', telegram: 'tg-root', youtube: 'yt-root', discord: 'dc-root' };
     const screen = $(map[style]); if (screen) screen.classList.add('active');
     if (style === 'classic') renderClassicLibrary();
     else if (style === 'telegram') renderTelegram();
     else if (style === 'youtube') renderYoutube();
+    else if (style === 'discord') renderDiscord();
   }
 
   function openStyleMenu(anchor) {
@@ -1831,7 +2184,27 @@
       mi.className = 'mi' + (settings.uiStyle === st.id ? ' active' : '');
       mi.textContent = (settings.uiStyle === st.id ? '✓ ' : '') + st.name;
       mi.addEventListener('click', () => {
-        settings.uiStyle = st.id; saveSettings(); pop.classList.remove('show'); applyUiStyle();
+        if (currentBookId) {
+          const pos = captureReadingPosition();
+          if (pos) {
+            const list = loadMeta();
+            const idx = list.findIndex(x => x.id === currentBookId);
+            if (idx >= 0) {
+              list[idx].scroll = pos.scrollTop;
+              list[idx].pct = pos.pct;
+              list[idx].chapter = pos.chapter;
+              list[idx].pIndex = pos.pIndex;
+              list[idx].offsetInPara = pos.offsetInPara;
+              saveMeta(list);
+            }
+          }
+        }
+        settings.uiStyle = st.id; saveSettings(); pop.classList.remove('show');
+        applyUiStyle();
+        if (currentBookId) {
+          const targetPos = loadMeta().find(x => x.id === currentBookId);
+          setTimeout(() => openBookInCurrentStyle(currentBookId, targetPos), 30);
+        }
       });
       pop.appendChild(mi);
     });
@@ -1978,16 +2351,20 @@
         if (settings.uiStyle === 'classic') target = $('content');
         else if (settings.uiStyle === 'telegram') { target = $('tg-content'); accent = 'var(--accent)'; }
         else if (settings.uiStyle === 'youtube') { target = $('yt-reader-content'); accent = 'var(--fg)'; }
+        else if (settings.uiStyle === 'discord') { target = $('dc-content'); accent = '#f2f3f5'; }
         if (target) {
-          const st = getActiveReaderEl() ? getActiveReaderEl().scrollTop : (b.scroll || 0);
+          const savedPos = captureReadingPosition();
           renderBookIntoContent(text, target, accent);
           requestAnimationFrame(() => {
-            const el = getActiveReaderEl();
-            if (el) el.scrollTop = st;
+            if (savedPos) restoreReadingPosition(savedPos);
             updateAllProgress();
           });
         }
       }
+    }
+    // КЛАССИКА: обновляем библиотеку после изменения настроек (было багом)
+    if (settings.uiStyle === 'classic') {
+      try { renderClassicLibrary(); } catch (e) {}
     }
   }
 
@@ -2002,6 +2379,63 @@
     if (e.target === settingsModal) closeSettingsModal();
   });
 
+  // ---- Классика: палитра ----
+  function renderPaletteClassic() {
+    if (!settingsModalBody) return;
+    settingsModalBody.innerHTML = '';
+    PRESET_GROUPS.forEach((group) => {
+      const title = document.createElement('div');
+      title.className = 'cl-settings-group-title';
+      title.textContent = group.title;
+      settingsModalBody.appendChild(title);
+      group.presets.forEach(pr => {
+        const row = document.createElement('div');
+        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+        row.className = 'cl-settings-row' + (isActive ? ' active' : '');
+        row.innerHTML =
+          '<div class="sw' + (isActive ? ' active' : '') +
+          '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg, 20)) + ';">Aa</div>' +
+          '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div>' +
+          '<div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
+          (isActive ? '<div class="check">✓</div>' : '');
+        row.addEventListener('click', () => {
+          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+          saveSettings(); applySettings(); renderPaletteClassic();
+        });
+        settingsModalBody.appendChild(row);
+      });
+    });
+    const t = document.createElement('div');
+    t.className = 'cl-settings-group-title';
+    t.textContent = 'Свои цвета';
+    settingsModalBody.appendChild(t);
+    const wrap = document.createElement('div'); wrap.className = 'cl-color-rows';
+    const mk = (label, key) => {
+      const row = document.createElement('div'); row.className = 'cl-color-row';
+      const lb = document.createElement('label'); lb.textContent = label;
+      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
+      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
+      row.appendChild(lb); row.appendChild(inp);
+      return row;
+    };
+    wrap.appendChild(mk('Фон', 'bg'));
+    wrap.appendChild(mk('Текст', 'fg'));
+    wrap.appendChild(mk('Акцент', 'accent'));
+    settingsModalBody.appendChild(wrap);
+
+    const reset = document.createElement('div');
+    reset.className = 'cl-settings-row';
+    reset.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);">↺</div>' +
+      '<div class="info"><div class="nm">Сбросить цвета</div>' +
+      '<div class="sub">Вернуть по умолчанию</div></div>';
+    reset.addEventListener('click', () => {
+      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
+      saveSettings(); applySettings(); renderPaletteClassic();
+    });
+    settingsModalBody.appendChild(reset);
+  }
+
+  // ---- Telegram: палитра ----
   function renderPaletteTg() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2057,6 +2491,7 @@
     settingsModalBody.appendChild(reset);
   }
 
+  // ---- YouTube: палитра ----
   function renderPaletteYt() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2116,6 +2551,113 @@
     settingsModalBody.appendChild(reset);
   }
 
+  // ---- Discord: палитра ----
+  function renderPaletteDc() {
+    if (!settingsModalBody) return;
+    settingsModalBody.innerHTML = '';
+    PRESET_GROUPS.forEach(group => {
+      const t = document.createElement('div');
+      t.className = 'dc-settings-group-title';
+      t.textContent = group.title;
+      settingsModalBody.appendChild(t);
+      const grid = document.createElement('div');
+      grid.className = 'dc-settings-grid';
+      group.presets.forEach(pr => {
+        const tile = document.createElement('div');
+        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+        tile.className = 'dc-tile' + (isActive ? ' active' : '');
+        tile.innerHTML =
+          '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg +
+          ';border-color:' + (isActive ? '#5865f2' : shade(pr.bg, 20)) + ';">Aa</div>' +
+          '<div class="nm">' + escapeHtml(pr.name) + '</div>';
+        tile.addEventListener('click', () => {
+          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+          saveSettings(); applySettings(); renderPaletteDc();
+        });
+        grid.appendChild(tile);
+      });
+      settingsModalBody.appendChild(grid);
+    });
+    const t2 = document.createElement('div');
+    t2.className = 'dc-settings-group-title';
+    t2.textContent = 'Свои цвета';
+    settingsModalBody.appendChild(t2);
+    const wrap = document.createElement('div'); wrap.className = 'dc-color-rows';
+    const mk = (label, key) => {
+      const row = document.createElement('div'); row.className = 'dc-color-row';
+      const lb = document.createElement('label'); lb.textContent = label;
+      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
+      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
+      row.appendChild(lb); row.appendChild(inp);
+      return row;
+    };
+    wrap.appendChild(mk('Фон', 'bg'));
+    wrap.appendChild(mk('Текст', 'fg'));
+    wrap.appendChild(mk('Акцент', 'accent'));
+    settingsModalBody.appendChild(wrap);
+
+    const reset = document.createElement('div');
+    reset.className = 'dc-reset-row';
+    reset.innerHTML = '<div class="sw">↺</div>' +
+      '<div class="info"><div class="nm">Сбросить цвета</div>' +
+      '<div class="sub">Вернуть по умолчанию</div></div>';
+    reset.addEventListener('click', () => {
+      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
+      saveSettings(); applySettings(); renderPaletteDc();
+    });
+    settingsModalBody.appendChild(reset);
+  }
+
+  // ---- Классика: шрифты ----
+  function renderFontsClassic() {
+    if (!settingsModalBody) return;
+    settingsModalBody.innerHTML = '';
+    let currentGroup = null;
+    FONTS.forEach(f => {
+      if (f.group !== currentGroup) {
+        currentGroup = f.group;
+        const t = document.createElement('div');
+        t.className = 'cl-settings-group-title';
+        t.textContent = currentGroup;
+        settingsModalBody.appendChild(t);
+      }
+      const row = document.createElement('div');
+      const isActive = settings.fontFamily === f.id;
+      row.className = 'cl-font-preview' + (isActive ? ' active' : '');
+      row.innerHTML =
+        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div>' +
+        '<div class="sub">' + (isActive ? 'Выбран' : 'Нажмите, чтобы применить') + '</div></div>' +
+        (isActive ? '<div class="check">✓</div>' : '');
+      row.addEventListener('click', () => {
+        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsClassic();
+      });
+      settingsModalBody.appendChild(row);
+    });
+    const t2 = document.createElement('div');
+    t2.className = 'cl-settings-group-title';
+    t2.textContent = 'Межбуквенный интервал';
+    settingsModalBody.appendChild(t2);
+    const row2 = document.createElement('div');
+    row2.className = 'cl-settings-row';
+    row2.style.cursor = 'default';
+    row2.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);font-weight:600;">±</div>' +
+      '<div class="info"><div class="nm">Интервал</div>' +
+      '<div class="sub">' + settings.letterSpacing.toFixed(2) + ' em</div></div>' +
+      '<div style="display:flex;gap:6px;">' +
+      '<button data-ls="-1" style="width:32px;height:32px;border-radius:50%;padding:0;">−</button>' +
+      '<button data-ls="1" style="width:32px;height:32px;border-radius:50%;padding:0;">+</button></div>';
+    row2.querySelectorAll('[data-ls]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
+        renderFontsClassic();
+      });
+    });
+    settingsModalBody.appendChild(row2);
+  }
+
+  // ---- Telegram: шрифты ----
   function renderFontsTg() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2164,6 +2706,7 @@
     settingsModalBody.appendChild(row2);
   }
 
+  // ---- YouTube: шрифты ----
   function renderFontsYt() {
     if (!settingsModalBody) return;
     settingsModalBody.innerHTML = '';
@@ -2210,20 +2753,74 @@
     settingsModalBody.appendChild(row);
   }
 
+  // ---- Discord: шрифты ----
+  function renderFontsDc() {
+    if (!settingsModalBody) return;
+    settingsModalBody.innerHTML = '';
+    let currentGroup = null;
+    FONTS.forEach(f => {
+      if (f.group !== currentGroup) {
+        currentGroup = f.group;
+        const t = document.createElement('div');
+        t.className = 'dc-settings-group-title';
+        t.textContent = currentGroup;
+        settingsModalBody.appendChild(t);
+      }
+      const row = document.createElement('div');
+      const isActive = settings.fontFamily === f.id;
+      row.className = 'dc-font-preview' + (isActive ? ' active' : '');
+      row.innerHTML =
+        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div>' +
+        '<div class="sub">' + (isActive ? 'Выбран' : 'Нажмите, чтобы применить') + '</div></div>' +
+        (isActive ? '<div class="check" style="color:#5865f2;font-size:16px;">✓</div>' : '');
+      row.addEventListener('click', () => {
+        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsDc();
+      });
+      settingsModalBody.appendChild(row);
+    });
+    const t2 = document.createElement('div');
+    t2.className = 'dc-settings-group-title';
+    t2.textContent = 'Межбуквенный интервал';
+    settingsModalBody.appendChild(t2);
+    const row2 = document.createElement('div');
+    row2.className = 'dc-font-preview';
+    row2.style.cursor = 'default';
+    row2.innerHTML = '<div class="aa" style="font-family:monospace;">±</div>' +
+      '<div class="info"><div class="nm">Интервал</div>' +
+      '<div class="sub">' + settings.letterSpacing.toFixed(2) + ' em</div></div>' +
+      '<div style="display:flex;gap:6px;">' +
+      '<button data-ls="-1" style="width:32px;height:32px;border-radius:4px;padding:0;background:#2b2d31;border:1px solid #1e1f22;color:#dbdee1;">−</button>' +
+      '<button data-ls="1" style="width:32px;height:32px;border-radius:4px;padding:0;background:#2b2d31;border:1px solid #1e1f22;color:#dbdee1;">+</button></div>';
+    row2.querySelectorAll('[data-ls]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
+        renderFontsDc();
+      });
+    });
+    settingsModalBody.appendChild(row2);
+  }
+
+  // ГЛАВНОЕ: правильный выбор рендера палитры/шрифтов по стилю
   function openSettingsModal(kind) {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
     const style = settings.uiStyle;
     if (kind === 'palette') {
       settingsModalTitle.textContent = 'Палитра цветов';
-      if (style === 'telegram') renderPaletteTg();
+      if (style === 'classic') renderPaletteClassic();
+      else if (style === 'telegram') renderPaletteTg();
       else if (style === 'youtube') renderPaletteYt();
-      else renderPaletteTg();
+      else if (style === 'discord') renderPaletteDc();
+      else renderPaletteClassic();
     } else if (kind === 'fonts') {
       settingsModalTitle.textContent = 'Шрифт';
-      if (style === 'telegram') renderFontsTg();
+      if (style === 'classic') renderFontsClassic();
+      else if (style === 'telegram') renderFontsTg();
       else if (style === 'youtube') renderFontsYt();
-      else renderFontsTg();
+      else if (style === 'discord') renderFontsDc();
+      else renderFontsClassic();
     }
   }
 
@@ -2565,6 +3162,88 @@
     chips.appendChild(add);
   }
 
+  // ---- Discord: каналы ----
+  function renderDcChannels() {
+    const list = $('dc-channels-list'); if (!list) return;
+    list.innerHTML = '';
+    const books = sortBooks(loadMeta());
+    const searchEl = $('dc-channels-search-input');
+    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
+    let filtered = books;
+    if (activeCollection === '') filtered = filtered.filter(b => !b.collection);
+    else if (activeCollection) filtered = filtered.filter(b => b.collection === activeCollection);
+    if (query) filtered = filtered.filter(b => (b.title || '').toLowerCase().includes(query));
+
+    if (!filtered.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:20px 12px;text-align:center;color:#949ba4;font-size:13px;';
+      empty.textContent = 'Нет книг. Нажмите «+ Добавить книгу».';
+      list.appendChild(empty); return;
+    }
+
+    const cat = document.createElement('div');
+    cat.className = 'dc-ch-category';
+    cat.innerHTML = '<span>ТЕКСТОВЫЕ КАНАЛЫ</span><span>▾</span>';
+    list.appendChild(cat);
+
+    filtered.forEach(b => {
+      const item = document.createElement('div');
+      item.className = 'dc-ch-item' + (b.id === currentBookId ? ' active' : '');
+      item.dataset.bookId = b.id;
+      item.innerHTML =
+        '<span class="hash">#</span>' +
+        '<span class="ch-name">' + escapeHtml(dcSlug(b.title)) + '</span>';
+      item.title = b.title + (b.pct > 0 ? ' · ' + (b.pct * 100).toFixed(1) + '%' : '');
+      item.addEventListener('click', () => renderDiscordBook(b.id, true));
+      let pressTimer = null;
+      item.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+        pressTimer = setTimeout(() => { startBookDrag(e, item, b.id, list); pressTimer = null; }, 350);
+      });
+      item.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      item.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      list.appendChild(item);
+    });
+
+    const cols = loadCollections();
+    if (cols.length) {
+      const sep = document.createElement('div');
+      sep.className = 'dc-ch-category';
+      sep.innerHTML = '<span>АРХИВЫ</span><span>▾</span>';
+      list.appendChild(sep);
+      cols.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'dc-ch-item' + (activeCollection === c.id ? ' active' : '');
+        const cnt = books.filter(b => b.collection === c.id).length;
+        item.innerHTML = '<span class="hash" style="font-size:14px;">📁</span>' +
+          '<span class="ch-name">' + escapeHtml(c.name) + '</span>' +
+          '<span style="font-size:11px;color:#949ba4;flex-shrink:0;">' + cnt + '</span>';
+        item.addEventListener('click', () => {
+          activeCollection = (activeCollection === c.id) ? null : c.id;
+          renderDcChannels();
+        });
+        list.appendChild(item);
+      });
+    }
+  }
+
+  function renderDcServers() {
+    const list = $('dc-servers-list'); if (!list) return;
+    list.innerHTML = '';
+    const cols = loadCollections();
+    cols.forEach(c => {
+      const icon = document.createElement('div');
+      icon.className = 'dc-server-icon';
+      icon.title = c.name;
+      icon.textContent = (c.name || '?').trim().charAt(0).toUpperCase();
+      icon.addEventListener('click', () => {
+        activeCollection = (activeCollection === c.id) ? null : c.id;
+        renderDcChannels();
+      });
+      list.appendChild(icon);
+    });
+  }
+
   function openCollectionMenu(anchorEl, bookId) {
     const menu = $('collection-menu'); if (!menu) return;
     const books = loadMeta(); const b = books.find(x => x.id === bookId);
@@ -2628,18 +3307,56 @@
     menu.classList.remove('show');
   });
 
-  function openBookClassic(id) {
-    const b = loadMeta().find(x => x.id === id); if (!b) return;
+  // ГЛАВНОЕ: универсальное открытие книги в текущем стиле с восстановлением позиции
+  function openBookInCurrentStyle(id, savedPos) {
+    const b = loadMeta().find(x => x.id === id);
+    if (!b) return;
     currentBookId = id; currentMarks = loadMarks(id);
-    $('paste-screen').classList.remove('active');
-    $('reader-shell').classList.add('active');
-    const text = getBookText(id);
-    renderBookIntoContent(text, $('content'), null);
+    const pos = savedPos || {
+      pIndex: b.pIndex,
+      offsetInPara: b.offsetInPara,
+      scrollTop: b.scroll,
+      pct: b.pct,
+      chapter: b.chapter
+    };
+    if (settings.uiStyle === 'classic') {
+      $('paste-screen').classList.remove('active');
+      $('reader-shell').classList.add('active');
+      renderBookIntoContent(getBookText(id), $('content'), null);
+    } else if (settings.uiStyle === 'telegram') {
+      const empty = $('tg-empty');
+      if (empty) empty.style.display = 'none';
+      const readerScreen = $('tg-reader-screen');
+      if (readerScreen) readerScreen.classList.add('active');
+      renderBookIntoContent(getBookText(id), $('tg-content'), 'var(--accent)');
+      $('tg-chat-area').classList.add('has-book');
+      $('tg-app').classList.add('chat-open');
+      const nameEl = $('tg-chat-name'); if (nameEl) nameEl.textContent = b.title;
+      const subEl = $('tg-chat-sub'); if (subEl) subEl.textContent = (b.words || 0).toLocaleString('ru-RU') + ' слов';
+      renderTelegramChatList();
+    } else if (settings.uiStyle === 'youtube') {
+      const watch = $('yt-watch'); if (watch) watch.classList.add('show');
+      const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
+      renderBookIntoContent(getBookText(id), $('yt-reader-content'), 'var(--fg)');
+      const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
+      renderYoutubeSidebar();
+    } else if (settings.uiStyle === 'discord') {
+      const empty = $('dc-empty'); if (empty) empty.style.display = 'none';
+      const rs = $('dc-reader-screen'); if (rs) rs.classList.add('active');
+      renderBookIntoContent(getBookText(id), $('dc-content'), '#f2f3f5');
+      $('dc-chat').classList.add('has-book');
+      $('dc-app').classList.add('chat-open');
+      const nameEl = $('dc-chat-name'); if (nameEl) nameEl.textContent = dcSlug(b.title);
+      renderDcChannels();
+    }
     requestAnimationFrame(() => {
-      const reader = $('reader-screen');
-      if (reader) reader.scrollTop = b.scroll || 0;
+      if (pos) restoreReadingPosition(pos);
       updateAllProgress();
     });
+  }
+
+  function openBookClassic(id) {
+    openBookInCurrentStyle(id, null);
   }
   function backClassic() {
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
@@ -2654,7 +3371,10 @@
     renderTelegramChatList();
     if (currentBookId) {
       const b = loadMeta().find(x => x.id === currentBookId);
-      if (b) renderTelegramBook(currentBookId, false);
+      if (b) openBookInCurrentStyle(currentBookId, {
+        pIndex: b.pIndex, offsetInPara: b.offsetInPara,
+        scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
+      });
     }
   }
   function renderTelegramChatList() {
@@ -2694,23 +3414,11 @@
   }
   function renderTelegramBook(id, fromList) {
     const b = loadMeta().find(x => x.id === id); if (!b) return;
-    currentBookId = id; currentMarks = loadMarks(id);
-    const nameEl = $('tg-chat-name'); const subEl = $('tg-chat-sub');
-    if (nameEl) nameEl.textContent = b.title;
-    if (subEl) subEl.textContent = (b.words || 0).toLocaleString('ru-RU') + ' слов';
-    const readerScreen = $('tg-reader-screen');
-    const empty = $('tg-empty');
-    if (empty) empty.style.display = 'none';
-    if (readerScreen) readerScreen.classList.add('active');
-    const text = getBookText(id);
-    renderBookIntoContent(text, $('tg-content'), 'var(--accent)');
-    $('tg-chat-area').classList.add('has-book');
-    if (fromList) $('tg-app').classList.add('chat-open');
-    requestAnimationFrame(() => {
-      if (readerScreen) readerScreen.scrollTop = b.scroll || 0;
-      updateAllProgress();
+    openBookInCurrentStyle(id, fromList ? null : {
+      pIndex: b.pIndex, offsetInPara: b.offsetInPara,
+      scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
     });
-    renderTelegramChatList();
+    if (fromList) $('tg-app').classList.add('chat-open');
   }
   function backTelegram() {
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
@@ -2728,6 +3436,22 @@
     renderYoutubeSidebar();
     renderYoutubeChips();
     renderYoutubeGrid();
+    if (currentBookId) {
+      const b = loadMeta().find(x => x.id === currentBookId);
+      if (b) {
+        const watch = $('yt-watch'); if (watch) watch.classList.add('show');
+        const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
+        renderBookIntoContent(getBookText(currentBookId), $('yt-reader-content'), 'var(--fg)');
+        const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
+        requestAnimationFrame(() => {
+          restoreReadingPosition({
+            pIndex: b.pIndex, offsetInPara: b.offsetInPara,
+            scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
+          });
+          updateAllProgress();
+        });
+      }
+    }
   }
   function renderYoutubeSidebar() {
     const sb = $('yt-sidebar-books'); if (!sb) return;
@@ -2784,24 +3508,54 @@
   }
   function renderYoutubeBook(id) {
     const b = loadMeta().find(x => x.id === id); if (!b) return;
-    currentBookId = id; currentMarks = loadMarks(id);
-    const watch = $('yt-watch'); if (watch) watch.classList.add('show');
-    const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
-    const text = getBookText(id);
-    renderBookIntoContent(text, $('yt-reader-content'), 'var(--fg)');
-    requestAnimationFrame(() => {
-      const scroll = $('yt-watch-scroll');
-      if (scroll) scroll.scrollTop = b.scroll || 0;
-      updateAllProgress();
-    });
-    const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
-    renderYoutubeSidebar();
+    openBookInCurrentStyle(id, null);
   }
   function backYoutube() {
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
     $('yt-watch').classList.remove('show');
     const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'none';
     renderYoutubeGrid();
+  }
+
+  // ===== DISCORD =====
+  function renderDiscord() {
+    renderDcServers();
+    renderDcChannels();
+    if (currentBookId) {
+      const b = loadMeta().find(x => x.id === currentBookId);
+      if (b) {
+        const empty = $('dc-empty'); if (empty) empty.style.display = 'none';
+        const rs = $('dc-reader-screen'); if (rs) rs.classList.add('active');
+        renderBookIntoContent(getBookText(currentBookId), $('dc-content'), '#f2f3f5');
+        $('dc-chat').classList.add('has-book');
+        $('dc-app').classList.add('chat-open');
+        const nameEl = $('dc-chat-name'); if (nameEl) nameEl.textContent = dcSlug(b.title);
+        requestAnimationFrame(() => {
+          restoreReadingPosition({
+            pIndex: b.pIndex, offsetInPara: b.offsetInPara,
+            scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
+          });
+          updateAllProgress();
+        });
+      }
+    }
+  }
+  function renderDiscordBook(id, fromList) {
+    const b = loadMeta().find(x => x.id === id); if (!b) return;
+    openBookInCurrentStyle(id, fromList ? null : {
+      pIndex: b.pIndex, offsetInPara: b.offsetInPara,
+      scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
+    });
+    if (fromList) $('dc-app').classList.add('chat-open');
+  }
+  function backDiscord() {
+    currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
+    $('dc-reader-screen').classList.remove('active');
+    $('dc-empty').style.display = 'flex';
+    $('dc-chat').classList.remove('has-book');
+    $('dc-app').classList.remove('chat-open');
+    $('dc-chat-name').textContent = 'добро-пожаловать';
+    renderDcChannels();
   }
 
   // ===== ДОБАВЛЕНИЕ КНИГ =====
@@ -2815,6 +3569,7 @@
     meta.push({
       id, title: title || guessTitle(text),
       words: countWords(text), scroll: 0, chapter: -1, pct: 0,
+      pIndex: 0, offsetInPara: 0,
       added: Date.now(), order: minOrder - 1,
       collection: collectionId || ''
     });
@@ -2836,6 +3591,7 @@
     if (settings.uiStyle === 'classic') renderClassicLibrary();
     else if (settings.uiStyle === 'telegram') { renderTgCollectionsBar(); renderTelegramChatList(); }
     else if (settings.uiStyle === 'youtube') { renderYoutubeSidebar(); renderYoutubeChips(); renderYoutubeGrid(); }
+    else if (settings.uiStyle === 'discord') { renderDcServers(); renderDcChannels(); }
   }
 
   // ===== ФАЙЛЫ =====
@@ -3043,7 +3799,7 @@
     el.id = 'pct-jump';
     el.style.cssText = 'position:fixed;z-index:260;display:none;align-items:center;gap:8px;padding:12px 14px;' +
       'background:var(--bg-panel);border:1px solid var(--border-strong);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.55);' +
-      'font-family:-apple-system,Segoe UI,Roboto,sans-serif;';
+      'font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:calc(100vw - 24px);flex-wrap:wrap;';
     el.innerHTML = '<span style="font-size:12px;color:var(--fg-dim);white-space:nowrap;">Перейти на</span>' +
       '<input type="number" min="0" max="100" step="0.01" inputmode="decimal" value="0" style="width:90px;background:var(--bg);border:1px solid var(--border-strong);color:var(--fg);padding:7px 10px;border-radius:6px;font-size:14px;font-variant-numeric:tabular-nums;outline:none;text-align:right;">' +
       '<span style="font-size:13px;color:var(--fg-dim);margin-left:-4px;">%</span>' +
@@ -3144,24 +3900,33 @@
     });
 
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+    // TG
     bindIf('tg-btn-toc', openToc); bindIf('tg-btn-marks', openMarks); bindIf('tg-btn-search', openSearch);
     bindIf('tg-btn-mark', addMark); bindIf('tg-add-mark-fab', addMark);
+    // YT
     bindIf('yt-btn-toc', openToc); bindIf('yt-btn-marks', openMarks); bindIf('yt-btn-search', openSearch);
     bindIf('yt-btn-mark', addMark); bindIf('yt-add-mark-fab', addMark);
+    // Classic
     bindIf('btn-toc', openToc); bindIf('btn-marks', openMarks); bindIf('btn-search', openSearch);
     bindIf('btn-mark', addMark); bindIf('btn-add-mark', addMark);
-    bindIf('tg-add-book', promptAddBook); bindIf('yt-add-book-side', promptAddBook);
+    // DC
+    bindIf('dc-btn-toc', openToc); bindIf('dc-btn-marks', openMarks); bindIf('dc-btn-search', openSearch);
+    bindIf('dc-btn-mark', addMark); bindIf('dc-add-mark-fab', addMark);
+    // add book
+    bindIf('tg-add-book', promptAddBook); bindIf('yt-add-book-side', promptAddBook); bindIf('dc-add-book', promptAddBook);
+    bindIf('dc-server-add', promptAddBook);
 
     bindIf('font-dec', () => changeFont(-2)); bindIf('font-inc', () => changeFont(2));
     bindIf('width-dec', () => changeWidth(-40)); bindIf('width-inc', () => changeWidth(40));
     bindIf('lh-dec', () => changeLineHeight(-0.1)); bindIf('lh-inc', () => changeLineHeight(0.1));
 
     bindIf('btn-library', backClassic); bindIf('yt-watch-back', backYoutube);
-    bindIf('tg-mobile-back', backTelegram);
+    bindIf('tg-mobile-back', backTelegram); bindIf('dc-mobile-back', backDiscord);
 
     bindIf('btn-menu', (e) => { e.stopPropagation(); toggleSheet(); });
     bindIf('tg-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
     bindIf('yt-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
+    bindIf('dc-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
@@ -3179,6 +3944,7 @@
     const tgSearch = $('tg-search-input'); if (tgSearch) tgSearch.addEventListener('input', renderTelegramChatList);
     const ytSearch = $('yt-search-input'); if (ytSearch) ytSearch.addEventListener('input', renderYoutubeGrid);
     const ytSearchBtn = $('yt-search-btn'); if (ytSearchBtn) ytSearchBtn.addEventListener('click', renderYoutubeGrid);
+    const dcSearch = $('dc-channels-search-input'); if (dcSearch) dcSearch.addEventListener('input', renderDcChannels);
 
     document.querySelectorAll('.yt-side-item[data-filter]').forEach(el => {
       el.addEventListener('click', () => {
@@ -3222,7 +3988,7 @@
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); openMarks(); }
     });
 
-    ['reader-screen','tg-reader-screen','yt-watch-scroll'].forEach(id => {
+    ['reader-screen','tg-reader-screen','yt-watch-scroll','dc-reader-screen'].forEach(id => {
       const el = $(id); if (!el) return;
       el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); });
     });
@@ -3290,6 +4056,24 @@
         if (dx > 100 && Math.abs(dy) < 60) { touchTracking = false; backTelegram(); }
       }, { passive: true });
       tgArea.addEventListener('touchend', () => { touchTracking = false; });
+    }
+
+    // Discord свайп "назад" на мобиле
+    const dcChat = $('dc-chat');
+    if (dcChat) {
+      let dsx = 0, dsy = 0, dtr = false;
+      dcChat.addEventListener('touchstart', (e) => {
+        if (window.innerWidth > 640) return;
+        if (!dcChat.parentElement.classList.contains('chat-open')) return;
+        const t = e.touches[0]; dsx = t.clientX; dsy = t.clientY; dtr = true;
+      }, { passive: true });
+      dcChat.addEventListener('touchmove', (e) => {
+        if (!dtr) return;
+        const t = e.touches[0]; const dx = t.clientX - dsx; const dy = t.clientY - dsy;
+        if (Math.abs(dy) > Math.abs(dx) + 20) { dtr = false; return; }
+        if (dx > 100 && Math.abs(dy) < 60) { dtr = false; backDiscord(); }
+      }, { passive: true });
+      dcChat.addEventListener('touchend', () => { dtr = false; });
     }
 
     applyUiStyle();
