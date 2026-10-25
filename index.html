@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>YVL BOOKS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -778,13 +781,38 @@
   }
   .palette-reset { width: 100%; margin-top: 8px; font-size: 11px; padding: 6px; }
 
-  .font-panel { width: 280px; }
-  .font-panel .font-row { display: flex; gap: 6px; margin-bottom: 14px; }
+  .font-panel { width: 340px; }
+  .font-panel .font-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .font-panel .font-group-title {
+    grid-column: 1 / -1;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 8px 0 2px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .font-panel .font-group-title:first-child { margin-top: 0; }
+  .font-panel .font-group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
   .font-panel .font-item {
-    flex: 1; padding: 8px 4px; border-radius: 6px;
+    padding: 8px 4px; border-radius: 6px;
     border: 1px solid var(--border-strong);
     cursor: pointer; text-align: center; font-size: 11px;
     color: var(--fg-mid); background: var(--bg-input);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .font-panel .font-item:hover { border-color: var(--accent); }
   .font-panel .font-item.active { border-color: var(--accent); color: var(--fg); }
@@ -1167,17 +1195,7 @@
 
     <div class="font-panel" id="font-panel">
       <h4>Шрифт</h4>
-      <div class="font-row" id="font-row">
-        <div class="font-item" data-font="serif">
-          <div class="sample" style="font-family:Georgia,serif">Aa</div>Serif
-        </div>
-        <div class="font-item" data-font="sans">
-          <div class="sample" style="font-family:-apple-system,Segoe UI,Roboto,sans-serif">Aa</div>Sans
-        </div>
-        <div class="font-item" data-font="mono">
-          <div class="sample" style="font-family:'JetBrains Mono','Courier New',monospace">Aa</div>Mono
-        </div>
-      </div>
+      <div class="font-row" id="font-row"></div>
       <h4>Межбуквенный интервал</h4>
       <div class="spacing-row">
         <button id="ls-dec" class="btn-icon">−</button>
@@ -1529,14 +1547,65 @@
     };
 
     const FONT_STACKS = {
-      serif: "Georgia, 'Times New Roman', serif",
-      sans: "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-      mono: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace"
+      serif:      "Georgia, 'Times New Roman', serif",
+      sans:       "-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      mono:       "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace",
+      literata:   "'Literata', Georgia, 'Times New Roman', serif",
+      ptSerif:    "'PT Serif', Georgia, serif",
+      notoSerif:  "'Noto Serif', Georgia, serif",
+      lora:       "'Lora', Georgia, serif",
+      merriweather:"'Merriweather', Georgia, serif",
+      cormorant:  "'Cormorant Garamond', 'Cormorant', Georgia, serif",
+      alegreya:   "'Alegreya', Georgia, serif",
+      crimson:    "'Crimson Text', Georgia, serif",
+      spectral:   "'Spectral', Georgia, serif",
+      sourceSerif:"'Source Serif 4', 'Source Serif Pro', Georgia, serif",
+      inter:      "'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      openSans:   "'Open Sans', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      notoSans:   "'Noto Sans', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      roboto:     "'Roboto', -apple-system, 'Segoe UI', Arial, sans-serif",
+      manrope:    "'Manrope', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      nunito:     "'Nunito', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      rubik:      "'Rubik', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      montserrat: "'Montserrat', -apple-system, 'Segoe UI', Arial, sans-serif",
+      ibmPlexSans:"'IBM Plex Sans', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      sourceSans: "'Source Sans 3', 'Source Sans Pro', -apple-system, 'Segoe UI', Roboto, sans-serif",
+      jetbrains:  "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace",
+      ibmPlexMono:"'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace",
+      courier:    "'Courier Prime', 'Courier New', Courier, monospace"
     };
 
-    // ─────────────────────────────────────────────────────────
-    //  РАСШИРЕННАЯ ПАЛИТРА
-    // ─────────────────────────────────────────────────────────
+    const FONTS = [
+      { id: 'serif',      name: 'Georgia',        group: 'Serif',   sample: 'Georgia, serif' },
+      { id: 'literata',   name: 'Literata',       group: 'Serif',   sample: "'Literata', Georgia, serif" },
+      { id: 'ptSerif',    name: 'PT Serif',       group: 'Serif',   sample: "'PT Serif', Georgia, serif" },
+      { id: 'notoSerif',  name: 'Noto Serif',     group: 'Serif',   sample: "'Noto Serif', Georgia, serif" },
+      { id: 'lora',       name: 'Lora',           group: 'Serif',   sample: "'Lora', Georgia, serif" },
+      { id: 'merriweather',name:'Merriweather',   group: 'Serif',   sample: "'Merriweather', Georgia, serif" },
+      { id: 'cormorant',  name: 'Cormorant',      group: 'Serif',   sample: "'Cormorant Garamond', Georgia, serif" },
+      { id: 'alegreya',   name: 'Alegreya',       group: 'Serif',   sample: "'Alegreya', Georgia, serif" },
+      { id: 'crimson',    name: 'Crimson Text',   group: 'Serif',   sample: "'Crimson Text', Georgia, serif" },
+      { id: 'spectral',   name: 'Spectral',       group: 'Serif',   sample: "'Spectral', Georgia, serif" },
+      { id: 'sourceSerif',name: 'Source Serif',   group: 'Serif',   sample: "'Source Serif 4', Georgia, serif" },
+
+      { id: 'sans',       name: 'System Sans',    group: 'Sans',    sample: "-apple-system, Segoe UI, Roboto, sans-serif" },
+      { id: 'inter',      name: 'Inter',          group: 'Sans',    sample: "'Inter', sans-serif" },
+      { id: 'openSans',   name: 'Open Sans',      group: 'Sans',    sample: "'Open Sans', sans-serif" },
+      { id: 'notoSans',   name: 'Noto Sans',      group: 'Sans',    sample: "'Noto Sans', sans-serif" },
+      { id: 'roboto',     name: 'Roboto',         group: 'Sans',    sample: "'Roboto', sans-serif" },
+      { id: 'manrope',    name: 'Manrope',        group: 'Sans',    sample: "'Manrope', sans-serif" },
+      { id: 'nunito',     name: 'Nunito',         group: 'Sans',    sample: "'Nunito', sans-serif" },
+      { id: 'rubik',      name: 'Rubik',          group: 'Sans',    sample: "'Rubik', sans-serif" },
+      { id: 'montserrat', name: 'Montserrat',     group: 'Sans',    sample: "'Montserrat', sans-serif" },
+      { id: 'ibmPlexSans',name: 'IBM Plex Sans',  group: 'Sans',    sample: "'IBM Plex Sans', sans-serif" },
+      { id: 'sourceSans', name: 'Source Sans',    group: 'Sans',    sample: "'Source Sans 3', sans-serif" },
+
+      { id: 'mono',       name: 'System Mono',    group: 'Mono',    sample: "monospace" },
+      { id: 'jetbrains',  name: 'JetBrains Mono', group: 'Mono',    sample: "'JetBrains Mono', monospace" },
+      { id: 'ibmPlexMono',name: 'IBM Plex Mono',  group: 'Mono',    sample: "'IBM Plex Mono', monospace" },
+      { id: 'courier',    name: 'Courier Prime',  group: 'Mono',    sample: "'Courier Prime', monospace" }
+    ];
+
     const PRESET_GROUPS = [
       {
         title: '🌙 Для сна',
@@ -1552,7 +1621,7 @@
         ]
       },
       {
-        title: '👁 Для глаз',
+        title: '☀️ Светлое',
         presets: [
           { name: 'Сепия',        bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
           { name: 'Paper',        bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' },
@@ -1746,6 +1815,27 @@
         });
 
         paletteGrid.appendChild(grid);
+      });
+    }
+
+    function buildFontList() {
+      if (!fontRow) return;
+      fontRow.innerHTML = '';
+      let currentGroup = null;
+      FONTS.forEach(f => {
+        if (f.group !== currentGroup) {
+          currentGroup = f.group;
+          const t = document.createElement('div');
+          t.className = 'font-group-title';
+          t.textContent = currentGroup;
+          fontRow.appendChild(t);
+        }
+        const el = document.createElement('div');
+        el.className = 'font-item';
+        el.dataset.font = f.id;
+        el.innerHTML =
+          '<div class="sample" style="font-family:' + f.sample + '">Aa</div>' + f.name;
+        fontRow.appendChild(el);
       });
     }
 
@@ -2943,7 +3033,6 @@
       return safe.replace(new RegExp('(' + q + ')', 'ig'), '<mark>$1</mark>');
     }
 
-    // ===== Архивы =====
     const COLLECTIONS_KEY = 'reader_collections';
     function loadCollections() {
       try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || '[]'); }
@@ -4016,6 +4105,7 @@
     //  ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     buildPresets();
+    buildFontList();
     applySettings();
     renderLibrary();
 
