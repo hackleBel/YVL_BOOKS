@@ -2,13 +2,16 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#14161a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>YVL BOOKS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
     --bg: #14161a; --bg-header: #191c21; --bg-panel: #1e2228; --bg-input: #191c21;
     --border: #23272e; --border-strong: #2e333b;
@@ -17,84 +20,96 @@
     --col-width: 720px; --line-height: 1.85; --letter-spacing: 0;
     --font-stack: Georgia, 'Times New Roman', serif;
     --mark-color: #e0b84a;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --tap: 44px;
   }
   html, body { height: 100%; background: var(--bg); color: var(--fg);
-    font-family: var(--font-stack); -webkit-tap-highlight-color: transparent; overflow: hidden;
-    -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  #app { display: flex; flex-direction: column; height: 100%; width: 100%; }
+    font-family: var(--font-stack); overflow: hidden;
+    -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+    overscroll-behavior: none; }
+  #app { display: flex; flex-direction: column; height: 100%; width: 100%;
+    padding-left: var(--safe-left); padding-right: var(--safe-right); }
 
-  button { background: var(--border); color: var(--fg); border: 1px solid var(--border-strong);
-    padding: 7px 12px; border-radius: 6px; font-size: 13px;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; cursor: pointer; line-height: 1.2;
-    max-width: 100%; }
+  button, .btn, [role="button"] { background: var(--border); color: var(--fg);
+    border: 1px solid var(--border-strong); padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    cursor: pointer; line-height: 1.2; max-width: 100%; min-height: 36px;
+    touch-action: manipulation; -webkit-user-select: none; user-select: none; }
   button:hover { background: var(--border-strong); }
   button:active { transform: translateY(1px); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
   input[type=file] { display: none; }
 
   #boot-error { display: none; position: fixed; left: 12px; right: 12px; top: 12px;
     background: #3a1a1a; color: #ffd0d0; border: 1px solid #7a2a2a; border-radius: 8px;
-    padding: 12px 14px; font-family: monospace; font-size: 12px; white-space: pre-wrap; z-index: 999; }
-  #file-toast { position: fixed; left: 50%; top: 24px; transform: translateX(-50%);
+    padding: 12px 14px; font-family: monospace; font-size: 12px; white-space: pre-wrap; z-index: 9999; }
+  #file-toast { position: fixed; left: 50%; top: calc(16px + var(--safe-top)); transform: translateX(-50%);
     background: var(--bg-panel); border: 1px solid var(--border-strong); color: var(--fg);
-    border-radius: 10px; padding: 12px 18px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px; z-index: 1000; box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    display: none; max-width: 90vw; text-align: center; line-height: 1.4; word-break: break-word; }
+    border-radius: 10px; padding: 10px 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 13px; z-index: 10000; box-shadow: 0 8px 30px rgba(0,0,0,.5);
+    display: none; max-width: min(90vw, 480px); text-align: center; line-height: 1.4; word-break: break-word; }
   #file-toast.show { display: block; }
   #file-toast.error { background: #3a1a1a; border-color: #7a2a2a; color: #ffd0d0; }
 
   .screen { flex: 1; display: none; overflow: hidden; position: relative; min-height: 0; }
   .screen.active { display: flex; }
 
-  @media (max-width: 900px), (hover: none) and (pointer: coarse) {
+  @media (hover: none) and (pointer: coarse) {
     * { scrollbar-width: none; -ms-overflow-style: none; }
     *::-webkit-scrollbar { width: 0; height: 0; display: none; }
   }
+  .scroll-y { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; min-height: 0; }
 
-  /* ============ ОБЩЕЕ ДЛЯ ТЕКСТА ============ */
   .reader-text { overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto; }
   .reader-text p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; orphans: 2; widows: 2; }
   .reader-text p:first-child { text-indent: 0; }
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
-  /* ============ КЛАССИКА ============ */
+  /* ====== КЛАССИКА ====== */
   #classic-root { flex-direction: column; min-height: 0; }
-  #paste-screen { display: none; flex: 1; flex-direction: column; padding: 16px;
-    align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; }
+  #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
+    align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
   #paste-screen.active { display: flex; }
-  #paste-screen .inner { width: 100%; max-width: 860px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  #paste-screen .inner { width: 100%; max-width: 860px; display: flex; flex-direction: column;
+    min-height: 0; padding-bottom: calc(16px + var(--safe-bottom)); }
   #paste-screen p.lead { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px; color: var(--fg-dim); margin-bottom: 12px; text-align: center; }
-  textarea#input { flex: 1; width: 100%; min-height: 160px; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 14px;
-    font-size: 15px; line-height: 1.6; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    resize: none; outline: none; max-width: 100%; }
+    font-size: 13px; color: var(--fg-dim); margin-bottom: 10px; text-align: center; }
+  textarea#input { width: 100%; height: 160px; min-height: 120px; max-height: 220px;
+    background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px;
+    font-size: 15px; line-height: 1.5; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    resize: vertical; outline: none; max-width: 100%; }
   textarea#input:focus { border-color: var(--accent); }
-  #paste-screen .actions { display: flex; justify-content: center; gap: 10px; margin-top: 14px;
+  #paste-screen .actions { display: flex; justify-content: center; gap: 8px; margin-top: 10px;
     flex-wrap: wrap; flex-shrink: 0; }
-  #library { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+  #paste-screen .actions button { min-height: var(--tap); font-size: 14px; padding: 10px 16px; }
+  #library { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px; }
   #library h3 { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--fg-dim); margin-bottom: 12px; font-weight: normal;
+    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #library-search-wrap { margin-bottom: 12px; display: flex; gap: 6px; align-items: center; }
+  #library-search-wrap { margin-bottom: 10px; display: flex; gap: 6px; align-items: center; }
   #library-search { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 12px;
     font-size: 14px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    max-width: 100%; }
+    max-width: 100%; min-height: 40px; }
   #library-search:focus { border-color: var(--accent); }
   #library-search-clear { background: transparent; border: 1px solid var(--border-strong);
     color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer; line-height: 1;
-    border-radius: 8px; display: none; flex-shrink: 0; }
+    border-radius: 8px; display: none; flex-shrink: 0; min-height: 40px; min-width: 40px; }
   #library-search-wrap.has-value #library-search-clear { display: block; }
 
-  .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
   .book-item { background: var(--bg-panel); border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 12px 14px 12px 34px; display: flex; flex-direction: column;
-    gap: 6px; cursor: pointer; position: relative; transition: border-color .15s, background .15s;
+    border-radius: 10px; padding: 12px 14px 12px 34px; display: flex; flex-direction: column;
+    gap: 5px; cursor: pointer; position: relative; transition: border-color .15s, background .15s;
     touch-action: pan-y; user-select: none; min-width: 0; }
   .book-item:hover { border-color: var(--accent); }
   .book-item .grip { position: absolute; left: 4px; top: 50%; transform: translateY(-50%);
-    width: 22px; height: 38px; display: flex; flex-direction: column; align-items: center;
+    width: 24px; height: 40px; display: flex; flex-direction: column; align-items: center;
     justify-content: center; gap: 3px; cursor: grab; border-radius: 5px; touch-action: none; }
   .book-item .grip span { display: block; width: 13px; height: 2px; border-radius: 1px; background: var(--fg-dim); }
   .book-item .grip:hover { background: var(--border-strong); }
@@ -109,20 +124,20 @@
     font-size: 11px; color: var(--fg-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .book-item .book-collection { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 10px; color: var(--accent); letter-spacing: .3px; text-transform: uppercase;
-    margin-top: 2px; display: inline-block; padding: 1px 6px; border-radius: 8px;
+    margin-top: 2px; display: inline-block; padding: 2px 7px; border-radius: 8px;
     background: rgba(139,145,155,.12); border: 1px solid var(--border-strong);
     cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; align-self: flex-start; }
+    white-space: nowrap; align-self: flex-start; min-height: 22px; }
   .book-item .book-collection:hover { border-color: var(--accent); }
   .book-item .book-collection.none { color: var(--fg-dim); background: transparent; border-style: dashed; }
   .book-item .progress-line { height: 3px; border-radius: 2px; background: var(--border);
     overflow: hidden; margin-top: 2px; }
   .book-item .progress-line span { display: block; height: 100%; background: var(--accent); }
-  .book-item .del, .book-item .rename { position: absolute; top: 8px; background: transparent;
-    border: none; color: var(--fg-dim); font-size: 14px; padding: 2px 6px; line-height: 1;
-    border-radius: 4px; cursor: pointer; }
-  .book-item .del { right: 8px; }
-  .book-item .rename { right: 34px; font-size: 13px; }
+  .book-item .del, .book-item .rename { position: absolute; top: 6px; background: transparent;
+    border: none; color: var(--fg-dim); font-size: 14px; padding: 4px 8px; line-height: 1;
+    border-radius: 6px; cursor: pointer; min-height: 30px; min-width: 30px; }
+  .book-item .del { right: 6px; }
+  .book-item .rename { right: 38px; font-size: 13px; }
   .book-item .del:hover { background: var(--border-strong); color: var(--fg); }
   .book-item .rename:hover { background: var(--border-strong); color: var(--accent); }
   #library-empty, #library-no-results { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -131,12 +146,12 @@
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
 
-  #collections-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
+  #collections-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
   .collection-chip { display: inline-flex; align-items: center; gap: 6px;
     background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 20px;
-    padding: 5px 10px 5px 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    padding: 6px 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 12px; color: var(--fg-mid); cursor: pointer; user-select: none;
-    transition: border-color .15s, color .15s, background .15s; max-width: 100%; }
+    transition: border-color .15s, color .15s, background .15s; max-width: 100%; min-height: 34px; }
   .collection-chip > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .collection-chip:hover { border-color: var(--accent); color: var(--fg); }
   .collection-chip.active { border-color: var(--accent); color: var(--fg); background: var(--border-strong); }
@@ -144,58 +159,76 @@
   .collection-chip.active .count { color: var(--accent); }
   .collection-chip .chip-actions { display: inline-flex; align-items: center; gap: 1px; flex-shrink: 0; }
   .collection-chip .chip-edit, .collection-chip .chip-del { background: transparent; border: none;
-    color: var(--fg-dim); padding: 0 3px; font-size: 11px; line-height: 1; cursor: pointer;
-    border-radius: 3px; flex-shrink: 0; }
+    color: var(--fg-dim); padding: 0 4px; font-size: 11px; line-height: 1; cursor: pointer;
+    border-radius: 3px; flex-shrink: 0; min-height: 24px; min-width: 24px; }
   .collection-chip .chip-edit:hover { color: var(--fg); background: var(--border); }
   .collection-chip .chip-del:hover { color: #ff9a9a; background: #3a1a1a; }
-  .collection-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 5px 12px; }
+  .collection-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
   .collection-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
 
   #collection-menu { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 180px; max-width: min(260px, calc(100vw - 24px)); max-height: 60vh; overflow-y: auto;
+    min-width: 180px; max-width: min(300px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #collection-menu.show { display: block; }
-  #collection-menu .cm-item { padding: 8px 12px; font-size: 13px; color: var(--fg-mid);
-    border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #collection-menu .cm-item { padding: 10px 12px; font-size: 13px; color: var(--fg-mid);
+    border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    min-height: 38px; display: flex; align-items: center; gap: 8px; }
   #collection-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
   #collection-menu .cm-item.active { color: var(--accent); }
   #collection-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
   #collection-menu .cm-item.danger { color: #c97a7a; }
   #collection-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
+  #collection-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
 
-  /* ============ ЧИТАЛКА ============ */
+  /* ====== ШАПКА ЧИТАЛКИ (БЕЗ ИКОНКИ ЮТУБА) ====== */
+  .reader-topbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; padding-top: max(8px, var(--safe-top));
+    background: var(--bg-header); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; min-height: 52px;
+  }
+  .reader-topbar .logo {
+    display: flex; align-items: center; gap: 0;
+    font-weight: 700; font-size: 15px; color: var(--fg);
+    flex-shrink: 0; letter-spacing: -.3px;
+  }
+  .reader-topbar .pct {
+    margin-left: auto; margin-right: 4px;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
+    color: var(--accent); background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 6px 10px; min-width: 64px; text-align: center;
+    cursor: pointer; user-select: none; min-height: 34px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reader-topbar .settings-btn {
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--fg); width: 40px; height: 40px; border-radius: 10px;
+    font-size: 18px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+  }
+  .reader-topbar .settings-btn:hover { background: var(--border-strong); }
+
+  /* ====== ЧИТАЛКА CLASSIC ====== */
   #reader-shell { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   #reader-shell.active { display: flex; }
-  #reader-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 14px;
-    flex-wrap: wrap; flex-shrink: 0; border-bottom: 1px solid var(--border); background: var(--bg-header); }
-  #reader-toolbar .spacer { flex: 1; }
-  .btn-group { display: flex; align-items: center; gap: 4px; background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 3px; }
-  .btn-group button { background: transparent; border: none; padding: 6px 8px;
-    border-radius: 5px; font-size: 13px; }
-  .btn-group button:hover { background: var(--border-strong); }
-  .size-label { font-size: 11px; color: var(--fg-dim); min-width: 34px; text-align: center;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #pct-indicator, #dc-pct-indicator { font-size: 12px; color: var(--accent); background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 6px 10px;
-    min-width: 66px; text-align: center; font-variant-numeric: tabular-nums;
-    font-weight: 600; cursor: pointer; user-select: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #reader-screen { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
-    scrollbar-width: none; -ms-overflow-style: none; min-height: 0; }
-  #reader-screen::-webkit-scrollbar { width: 0; height: 0; }
+    min-height: 0; -webkit-overflow-scrolling: touch; }
   #content { max-width: var(--col-width); margin: 0 auto;
-    padding: 32px 20px 120px;
+    padding: 24px 18px calc(80px + var(--safe-bottom));
     font-size: 20px; line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing); width: 100%; }
 
-  /* ============ TELEGRAM ============ */
+  /* ====== TELEGRAM ====== */
   #tg-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); min-height: 0; }
   #tg-sidebar { width: 340px; flex-shrink: 0; background: var(--bg-header);
     border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
-  #tg-side-head { padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  #tg-side-head { padding: 12px 14px; padding-top: max(12px, var(--safe-top));
+    display: flex; align-items: center; gap: 10px;
     border-bottom: 1px solid var(--border); flex-shrink: 0; }
   #tg-side-head h1 { font-size: 17px; font-weight: 700; flex: 1; color: var(--fg); }
   #tg-search { margin: 8px 12px; background: var(--bg-input); border-radius: 20px;
@@ -203,19 +236,19 @@
     color: var(--fg-dim); min-width: 0; }
   #tg-search input { background: transparent; border: none; outline: none;
     color: var(--fg); font-size: 14px; flex: 1; font-family: inherit; min-width: 0; width: 100%; }
-  #tg-add-book { margin: 0 12px 10px; padding: 9px; background: var(--accent);
+  #tg-add-book { margin: 0 12px 10px; padding: 10px; background: var(--accent);
     color: var(--accent-contrast); border: none; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer; }
+    font-size: 14px; font-weight: 600; cursor: pointer; min-height: var(--tap); }
   #tg-add-book:hover { opacity: .9; }
-  #tg-chat-list { flex: 1; overflow-y: auto; min-height: 0; }
-  .tg-chat-item { display: flex; align-items: center; gap: 12px; padding: 9px 14px;
-    cursor: pointer; transition: background .12s; min-width: 0; }
+  #tg-chat-list { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .tg-chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+    cursor: pointer; transition: background .12s; min-width: 0; min-height: 56px; }
   .tg-chat-item:hover { background: var(--bg-panel); }
   .tg-chat-item.active { background: var(--bg-panel); }
-  .tg-avatar { width: 48px; height: 48px; border-radius: 50%;
+  .tg-avatar { width: 44px; height: 44px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--border-strong));
     display: flex; align-items: center; justify-content: center;
-    color: var(--accent-contrast); font-size: 18px; font-weight: 700;
+    color: var(--accent-contrast); font-size: 17px; font-weight: 700;
     flex-shrink: 0; text-transform: uppercase; }
   .tg-chat-body { flex: 1; min-width: 0; }
   .tg-chat-name { font-size: 14px; color: var(--fg); font-weight: 600;
@@ -225,90 +258,91 @@
 
   #tg-collections-bar { padding: 6px 12px 10px; display: flex; flex-wrap: wrap; gap: 6px;
     border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  #tg-collections-bar .collection-chip { font-size: 12px; padding: 4px 9px 4px 11px; }
+  #tg-collections-bar .collection-chip { font-size: 12px; padding: 5px 10px; }
 
   #tg-chat-area { flex: 1; display: flex; flex-direction: column; min-width: 0;
     position: relative; background: var(--bg); min-height: 0; }
-  #tg-chat-header { padding: 10px 16px; background: var(--bg-header);
-    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; min-height: 56px;
-    flex-shrink: 0; }
+  #tg-chat-header { padding: 10px 14px; padding-top: max(10px, var(--safe-top));
+    background: var(--bg-header); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; min-height: 56px; flex-shrink: 0; }
   #tg-chat-header .name { font-size: 15px; font-weight: 600; }
   #tg-chat-header .sub { font-size: 12px; color: var(--fg-dim); }
-  #tg-chat-header .actions { margin-left: auto; display: flex; gap: 4px; }
+  #tg-chat-header .actions { margin-left: auto; display: flex; gap: 2px; align-items: center; }
   .tg-icon-btn { background: transparent; border: none; color: var(--fg-dim);
-    width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 17px; cursor: pointer; }
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 17px; cursor: pointer; flex-shrink: 0; }
   .tg-icon-btn:hover { background: var(--bg-panel); color: var(--fg); }
   #tg-empty { flex: 1; display: flex; flex-direction: column; align-items: center;
     justify-content: center; color: var(--fg-dim); gap: 12px; text-align: center; padding: 30px; }
   #tg-empty .big { font-size: 44px; }
   #tg-empty p { font-size: 14px; max-width: 340px; line-height: 1.5; }
   #tg-reader-screen { display: none; flex: 1; overflow-y: auto;
-    scrollbar-width: none; -ms-overflow-style: none; background: var(--bg); min-height: 0; }
+    background: var(--bg); min-height: 0; -webkit-overflow-scrolling: touch; }
   #tg-reader-screen.active { display: block; }
-  #tg-reader-screen::-webkit-scrollbar { width: 0; height: 0; }
   #tg-content { max-width: var(--col-width); margin: 0 auto;
-    padding: 20px 18px 120px;
+    padding: 20px 16px calc(100px + var(--safe-bottom));
     font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
     color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
   #tg-content .chapter-title { color: var(--accent); }
-  .tg-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
-    border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
+  .tg-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
+    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
     border: none; font-size: 24px; display: none; align-items: center; justify-content: center;
     box-shadow: 0 4px 16px rgba(0,0,0,.45); cursor: pointer; z-index: 20; }
   #tg-chat-area.has-book .tg-fab { display: flex; }
 
-  /* ============ YOUTUBE ============ */
+  /* ====== YOUTUBE ====== */
   #yt-app { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   #yt-header { min-height: 56px; flex-shrink: 0; display: flex; align-items: center;
-    gap: 12px; padding: 8px 16px; background: var(--bg-header);
-    border-bottom: 1px solid var(--border); position: relative; z-index: 30; flex-wrap: wrap; }
+    gap: 10px; padding: 8px 14px; padding-top: max(8px, var(--safe-top));
+    background: var(--bg-header); border-bottom: 1px solid var(--border);
+    position: relative; z-index: 30; flex-wrap: wrap; }
   #yt-header .yt-logo { display: flex; align-items: center; gap: 8px;
-    font-size: 18px; font-weight: 700; letter-spacing: -.5px; color: var(--fg); flex-shrink: 0; }
+    font-size: 17px; font-weight: 700; letter-spacing: -.5px; color: var(--fg); flex-shrink: 0; }
   #yt-header .yt-logo .play { background: var(--accent); color: var(--accent-contrast);
     width: 30px; height: 21px; border-radius: 6px; display: flex;
     align-items: center; justify-content: center; font-size: 11px; }
   #yt-search-box { flex: 1; max-width: 600px; margin: 0 auto; display: flex; min-width: 0; }
   #yt-search-box input { flex: 1; min-width: 0; background: var(--bg-input);
     border: 1px solid var(--border-strong); border-right: none;
-    border-radius: 20px 0 0 20px; padding: 8px 16px; color: var(--fg);
+    border-radius: 20px 0 0 20px; padding: 9px 14px; color: var(--fg);
     font-size: 14px; outline: none; font-family: inherit; width: 100%; }
   #yt-search-box input:focus { border-color: var(--accent); }
   #yt-search-box button { background: var(--bg-panel); border: 1px solid var(--border-strong);
-    border-radius: 0 20px 20px 0; padding: 0 16px; color: var(--fg); cursor: pointer; font-size: 15px;
-    flex-shrink: 0; }
+    border-radius: 0 20px 20px 0; padding: 0 14px; color: var(--fg); cursor: pointer; font-size: 15px;
+    flex-shrink: 0; min-height: 40px; }
   #yt-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
   #yt-sidebar { width: 220px; flex-shrink: 0; background: var(--bg);
-    padding: 10px 8px; overflow-y: auto; border-right: 1px solid var(--border); min-height: 0; }
-  .yt-side-item { display: flex; align-items: center; gap: 16px; padding: 9px 12px;
+    padding: 10px 8px; overflow-y: auto; border-right: 1px solid var(--border);
+    min-height: 0; -webkit-overflow-scrolling: touch; }
+  .yt-side-item { display: flex; align-items: center; gap: 14px; padding: 10px 12px;
     border-radius: 9px; font-size: 14px; color: var(--fg); cursor: pointer; margin-bottom: 2px;
-    min-width: 0; }
+    min-width: 0; min-height: 44px; }
   .yt-side-item:hover { background: var(--bg-panel); }
   .yt-side-item.active { background: var(--bg-panel); font-weight: 600; }
   .yt-side-item .icon { font-size: 19px; width: 24px; text-align: center; flex-shrink: 0; }
   .yt-side-item > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .yt-side-sep { height: 1px; background: var(--border); margin: 10px 6px; }
-  #yt-main { flex: 1; overflow-y: auto; padding: 16px 20px; position: relative; background: var(--bg);
-    min-height: 0; min-width: 0; }
-  #yt-chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 14px;
+  #yt-main { flex: 1; overflow-y: auto; padding: 14px 16px; position: relative; background: var(--bg);
+    min-height: 0; min-width: 0; -webkit-overflow-scrolling: touch; }
+  #yt-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px;
     margin-bottom: 4px; scrollbar-width: none; }
   #yt-chips::-webkit-scrollbar { display: none; }
   .yt-chip { flex-shrink: 0; background: var(--bg-panel); border: 1px solid var(--border-strong);
-    color: var(--fg); border-radius: 8px; padding: 7px 13px; font-size: 13px;
-    cursor: pointer; white-space: nowrap; }
+    color: var(--fg); border-radius: 8px; padding: 8px 14px; font-size: 13px;
+    cursor: pointer; white-space: nowrap; min-height: 36px; }
   .yt-chip.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-  #yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 18px 14px; }
+  #yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px 14px; }
   .yt-card { cursor: pointer; display: flex; flex-direction: column; min-width: 0; }
   .yt-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
-    display: flex; align-items: center; justify-content: center; padding: 18px;
+    display: flex; align-items: center; justify-content: center; padding: 16px;
     background: linear-gradient(135deg, var(--bg-panel), var(--bg-header));
     border: 1px solid var(--border); position: relative; }
   .yt-thumb .t { color: var(--fg); font-size: 15px; font-weight: 600;
     line-height: 1.3; text-align: center; display: -webkit-box;
     -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
   .yt-thumb .dur { position: absolute; right: 8px; bottom: 8px;
-    background: rgba(0,0,0,.8); color: #fff; font-size: 11px; padding: 2px 5px;
+    background: rgba(0,0,0,.8); color: #fff; font-size: 11px; padding: 2px 6px;
     border-radius: 4px; font-weight: 600; }
   .yt-card-body { display: flex; gap: 12px; padding-top: 10px; min-width: 0; }
   .yt-card-avatar { width: 36px; height: 36px; border-radius: 50%;
@@ -322,35 +356,35 @@
   #yt-watch { position: absolute; inset: 0; background: var(--bg);
     display: none; flex-direction: column; z-index: 25; overflow: hidden; }
   #yt-watch.show { display: flex; }
-  #yt-watch-top { display: flex; align-items: center; gap: 14px; padding: 10px 16px;
+  #yt-watch-top { display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    padding-top: max(8px, var(--safe-top));
     background: var(--bg-header); border-bottom: 1px solid var(--border); flex-shrink: 0;
     flex-wrap: nowrap; min-height: 56px; }
   #yt-watch-top .back { background: transparent; border: none; color: var(--fg);
-    font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 50%; flex-shrink: 0; }
+    font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 50%; flex-shrink: 0;
+    min-width: 40px; min-height: 40px; }
   #yt-watch-top .back:hover { background: var(--bg-panel); }
-  #yt-watch-top .title { font-size: 16px; font-weight: 600;
+  #yt-watch-top .title { font-size: 15px; font-weight: 600;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
-  #yt-watch-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
-    min-height: 0; }
-  #yt-watch-scroll::-webkit-scrollbar { width: 0; height: 0; }
-  #yt-watch-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  #yt-watch-scroll { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+  #yt-watch-container { max-width: 1100px; margin: 0 auto; padding: 16px; }
   #yt-reader-content { font-family: var(--font-stack); font-size: 19px; line-height: 1.75;
     color: var(--fg); letter-spacing: var(--letter-spacing);
-    max-width: var(--col-width); margin: 0 auto; padding: 0 8px; width: 100%; }
-  #yt-add-mark-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
-    border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
+    max-width: var(--col-width); margin: 0 auto; padding: 0 8px calc(80px + var(--safe-bottom)); width: 100%; }
+  #yt-add-mark-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
+    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
     border: none; font-size: 24px; display: none; align-items: center;
     justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,.45);
     cursor: pointer; z-index: 20; }
   #yt-watch.show #yt-add-mark-fab { display: flex; }
 
-  /* ============ DISCORD (на переменных — палитра работает) ============ */
+  /* ====== DISCORD ====== */
   #dc-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); min-height: 0;
     font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: var(--fg); }
   #dc-servers { width: 72px; flex-shrink: 0; background: var(--bg-header);
     display: flex; flex-direction: column; align-items: center; padding: 12px 0;
-    gap: 8px; overflow-y: auto; min-height: 0; }
+    gap: 8px; overflow-y: auto; min-height: 0; padding-top: max(12px, var(--safe-top)); }
   .dc-server-icon { width: 48px; height: 48px; border-radius: 16px;
     background: var(--bg-panel); display: flex; align-items: center; justify-content: center;
     color: var(--fg); font-size: 18px; font-weight: 700; cursor: pointer;
@@ -367,49 +401,50 @@
 
   #dc-channels { width: 240px; flex-shrink: 0; background: var(--bg-panel);
     display: flex; flex-direction: column; min-height: 0; }
-  #dc-channels-head { padding: 12px 16px; border-bottom: 1px solid var(--bg-header);
+  #dc-channels-head { padding: 12px 16px; padding-top: max(12px, var(--safe-top));
+    border-bottom: 1px solid var(--bg-header);
     box-shadow: 0 1px 0 rgba(0,0,0,.2); flex-shrink: 0; cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; }
+    display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
   #dc-channels-head:hover { background: var(--border); }
   #dc-channels-head .nm { font-size: 15px; font-weight: 600; color: var(--fg);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #dc-channels-search { margin: 8px; padding: 5px 10px; background: var(--bg-header);
-    border-radius: 4px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  #dc-channels-search { margin: 8px; padding: 8px 10px; background: var(--bg-header);
+    border-radius: 4px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 40px; }
   #dc-channels-search input { background: transparent; border: none; outline: none;
     color: var(--fg); font-size: 14px; flex: 1; min-width: 0; font-family: inherit; }
   #dc-channels-search input::placeholder { color: var(--fg-dim); }
-  #dc-channels-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 0; }
+  #dc-channels-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 0; -webkit-overflow-scrolling: touch; }
   .dc-ch-category { font-size: 11px; font-weight: 700; text-transform: uppercase;
     color: var(--fg-dim); padding: 16px 8px 4px; letter-spacing: .02em;
     display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
   .dc-ch-category:first-child { padding-top: 4px; }
-  .dc-ch-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+  .dc-ch-item { display: flex; align-items: center; gap: 6px; padding: 8px;
     border-radius: 4px; color: var(--fg-mid); font-size: 15px; font-weight: 500;
-    cursor: pointer; margin-bottom: 1px; min-width: 0; }
+    cursor: pointer; margin-bottom: 1px; min-width: 0; min-height: 40px; }
   .dc-ch-item:hover { background: var(--border); color: var(--fg); }
   .dc-ch-item.active { background: var(--border-strong); color: var(--fg); }
   .dc-ch-item .hash { font-size: 18px; font-weight: 400; color: var(--fg-dim); flex-shrink: 0; }
   .dc-ch-item.active .hash { color: var(--fg); }
   .dc-ch-item .ch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     flex: 1; min-width: 0; }
-  .dc-add-book-btn { margin: 8px; padding: 8px; background: var(--accent); color: var(--accent-contrast);
+  .dc-add-book-btn { margin: 8px; padding: 10px; background: var(--accent); color: var(--accent-contrast);
     border: none; border-radius: 4px; font-size: 14px; font-weight: 600;
-    cursor: pointer; flex-shrink: 0; }
+    cursor: pointer; flex-shrink: 0; min-height: var(--tap); }
   .dc-add-book-btn:hover { opacity: .9; }
 
   #dc-chat { flex: 1; display: flex; flex-direction: column; min-width: 0;
     background: var(--bg); min-height: 0; position: relative; }
-  #dc-chat-header { min-height: 48px; padding: 0 16px; background: var(--bg);
-    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+  #dc-chat-header { min-height: 52px; padding: 0 14px; padding-top: max(0px, var(--safe-top));
+    background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px;
     flex-shrink: 0; box-shadow: 0 1px 0 rgba(0,0,0,.1); }
   #dc-chat-header .hash-big { font-size: 24px; color: var(--fg-dim); }
   #dc-chat-header .nm { font-size: 16px; font-weight: 700; color: var(--fg);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-  #dc-chat-header .actions { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
+  #dc-chat-header .actions { display: flex; gap: 2px; flex-shrink: 0; align-items: center; }
   #dc-chat-header .dc-icon-btn { background: transparent; border: none;
-    color: var(--fg-mid); width: 32px; height: 32px; border-radius: 4px;
+    color: var(--fg-mid); width: 38px; height: 38px; border-radius: 4px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; cursor: pointer; }
+    font-size: 18px; cursor: pointer; flex-shrink: 0; }
   #dc-chat-header .dc-icon-btn:hover { background: var(--bg-panel); color: var(--fg); }
   #dc-pct-indicator { margin-right: 4px; }
   #dc-empty { flex: 1; display: flex; flex-direction: column; align-items: center;
@@ -418,42 +453,40 @@
   #dc-empty h2 { color: var(--fg); font-size: 20px; font-weight: 700; }
   #dc-empty p { font-size: 14px; max-width: 360px; line-height: 1.5; }
   #dc-reader-screen { display: none; flex: 1; overflow-y: auto;
-    scrollbar-width: thin; min-height: 0; background: var(--bg); }
-  #dc-reader-screen::-webkit-scrollbar { width: 16px; }
-  #dc-reader-screen::-webkit-scrollbar-track { background: var(--bg-panel); }
-  #dc-reader-screen::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; border: 4px solid var(--bg-panel); }
+    min-height: 0; background: var(--bg); -webkit-overflow-scrolling: touch; }
   #dc-reader-screen.active { display: block; }
   #dc-content { max-width: var(--col-width); margin: 0 auto;
-    padding: 20px 18px 120px;
+    padding: 20px 16px calc(100px + var(--safe-bottom));
     font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
     color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
   #dc-content .chapter-title { color: var(--accent); font-weight: 700; }
   #dc-content p { color: var(--fg); }
-  .dc-fab { position: absolute; right: 20px; bottom: 20px; width: 50px; height: 50px;
-    border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
+  .dc-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
+    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
     border: none; font-size: 22px; display: none; align-items: center; justify-content: center;
     box-shadow: 0 4px 16px rgba(0,0,0,.5); cursor: pointer; z-index: 20; }
   #dc-chat.has-book .dc-fab { display: flex; }
   .dc-fab:hover { opacity: .9; }
 
-  /* ============ ПАНЕЛИ ============ */
+  /* ====== ПАНЕЛИ ====== */
   .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
     z-index: 300; transform: translateX(100%); transition: transform .25s ease;
     display: flex; flex-direction: column;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
   .panel.open { transform: translateX(0); }
-  .panel-header { padding: 16px 20px; padding-top: max(16px, env(safe-area-inset-top));
-    border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;
-    align-items: center; font-size: 13px; color: var(--accent);
-    letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; gap: 8px; }
-  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; }
+  .panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase;
+    flex-shrink: 0; gap: 8px; min-height: 52px; }
+  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
   .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
   .panel-overlay.open { display: block; }
 
-  .toc-item { padding: 10px 20px; font-size: 13px; color: var(--fg-mid);
+  .toc-item { padding: 12px 18px; font-size: 13px; color: var(--fg-mid);
     cursor: pointer; line-height: 1.4; border-left: 2px solid transparent;
-    display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+    display: flex; justify-content: space-between; gap: 10px; align-items: baseline; min-height: 44px; }
   .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
   .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
   .toc-item .toc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -464,51 +497,53 @@
   #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
 
   #marks-header-actions { display: flex; gap: 6px; }
-  #marks-header button { padding: 4px 10px; font-size: 12px; }
+  #marks-header button { padding: 6px 10px; font-size: 12px; min-height: 34px; }
   #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   #marks-search { width: 100%; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 8px 12px;
-    font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 9px 12px;
+    font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    min-height: 38px; }
   #marks-search:focus { border-color: var(--accent); }
-  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; }
-  .mark-item { padding: 12px 20px; border-bottom: 1px solid var(--border);
+  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .mark-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
     cursor: pointer; position: relative; transition: background .15s; }
   .mark-item:hover { background: var(--bg-panel); }
   .mark-item .mark-title { font-size: 12px; color: var(--fg-dim);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-right: 28px; }
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-right: 30px; }
   .mark-item .mark-text { font-size: 13px; color: var(--fg); line-height: 1.4;
     margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3;
     -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
   .mark-item .mark-date { font-size: 10px; color: var(--fg-dim); }
   .mark-item .mark-note { font-size: 12px; color: var(--mark-color);
     background: rgba(224,184,74,.08); border-left: 2px solid var(--mark-color);
-    padding: 5px 8px; border-radius: 3px; margin: 6px 0; line-height: 1.35;
+    padding: 6px 8px; border-radius: 3px; margin: 6px 0; line-height: 1.35;
     word-break: break-word; white-space: pre-wrap; }
   .mark-item .mark-del { position: absolute; top: 10px; right: 10px;
-    background: transparent; border: none; color: var(--fg-dim); font-size: 13px;
-    padding: 4px 8px; line-height: 1; border-radius: 4px; cursor: pointer; }
+    background: transparent; border: none; color: var(--fg-dim); font-size: 14px;
+    padding: 6px 10px; line-height: 1; border-radius: 4px; cursor: pointer;
+    min-height: 32px; min-width: 32px; }
   .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
   #marks-empty { padding: 24px 20px; font-size: 13px; color: var(--fg-dim);
     text-align: center; line-height: 1.5; }
 
   #search-panel { width: min(400px, 100vw); }
-  #search-input-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border);
+  #search-input-wrap { padding: 10px 14px; border-bottom: 1px solid var(--border);
     display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
   #book-search-input { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 10px 12px; font-size: 14px; outline: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 100%; width: 100%; }
+    padding: 9px 12px; font-size: 14px; outline: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 100%; width: 100%; min-height: 38px; }
   #book-search-input:focus { border-color: var(--accent); }
   #book-search-clear { background: transparent; border: 1px solid var(--border-strong);
     color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer;
-    line-height: 1; border-radius: 8px; display: none; flex-shrink: 0; }
+    line-height: 1; border-radius: 8px; display: none; flex-shrink: 0; min-width: 38px; min-height: 38px; }
   #search-input-wrap.has-value #book-search-clear { display: block; }
-  #search-meta { padding: 8px 16px 12px; font-size: 12px; color: var(--fg-dim);
+  #search-meta { padding: 8px 14px 12px; font-size: 12px; color: var(--fg-dim);
     font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); min-height: 20px;
     flex-shrink: 0; }
   #search-meta strong { color: var(--accent); font-weight: 600; }
-  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 0; }
-  .search-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
+  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .search-item { padding: 12px 16px; border-bottom: 1px solid var(--border);
     cursor: pointer; position: relative; transition: background .15s; }
   .search-item:hover { background: var(--bg-panel); }
   .search-item.active { background: var(--bg-panel); border-left: 2px solid var(--accent); }
@@ -519,66 +554,66 @@
     text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
   .search-item .s-pct { font-size: 12px; color: var(--accent);
     font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;
-    background: rgba(139,145,155,.12); padding: 2px 7px; border-radius: 8px; }
+    background: rgba(139,145,155,.12); padding: 2px 8px; border-radius: 8px; }
   .search-item.active .s-pct { background: var(--accent); color: var(--bg); }
   .search-item .s-text { font-size: 12px; color: var(--fg-mid);
     line-height: 1.45; word-break: break-word; }
   .search-item .s-text mark { background: var(--accent); color: var(--accent-contrast);
     border-radius: 2px; padding: 0 2px; }
-  #search-empty { padding: 24px 18px; font-size: 13px; color: var(--fg-dim);
+  #search-empty { padding: 24px 16px; font-size: 13px; color: var(--fg-dim);
     text-align: center; line-height: 1.5; }
   .find-hit { background: rgba(139,145,155,.35); border-radius: 3px;
     box-shadow: 0 0 0 1px var(--accent); transition: background .4s; }
 
-  /* ============ МЕНЮ ============ */
   #menu-pop { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
     min-width: 220px; max-width: calc(100vw - 24px);
     box-shadow: 0 12px 40px rgba(0,0,0,.55);
     display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #menu-pop.show { display: block; }
-  #menu-pop .mi { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
-    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+  #menu-pop .mi { padding: 10px 12px; font-size: 13px; color: var(--fg-mid);
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    min-height: 40px; }
   #menu-pop .mi:hover { background: var(--border-strong); color: var(--fg); }
   #menu-pop .mi.active { color: var(--accent); }
   #menu-pop .sep { height: 1px; background: var(--border); margin: 6px 4px; }
   #menu-pop .group-title { font-size: 10px; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--fg-dim); padding: 8px 12px 4px; font-weight: 600; }
 
-  /* ============ NOTE EDITOR ============ */
   #note-editor { position: fixed; inset: 0; background: rgba(0,0,0,.55);
     z-index: 340; display: none; align-items: center; justify-content: center;
-    padding: 20px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+    padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #note-editor.open { display: flex; }
   #note-editor .box { width: 100%; max-width: 480px; background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 12px; padding: 18px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+    border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6); max-height: 90vh; display: flex; flex-direction: column; }
   #note-editor h4 { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--mark-color); margin-bottom: 10px; font-weight: normal; }
+    color: var(--mark-color); margin-bottom: 10px; font-weight: normal; flex-shrink: 0; }
   #note-editor .preview { font-size: 12px; color: var(--fg-dim);
     margin-bottom: 12px; line-height: 1.4; max-height: 60px; overflow: hidden;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    word-break: break-word; }
+    word-break: break-word; flex-shrink: 0; }
   #note-editor textarea { width: 100%; min-height: 90px; background: var(--bg-input);
     color: var(--fg); border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 10px; font-size: 14px; line-height: 1.5; font-family: inherit;
     resize: vertical; outline: none; max-width: 100%; }
   #note-editor textarea:focus { border-color: var(--accent); }
-  #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-  #note-editor .actions button { padding: 8px 14px; font-size: 13px; }
+  #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-shrink: 0; }
+  #note-editor .actions button { padding: 10px 16px; font-size: 13px; min-height: var(--tap); }
   #note-editor .actions .primary { background: var(--mark-color); color: var(--bg);
     border-color: var(--mark-color); }
 
-  /* ============ DROP ============ */
   #drop-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65);
     display: none; align-items: center; justify-content: center; z-index: 500;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 18px; color: var(--fg); pointer-events: none; border: 2px dashed var(--accent); }
+    font-size: 18px; color: var(--fg); pointer-events: none; border: 2px dashed var(--accent);
+    padding: 20px; text-align: center; }
   #drop-overlay.show { display: flex; }
 
-  /* ============ ПРОГРЕСС ============ */
   #progress-bar { position: fixed; top: 0; left: 0; height: 2px;
     background: var(--accent); width: 0%; z-index: 100; }
+
+  /* ====== ПОЛЗУНОК ПРОКРУТКИ (ТОЛЬКО ПК) ====== */
   #side-progress { position: fixed; right: 6px; top: 60px; bottom: 40px;
     width: 22px; background: transparent; z-index: 90; cursor: pointer;
     opacity: 0; transition: opacity .35s; touch-action: none; }
@@ -586,20 +621,28 @@
   #side-progress::before { content: ""; position: absolute; right: 9px; top: 0; bottom: 0;
     width: 3px; background: var(--border); border-radius: 2px; }
   #side-thumb { position: absolute; right: 6px; width: 9px; height: 40px;
-    background: var(--accent); border-radius: 5px; opacity: .6; }
+    background: var(--accent); border-radius: 5px; opacity: .6;
+    transform: translateY(0); transition: transform .08s linear; }
   #side-progress.dragging #side-thumb { opacity: 1; }
   #side-marks { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; pointer-events: none; }
   .side-mark { position: absolute; right: 3px; width: 10px; height: 3px;
     background: var(--mark-color); border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%); }
 
-  /* ============ МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ ============ */
+  /* Скрываем ползунок на планшетах и телефонах */
+  @media (max-width: 1100px) {
+    #side-progress { display: none !important; }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    #side-progress { display: none !important; }
+  }
+
   #mobile-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-panel);
     border-top: 1px solid var(--border-strong); border-radius: 18px 18px 0 0;
     box-shadow: 0 -12px 40px rgba(0,0,0,.55); z-index: 400; transform: translateY(110%);
-    transition: transform .28s ease; padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
-    display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    max-height: 80vh; overflow-y: auto; }
+    transition: transform .28s ease; padding: 10px 16px calc(16px + var(--safe-bottom));
+    display: block; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   #mobile-sheet.open { transform: translateY(0); }
   #sheet-handle { width: 44px; height: 4px; background: var(--border-strong);
     border-radius: 4px; margin: 4px auto 12px; }
@@ -608,9 +651,10 @@
     color: var(--fg-dim); font-weight: normal; margin-bottom: 8px; }
   .sheet-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; min-width: 0; }
+  .sheet-row .btn-group button { min-height: 40px; flex: 1; }
   .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .sheet-grid button { padding: 12px; font-size: 14px; border-radius: 10px;
-    background: var(--bg-input); border: 1px solid var(--border-strong); }
+  .sheet-grid button { padding: 14px 10px; font-size: 14px; border-radius: 10px;
+    background: var(--bg-input); border: 1px solid var(--border-strong); min-height: var(--tap); }
   .sheet-grid button.wide { grid-column: 1 / -1; }
   .sheet-grid button.mark-btn { color: var(--mark-color); border-color: rgba(224,184,74,.4); }
   #sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45);
@@ -619,22 +663,22 @@
   .m-pct-value { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums;
     font-weight: 600; min-width: 62px; text-align: right; cursor: pointer;
-    user-select: none; padding: 4px 6px; border-radius: 6px; transition: background .15s; }
+    user-select: none; padding: 6px; border-radius: 6px; transition: background .15s; }
   .m-pct-value:hover { background: var(--border-strong); }
   .m-pct-track { flex: 1; height: 5px; background: var(--border);
     border-radius: 3px; overflow: hidden; margin-left: 10px; min-width: 60px; }
   .m-pct-fill { display: block; height: 100%; width: 0%; background: var(--accent);
     transition: width .15s linear; }
 
-  /* ============ МОДАЛКА ПАЛИТРЫ/ШРИФТОВ ============ */
+  /* ====== МОДАЛКА НАСТРОЕК ====== */
   #settings-modal { position: fixed; inset: 0; z-index: 450; display: none;
     background: rgba(0,0,0,.55); align-items: center; justify-content: center;
-    padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+    padding: 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #settings-modal.open { display: flex; }
   #settings-modal .card { width: 100%; max-width: 480px; max-height: 88vh;
-    overflow-y: auto; border-radius: 14px; }
+    overflow-y: auto; border-radius: 14px; -webkit-overflow-scrolling: touch; }
   #settings-modal .card-header { display: flex; align-items: center;
-    justify-content: space-between; padding: 16px 18px; position: sticky; top: 0;
+    justify-content: space-between; padding: 14px 16px; position: sticky; top: 0;
     z-index: 2; background: inherit; }
   #settings-modal .card-header h3 { font-size: 15px; font-weight: 700; }
   #settings-modal .card-body { padding: 0 0 16px; }
@@ -646,9 +690,9 @@
     border-bottom: 1px solid var(--border); }
   body.style-classic .cl-settings-group-title { font-size: 11px; letter-spacing: 1.5px;
     text-transform: uppercase; color: var(--fg-dim); font-weight: 600;
-    padding: 14px 18px 6px; }
+    padding: 14px 16px 6px; }
   body.style-classic .cl-settings-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-classic .cl-settings-row:hover { background: var(--bg-panel); }
   body.style-classic .cl-settings-row.active { background: var(--bg-panel); }
   body.style-classic .cl-settings-row .sw { width: 36px; height: 36px;
@@ -660,17 +704,17 @@
   body.style-classic .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
   body.style-classic .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
   body.style-classic .cl-settings-row .check { color: var(--accent); font-size: 16px; }
-  body.style-classic .cl-color-rows { padding: 4px 18px 10px; }
+  body.style-classic .cl-color-rows { padding: 4px 16px 10px; }
   body.style-classic .cl-color-row { display: flex; align-items: center;
     justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); }
+    border-bottom: 1px solid var(--border); min-height: 52px; }
   body.style-classic .cl-color-row:last-child { border-bottom: none; }
   body.style-classic .cl-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-classic .cl-color-row input[type=color] { width: 40px; height: 32px;
+  body.style-classic .cl-color-row input[type=color] { width: 44px; height: 36px;
     border: 1px solid var(--border-strong); border-radius: 8px;
     background: var(--bg); padding: 2px; cursor: pointer; }
   body.style-classic .cl-font-preview { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-classic .cl-font-preview:hover { background: var(--bg-panel); }
   body.style-classic .cl-font-preview .aa { width: 40px; height: 40px;
     border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border);
@@ -686,9 +730,9 @@
   body.style-telegram #settings-modal .card-header { background: var(--bg-header);
     border-bottom: 1px solid var(--border); }
   body.style-telegram .tg-settings-group-title { font-size: 11px; font-weight: 600;
-    color: var(--fg-dim); padding: 14px 18px 6px; letter-spacing: .3px; }
+    color: var(--fg-dim); padding: 14px 16px 6px; letter-spacing: .3px; }
   body.style-telegram .tg-settings-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-telegram .tg-settings-row:hover { background: var(--bg-panel); }
   body.style-telegram .tg-settings-row.active { background: var(--bg-panel); }
   body.style-telegram .tg-settings-row .sw { width: 36px; height: 36px;
@@ -700,17 +744,17 @@
   body.style-telegram .tg-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
   body.style-telegram .tg-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
   body.style-telegram .tg-settings-row .check { color: var(--accent); font-size: 16px; }
-  body.style-telegram .tg-color-rows { padding: 4px 18px 10px; }
+  body.style-telegram .tg-color-rows { padding: 4px 16px 10px; }
   body.style-telegram .tg-color-row { display: flex; align-items: center;
     justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); }
+    border-bottom: 1px solid var(--border); min-height: 52px; }
   body.style-telegram .tg-color-row:last-child { border-bottom: none; }
   body.style-telegram .tg-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-telegram .tg-color-row input[type=color] { width: 40px; height: 32px;
+  body.style-telegram .tg-color-row input[type=color] { width: 44px; height: 36px;
     border: 1px solid var(--border-strong); border-radius: 8px;
     background: var(--bg); padding: 2px; cursor: pointer; }
   body.style-telegram .tg-font-preview { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-telegram .tg-font-preview:hover { background: var(--bg-panel); }
   body.style-telegram .tg-font-preview .aa { width: 40px; height: 40px;
     border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border);
@@ -727,13 +771,13 @@
     border-bottom: 1px solid var(--border); }
   body.style-youtube #settings-modal .card-header h3 { font-size: 16px; font-weight: 700; }
   body.style-youtube .yt-settings-group-title { font-size: 15px; font-weight: 700;
-    color: var(--fg); padding: 14px 18px 10px; }
+    color: var(--fg); padding: 14px 16px 10px; }
   body.style-youtube .yt-settings-grid { display: grid;
-    grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 18px 12px; }
+    grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px 12px; }
   body.style-youtube .yt-settings-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
   body.style-youtube .yt-tile { background: var(--bg-panel); border: 1px solid var(--border);
     border-radius: 10px; padding: 8px 6px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 80px; }
   body.style-youtube .yt-tile:hover { background: var(--border-strong); }
   body.style-youtube .yt-tile.active { border-color: var(--fg); }
   body.style-youtube .yt-tile .sw { width: 100%; height: 56px; border-radius: 8px;
@@ -744,7 +788,7 @@
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
   body.style-youtube .yt-font-tile { background: var(--bg-panel); border: 1px solid var(--border);
     border-radius: 10px; padding: 12px 8px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; }
   body.style-youtube .yt-font-tile:hover { background: var(--border-strong); }
   body.style-youtube .yt-font-tile.active { border-color: var(--fg); }
   body.style-youtube .yt-font-tile .aa { font-size: 24px; line-height: 1; }
@@ -760,14 +804,14 @@
     font-size: 16px; font-weight: 700; }
   body.style-discord .dc-settings-group-title { font-size: 12px; font-weight: 700;
     text-transform: uppercase; color: var(--fg-dim); letter-spacing: .02em;
-    padding: 16px 18px 8px; }
+    padding: 16px 16px 8px; }
   body.style-discord .dc-settings-grid { display: grid;
-    grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 18px 12px; }
+    grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 16px 12px; }
   body.style-discord .dc-settings-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
   body.style-discord .dc-tile { background: var(--bg-header); border: 2px solid transparent;
     border-radius: 8px; padding: 8px 6px; cursor: pointer; text-align: center;
     display: flex; flex-direction: column; align-items: center; gap: 6px;
-    transition: border-color .15s; }
+    transition: border-color .15s; min-height: 80px; }
   body.style-discord .dc-tile:hover { background: var(--border); }
   body.style-discord .dc-tile.active { border-color: var(--accent); }
   body.style-discord .dc-tile .sw { width: 100%; height: 52px; border-radius: 6px;
@@ -776,17 +820,17 @@
     border: 1px solid var(--bg); }
   body.style-discord .dc-tile .nm { font-size: 11px; color: var(--fg); font-weight: 600;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  body.style-discord .dc-color-rows { padding: 4px 18px 10px; }
+  body.style-discord .dc-color-rows { padding: 4px 16px 10px; }
   body.style-discord .dc-color-row { display: flex; align-items: center;
     justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); }
+    border-bottom: 1px solid var(--border); min-height: 52px; }
   body.style-discord .dc-color-row:last-child { border-bottom: none; }
   body.style-discord .dc-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-discord .dc-color-row input[type=color] { width: 40px; height: 32px;
+  body.style-discord .dc-color-row input[type=color] { width: 44px; height: 36px;
     border: 1px solid var(--bg); border-radius: 6px;
     background: var(--bg-header); padding: 2px; cursor: pointer; }
   body.style-discord .dc-font-preview { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-discord .dc-font-preview:hover { background: var(--border); }
   body.style-discord .dc-font-preview.active { background: var(--border-strong); }
   body.style-discord .dc-font-preview .aa { width: 40px; height: 40px;
@@ -799,7 +843,7 @@
   body.style-discord .dc-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
   body.style-discord .dc-font-preview.active .nm { color: var(--accent); }
   body.style-discord .dc-reset-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 18px; cursor: pointer; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   body.style-discord .dc-reset-row:hover { background: var(--border); }
   body.style-discord .dc-reset-row .sw { width: 36px; height: 36px;
     border-radius: 50%; background: var(--bg-header); border: 1px solid var(--bg);
@@ -807,16 +851,81 @@
   body.style-discord .dc-reset-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
   body.style-discord .dc-reset-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
 
-  /* ============ МОБИЛЬНЫЕ ПРАВИЛА ============ */
-  @media (max-width: 640px) {
-    html, body { overscroll-behavior: none; }
-    #reader-toolbar .btn-group,
-    #reader-toolbar > button:not(#btn-menu),
-    #reader-toolbar .spacer { display: none !important; }
-    #reader-toolbar { padding: 8px 12px; }
-    #btn-menu { display: inline-flex !important; }
+  /* ====== INLINE-ДИАЛОГ ====== */
+  #inline-dialog { position: fixed; inset: 0; z-index: 600; display: none;
+    background: rgba(0,0,0,.55); align-items: center; justify-content: center;
+    padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+  #inline-dialog.open { display: flex; }
+  #inline-dialog .dlg { width: 100%; max-width: 420px; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  #inline-dialog .dlg h4 { font-size: 13px; color: var(--fg); margin-bottom: 10px; font-weight: 600; }
+  #inline-dialog .dlg input, #inline-dialog .dlg textarea {
+    width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; outline: none; font-family: inherit; }
+  #inline-dialog .dlg textarea { min-height: 100px; resize: vertical; }
+  #inline-dialog .dlg input:focus, #inline-dialog .dlg textarea:focus { border-color: var(--accent); }
+  #inline-dialog .dlg .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  #inline-dialog .dlg .actions button { min-height: var(--tap); padding: 10px 16px; font-size: 13px; }
+  #inline-dialog .dlg .actions .primary { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+  #inline-dialog .dlg .actions .danger { background: #7a2a2a; border-color: #7a2a2a; color: #ffd0d0; }
 
-    #content { padding: 20px 14px calc(100px + env(safe-area-inset-bottom)); font-size: 18px; }
+  /* ====== АДАПТИВ ====== */
+  @media (max-width: 1100px) {
+    #yt-sidebar { width: 180px; }
+    #dc-channels { width: 220px; }
+    #tg-sidebar { width: 300px; }
+
+    #tg-chat-header, #yt-header, #yt-watch-top, #dc-chat-header,
+    #tg-side-head, #dc-channels-head {
+      flex-wrap: wrap;
+      min-height: 56px;
+      padding-top: max(10px, var(--safe-top)) !important;
+      overflow: visible;
+    }
+    #tg-chat-header > *, #yt-header > *, #yt-watch-top > *, #dc-chat-header > * { flex-shrink: 0; }
+    #yt-header #yt-search-box { flex-basis: 100%; order: 3; max-width: 100%; }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    #tg-sidebar { width: 280px; }
+    #dc-channels { width: 210px; }
+    #yt-sidebar { width: 170px; }
+    .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .tg-icon-btn { width: 42px; height: 42px; font-size: 18px; }
+    #dc-chat-header .dc-icon-btn { width: 42px; height: 42px; font-size: 18px; }
+    #yt-watch-top .back { min-width: 44px; min-height: 44px; }
+  }
+
+  @media (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+    #tg-sidebar { width: 320px; }
+    #dc-channels { width: 230px; }
+    #yt-sidebar { width: 200px; }
+  }
+
+  @media (max-width: 900px) {
+    #tg-sidebar { width: 260px; }
+    #dc-channels { width: 200px; }
+    #dc-servers { width: 64px; }
+    .dc-server-icon { width: 44px; height: 44px; }
+    #yt-sidebar { width: 160px; }
+    .yt-side-item { gap: 10px; padding: 9px 10px; font-size: 13px; }
+    .yt-side-item .icon { font-size: 17px; width: 20px; }
+    .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  }
+
+  @media (max-width: 768px) {
+    :root { --col-width: 100%; }
+
+    #content { padding: 16px 14px calc(80px + var(--safe-bottom)); font-size: 18px; }
+    #tg-content { padding: 14px 12px calc(100px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #tg-content p { margin-bottom: 1em; text-indent: 1.6em; }
+    #tg-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
+    #yt-reader-content { padding: 0 4px calc(80px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #yt-reader-content p { margin-bottom: 1em; text-indent: 1.6em; }
+    #dc-content { padding: 14px 12px calc(100px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #dc-content p { margin-bottom: 1em; text-indent: 1.6em; }
 
     #tg-app { position: relative; min-height: 0; }
     #tg-sidebar { width: 100%; position: absolute; inset: 0; border-right: none;
@@ -825,83 +934,36 @@
       transform: translateX(100%); transition: transform .25s ease; display: flex; }
     #tg-app.chat-open #tg-chat-area { transform: translateX(0); }
     #tg-app.chat-open #tg-sidebar { transform: translateX(-30%); }
-    #tg-side-head { padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top));
-      min-height: 52px; }
-    #tg-side-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
+    #tg-side-head { padding: 10px 12px; padding-top: max(10px, var(--safe-top)); min-height: 56px; }
+    #tg-side-head h1 { font-size: 18px; font-weight: 700; letter-spacing: -.3px; }
     #tg-side-head .tg-icon-btn { width: 40px; height: 40px; font-size: 18px; }
-    #tg-search { margin: 6px 12px 8px; padding: 8px 14px; border-radius: 12px;
-      background: var(--bg-input); }
+    #tg-search { margin: 6px 12px 8px; padding: 9px 14px; border-radius: 12px;
+      background: var(--bg-input); min-height: 42px; }
     #tg-search input { font-size: 15px; }
-    #tg-add-book { margin: 0 12px 8px; padding: 11px;
-      border-radius: 12px; font-size: 15px; font-weight: 600; }
+    #tg-add-book { margin: 0 12px 8px; padding: 12px; border-radius: 12px;
+      font-size: 15px; font-weight: 600; min-height: var(--tap); }
     .tg-chat-item { padding: 10px 14px; gap: 12px; }
-    .tg-avatar { width: 54px; height: 54px; font-size: 21px; }
-    .tg-chat-name { font-size: 15.5px; font-weight: 600; }
-    .tg-chat-sub { font-size: 13px; margin-top: 3px; }
-    #tg-chat-header { padding: 6px 10px; padding-top: max(6px, env(safe-area-inset-top));
-      min-height: 56px; gap: 6px; background: var(--bg-header); }
-    #tg-chat-header .name { font-size: 16px; font-weight: 600;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55vw; }
-    #tg-chat-header .sub { font-size: 12px; margin-top: 1px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55vw; }
-    #tg-chat-header .actions { gap: 0; }
-    #tg-chat-header .tg-icon-btn { width: 38px; height: 38px; font-size: 17px; }
-    #tg-mobile-back { display: flex !important; width: 38px; height: 38px; font-size: 20px; }
-    #tg-chat-header .tg-icon-btn[data-style-btn],
-    #tg-chat-header #tg-btn-toc,
-    #tg-chat-header #tg-btn-search,
-    #tg-chat-header #tg-btn-mark,
-    #tg-chat-header #tg-btn-marks { display: none !important; }
-    #tg-menu-btn { display: inline-flex !important; }
-
+    .tg-avatar { width: 50px; height: 50px; font-size: 20px; }
+    #tg-chat-header { padding: 8px 10px; padding-top: max(8px, var(--safe-top));
+      min-height: 56px; gap: 8px; }
+    #tg-mobile-back { display: flex !important; }
+    #tg-chat-header .actions { gap: 4px; }
     #tg-reader-screen { background: var(--bg); }
-    #tg-content { padding: 14px 14px calc(100px + env(safe-area-inset-bottom));
-      font-size: 17.5px; line-height: 1.65; }
-    #tg-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    #tg-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
-    #tg-empty { padding: 20px; }
-    #tg-empty .big { font-size: 54px; }
-    #tg-empty p { font-size: 14px; }
-    .tg-fab { right: 16px; bottom: calc(20px + env(safe-area-inset-bottom));
-      width: 56px; height: 56px; font-size: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.55); }
+    .tg-fab { width: 56px; height: 56px; font-size: 26px; right: 14px;
+      bottom: calc(20px + var(--safe-bottom)); }
 
     #yt-sidebar { display: none; }
-    #yt-header { padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top));
-      gap: 8px; flex-wrap: wrap; }
-    #yt-header .yt-logo { font-size: 16px; gap: 6px; flex-shrink: 0; }
-    #yt-header .yt-logo .play { width: 26px; height: 18px; font-size: 10px; }
+    #yt-header { padding: 8px 12px; padding-top: max(8px, var(--safe-top)); gap: 8px; flex-wrap: wrap; }
+    #yt-header .yt-logo { font-size: 16px; gap: 6px; }
     #yt-search-box { flex-basis: 100%; max-width: 100%; margin: 0; order: 3; }
-    #yt-search-box input { padding: 8px 14px; font-size: 14px; border-radius: 18px 0 0 18px; }
-    #yt-search-box button { padding: 0 16px; border-radius: 0 18px 18px 0; font-size: 14px; }
-    #yt-header .tg-icon-btn[data-style-btn] { display: none !important; }
-    #yt-menu-btn { display: inline-flex !important; }
-    #yt-main { padding: 8px 10px calc(20px + env(safe-area-inset-bottom)); }
-    #yt-chips { gap: 8px; padding-bottom: 10px; margin-bottom: 2px; }
-    .yt-chip { padding: 6px 13px; font-size: 13px; border-radius: 20px; }
+    #yt-main { padding: 10px 10px calc(20px + var(--safe-bottom)); }
+    .yt-chip { padding: 7px 14px; font-size: 13px; border-radius: 20px; }
     #yt-grid { grid-template-columns: 1fr; gap: 16px; }
-    .yt-thumb { border-radius: 12px; aspect-ratio: 16/9; padding: 16px; }
-    .yt-thumb .t { font-size: 14px; }
-    .yt-card-body { padding-top: 10px; gap: 10px; }
-    .yt-card-avatar { width: 36px; height: 36px; font-size: 15px; }
-    .yt-card-title { font-size: 14px; line-height: 1.35; }
-    .yt-card-meta { font-size: 12px; }
-    #yt-watch-top { padding: 8px 10px; padding-top: max(8px, env(safe-area-inset-top));
-      gap: 8px; background: var(--bg-header); }
-    #yt-watch-top .back { font-size: 20px; padding: 6px 8px; flex-shrink: 0; }
-    #yt-watch-top .title { font-size: 15px; white-space: normal;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden; line-height: 1.25; flex: 1; min-width: 0; }
-    #yt-watch-top .tg-icon-btn { width: 34px; height: 34px; font-size: 16px; }
-    #yt-watch-top #yt-btn-toc,
-    #yt-watch-top #yt-btn-search,
-    #yt-watch-top #yt-btn-mark,
-    #yt-watch-top #yt-btn-marks { display: none !important; }
-    #yt-watch-container { padding: 14px 12px calc(100px + env(safe-area-inset-bottom)); }
-    #yt-reader-content { font-size: 17.5px; line-height: 1.65; padding: 0; }
-    #yt-reader-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    #yt-reader-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
-    #yt-add-mark-fab { right: 16px; bottom: calc(20px + env(safe-area-inset-bottom));
-      width: 56px; height: 56px; font-size: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.55); }
+    #yt-watch-top { padding: 8px 10px; padding-top: max(8px, var(--safe-top)); gap: 8px; }
+    #yt-watch-top .tg-icon-btn { width: 36px; height: 36px; font-size: 16px; }
+    #yt-watch-container { padding: 14px 12px calc(100px + var(--safe-bottom)); }
+    #yt-add-mark-fab { width: 56px; height: 56px; font-size: 26px; right: 14px;
+      bottom: calc(20px + var(--safe-bottom)); }
 
     #dc-servers { display: none; }
     #dc-app { position: relative; min-height: 0; }
@@ -911,40 +973,24 @@
       transform: translateX(100%); transition: transform .25s ease; display: flex; }
     #dc-app.chat-open #dc-chat { transform: translateX(0); }
     #dc-app.chat-open #dc-channels { transform: translateX(-30%); }
-    #dc-channels-head { padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
-      min-height: 52px; }
-    #dc-chat-header { min-height: 52px; padding: 0 12px;
-      padding-top: max(0px, env(safe-area-inset-top)); }
-    #dc-chat-header .nm { font-size: 15px; }
+    #dc-channels-head { padding: 12px 16px; padding-top: max(12px, var(--safe-top)); min-height: 56px; }
+    #dc-chat-header { min-height: 52px; padding: 0 10px; padding-top: max(0px, var(--safe-top)); }
     #dc-mobile-back { display: flex !important; }
-    #dc-chat-header .dc-icon-btn { width: 36px; height: 36px; font-size: 17px; }
-    #dc-chat-header #dc-btn-toc,
-    #dc-chat-header #dc-btn-search,
-    #dc-chat-header #dc-btn-mark,
-    #dc-chat-header #dc-btn-marks { display: none !important; }
     #dc-pct-indicator { font-size: 11px; padding: 5px 8px; min-width: 56px; }
-    #dc-content { padding: 14px 14px calc(100px + env(safe-area-inset-bottom));
-      font-size: 17px; line-height: 1.6; }
-    #dc-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    .dc-fab { right: 16px; bottom: calc(20px + env(safe-area-inset-bottom));
-      width: 52px; height: 52px; font-size: 24px; }
+    .dc-fab { width: 54px; height: 54px; font-size: 22px; right: 14px;
+      bottom: calc(20px + var(--safe-bottom)); }
 
     .panel { width: 100%; }
-    .panel-header { padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); }
-    #side-progress { display: none !important; }
 
-    #paste-screen { padding: 12px; }
-    textarea#input { padding: 12px; font-size: 15px; }
-    #paste-screen .actions button { flex: 1 1 auto; min-width: 90px; }
+    #paste-screen { padding: 10px; }
+    textarea#input { padding: 10px; font-size: 15px; height: 140px; max-height: 180px; }
+    #paste-screen .actions { gap: 6px; }
+    #paste-screen .actions button { flex: 1 1 auto; min-width: 100px; font-size: 14px; }
     .book-list { grid-template-columns: 1fr; gap: 10px; }
-    .book-item { padding: 14px 76px 14px 38px; border-radius: 12px; gap: 4px; }
-    .book-item .grip { left: 6px; width: 24px; height: 44px; }
-    .book-item .grip span { width: 15px; height: 2px; }
+    .book-item { padding: 14px 70px 14px 38px; border-radius: 12px; }
     .book-item .title { font-size: 15px; white-space: normal; padding-right: 0; line-height: 1.3; }
-    .book-item .del, .book-item .rename { top: 50%; transform: translateY(-50%);
-      font-size: 16px; padding: 8px 10px; border-radius: 8px; }
-    .book-item .del { right: 10px; }
-    .book-item .rename { right: 46px; font-size: 15px; }
+    .book-item .del { right: 8px; }
+    .book-item .rename { right: 44px; }
 
     #menu-pop { min-width: 260px; max-width: calc(100vw - 24px); }
     #note-editor { padding: 12px; }
@@ -953,20 +999,32 @@
     #settings-modal { padding: 8px; }
     #settings-modal .card { max-height: 92vh; }
   }
-  @media (max-width: 380px) {
+
+  @media (max-width: 480px) {
     #yt-header .yt-logo span:not(.play) { font-size: 14px; }
     .yt-card-title { font-size: 13.5px; }
     #tg-content, #yt-reader-content, #content, #dc-content { font-size: 17px; }
+    .sheet-grid { grid-template-columns: 1fr 1fr; }
+    .sheet-grid button { font-size: 13px; padding: 12px 8px; }
+    #mobile-sheet { padding-left: 12px; padding-right: 12px; }
   }
-  #btn-menu, #tg-menu-btn, #yt-menu-btn, #dc-menu-btn { display: none;
-    align-items: center; justify-content: center; }
+  @media (max-width: 360px) {
+    #tg-content, #yt-reader-content, #content, #dc-content { font-size: 16px; }
+    .sheet-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-height: 500px) and (orientation: landscape) {
+    #mobile-sheet { max-height: 95vh; }
+    #yt-watch-top { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
+    #tg-chat-header { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
+    #dc-chat-header { min-height: 44px; }
+  }
+
   #tg-menu-btn, #yt-menu-btn, #dc-menu-btn { background: transparent; border: none;
-    color: var(--fg-dim); width: 38px; height: 38px; border-radius: 50%;
-    font-size: 20px; cursor: pointer; }
-  #tg-menu-btn:hover, #yt-menu-btn:hover, #dc-menu-btn:hover { background: var(--bg-panel); color: var(--fg); }
-  @media (max-width: 640px) { #btn-menu { display: inline-flex; } }
-  #btn-style-classic { display: inline-flex; }
-  @media (max-width: 640px) { #btn-style-classic { display: none !important; } }
+    color: var(--fg-dim); width: 42px; height: 42px; border-radius: 50%;
+    font-size: 20px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  #tg-menu-btn:hover, #yt-menu-btn:hover, #dc-menu-btn:hover {
+    background: var(--bg-panel); color: var(--fg); }
 </style>
 </head>
 <body class="style-classic">
@@ -1001,27 +1059,10 @@
       </div>
     </div>
     <div id="reader-shell">
-      <div id="reader-toolbar">
-        <div class="btn-group" title="Размер текста">
-          <button id="font-dec">A−</button><span class="size-label" id="size-label">20</span><button id="font-inc">A+</button>
-        </div>
-        <div class="btn-group" title="Ширина колонки">
-          <button id="width-dec">↔−</button><span class="size-label" id="width-label">720</span><button id="width-inc">↔+</button>
-        </div>
-        <div class="btn-group" title="Межстрочный интервал">
-          <button id="lh-dec">⇕−</button><span class="size-label" id="lh-label">1.85</span><button id="lh-inc">⇕+</button>
-        </div>
-        <span id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
-        <div class="spacer"></div>
-        <button id="btn-toc">Содержание</button>
-        <button id="btn-search">🔍 Поиск</button>
-        <button id="btn-font">Aa</button>
-        <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
-        <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
-        <button id="btn-theme">🎨 Цвет</button>
-        <button id="btn-style-classic">🎭 Стиль</button>
-        <button id="btn-library">Библиотека</button>
-        <button id="btn-menu" title="Меню">☰</button>
+      <div class="reader-topbar">
+        <div class="logo"><span>YVL Books</span></div>
+        <span class="pct" id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
+        <button class="settings-btn" id="btn-menu" title="Настройки">⚙</button>
       </div>
       <div id="reader-screen"><div id="content" class="reader-text"></div></div>
     </div>
@@ -1033,7 +1074,7 @@
       <div id="tg-sidebar">
         <div id="tg-side-head">
           <h1>YVL Books</h1>
-          <button class="tg-icon-btn" data-style-btn title="Меню">☰</button>
+          <button class="tg-icon-btn" id="tg-open-settings" title="Настройки">⚙</button>
         </div>
         <div id="tg-search">
           <span>🔍</span>
@@ -1051,12 +1092,8 @@
             <div class="sub" id="tg-chat-sub">Выберите книгу слева</div>
           </div>
           <div class="actions">
-            <button class="tg-icon-btn" id="tg-menu-btn" title="Меню">☰</button>
-            <button class="tg-icon-btn" data-style-btn title="Стиль">🎭</button>
-            <button class="tg-icon-btn" id="tg-btn-toc" title="Содержание">📖</button>
-            <button class="tg-icon-btn" id="tg-btn-search" title="Поиск">🔍</button>
-            <button class="tg-icon-btn" id="tg-btn-mark" title="Закладка">🔖</button>
-            <button class="tg-icon-btn" id="tg-btn-marks" title="Закладки">🗂</button>
+            <span class="tg-icon-btn" id="tg-pct-badge" style="width:auto;padding:0 8px;border-radius:8px;background:var(--bg-panel);border:1px solid var(--border-strong);font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;cursor:pointer;">0.00%</span>
+            <button class="tg-icon-btn" id="tg-open-settings-2" title="Настройки">⚙</button>
           </div>
         </div>
         <div id="tg-empty">
@@ -1078,8 +1115,7 @@
           <input type="text" id="yt-search-input" placeholder="Поиск книг...">
           <button id="yt-search-btn">🔍</button>
         </div>
-        <button class="tg-icon-btn" id="yt-menu-btn" title="Меню" style="color:var(--fg-dim)">☰</button>
-        <button class="tg-icon-btn" data-style-btn title="Стиль" style="color:var(--fg-dim)">🎭</button>
+        <button class="tg-icon-btn" id="yt-open-settings" title="Настройки" style="color:var(--fg-dim)">⚙</button>
       </div>
       <div id="yt-layout">
         <div id="yt-sidebar">
@@ -1091,6 +1127,7 @@
           <div id="yt-sidebar-books"></div>
           <div class="yt-side-sep"></div>
           <div class="yt-side-item" id="yt-add-book-side"><span class="icon">＋</span>Добавить книгу</div>
+          <div class="yt-side-item" id="yt-add-archive-side"><span class="icon">📁</span>Добавить архив</div>
         </div>
         <div id="yt-main">
           <div id="yt-chips"></div>
@@ -1099,11 +1136,9 @@
             <div id="yt-watch-top">
               <button class="back" id="yt-watch-back">←</button>
               <div class="title" id="yt-watch-title">Книга</div>
-              <div style="margin-left:auto;display:flex;gap:4px;flex-shrink:0;">
-                <button class="tg-icon-btn" id="yt-btn-toc" title="Содержание" style="color:var(--fg-dim)">📖</button>
-                <button class="tg-icon-btn" id="yt-btn-search" title="Поиск" style="color:var(--fg-dim)">🔍</button>
-                <button class="tg-icon-btn" id="yt-btn-mark" title="Закладка" style="color:var(--fg-dim)">🔖</button>
-                <button class="tg-icon-btn" id="yt-btn-marks" title="Закладки" style="color:var(--fg-dim)">🗂</button>
+              <div style="margin-left:auto;display:flex;gap:2px;flex-shrink:0;align-items:center;">
+                <span class="tg-icon-btn" id="yt-pct-badge" style="width:auto;padding:0 8px;border-radius:8px;background:var(--bg-panel);border:1px solid var(--border-strong);font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;cursor:pointer;display:none;">0.00%</span>
+                <button class="tg-icon-btn" id="yt-open-settings-2" title="Настройки" style="color:var(--fg-dim)">⚙</button>
               </div>
             </div>
             <div id="yt-watch-scroll">
@@ -1124,7 +1159,7 @@
         <div class="dc-server-sep"></div>
         <div id="dc-servers-list"></div>
         <div class="dc-server-sep"></div>
-        <div class="dc-server-icon dc-server-add" id="dc-server-add" title="Добавить книгу">＋</div>
+        <div class="dc-server-icon dc-server-add" id="dc-server-add" title="Добавить архив">＋</div>
       </div>
       <div id="dc-channels">
         <div id="dc-channels-head" title="YVL Books">
@@ -1145,12 +1180,7 @@
           <div class="nm" id="dc-chat-name">добро-пожаловать</div>
           <div class="actions">
             <span id="dc-pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
-            <button class="dc-icon-btn" id="dc-menu-btn" title="Меню">☰</button>
-            <button class="dc-icon-btn" data-style-btn title="Стиль">🎭</button>
-            <button class="dc-icon-btn" id="dc-btn-toc" title="Содержание">📖</button>
-            <button class="dc-icon-btn" id="dc-btn-search" title="Поиск">🔍</button>
-            <button class="dc-icon-btn" id="dc-btn-mark" title="Закладка">🔖</button>
-            <button class="dc-icon-btn" id="dc-btn-marks" title="Закладки">🗂</button>
+            <button class="dc-icon-btn" id="dc-open-settings" title="Настройки">⚙</button>
           </div>
         </div>
         <div id="dc-empty">
@@ -1214,6 +1244,7 @@
   <div id="side-progress"><div id="side-thumb"></div><div id="side-marks"></div></div>
 </div>
 
+<!-- МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ -->
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
@@ -1263,6 +1294,8 @@
       <button id="m-mark" class="mark-btn">🔖 Закладка</button>
       <button id="m-marks" class="mark-btn">🔖 Закладки</button>
       <button id="m-collections">📁 Архивы</button>
+      <button id="m-add-book">＋ Книга</button>
+      <button id="m-add-archive">＋ Архив</button>
       <button id="m-style" class="wide">🎭 Сменить стиль</button>
       <button id="m-library" class="wide">📚 Библиотека</button>
       <button id="m-close" class="wide">✕ Закрыть</button>
@@ -1270,6 +1303,7 @@
   </div>
 </div>
 
+<!-- МОДАЛКА "НАСТРОЙКИ" (единая для всех стилей) -->
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
@@ -1279,6 +1313,20 @@
     <div class="card-body" id="settings-modal-body"></div>
   </div>
 </div>
+
+<!-- ДИАЛОГ ВВОДА (замена prompt) -->
+<div id="inline-dialog">
+  <div class="dlg">
+    <h4 id="inline-dialog-title">Введите значение</h4>
+    <input id="inline-dialog-input" type="text" autocomplete="off">
+    <textarea id="inline-dialog-textarea" style="display:none;" spellcheck="false"></textarea>
+    <div class="actions">
+      <button id="inline-dialog-cancel">Отмена</button>
+      <button id="inline-dialog-ok" class="primary">OK</button>
+    </div>
+  </div>
+</div>
+</body>
 <script>
 (function () {
   'use strict';
@@ -1337,6 +1385,63 @@
       const luma = (0.299*r + 0.587*g + 0.114*b) / 255;
       return luma > 0.55 ? '#14161a' : '#ffffff';
     } catch (e) { return '#ffffff'; }
+  }
+
+  // ===== INLINE-ДИАЛОГ =====
+  const inlineDlg = $('inline-dialog');
+  const inlineTitle = $('inline-dialog-title');
+  const inlineInput = $('inline-dialog-input');
+  const inlineTextarea = $('inline-dialog-textarea');
+  const inlineOk = $('inline-dialog-ok');
+  const inlineCancel = $('inline-dialog-cancel');
+  let inlineResolve = null;
+
+  function openInlineDialog(opts) {
+    return new Promise((resolve) => {
+      inlineResolve = resolve;
+      inlineTitle.textContent = opts.title || '';
+      const isText = !!opts.textarea;
+      inlineInput.style.display = isText ? 'none' : 'block';
+      inlineTextarea.style.display = isText ? 'block' : 'none';
+      if (isText) {
+        inlineTextarea.value = opts.value || '';
+        inlineTextarea.placeholder = opts.placeholder || '';
+        setTimeout(() => inlineTextarea.focus(), 40);
+      } else {
+        inlineInput.value = opts.value || '';
+        inlineInput.placeholder = opts.placeholder || '';
+        setTimeout(() => { inlineInput.focus(); inlineInput.select(); }, 40);
+      }
+      inlineOk.className = opts.danger ? 'danger' : 'primary';
+      inlineOk.textContent = opts.okText || 'OK';
+      inlineCancel.style.display = opts.hideCancel ? 'none' : '';
+      inlineDlg.classList.add('open');
+    });
+  }
+  function closeInlineDialog(result) {
+    inlineDlg.classList.remove('open');
+    if (inlineResolve) { const r = inlineResolve; inlineResolve = null; r(result); }
+  }
+  if (inlineOk) inlineOk.addEventListener('click', () => {
+    const isText = inlineTextarea.style.display !== 'none';
+    closeInlineDialog(isText ? inlineTextarea.value : inlineInput.value);
+  });
+  if (inlineCancel) inlineCancel.addEventListener('click', () => closeInlineDialog(null));
+  if (inlineDlg) inlineDlg.addEventListener('click', (e) => { if (e.target === inlineDlg) closeInlineDialog(null); });
+  if (inlineInput) inlineInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); inlineOk && inlineOk.click(); }
+    if (e.key === 'Escape') { e.preventDefault(); closeInlineDialog(null); }
+  });
+
+  function askText(title, value, placeholder) {
+    return openInlineDialog({ title, value, placeholder });
+  }
+  function askLongText(title, value, placeholder) {
+    return openInlineDialog({ title, value, placeholder, textarea: true });
+  }
+  function askConfirm(title, okText, danger) {
+    return openInlineDialog({ title, okText: okText || 'OK', danger: !!danger, hideCancel: false, value: '' })
+      .then(v => v !== null);
   }
 
   // ===== НАСТРОЙКИ =====
@@ -1504,14 +1609,14 @@
   }
   function saveMeta(arr) {
     try { localStorage.setItem(META_KEY, JSON.stringify(arr)); }
-    catch (e) { toast('Не удалось сохранить библиотеку — возможно, переполнено хранилище', true); }
+    catch (e) { toast('Не удалось сохранить библиотеку', true); }
   }
   function getBookText(id) {
     try { return localStorage.getItem(TEXT_PREFIX + id) || ''; } catch (e) { return ''; }
   }
   function setBookText(id, text) {
     try { localStorage.setItem(TEXT_PREFIX + id, text); return true; }
-    catch (e) { toast('Текст книги слишком велик для localStorage', true); return false; }
+    catch (e) { toast('Текст книги слишком велик', true); return false; }
   }
   function removeBookData(id) {
     try { localStorage.removeItem(TEXT_PREFIX + id); } catch (e) {}
@@ -1545,8 +1650,7 @@
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
   function dcSlug(title) {
     return String(title || 'book').toLowerCase()
-      .replace(/ё/g, 'е')
-      .replace(/[^\wа-я0-9]+/gi, '-')
+      .replace(/ё/g, 'е').replace(/[^\wа-я0-9]+/gi, '-')
       .replace(/^-+|-+$/g, '').slice(0, 40) || 'book';
   }
 
@@ -1633,11 +1737,8 @@
     if (targetIdx < 0 && paras.length) { targetIdx = 0; offsetInPara = 0; }
     const max = el.scrollHeight - el.clientHeight;
     return {
-      pIndex: targetIdx,
-      offsetInPara: offsetInPara,
-      scrollTop: el.scrollTop,
-      pct: max > 0 ? el.scrollTop / max : 0,
-      chapter: activeChapter
+      pIndex: targetIdx, offsetInPara: offsetInPara, scrollTop: el.scrollTop,
+      pct: max > 0 ? el.scrollTop / max : 0, chapter: activeChapter
     };
   }
   function restoreReadingPosition(pos) {
@@ -1839,8 +1940,10 @@
   }
   function clearMarks() {
     if (!currentMarks.length) return;
-    if (!confirm('Удалить все закладки этой книги?')) return;
-    currentMarks = []; saveMarks(currentBookId, currentMarks); renderSideMarks(); renderMarksList();
+    askConfirm('Удалить все закладки этой книги?', 'Удалить', true).then(ok => {
+      if (!ok) return;
+      currentMarks = []; saveMarks(currentBookId, currentMarks); renderSideMarks(); renderMarksList();
+    });
   }
   function renderMarksList() {
     if (!marksList) return;
@@ -2077,13 +2180,35 @@
       saveMeta(list);
     }, 400);
   }
+
+  // Корректная установка thumb'а ползунка (translateY)
+  function updateSideThumb(pct) {
+    const thumb = $('side-thumb'); const sp = $('side-progress');
+    if (!thumb || !sp) return;
+    const visible = window.getComputedStyle(sp).display !== 'none';
+    if (!visible) return;
+    const trackH = sp.clientHeight;
+    const thumbH = thumb.offsetHeight || 40;
+    const usable = Math.max(1, trackH - thumbH);
+    const y = (Math.max(0, Math.min(100, pct)) / 100) * usable;
+    thumb.style.transform = 'translateY(' + y + 'px)';
+  }
+
   function updateAllProgress() {
     const pct = getCurrentPercent();
     const pb = $('progress-bar'); if (pb) pb.style.width = pct + '%';
+
     const ind = $('pct-indicator'); if (ind) ind.textContent = pct.toFixed(2) + '%';
+    const tgBadge = $('tg-pct-badge'); if (tgBadge) tgBadge.textContent = pct.toFixed(2) + '%';
+    const ytBadge = $('yt-pct-badge');
+    if (ytBadge) { ytBadge.textContent = pct.toFixed(2) + '%'; ytBadge.style.display = currentBookId ? 'inline-flex' : 'none'; }
+    const dcInd = $('dc-pct-indicator'); if (dcInd) dcInd.textContent = pct.toFixed(2) + '%';
+
     const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
     const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
-    const dcInd = $('dc-pct-indicator'); if (dcInd) dcInd.textContent = pct.toFixed(2) + '%';
+
+    updateSideThumb(pct);
+
     const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
     if (chapters.length && el) {
       let idx = -1;
@@ -2097,6 +2222,7 @@
   }
   function showScroller() {
     const sp = $('side-progress'); if (!sp) return;
+    if (window.getComputedStyle(sp).display === 'none') return;
     if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
     sp.classList.add('visible');
     clearTimeout(sp._t);
@@ -2109,10 +2235,6 @@
   const sheetHandle = $('sheet-handle');
   function openSheet() { mobileSheet?.classList.add('open'); sheetOverlay?.classList.add('open'); }
   function closeSheet() { mobileSheet?.classList.remove('open'); sheetOverlay?.classList.remove('open'); }
-  function toggleSheet() {
-    if (!mobileSheet) return;
-    mobileSheet.classList.contains('open') ? closeSheet() : openSheet();
-  }
   if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
   let sheetTouchStartY = null;
   if (sheetHandle) {
@@ -2141,151 +2263,9 @@
     else if (style === 'telegram') renderTelegram();
     else if (style === 'youtube') renderYoutube();
     else if (style === 'discord') renderDiscord();
+    // пересчитать позицию ползунка после смены стиля
+    requestAnimationFrame(() => updateSideThumb(getCurrentPercent()));
   }
-
-  function openStyleMenu(anchor) {
-    const pop = $('menu-pop'); if (!pop) return;
-    pop.innerHTML = ''; pop.style.transform = '';
-    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto';
-
-    const title = document.createElement('div'); title.className = 'group-title';
-    title.textContent = 'Стиль интерфейса'; pop.appendChild(title);
-    UI_STYLES.forEach(st => {
-      const mi = document.createElement('div');
-      mi.className = 'mi' + (settings.uiStyle === st.id ? ' active' : '');
-      mi.textContent = (settings.uiStyle === st.id ? '✓ ' : '') + st.name;
-      mi.addEventListener('click', () => {
-        if (currentBookId) {
-          const pos = captureReadingPosition();
-          if (pos) {
-            const list = loadMeta();
-            const idx = list.findIndex(x => x.id === currentBookId);
-            if (idx >= 0) {
-              list[idx].scroll = pos.scrollTop;
-              list[idx].pct = pos.pct;
-              list[idx].chapter = pos.chapter;
-              list[idx].pIndex = pos.pIndex;
-              list[idx].offsetInPara = pos.offsetInPara;
-              saveMeta(list);
-            }
-          }
-        }
-        settings.uiStyle = st.id; saveSettings(); pop.classList.remove('show');
-        applyUiStyle();
-        if (currentBookId) {
-          const targetPos = loadMeta().find(x => x.id === currentBookId);
-          setTimeout(() => openBookInCurrentStyle(currentBookId, targetPos), 30);
-        }
-      });
-      pop.appendChild(mi);
-    });
-    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
-
-    const paletteItem = document.createElement('div'); paletteItem.className = 'mi';
-    paletteItem.textContent = '🎨 Палитра цветов';
-    paletteItem.addEventListener('click', () => { pop.classList.remove('show'); openPaletteMenu(); });
-    pop.appendChild(paletteItem);
-
-    const fontItem = document.createElement('div'); fontItem.className = 'mi';
-    fontItem.textContent = 'Aa Шрифт и интервал';
-    fontItem.addEventListener('click', () => { pop.classList.remove('show'); openFontMenu(); });
-    pop.appendChild(fontItem);
-
-    const collectionsItem = document.createElement('div'); collectionsItem.className = 'mi';
-    collectionsItem.textContent = '📁 Архивы';
-    collectionsItem.addEventListener('click', () => { pop.classList.remove('show'); openCollectionsManager(); });
-    pop.appendChild(collectionsItem);
-
-    if (anchor) {
-      const r = anchor.getBoundingClientRect();
-      let left = r.left, top = r.bottom + 6;
-      pop.style.left = Math.max(8, Math.min(window.innerWidth - 260, left)) + 'px';
-      pop.style.top = top + 'px';
-      pop.classList.add('show');
-      requestAnimationFrame(() => {
-        const h = pop.offsetHeight || 300;
-        if (top + h > window.innerHeight - 8) pop.style.top = Math.max(8, r.top - h - 6) + 'px';
-      });
-    } else {
-      pop.style.left = '50%'; pop.style.top = '50%';
-      pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
-    }
-  }
-
-  function openCollectionsManager() {
-    const pop = $('menu-pop'); if (!pop) return;
-    pop.innerHTML = ''; pop.style.transform = '';
-    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto';
-    pop.style.minWidth = '280px';
-
-    const title = document.createElement('div'); title.className = 'group-title';
-    title.textContent = '📁 Архивы (папки)'; pop.appendChild(title);
-
-    const cols = loadCollections();
-    const books = loadMeta();
-    if (!cols.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
-      empty.textContent = 'Пока нет архивов.';
-      pop.appendChild(empty);
-    } else {
-      cols.forEach(c => {
-        const row = document.createElement('div'); row.className = 'mi';
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
-        const nm = document.createElement('span');
-        const count = books.filter(b => b.collection === c.id).length;
-        nm.textContent = '📁 ' + c.name + ' (' + count + ')';
-        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-        const edit = document.createElement('button');
-        edit.textContent = '✎'; edit.title = 'Переименовать';
-        edit.style.cssText = 'padding:2px 6px;font-size:12px;';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const n = prompt('Название архива:', c.name);
-          if (n !== null && n.trim()) {
-            const arr = loadCollections();
-            const cc = arr.find(x => x.id === c.id);
-            if (cc) { cc.name = n.trim(); saveCollections(arr); }
-            openCollectionsManager(); renderAll();
-          }
-        });
-        const del = document.createElement('button');
-        del.textContent = '✕'; del.title = 'Удалить';
-        del.style.cssText = 'padding:2px 6px;font-size:12px;color:#c97a7a;';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (confirm('Удалить архив «' + c.name + '»? Книги останутся без архива.')) {
-            saveCollections(loadCollections().filter(x => x.id !== c.id));
-            const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
-            saveMeta(arr);
-            if (activeCollection === c.id) activeCollection = null;
-            openCollectionsManager(); renderAll();
-          }
-        });
-        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
-        pop.appendChild(row);
-      });
-    }
-
-    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
-    const addBtn = document.createElement('div'); addBtn.className = 'mi';
-    addBtn.textContent = '+ Новый архив';
-    addBtn.addEventListener('click', () => {
-      const n = prompt('Название нового архива:');
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCollections(arr); openCollectionsManager(); renderAll();
-      }
-    });
-    pop.appendChild(addBtn);
-
-    pop.style.left = '50%'; pop.style.top = '50%';
-    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
-  }
-
-  function openPaletteMenu() { openSettingsModal('palette'); }
-  function openFontMenu() { openSettingsModal('fonts'); }
 
   function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
   function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
@@ -2349,441 +2329,420 @@
     if (e.target === settingsModal) closeSettingsModal();
   });
 
-  function renderPaletteClassic() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    PRESET_GROUPS.forEach((group) => {
-      const title = document.createElement('div');
-      title.className = 'cl-settings-group-title';
-      title.textContent = group.title;
-      settingsModalBody.appendChild(title);
-      group.presets.forEach(pr => {
-        const row = document.createElement('div');
-        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-        row.className = 'cl-settings-row' + (isActive ? ' active' : '');
-        row.innerHTML =
-          '<div class="sw' + (isActive ? ' active' : '') +
-          '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg, 20)) + ';">Aa</div>' +
-          '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div>' +
-          '<div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
-          (isActive ? '<div class="check">✓</div>' : '');
-        row.addEventListener('click', () => {
-          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-          saveSettings(); applySettings(); renderPaletteClassic();
-        });
-        settingsModalBody.appendChild(row);
-      });
-    });
+  function addGroup(title) {
+    const style = settings.uiStyle || 'classic';
+    const useDiscord = style === 'discord';
+    const useYouTube = style === 'youtube';
+    const useTelegram = style === 'telegram';
+    const cls = useDiscord ? 'dc-settings-group-title' : (useYouTube ? 'yt-settings-group-title' : (useTelegram ? 'tg-settings-group-title' : 'cl-settings-group-title'));
     const t = document.createElement('div');
-    t.className = 'cl-settings-group-title';
-    t.textContent = 'Свои цвета';
+    t.className = cls; t.textContent = title;
     settingsModalBody.appendChild(t);
-    const wrap = document.createElement('div'); wrap.className = 'cl-color-rows';
-    const mk = (label, key) => {
-      const row = document.createElement('div'); row.className = 'cl-color-row';
-      const lb = document.createElement('label'); lb.textContent = label;
-      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
-      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
-      row.appendChild(lb); row.appendChild(inp);
-      return row;
-    };
-    wrap.appendChild(mk('Фон', 'bg'));
-    wrap.appendChild(mk('Текст', 'fg'));
-    wrap.appendChild(mk('Акцент', 'accent'));
-    settingsModalBody.appendChild(wrap);
-
-    const reset = document.createElement('div');
-    reset.className = 'cl-settings-row';
-    reset.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);">↺</div>' +
-      '<div class="info"><div class="nm">Сбросить цвета</div>' +
-      '<div class="sub">Вернуть по умолчанию</div></div>';
-    reset.addEventListener('click', () => {
-      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
-      saveSettings(); applySettings(); renderPaletteClassic();
-    });
-    settingsModalBody.appendChild(reset);
   }
 
-  function renderPaletteTg() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    PRESET_GROUPS.forEach((group) => {
-      const title = document.createElement('div');
-      title.className = 'tg-settings-group-title';
-      title.textContent = group.title;
-      settingsModalBody.appendChild(title);
-      group.presets.forEach(pr => {
-        const row = document.createElement('div');
-        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-        row.className = 'tg-settings-row' + (isActive ? ' active' : '');
-        row.innerHTML =
-          '<div class="sw' + (isActive ? ' active' : '') +
-          '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg, 20)) + ';">Aa</div>' +
-          '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div>' +
-          '<div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
-          (isActive ? '<div class="check">✓</div>' : '');
-        row.addEventListener('click', () => {
-          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-          saveSettings(); applySettings(); renderPaletteTg();
-        });
-        settingsModalBody.appendChild(row);
-      });
-    });
-    const t = document.createElement('div');
-    t.className = 'tg-settings-group-title';
-    t.textContent = 'Свои цвета';
-    settingsModalBody.appendChild(t);
-    const wrap = document.createElement('div'); wrap.className = 'tg-color-rows';
-    const mk = (label, key) => {
-      const row = document.createElement('div'); row.className = 'tg-color-row';
-      const lb = document.createElement('label'); lb.textContent = label;
-      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
-      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
-      row.appendChild(lb); row.appendChild(inp);
-      return row;
-    };
-    wrap.appendChild(mk('Фон', 'bg'));
-    wrap.appendChild(mk('Текст', 'fg'));
-    wrap.appendChild(mk('Акцент', 'accent'));
-    settingsModalBody.appendChild(wrap);
-
-    const reset = document.createElement('div');
-    reset.className = 'tg-settings-row';
-    reset.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);">↺</div>' +
-      '<div class="info"><div class="nm">Сбросить цвета</div>' +
-      '<div class="sub">Вернуть по умолчанию</div></div>';
-    reset.addEventListener('click', () => {
-      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
-      saveSettings(); applySettings(); renderPaletteTg();
-    });
-    settingsModalBody.appendChild(reset);
-  }
-
-  function renderPaletteYt() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    PRESET_GROUPS.forEach(group => {
-      const t = document.createElement('div');
-      t.className = 'yt-settings-group-title';
-      t.textContent = group.title;
-      settingsModalBody.appendChild(t);
-      const grid = document.createElement('div');
-      grid.className = 'yt-settings-grid';
-      group.presets.forEach(pr => {
-        const tile = document.createElement('div');
-        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-        tile.className = 'yt-tile' + (isActive ? ' active' : '');
-        tile.innerHTML =
-          '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg +
-          ';border-color:' + (isActive ? 'var(--fg)' : shade(pr.bg, 20)) + ';">Aa</div>' +
-          '<div class="nm">' + escapeHtml(pr.name) + '</div>';
-        tile.addEventListener('click', () => {
-          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-          saveSettings(); applySettings(); renderPaletteYt();
-        });
-        grid.appendChild(tile);
-      });
-      settingsModalBody.appendChild(grid);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'yt-settings-group-title';
-    t2.textContent = 'Свои цвета';
-    settingsModalBody.appendChild(t2);
-    const grid2 = document.createElement('div');
-    grid2.className = 'yt-settings-grid cols-2';
-    const mkRow = (label, key) => {
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;';
-      const l = document.createElement('div');
-      l.textContent = label; l.style.cssText = 'font-size:12px;color:var(--fg-mid);';
-      const inp = document.createElement('input');
-      inp.type = 'color'; inp.value = settings[key];
-      inp.style.cssText = 'width:100%;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;padding:2px;';
-      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
-      wrap.appendChild(l); wrap.appendChild(inp);
-      return wrap;
-    };
-    grid2.appendChild(mkRow('Фон', 'bg'));
-    grid2.appendChild(mkRow('Текст', 'fg'));
-    grid2.appendChild(mkRow('Акцент', 'accent'));
-    settingsModalBody.appendChild(grid2);
-    const reset = document.createElement('div');
-    reset.className = 'yt-font-tile';
-    reset.style.margin = '12px 18px 0';
-    reset.innerHTML = '<div class="aa">↺</div><div class="nm">Сбросить цвета</div>';
-    reset.addEventListener('click', () => {
-      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
-      saveSettings(); applySettings(); renderPaletteYt();
-    });
-    settingsModalBody.appendChild(reset);
-  }
-
-  function renderPaletteDc() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    PRESET_GROUPS.forEach(group => {
-      const t = document.createElement('div');
-      t.className = 'dc-settings-group-title';
-      t.textContent = group.title;
-      settingsModalBody.appendChild(t);
-      const grid = document.createElement('div');
-      grid.className = 'dc-settings-grid';
-      group.presets.forEach(pr => {
-        const tile = document.createElement('div');
-        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-        tile.className = 'dc-tile' + (isActive ? ' active' : '');
-        tile.innerHTML =
-          '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg +
-          ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg, 20)) + ';">Aa</div>' +
-          '<div class="nm">' + escapeHtml(pr.name) + '</div>';
-        tile.addEventListener('click', () => {
-          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-          saveSettings(); applySettings(); renderPaletteDc();
-        });
-        grid.appendChild(tile);
-      });
-      settingsModalBody.appendChild(grid);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'dc-settings-group-title';
-    t2.textContent = 'Свои цвета';
-    settingsModalBody.appendChild(t2);
-    const wrap = document.createElement('div'); wrap.className = 'dc-color-rows';
-    const mk = (label, key) => {
-      const row = document.createElement('div'); row.className = 'dc-color-row';
-      const lb = document.createElement('label'); lb.textContent = label;
-      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
-      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
-      row.appendChild(lb); row.appendChild(inp);
-      return row;
-    };
-    wrap.appendChild(mk('Фон', 'bg'));
-    wrap.appendChild(mk('Текст', 'fg'));
-    wrap.appendChild(mk('Акцент', 'accent'));
-    settingsModalBody.appendChild(wrap);
-
-    const reset = document.createElement('div');
-    reset.className = 'dc-reset-row';
-    reset.innerHTML = '<div class="sw">↺</div>' +
-      '<div class="info"><div class="nm">Сбросить цвета</div>' +
-      '<div class="sub">Вернуть по умолчанию</div></div>';
-    reset.addEventListener('click', () => {
-      settings.bg = DEFAULTS.bg; settings.fg = DEFAULTS.fg; settings.accent = DEFAULTS.accent;
-      saveSettings(); applySettings(); renderPaletteDc();
-    });
-    settingsModalBody.appendChild(reset);
-  }
-
-  function renderFontsClassic() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    let currentGroup = null;
-    FONTS.forEach(f => {
-      if (f.group !== currentGroup) {
-        currentGroup = f.group;
-        const t = document.createElement('div');
-        t.className = 'cl-settings-group-title';
-        t.textContent = currentGroup;
-        settingsModalBody.appendChild(t);
-      }
-      const row = document.createElement('div');
-      const isActive = settings.fontFamily === f.id;
-      row.className = 'cl-font-preview' + (isActive ? ' active' : '');
-      row.innerHTML =
-        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div>' +
-        '<div class="sub">' + (isActive ? 'Выбран' : 'Нажмите, чтобы применить') + '</div></div>' +
-        (isActive ? '<div class="check">✓</div>' : '');
-      row.addEventListener('click', () => {
-        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsClassic();
-      });
-      settingsModalBody.appendChild(row);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'cl-settings-group-title';
-    t2.textContent = 'Межбуквенный интервал';
-    settingsModalBody.appendChild(t2);
-    const row2 = document.createElement('div');
-    row2.className = 'cl-settings-row';
-    row2.style.cursor = 'default';
-    row2.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);font-weight:600;">±</div>' +
-      '<div class="info"><div class="nm">Интервал</div>' +
-      '<div class="sub">' + settings.letterSpacing.toFixed(2) + ' em</div></div>' +
-      '<div style="display:flex;gap:6px;">' +
-      '<button data-ls="-1" style="width:32px;height:32px;border-radius:50%;padding:0;">−</button>' +
-      '<button data-ls="1" style="width:32px;height:32px;border-radius:50%;padding:0;">+</button></div>';
-    row2.querySelectorAll('[data-ls]').forEach(b => {
-      b.addEventListener('click', (e) => {
-        e.stopPropagation();
-        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
-        renderFontsClassic();
-      });
-    });
-    settingsModalBody.appendChild(row2);
-  }
-
-  function renderFontsTg() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    let currentGroup = null;
-    FONTS.forEach(f => {
-      if (f.group !== currentGroup) {
-        currentGroup = f.group;
-        const t = document.createElement('div');
-        t.className = 'tg-settings-group-title';
-        t.textContent = currentGroup;
-        settingsModalBody.appendChild(t);
-      }
-      const row = document.createElement('div');
-      const isActive = settings.fontFamily === f.id;
-      row.className = 'tg-font-preview' + (isActive ? ' active' : '');
-      row.innerHTML =
-        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div>' +
-        '<div class="sub">' + (isActive ? 'Выбран' : 'Нажмите, чтобы применить') + '</div></div>' +
-        (isActive ? '<div class="check">✓</div>' : '');
-      row.addEventListener('click', () => {
-        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsTg();
-      });
-      settingsModalBody.appendChild(row);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'tg-settings-group-title';
-    t2.textContent = 'Межбуквенный интервал';
-    settingsModalBody.appendChild(t2);
-    const row2 = document.createElement('div');
-    row2.className = 'tg-settings-row';
-    row2.style.cursor = 'default';
-    row2.innerHTML = '<div class="sw" style="background:var(--bg-panel);color:var(--accent);font-weight:600;">±</div>' +
-      '<div class="info"><div class="nm">Интервал</div>' +
-      '<div class="sub">' + settings.letterSpacing.toFixed(2) + ' em</div></div>' +
-      '<div style="display:flex;gap:6px;">' +
-      '<button data-ls="-1" style="width:32px;height:32px;border-radius:50%;padding:0;">−</button>' +
-      '<button data-ls="1" style="width:32px;height:32px;border-radius:50%;padding:0;">+</button></div>';
-    row2.querySelectorAll('[data-ls]').forEach(b => {
-      b.addEventListener('click', (e) => {
-        e.stopPropagation();
-        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
-        renderFontsTg();
-      });
-    });
-    settingsModalBody.appendChild(row2);
-  }
-
-  function renderFontsYt() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    let currentGroup = null;
-    let currentGrid = null;
-    FONTS.forEach(f => {
-      if (f.group !== currentGroup) {
-        currentGroup = f.group;
-        const t = document.createElement('div');
-        t.className = 'yt-settings-group-title';
-        t.textContent = currentGroup;
-        settingsModalBody.appendChild(t);
-        currentGrid = document.createElement('div');
-        currentGrid.className = 'yt-settings-grid';
-        settingsModalBody.appendChild(currentGrid);
-      }
-      const tile = document.createElement('div');
-      const isActive = settings.fontFamily === f.id;
-      tile.className = 'yt-font-tile' + (isActive ? ' active' : '');
-      tile.innerHTML =
-        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-        '<div class="nm">' + escapeHtml(f.name) + '</div>';
-      tile.addEventListener('click', () => {
-        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsYt();
-      });
-      currentGrid.appendChild(tile);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'yt-settings-group-title';
-    t2.textContent = 'Межбуквенный интервал';
-    settingsModalBody.appendChild(t2);
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:0 18px 12px;';
-    row.innerHTML =
-      '<button data-ls="-1" style="width:36px;height:32px;border-radius:16px;padding:0;background:var(--bg-panel);border:1px solid var(--border);color:var(--fg);">−</button>' +
-      '<div style="flex:1;text-align:center;font-size:14px;font-weight:600;">' + settings.letterSpacing.toFixed(2) + ' em</div>' +
-      '<button data-ls="1" style="width:36px;height:32px;border-radius:16px;padding:0;background:var(--bg-panel);border:1px solid var(--border);color:var(--fg);">+</button>';
-    row.querySelectorAll('[data-ls]').forEach(b => {
-      b.addEventListener('click', () => {
-        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
-        renderFontsYt();
-      });
-    });
-    settingsModalBody.appendChild(row);
-  }
-
-  function renderFontsDc() {
-    if (!settingsModalBody) return;
-    settingsModalBody.innerHTML = '';
-    let currentGroup = null;
-    FONTS.forEach(f => {
-      if (f.group !== currentGroup) {
-        currentGroup = f.group;
-        const t = document.createElement('div');
-        t.className = 'dc-settings-group-title';
-        t.textContent = currentGroup;
-        settingsModalBody.appendChild(t);
-      }
-      const row = document.createElement('div');
-      const isActive = settings.fontFamily === f.id;
-      row.className = 'dc-font-preview' + (isActive ? ' active' : '');
-      row.innerHTML =
-        '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div>' +
-        '<div class="sub">' + (isActive ? 'Выбран' : 'Нажмите, чтобы применить') + '</div></div>' +
-        (isActive ? '<div class="check" style="color:var(--accent);font-size:16px;">✓</div>' : '');
-      row.addEventListener('click', () => {
-        settings.fontFamily = f.id; saveSettings(); applySettings(); renderFontsDc();
-      });
-      settingsModalBody.appendChild(row);
-    });
-    const t2 = document.createElement('div');
-    t2.className = 'dc-settings-group-title';
-    t2.textContent = 'Межбуквенный интервал';
-    settingsModalBody.appendChild(t2);
-    const row2 = document.createElement('div');
-    row2.className = 'dc-font-preview';
-    row2.style.cursor = 'default';
-    row2.innerHTML = '<div class="aa" style="font-family:monospace;">±</div>' +
-      '<div class="info"><div class="nm">Интервал</div>' +
-      '<div class="sub">' + settings.letterSpacing.toFixed(2) + ' em</div></div>' +
-      '<div style="display:flex;gap:6px;">' +
-      '<button data-ls="-1" style="width:32px;height:32px;border-radius:4px;padding:0;background:var(--bg-header);border:1px solid var(--border);color:var(--fg);">−</button>' +
-      '<button data-ls="1" style="width:32px;height:32px;border-radius:4px;padding:0;background:var(--bg-header);border:1px solid var(--border);color:var(--fg);">+</button></div>';
-    row2.querySelectorAll('[data-ls]').forEach(b => {
-      b.addEventListener('click', (e) => {
-        e.stopPropagation();
-        changeLetterSpacing(parseFloat(b.dataset.ls) * 0.01);
-        renderFontsDc();
-      });
-    });
-    settingsModalBody.appendChild(row2);
-  }
-
-  function openSettingsModal(kind) {
+  // Только палитра
+  function openPaletteOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
-    const style = settings.uiStyle;
-    if (kind === 'palette') {
-      settingsModalTitle.textContent = 'Палитра цветов';
-      if (style === 'classic') renderPaletteClassic();
-      else if (style === 'telegram') renderPaletteTg();
-      else if (style === 'youtube') renderPaletteYt();
-      else if (style === 'discord') renderPaletteDc();
-      else renderPaletteClassic();
-    } else if (kind === 'fonts') {
-      settingsModalTitle.textContent = 'Шрифт';
-      if (style === 'classic') renderFontsClassic();
-      else if (style === 'telegram') renderFontsTg();
-      else if (style === 'youtube') renderFontsYt();
-      else if (style === 'discord') renderFontsDc();
-      else renderFontsClassic();
-    }
+    settingsModalTitle.textContent = 'Палитра';
+    settingsModalBody.innerHTML = '';
+    const style = settings.uiStyle || 'classic';
+    const useDiscord = style === 'discord';
+    const useYouTube = style === 'youtube';
+    const useTelegram = style === 'telegram';
+
+    PRESET_GROUPS.forEach(group => {
+      const t = document.createElement('div');
+      t.className = useDiscord ? 'dc-settings-group-title' : (useYouTube ? 'yt-settings-group-title' : (useTelegram ? 'tg-settings-group-title' : 'cl-settings-group-title'));
+      t.textContent = group.title;
+      settingsModalBody.appendChild(t);
+
+      if (useYouTube) {
+        const grid = document.createElement('div');
+        grid.className = 'yt-settings-grid';
+        group.presets.forEach(pr => {
+          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+          const tile = document.createElement('div');
+          tile.className = 'yt-tile' + (isActive ? ' active' : '');
+          tile.innerHTML = '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--fg)' : shade(pr.bg,20)) + ';">Aa</div>' +
+            '<div class="nm">' + escapeHtml(pr.name) + '</div>';
+          tile.addEventListener('click', () => {
+            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+            saveSettings(); applySettings(); openPaletteOnly();
+          });
+          grid.appendChild(tile);
+        });
+        settingsModalBody.appendChild(grid);
+      } else if (useDiscord) {
+        const grid = document.createElement('div');
+        grid.className = 'dc-settings-grid';
+        group.presets.forEach(pr => {
+          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+          const tile = document.createElement('div');
+          tile.className = 'dc-tile' + (isActive ? ' active' : '');
+          tile.innerHTML = '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
+            '<div class="nm">' + escapeHtml(pr.name) + '</div>';
+          tile.addEventListener('click', () => {
+            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+            saveSettings(); applySettings(); openPaletteOnly();
+          });
+          grid.appendChild(tile);
+        });
+        settingsModalBody.appendChild(grid);
+      } else {
+        group.presets.forEach(pr => {
+          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+          const row = document.createElement('div');
+          row.className = (useTelegram ? 'tg-settings-row' : 'cl-settings-row') + (isActive ? ' active' : '');
+          row.innerHTML = '<div class="sw' + (isActive ? ' active' : '') + '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
+            '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div><div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
+            (isActive ? '<div class="check">✓</div>' : '');
+          row.addEventListener('click', () => {
+            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+            saveSettings(); applySettings(); openPaletteOnly();
+          });
+          settingsModalBody.appendChild(row);
+        });
+      }
+    });
+
+    // Свои цвета
+    addGroup('Свои цвета');
+    const custom = document.createElement('div');
+    custom.style.cssText = 'padding:10px 16px 16px;';
+    const mkColorRow = (label, key) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 0;min-height:44px;';
+      const lb = document.createElement('label'); lb.textContent = label; lb.style.cssText = 'font-size:14px;color:var(--fg);';
+      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
+      inp.style.cssText = 'width:44px;height:36px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);padding:2px;cursor:pointer;';
+      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
+      row.appendChild(lb); row.appendChild(inp);
+      return row;
+    };
+    custom.appendChild(mkColorRow('Фон', 'bg'));
+    custom.appendChild(mkColorRow('Текст', 'fg'));
+    custom.appendChild(mkColorRow('Акцент', 'accent'));
+    settingsModalBody.appendChild(custom);
   }
+
+  // Только шрифты
+  function openFontsOnly() {
+    if (!settingsModal) return;
+    settingsModal.classList.add('open');
+    settingsModalTitle.textContent = 'Шрифт';
+    settingsModalBody.innerHTML = '';
+    const style = settings.uiStyle || 'classic';
+    const useDiscord = style === 'discord';
+    const useYouTube = style === 'youtube';
+    const useTelegram = style === 'telegram';
+
+    addGroup('📖 Шрифт текста');
+    let currentGrid = null;
+    let currentGroup = null;
+    const wrap = document.createElement('div');
+    if (useYouTube) { wrap.className = 'yt-settings-grid'; wrap.style.padding = '0 16px 12px'; }
+    else if (useDiscord) { wrap.className = 'dc-settings-grid'; wrap.style.padding = '0 16px 12px'; }
+    else wrap.style.cssText = 'padding:0 0 8px;';
+
+    FONTS.forEach(f => {
+      if (useYouTube || useDiscord) {
+        if (f.group !== currentGroup) {
+          currentGroup = f.group;
+          const t = document.createElement('div');
+          t.className = useDiscord ? 'dc-settings-group-title' : 'yt-settings-group-title';
+          t.textContent = currentGroup;
+          settingsModalBody.appendChild(t);
+          currentGrid = document.createElement('div');
+          currentGrid.className = useDiscord ? 'dc-settings-grid' : 'yt-settings-grid';
+          settingsModalBody.appendChild(currentGrid);
+        }
+        const isActive = settings.fontFamily === f.id;
+        if (useYouTube) {
+          const tile = document.createElement('div');
+          tile.className = 'yt-font-tile' + (isActive ? ' active' : '');
+          tile.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div><div class="nm">' + escapeHtml(f.name) + '</div>';
+          tile.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
+          currentGrid.appendChild(tile);
+        } else {
+          const row = document.createElement('div');
+          row.className = 'dc-font-preview' + (isActive ? ' active' : '');
+          row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+            '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
+            (isActive ? '<div class="check" style="color:var(--accent);font-size:16px;">✓</div>' : '');
+          row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
+          currentGrid.appendChild(row);
+        }
+      } else {
+        const isActive = settings.fontFamily === f.id;
+        const row = document.createElement('div');
+        row.className = (useTelegram ? 'tg-font-preview' : 'cl-font-preview') + (isActive ? ' active' : '');
+        row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+          '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
+          (isActive ? '<div class="check">✓</div>' : '');
+        row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
+        wrap.appendChild(row);
+      }
+    });
+    if (!useYouTube && !useDiscord) settingsModalBody.appendChild(wrap);
+
+    // Размер, ширина, интервал — здесь же удобно
+    addGroup('Параметры текста');
+    const rows = document.createElement('div');
+    rows.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
+    const mkRow = (label, ctrl) => {
+      const r = document.createElement('div');
+      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
+      const lb = document.createElement('div');
+      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);';
+      lb.textContent = label;
+      r.appendChild(lb); r.appendChild(ctrl);
+      return r;
+    };
+    const mkStepper = (val, onChange) => {
+      const w = document.createElement('div');
+      w.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      const dec = document.createElement('button'); dec.textContent = '−';
+      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      dec.addEventListener('click', () => onChange(-1));
+      const valEl = document.createElement('div');
+      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
+      valEl.textContent = val;
+      const inc = document.createElement('button'); inc.textContent = '+';
+      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      inc.addEventListener('click', () => onChange(1));
+      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
+      return { w, valEl };
+    };
+    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
+    rows.appendChild(mkRow('Размер', fs.w));
+    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
+    rows.appendChild(mkRow('Ширина', wS.w));
+    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
+    rows.appendChild(mkRow('Интервал', lhS.w));
+    settingsModalBody.appendChild(rows);
+  }
+
+  // Универсальные настройки (все разделы)
+  function openUnifiedSettings() {
+    if (!settingsModal) return;
+    settingsModal.classList.add('open');
+    settingsModalTitle.textContent = 'Настройки';
+    settingsModalBody.innerHTML = '';
+
+    // Чтение
+    addGroup('📖 Чтение');
+    const rowsRead = document.createElement('div');
+    rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
+    const mkRow = (label, ctrl) => {
+      const r = document.createElement('div');
+      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
+      const lb = document.createElement('div');
+      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);';
+      lb.textContent = label;
+      r.appendChild(lb); r.appendChild(ctrl);
+      return r;
+    };
+    const mkStepper = (val, onChange) => {
+      const w = document.createElement('div');
+      w.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      const dec = document.createElement('button'); dec.textContent = '−';
+      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      dec.addEventListener('click', () => onChange(-1));
+      const valEl = document.createElement('div');
+      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
+      valEl.textContent = val;
+      const inc = document.createElement('button'); inc.textContent = '+';
+      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      inc.addEventListener('click', () => onChange(1));
+      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
+      return { w, valEl };
+    };
+    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
+    rowsRead.appendChild(mkRow('Размер текста', fs.w));
+    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
+    rowsRead.appendChild(mkRow('Ширина колонки', wS.w));
+    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
+    rowsRead.appendChild(mkRow('Интервал', lhS.w));
+    settingsModalBody.appendChild(rowsRead);
+
+    // Кнопки разделов
+    addGroup('🎨 Шрифт и палитра');
+    const wrapBtns = document.createElement('div');
+    wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
+    const bFont = document.createElement('button');
+    bFont.textContent = 'Aa Шрифт'; bFont.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bFont.addEventListener('click', () => { closeSettingsModal(); setTimeout(openFontsOnly, 120); });
+    wrapBtns.appendChild(bFont);
+    const bPal = document.createElement('button');
+    bPal.textContent = '🎨 Палитра'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
+    wrapBtns.appendChild(bPal);
+    settingsModalBody.appendChild(wrapBtns);
+
+    // Стиль
+    addGroup('🎭 Стиль интерфейса');
+    const stylesWrap = document.createElement('div');
+    stylesWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:6px;';
+    UI_STYLES.forEach(st => {
+      const isActive = settings.uiStyle === st.id;
+      const row = document.createElement('button');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:' + (isActive ? 'var(--border-strong)' : 'var(--bg-panel)') + ';border:1px solid ' + (isActive ? 'var(--accent)' : 'var(--border-strong)') + ';color:var(--fg);font-size:14px;text-align:left;min-height:44px;cursor:pointer;';
+      row.textContent = (isActive ? '✓ ' : '') + st.name;
+      row.addEventListener('click', () => {
+        if (currentBookId) {
+          const pos = captureReadingPosition();
+          if (pos) {
+            const list = loadMeta();
+            const idx = list.findIndex(x => x.id === currentBookId);
+            if (idx >= 0) {
+              list[idx].scroll = pos.scrollTop; list[idx].pct = pos.pct; list[idx].chapter = pos.chapter;
+              list[idx].pIndex = pos.pIndex; list[idx].offsetInPara = pos.offsetInPara;
+              saveMeta(list);
+            }
+          }
+        }
+        settings.uiStyle = st.id; saveSettings();
+        applyUiStyle();
+        if (currentBookId) {
+          const targetPos = loadMeta().find(x => x.id === currentBookId);
+          setTimeout(() => openBookInCurrentStyle(currentBookId, targetPos), 30);
+        }
+        closeSettingsModal();
+      });
+      stylesWrap.appendChild(row);
+    });
+    settingsModalBody.appendChild(stylesWrap);
+
+    // Библиотека
+    addGroup('📚 Библиотека');
+    const libWrap = document.createElement('div');
+    libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
+    const mkBtn = (label, fn) => {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'padding:12px 14px;border-radius:10px;font-size:14px;text-align:left;min-height:var(--tap);background:var(--bg-panel);border:1px solid var(--border-strong);color:var(--fg);cursor:pointer;';
+      b.addEventListener('click', fn);
+      libWrap.appendChild(b);
+    };
+    mkBtn('＋ Добавить книгу', () => { closeSettingsModal(); setTimeout(promptAddBook, 180); });
+    mkBtn('＋ Добавить архив', () => { closeSettingsModal(); setTimeout(promptAddArchive, 180); });
+    mkBtn('📁 Архивы', () => { closeSettingsModal(); setTimeout(openCollectionsManager, 180); });
+    mkBtn('📖 Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
+    mkBtn('🔖 Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    mkBtn('🔍 Поиск по книге', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
+    mkBtn('📚 Вернуться в библиотеку', () => {
+      closeSettingsModal();
+      if (settings.uiStyle === 'classic') backClassic();
+      else if (settings.uiStyle === 'telegram') backTelegram();
+      else if (settings.uiStyle === 'youtube') backYoutube();
+      else if (settings.uiStyle === 'discord') backDiscord();
+    });
+    settingsModalBody.appendChild(libWrap);
+  }
+
+  // ===== УНИВЕРСАЛЬНОЕ МЕНЮ КНИГИ =====
+  function showBookMenu(bookId, anchorEl) {
+    const menu = $('collection-menu'); if (!menu) return;
+    const books = loadMeta(); const b = books.find(x => x.id === bookId);
+    if (!b) return;
+    const cur = b.collection || '';
+    const cols = loadCollections();
+    menu.innerHTML = '';
+
+    function mkItem(text, active, cb, danger) {
+      const it = document.createElement('div');
+      it.className = 'cm-item' + (active ? ' active' : '') + (danger ? ' danger' : '');
+      it.textContent = text;
+      it.addEventListener('click', () => { cb(); menu.classList.remove('show'); });
+      menu.appendChild(it);
+    }
+    function mkTitle(text) {
+      const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text;
+      menu.appendChild(t);
+    }
+
+    mkTitle(b.title || 'Книга');
+    mkItem('✎ Переименовать', false, () => {
+      askText('Новое название:', b.title).then(n => {
+        if (n !== null && n.trim()) {
+          const arr = loadMeta(); const bk = arr.find(x => x.id === bookId);
+          if (bk) bk.title = n.trim(); saveMeta(arr);
+          if (currentBookId === bookId) {
+            if (settings.uiStyle === 'telegram') { const el = $('tg-chat-name'); if (el) el.textContent = n.trim(); }
+            else if (settings.uiStyle === 'discord') { const el = $('dc-chat-name'); if (el) el.textContent = dcSlug(n.trim()); }
+            else if (settings.uiStyle === 'youtube') { const el = $('yt-watch-title'); if (el) el.textContent = n.trim(); }
+          }
+          renderAll();
+        }
+      });
+    });
+
+    const sep1 = document.createElement('div'); sep1.className = 'cm-sep'; menu.appendChild(sep1);
+    mkTitle('Архив');
+    mkItem('🚫 Без архива', cur === '', () => {
+      const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
+      if (bb) { bb.collection = ''; saveMeta(arr); }
+      renderAll();
+    });
+    if (cols.length) {
+      cols.forEach(c => {
+        mkItem('📁 ' + c.name, cur === c.id, () => {
+          const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
+          if (bb) { bb.collection = c.id; saveMeta(arr); }
+          renderAll();
+        });
+      });
+    }
+    mkItem('＋ Новый архив…', false, () => {
+      askText('Название нового архива:').then(n => {
+        if (n !== null && n.trim()) {
+          const arr = loadCollections();
+          const id = 'c' + Date.now();
+          arr.push({ id, name: n.trim(), created: Date.now() });
+          saveCollections(arr);
+          const bks = loadMeta(); const bb = bks.find(x => x.id === bookId);
+          if (bb) { bb.collection = id; saveMeta(bks); }
+          renderAll();
+        }
+      });
+    });
+
+    const sep3 = document.createElement('div'); sep3.className = 'cm-sep'; menu.appendChild(sep3);
+    mkItem('🗑 Удалить книгу', false, () => {
+      askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
+        if (!ok) return;
+        removeBookData(bookId);
+        saveMeta(loadMeta().filter(x => x.id !== bookId));
+        if (currentBookId === bookId) {
+          if (settings.uiStyle === 'classic') backClassic();
+          else if (settings.uiStyle === 'telegram') backTelegram();
+          else if (settings.uiStyle === 'youtube') backYoutube();
+          else if (settings.uiStyle === 'discord') backDiscord();
+        }
+        renderAll();
+      });
+    }, true);
+
+    const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 20, bottom: 80, top: 60 };
+    menu.style.left = Math.max(8, Math.min(window.innerWidth - 260, rect.left)) + 'px';
+    menu.style.top = (rect.bottom + 6) + 'px';
+    menu.classList.add('show');
+    setTimeout(() => {
+      const mh = menu.offsetHeight || 280;
+      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
+        menu.style.top = Math.max(8, (rect.top || 60) - mh - 6) + 'px';
+      }
+    }, 0);
+  }
+
+  document.addEventListener('click', (e) => {
+    const menu = $('collection-menu');
+    if (!menu || !menu.classList.contains('show')) return;
+    if (menu.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('.book-collection, .collection-chip')) return;
+    menu.classList.remove('show');
+  });
 
   // ===== КЛАССИКА =====
   function renderClassicLibrary() {
@@ -2818,24 +2777,20 @@
       grip.title = 'Перетащите, чтобы изменить порядок';
       grip.innerHTML = '<span></span><span></span><span></span>';
       el.appendChild(grip);
-
       const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
       el.appendChild(title);
-
       const colEl = document.createElement('div');
       colEl.className = 'book-collection' + (b.collection ? '' : ' none');
       const colName = b.collection ? (cols.find(c => c.id === b.collection)?.name || 'Архив') : 'Без архива';
       colEl.textContent = '📁 ' + colName;
-      colEl.addEventListener('click', (e) => { e.stopPropagation(); openCollectionMenu(colEl, b.id); });
+      colEl.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, colEl); });
       el.appendChild(colEl);
-
       const meta = document.createElement('div'); meta.className = 'meta';
       let metaText = (b.words || countWords(getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
       const marksCount = loadMarks(b.id).length;
       if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
       if (b.pct > 0) metaText += ' · ' + (b.pct * 100).toFixed(2) + '%';
       meta.textContent = metaText; el.appendChild(meta);
-
       if (b.pct > 0.00005) {
         const line = document.createElement('div'); line.className = 'progress-line';
         const span = document.createElement('span');
@@ -2846,27 +2801,32 @@
       rename.className = 'rename'; rename.textContent = '✎';
       rename.addEventListener('click', (e) => {
         e.stopPropagation();
-        const n = prompt('Новое название:', b.title);
-        if (n !== null && n.trim()) {
-          const arr = loadMeta(); const bk = arr.find(x => x.id === b.id);
-          if (bk) bk.title = n.trim(); saveMeta(arr); renderClassicLibrary();
-        }
+        askText('Новое название:', b.title).then(n => {
+          if (n !== null && n.trim()) {
+            const arr = loadMeta(); const bk = arr.find(x => x.id === b.id);
+            if (bk) bk.title = n.trim(); saveMeta(arr); renderClassicLibrary();
+          }
+        });
       });
       el.appendChild(rename);
       const del = document.createElement('button');
       del.className = 'del'; del.textContent = '✕';
       del.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (confirm('Удалить «' + b.title + '»?')) {
+        askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
+          if (!ok) return;
           removeBookData(b.id);
-          saveMeta(loadMeta().filter(x => x.id !== b.id)); renderClassicLibrary();
-        }
+          saveMeta(loadMeta().filter(x => x.id !== b.id));
+          if (currentBookId === b.id) backClassic();
+          renderClassicLibrary();
+        });
       });
       el.appendChild(del);
       el.addEventListener('click', (e) => {
         if (e.target.closest('.del, .rename, .book-collection, .grip')) return;
         openBookClassic(b.id);
       });
+      el.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, el); });
       attachBookDragHandlers(el, b.id);
       libraryList.appendChild(el);
     });
@@ -2891,7 +2851,7 @@
       const d = dx * dx + dy * dy;
       if (d < bestDist) { bestDist = d; best = { el, rect: r }; }
     }
-    if (best && bestDist < 120 * 120) return best;
+    if (best && bestDist < 140 * 140) return best;
     return null;
   }
   function commitReorder(dragId, targetId, placeAfter) {
@@ -2911,10 +2871,7 @@
     const grip = el.querySelector('.grip');
     if (!grip) return;
     const container = el.parentElement;
-    grip.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      startBookDrag(e, el, bookId, container);
-    });
+    grip.addEventListener('pointerdown', (e) => { e.preventDefault(); startBookDrag(e, el, bookId, container); });
   }
   function startBookDrag(e, bookEl, bookId, container) {
     if (dragState) return;
@@ -2925,9 +2882,8 @@
       const dx = ev.clientX - dragState.startX;
       const dy = ev.clientY - dragState.startY;
       if (!dragState.active) {
-        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-        dragState.active = true;
-        dragState.el.classList.add('dragging');
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        dragState.active = true; dragState.el.classList.add('dragging');
         document.body.style.userSelect = 'none';
       }
       clearDragHighlights(container);
@@ -2965,6 +2921,85 @@
   }
 
   // ===== КОЛЛЕКЦИИ =====
+  function promptAddArchive() {
+    askText('Название нового архива:').then(n => {
+      if (n !== null && n.trim()) {
+        const arr = loadCollections();
+        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+        saveCollections(arr);
+        renderAll();
+        toast('Архив создан');
+      }
+    });
+  }
+  function openCollectionsManager() {
+    const pop = $('menu-pop'); if (!pop) return;
+    pop.innerHTML = ''; pop.style.transform = '';
+    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
+
+    const title = document.createElement('div'); title.className = 'group-title';
+    title.textContent = '📁 Архивы (папки)'; pop.appendChild(title);
+
+    const cols = loadCollections(); const books = loadMeta();
+    if (!cols.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
+      empty.textContent = 'Пока нет архивов.'; pop.appendChild(empty);
+    } else {
+      cols.forEach(c => {
+        const row = document.createElement('div'); row.className = 'mi';
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
+        const nm = document.createElement('span');
+        const count = books.filter(b => b.collection === c.id).length;
+        nm.textContent = '📁 ' + c.name + ' (' + count + ')';
+        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        const edit = document.createElement('button');
+        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
+        edit.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askText('Название архива:', c.name).then(n => {
+            if (n !== null && n.trim()) {
+              const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
+              if (cc) cc.name = n.trim(); saveCollections(arr);
+              openCollectionsManager(); renderAll();
+            }
+          });
+        });
+        const del = document.createElement('button');
+        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askConfirm('Удалить архив «' + c.name + '»? Книги останутся без архива.', 'Удалить', true).then(ok => {
+            if (!ok) return;
+            saveCollections(loadCollections().filter(x => x.id !== c.id));
+            const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
+            saveMeta(arr);
+            if (activeCollection === c.id) activeCollection = null;
+            openCollectionsManager(); renderAll();
+          });
+        });
+        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
+        pop.appendChild(row);
+      });
+    }
+    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
+    const addBtn = document.createElement('div'); addBtn.className = 'mi';
+    addBtn.textContent = '+ Новый архив';
+    addBtn.addEventListener('click', () => {
+      askText('Название нового архива:').then(n => {
+        if (n !== null && n.trim()) {
+          const arr = loadCollections();
+          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+          saveCollections(arr); openCollectionsManager(); renderAll();
+        }
+      });
+    });
+    pop.appendChild(addBtn);
+
+    pop.style.left = '50%'; pop.style.top = '50%';
+    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
+  }
+
   function renderCollectionsBar() {
     const bar = $('collections-bar'); if (!bar) return;
     const cols = loadCollections(); const books = loadMeta();
@@ -2995,35 +3030,30 @@
         const edit = document.createElement('button'); edit.className = 'chip-edit'; edit.textContent = '✎';
         edit.addEventListener('click', (e) => {
           e.stopPropagation();
-          const n = prompt('Название архива:', c.name);
-          if (n !== null) {
-            const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
-            if (cc) { cc.name = n.trim() || c.name; saveCollections(arr); }
-            renderAll();
-          }
+          askText('Название архива:', c.name).then(n => {
+            if (n !== null) {
+              const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
+              if (cc) { cc.name = n.trim() || c.name; saveCollections(arr); }
+              renderAll();
+            }
+          });
         });
         actions.appendChild(edit);
         const del = document.createElement('button'); del.className = 'chip-del'; del.textContent = '✕';
         del.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (confirm('Удалить архив «' + c.name + '»? Книги останутся без архива.')) {
+          askConfirm('Удалить архив «' + c.name + '»?', 'Удалить', true).then(ok => {
+            if (!ok) return;
             saveCollections(loadCollections().filter(x => x.id !== c.id));
             const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
             saveMeta(arr); if (activeCollection === c.id) activeCollection = null; renderAll();
-          }
+          });
         });
         actions.appendChild(del);
         el.appendChild(actions);
       });
     });
-    const addChip = makeChip('+ Архив', '', false, () => {
-      const n = prompt('Название нового архива:');
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCollections(arr); renderAll();
-      }
-    });
+    const addChip = makeChip('+ Архив', '', false, promptAddArchive);
     addChip.classList.add('add-chip');
   }
 
@@ -3059,14 +3089,7 @@
     const add = document.createElement('div');
     add.className = 'collection-chip add-chip';
     add.innerHTML = '<span>+ Архив</span>';
-    add.addEventListener('click', () => {
-      const n = prompt('Название нового архива:');
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCollections(arr); renderTgCollectionsBar(); renderTelegramChatList();
-      }
-    });
+    add.addEventListener('click', promptAddArchive);
     bar.appendChild(add);
   }
 
@@ -3106,20 +3129,63 @@
         activeCollection = (activeCollection === c.id) ? null : c.id;
         renderYoutubeChips(); renderYoutubeGrid();
       });
+      let tmr = null;
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+        tmr = setTimeout(() => { tmr = null; manageArchiveMenu(c, el); }, 500);
+      });
+      el.addEventListener('pointerup', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+      el.addEventListener('pointercancel', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+      el.addEventListener('pointermove', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+      el.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, el); });
       chips.appendChild(el);
     });
     const add = document.createElement('div');
     add.className = 'yt-chip';
     add.textContent = '+ Архив';
-    add.addEventListener('click', () => {
-      const n = prompt('Название нового архива:');
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCollections(arr); renderYoutubeChips(); renderYoutubeGrid();
-      }
-    });
+    add.addEventListener('click', promptAddArchive);
     chips.appendChild(add);
+  }
+
+  function manageArchiveMenu(c, anchorEl) {
+    const menu = $('collection-menu'); if (!menu) return;
+    menu.innerHTML = '';
+    function mkItem(text, cb, danger) {
+      const it = document.createElement('div');
+      it.className = 'cm-item' + (danger ? ' danger' : '');
+      it.textContent = text;
+      it.addEventListener('click', () => { cb(); menu.classList.remove('show'); });
+      menu.appendChild(it);
+    }
+    const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = '📁 ' + c.name;
+    menu.appendChild(t);
+    mkItem('✎ Переименовать', () => {
+      askText('Название архива:', c.name).then(n => {
+        if (n !== null && n.trim()) {
+          const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
+          if (cc) cc.name = n.trim(); saveCollections(arr); renderAll();
+        }
+      });
+    });
+    mkItem('🗑 Удалить архив', () => {
+      askConfirm('Удалить архив «' + c.name + '»?', 'Удалить', true).then(ok => {
+        if (!ok) return;
+        saveCollections(loadCollections().filter(x => x.id !== c.id));
+        const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
+        saveMeta(arr); if (activeCollection === c.id) activeCollection = null; renderAll();
+      });
+    }, true);
+
+    const rect = anchorEl.getBoundingClientRect();
+    menu.style.left = Math.max(8, Math.min(window.innerWidth - 260, rect.left)) + 'px';
+    menu.style.top = (rect.bottom + 6) + 'px';
+    menu.classList.add('show');
+    setTimeout(() => {
+      const mh = menu.offsetHeight || 160;
+      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
+        menu.style.top = Math.max(8, rect.top - mh - 6) + 'px';
+      }
+    }, 0);
   }
 
   function renderDcChannels() {
@@ -3136,7 +3202,7 @@
     if (!filtered.length) {
       const empty = document.createElement('div');
       empty.style.cssText = 'padding:20px 12px;text-align:center;color:var(--fg-dim);font-size:13px;';
-      empty.textContent = 'Нет книг. Нажмите «+ Добавить книгу».';
+      empty.textContent = 'Нет книг. Нажмите «＋ Добавить книгу».';
       list.appendChild(empty); return;
     }
 
@@ -3149,18 +3215,18 @@
       const item = document.createElement('div');
       item.className = 'dc-ch-item' + (b.id === currentBookId ? ' active' : '');
       item.dataset.bookId = b.id;
-      item.innerHTML =
-        '<span class="hash">#</span>' +
-        '<span class="ch-name">' + escapeHtml(dcSlug(b.title)) + '</span>';
+      item.innerHTML = '<span class="hash">#</span><span class="ch-name">' + escapeHtml(dcSlug(b.title)) + '</span>';
       item.title = b.title + (b.pct > 0 ? ' · ' + (b.pct * 100).toFixed(1) + '%' : '');
       item.addEventListener('click', () => renderDiscordBook(b.id, true));
       let pressTimer = null;
       item.addEventListener('pointerdown', (e) => {
         if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { startBookDrag(e, item, b.id, list); pressTimer = null; }, 350);
+        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, item); }, 500);
       });
       item.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
       item.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      item.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
       list.appendChild(item);
     });
 
@@ -3181,6 +3247,15 @@
           activeCollection = (activeCollection === c.id) ? null : c.id;
           renderDcChannels();
         });
+        let tmr = null;
+        item.addEventListener('pointerdown', (e) => {
+          if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+          tmr = setTimeout(() => { tmr = null; manageArchiveMenu(c, item); }, 500);
+        });
+        item.addEventListener('pointerup', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+        item.addEventListener('pointercancel', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+        item.addEventListener('pointermove', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
+        item.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, item); });
         list.appendChild(item);
       });
     }
@@ -3199,93 +3274,24 @@
         activeCollection = (activeCollection === c.id) ? null : c.id;
         renderDcChannels();
       });
+      icon.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, icon); });
       list.appendChild(icon);
     });
   }
 
-  function openCollectionMenu(anchorEl, bookId) {
-    const menu = $('collection-menu'); if (!menu) return;
-    const books = loadMeta(); const b = books.find(x => x.id === bookId);
-    const cur = b ? (b.collection || '') : '';
-    const cols = loadCollections();
-    menu.innerHTML = '';
-
-    function mkItem(text, active, cb, danger) {
-      const it = document.createElement('div');
-      it.className = 'cm-item' + (active ? ' active' : '') + (danger ? ' danger' : '');
-      it.textContent = text;
-      it.addEventListener('click', () => { cb(); menu.classList.remove('show'); });
-      menu.appendChild(it);
-      return it;
-    }
-    mkItem('Без архива', cur === '', () => {
-      const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
-      if (bb) { bb.collection = ''; saveMeta(arr); }
-      renderAll();
-    });
-    if (cols.length) {
-      const sep = document.createElement('div'); sep.className = 'cm-sep'; menu.appendChild(sep);
-      cols.forEach(c => {
-        mkItem('📁 ' + c.name, cur === c.id, () => {
-          const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
-          if (bb) { bb.collection = c.id; saveMeta(arr); }
-          renderAll();
-        });
-      });
-    }
-    const sep2 = document.createElement('div'); sep2.className = 'cm-sep'; menu.appendChild(sep2);
-    mkItem('+ Новый архив…', false, () => {
-      const n = prompt('Название нового архива:');
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        const id = 'c' + Date.now();
-        arr.push({ id, name: n.trim(), created: Date.now() });
-        saveCollections(arr);
-        const bks = loadMeta(); const bb = bks.find(x => x.id === bookId);
-        if (bb) { bb.collection = id; saveMeta(bks); }
-        renderAll();
-      }
-    });
-
-    const rect = anchorEl.getBoundingClientRect();
-    menu.style.left = Math.max(8, Math.min(window.innerWidth - 220, rect.left)) + 'px';
-    menu.style.top = (rect.bottom + 6) + 'px';
-    menu.classList.add('show');
-    setTimeout(() => {
-      const mh = menu.offsetHeight || 200;
-      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
-        menu.style.top = Math.max(8, rect.top - mh - 6) + 'px';
-      }
-    }, 0);
-  }
-  document.addEventListener('click', (e) => {
-    const menu = $('collection-menu');
-    if (!menu || !menu.classList.contains('show')) return;
-    if (menu.contains(e.target)) return;
-    if (e.target.closest && e.target.closest('.book-collection, .collection-chip')) return;
-    menu.classList.remove('show');
-  });
-
+  // ===== ОТКРЫТИЕ КНИГ =====
   function openBookInCurrentStyle(id, savedPos) {
     const b = loadMeta().find(x => x.id === id);
     if (!b) return;
     currentBookId = id; currentMarks = loadMarks(id);
-    const pos = savedPos || {
-      pIndex: b.pIndex,
-      offsetInPara: b.offsetInPara,
-      scrollTop: b.scroll,
-      pct: b.pct,
-      chapter: b.chapter
-    };
+    const pos = savedPos || { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
     if (settings.uiStyle === 'classic') {
       $('paste-screen').classList.remove('active');
       $('reader-shell').classList.add('active');
       renderBookIntoContent(getBookText(id), $('content'), null);
     } else if (settings.uiStyle === 'telegram') {
-      const empty = $('tg-empty');
-      if (empty) empty.style.display = 'none';
-      const readerScreen = $('tg-reader-screen');
-      if (readerScreen) readerScreen.classList.add('active');
+      const empty = $('tg-empty'); if (empty) empty.style.display = 'none';
+      const rs = $('tg-reader-screen'); if (rs) rs.classList.add('active');
       renderBookIntoContent(getBookText(id), $('tg-content'), 'var(--accent)');
       $('tg-chat-area').classList.add('has-book');
       $('tg-app').classList.add('chat-open');
@@ -3297,6 +3303,7 @@
       const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
       renderBookIntoContent(getBookText(id), $('yt-reader-content'), 'var(--fg)');
       const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
+      const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'inline-flex';
       renderYoutubeSidebar();
     } else if (settings.uiStyle === 'discord') {
       const empty = $('dc-empty'); if (empty) empty.style.display = 'none';
@@ -3313,9 +3320,7 @@
     });
   }
 
-  function openBookClassic(id) {
-    openBookInCurrentStyle(id, null);
-  }
+  function openBookClassic(id) { openBookInCurrentStyle(id, null); }
   function backClassic() {
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
     $('paste-screen').classList.add('active');
@@ -3363,10 +3368,12 @@
       let pressTimer = null;
       item.addEventListener('pointerdown', (e) => {
         if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { startBookDrag(e, item, b.id, list); pressTimer = null; }, 350);
+        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, item); }, 500);
       });
       item.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
       item.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      item.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
       list.appendChild(item);
     });
   }
@@ -3401,6 +3408,7 @@
         const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
         renderBookIntoContent(getBookText(currentBookId), $('yt-reader-content'), 'var(--fg)');
         const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
+        const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'inline-flex';
         requestAnimationFrame(() => {
           restoreReadingPosition({
             pIndex: b.pIndex, offsetInPara: b.offsetInPara,
@@ -3422,6 +3430,7 @@
       item.innerHTML = '<span class="icon" style="background:var(--bg-panel);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid var(--border);">' + escapeHtml(initial) + '</span>' +
         '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(b.title) + '</span>';
       item.addEventListener('click', () => renderYoutubeBook(b.id));
+      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
       sb.appendChild(item);
     });
   }
@@ -3457,10 +3466,12 @@
       let pressTimer = null;
       card.addEventListener('pointerdown', (e) => {
         if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { startBookDrag(e, card, b.id, grid); pressTimer = null; }, 350);
+        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, card); }, 500);
       });
       card.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
       card.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      card.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      card.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, card); });
       grid.appendChild(card);
     });
   }
@@ -3472,6 +3483,7 @@
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
     $('yt-watch').classList.remove('show');
     const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'none';
+    const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'none';
     renderYoutubeGrid();
   }
 
@@ -3534,10 +3546,10 @@
     saveMeta(meta);
     return id;
   }
-  function promptAddBook() {
-    const t = prompt('Название книги:', 'Новая книга');
+  async function promptAddBook() {
+    const t = await askText('Название книги:', 'Новая книга');
     if (t === null) return;
-    const text = prompt('Вставьте текст книги:', '');
+    const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
     if (text === null || !text.trim()) { toast('Нет текста', true); return; }
     const cid = (typeof activeCollection === 'string' && activeCollection) ? activeCollection : '';
     const id = addBookRecord(t.trim() || guessTitle(text), text, cid);
@@ -3653,11 +3665,8 @@
   }
   function textFromRtf(rtf) {
     let text = rtf;
-    text = text.replace(/\\fonttbl[\s\S]*?\}/g, '');
-    text = text.replace(/\\colortbl[\s\S]*?\}/g, '');
-    text = text.replace(/\\stylesheet[\s\S]*?\}/g, '');
-    text = text.replace(/\\info[\s\S]*?\}/g, '');
-    text = text.replace(/\\pict[\s\S]*?\}/g, '');
+    text = text.replace(/\\fonttbl[\s\S]*?\}/g, '').replace(/\\colortbl[\s\S]*?\}/g, '')
+      .replace(/\\stylesheet[\s\S]*?\}/g, '').replace(/\\info[\s\S]*?\}/g, '').replace(/\\pict[\s\S]*?\}/g, '');
     text = text.replace(/\\par[d]?\b/g, '\n').replace(/\\line\b/g, '\n').replace(/\\tab\b/g, '\t');
     text = text.replace(/\\u(-?\d+)\??/g, (m, n) => { let c = parseInt(n, 10); if (c < 0) c += 65536; return String.fromCharCode(c); });
     text = text.replace(/\\'([0-9a-fA-F]{2})/g, (m, h) => String.fromCharCode(parseInt(h, 16)));
@@ -3759,10 +3768,10 @@
       'background:var(--bg-panel);border:1px solid var(--border-strong);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.55);' +
       'font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:calc(100vw - 24px);flex-wrap:wrap;';
     el.innerHTML = '<span style="font-size:12px;color:var(--fg-dim);white-space:nowrap;">Перейти на</span>' +
-      '<input type="number" min="0" max="100" step="0.01" inputmode="decimal" value="0" style="width:90px;background:var(--bg);border:1px solid var(--border-strong);color:var(--fg);padding:7px 10px;border-radius:6px;font-size:14px;font-variant-numeric:tabular-nums;outline:none;text-align:right;">' +
+      '<input type="number" min="0" max="100" step="0.01" inputmode="decimal" value="0" style="width:90px;background:var(--bg);border:1px solid var(--border-strong);color:var(--fg);padding:8px 10px;border-radius:6px;font-size:14px;font-variant-numeric:tabular-nums;outline:none;text-align:right;">' +
       '<span style="font-size:13px;color:var(--fg-dim);margin-left:-4px;">%</span>' +
-      '<button style="background:var(--accent);color:var(--bg);border:1px solid var(--accent);font-weight:600;padding:7px 10px;border-radius:6px;font-size:13px;cursor:pointer;">→</button>' +
-      '<button style="padding:7px 10px;border-radius:6px;font-size:13px;cursor:pointer;">✕</button>';
+      '<button style="background:var(--accent);color:var(--bg);border:1px solid var(--accent);font-weight:600;padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer;min-height:36px;">→</button>' +
+      '<button style="padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer;min-height:36px;">✕</button>';
     document.body.appendChild(el);
     const input = el.querySelector('input');
     const go = el.querySelectorAll('button')[0];
@@ -3803,13 +3812,15 @@
     setTimeout(() => { input.focus(); input.select(); }, 50);
   }
   document.addEventListener('click', (e) => {
-    const pctEl = $('pct-indicator'); const mPctEl = $('m-pct-indicator'); const dcPctEl = $('dc-pct-indicator');
+    const pctEl = $('pct-indicator'); const mPctEl = $('m-pct-indicator');
+    const dcPctEl = $('dc-pct-indicator'); const tgBadge = $('tg-pct-badge'); const ytBadge = $('yt-pct-badge');
     if (e.target === pctEl) { e.stopPropagation(); openPctJump(pctEl); return; }
     if (e.target === mPctEl) { e.stopPropagation(); openPctJump(mPctEl); return; }
     if (e.target === dcPctEl) { e.stopPropagation(); openPctJump(dcPctEl); return; }
+    if (e.target === tgBadge) { e.stopPropagation(); openPctJump(tgBadge); return; }
+    if (e.target === ytBadge) { e.stopPropagation(); openPctJump(ytBadge); return; }
     if (pctJumpEl && pctJumpEl.style.display === 'flex') {
       if (pctJumpEl.contains(e.target)) return;
-      if (e.target === pctEl || e.target === mPctEl || e.target === dcPctEl) return;
       pctJumpEl.style.display = 'none';
     }
   });
@@ -3820,11 +3831,11 @@
     applySettings();
 
     const btnRead = $('btn-read');
-    if (btnRead) btnRead.addEventListener('click', () => {
+    if (btnRead) btnRead.addEventListener('click', async () => {
       const text = $('input').value;
       if (!text.trim()) { toast('Вставьте текст', true); return; }
       const id = addBookRecord(guessTitle(text), text);
-      if (id) openBookClassic(id);
+      if (id) { $('input').value = ''; openBookClassic(id); }
     });
     const btnFile = $('btn-file'); const fileInput = $('file-input');
     if (btnFile && fileInput) {
@@ -3837,7 +3848,10 @@
     const btnClear = $('btn-clear');
     if (btnClear) btnClear.addEventListener('click', () => {
       const input = $('input');
-      if (!input.value.trim() || confirm('Очистить поле?')) { input.value = ''; input.focus(); }
+      if (!input.value.trim()) { input.focus(); return; }
+      askConfirm('Очистить поле?', 'Очистить', true).then(ok => {
+        if (ok) { input.value = ''; input.focus(); }
+      });
     });
     const libSearch = $('library-search');
     if (libSearch) libSearch.addEventListener('input', renderClassicLibrary);
@@ -3846,59 +3860,56 @@
       $('library-search').value = ''; renderClassicLibrary(); $('library-search').focus();
     });
 
-    document.querySelectorAll('[data-style-btn]').forEach(el => {
-      el.addEventListener('click', (e) => { e.stopPropagation(); openStyleMenu(el); });
-    });
-    const btnStyleClassic = $('btn-style-classic');
-    if (btnStyleClassic) btnStyleClassic.addEventListener('click', (e) => { e.stopPropagation(); openStyleMenu(btnStyleClassic); });
-    document.addEventListener('click', (e) => {
-      const pop = $('menu-pop');
-      if (pop && pop.classList.contains('show') && !pop.contains(e.target) && !e.target.closest('[data-style-btn]')) {
-        pop.classList.remove('show'); pop.style.transform = '';
-      }
-    });
-
+    // Единые кнопки "⚙" и "Aa" / "🎨" на всех стилях
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
-    // TG
-    bindIf('tg-btn-toc', openToc); bindIf('tg-btn-marks', openMarks); bindIf('tg-btn-search', openSearch);
-    bindIf('tg-btn-mark', addMark); bindIf('tg-add-mark-fab', addMark);
-    // YT
-    bindIf('yt-btn-toc', openToc); bindIf('yt-btn-marks', openMarks); bindIf('yt-btn-search', openSearch);
-    bindIf('yt-btn-mark', addMark); bindIf('yt-add-mark-fab', addMark);
-    // Classic
-    bindIf('btn-toc', openToc); bindIf('btn-marks', openMarks); bindIf('btn-search', openSearch);
-    bindIf('btn-mark', addMark);
-    // DC
-    bindIf('dc-btn-toc', openToc); bindIf('dc-btn-marks', openMarks); bindIf('dc-btn-search', openSearch);
-    bindIf('dc-btn-mark', addMark); bindIf('dc-add-mark-fab', addMark);
-    // add book
-    bindIf('tg-add-book', promptAddBook); bindIf('yt-add-book-side', promptAddBook); bindIf('dc-add-book', promptAddBook);
-    bindIf('dc-server-add', promptAddBook);
+    // Настройки (все стили)
+    bindIf('btn-menu', openUnifiedSettings);
+    bindIf('tg-open-settings', openUnifiedSettings);
+    bindIf('tg-open-settings-2', openUnifiedSettings);
+    bindIf('yt-open-settings', openUnifiedSettings);
+    bindIf('yt-open-settings-2', openUnifiedSettings);
+    bindIf('dc-open-settings', openUnifiedSettings);
+    // Шрифт / Палитра (в Classic)
+    bindIf('btn-font', openFontsOnly);
+    bindIf('btn-theme', openPaletteOnly);
 
-    bindIf('font-dec', () => changeFont(-2)); bindIf('font-inc', () => changeFont(2));
-    bindIf('width-dec', () => changeWidth(-40)); bindIf('width-inc', () => changeWidth(40));
-    bindIf('lh-dec', () => changeLineHeight(-0.1)); bindIf('lh-inc', () => changeLineHeight(0.1));
-
-    bindIf('btn-library', backClassic); bindIf('yt-watch-back', backYoutube);
-    bindIf('tg-mobile-back', backTelegram); bindIf('dc-mobile-back', backDiscord);
-
-    bindIf('btn-menu', (e) => { e.stopPropagation(); toggleSheet(); });
-    bindIf('tg-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
-    bindIf('yt-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
-    bindIf('dc-menu-btn', (e) => { e.stopPropagation(); toggleSheet(); });
+    // Кнопки на нижней панели (мобилка)
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
     bindIf('m-marks', () => { closeSheet(); setTimeout(openMarks, 180); });
     bindIf('m-mark', () => { closeSheet(); addMark(); });
-    bindIf('m-library', () => { closeSheet(); backClassic(); });
-    bindIf('m-style', () => { closeSheet(); setTimeout(() => openStyleMenu(null), 180); });
-    bindIf('m-theme', () => { closeSheet(); setTimeout(() => openSettingsModal('palette'), 180); });
-    bindIf('m-font', () => { closeSheet(); setTimeout(() => openSettingsModal('fonts'), 180); });
+    bindIf('m-library', () => {
+      closeSheet();
+      if (settings.uiStyle === 'classic') backClassic();
+      else if (settings.uiStyle === 'telegram') backTelegram();
+      else if (settings.uiStyle === 'youtube') backYoutube();
+      else if (settings.uiStyle === 'discord') backDiscord();
+    });
+    bindIf('m-style', () => { closeSheet(); setTimeout(openUnifiedSettings, 180); });
+    bindIf('m-theme', () => { closeSheet(); setTimeout(openPaletteOnly, 180); });
+    bindIf('m-font', () => { closeSheet(); setTimeout(openFontsOnly, 180); });
     bindIf('m-collections', () => { closeSheet(); setTimeout(openCollectionsManager, 180); });
+    bindIf('m-add-book', () => { closeSheet(); setTimeout(promptAddBook, 180); });
+    bindIf('m-add-archive', () => { closeSheet(); setTimeout(promptAddArchive, 180); });
     bindIf('m-font-dec', () => changeFont(-2)); bindIf('m-font-inc', () => changeFont(2));
     bindIf('m-width-dec', () => changeWidth(-40)); bindIf('m-width-inc', () => changeWidth(40));
     bindIf('m-lh-dec', () => changeLineHeight(-0.1)); bindIf('m-lh-inc', () => changeLineHeight(0.1));
+
+    // Добавить книгу / архив
+    bindIf('tg-add-book', promptAddBook);
+    bindIf('dc-add-book', promptAddBook);
+    bindIf('dc-server-add', promptAddArchive);
+    bindIf('yt-add-book-btn', promptAddBook);
+    bindIf('yt-add-archive-btn', promptAddArchive);
+    bindIf('yt-add-book-side', promptAddBook);
+    bindIf('yt-add-archive-side', promptAddArchive);
+
+    // Навигация
+    bindIf('btn-library', backClassic);
+    bindIf('yt-watch-back', backYoutube);
+    bindIf('tg-mobile-back', backTelegram);
+    bindIf('dc-mobile-back', backDiscord);
 
     const tgSearch = $('tg-search-input'); if (tgSearch) tgSearch.addEventListener('input', renderTelegramChatList);
     const ytSearch = $('yt-search-input'); if (ytSearch) ytSearch.addEventListener('input', renderYoutubeGrid);
@@ -3936,6 +3947,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (noteEditor && noteEditor.classList.contains('open')) return;
+      if (inlineDlg && inlineDlg.classList.contains('open')) return;
       if (settingsModal && settingsModal.classList.contains('open')) {
         if (e.key === 'Escape') { e.preventDefault(); closeSettingsModal(); }
         return;
@@ -3949,9 +3961,10 @@
 
     ['reader-screen','tg-reader-screen','yt-watch-scroll','dc-reader-screen'].forEach(id => {
       const el = $(id); if (!el) return;
-      el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); });
+      el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); }, { passive: true });
     });
 
+    // Ползунок: клик и перетаскивание
     const sp = $('side-progress'); const sideThumb = $('side-thumb');
     if (sp && sideThumb) {
       let dragging = false;
@@ -3965,6 +3978,7 @@
         el.scrollTop = pct * (el.scrollHeight - el.clientHeight);
       }
       function startDrag(e) {
+        if (window.getComputedStyle(sp).display === 'none') return;
         dragging = true; sp.classList.add('dragging', 'visible'); e.preventDefault();
         const y = e.touches ? e.touches[0].clientY : e.clientY; scrollFromPointer(y);
         document.addEventListener('mousemove', onDragMove, { passive: false });
@@ -3992,13 +4006,20 @@
       sp.addEventListener('touchstart', startDrag, { passive: false });
       sp.addEventListener('mouseenter', () => { sp.classList.add('visible'); clearTimeout(sp._t); });
       sp.addEventListener('mouseleave', showScroller);
+      // клик по треку — сразу перемотка
+      sp.addEventListener('click', (e) => {
+        if (window.getComputedStyle(sp).display === 'none') return;
+        scrollFromPointer(e.clientY);
+        updateAllProgress();
+      });
     }
 
+    // Свайп назад на мобилке
     let touchStartX = 0, touchStartY = 0, touchTracking = false;
     const tgArea = $('tg-chat-area');
     if (tgArea) {
       tgArea.addEventListener('touchstart', (e) => {
-        if (window.innerWidth > 640) return;
+        if (window.innerWidth > 768) return;
         if (!tgArea.parentElement.classList.contains('chat-open')) return;
         const t = e.touches[0];
         touchStartX = t.clientX; touchStartY = t.clientY; touchTracking = true;
@@ -4016,7 +4037,7 @@
     if (dcChat) {
       let dsx = 0, dsy = 0, dtr = false;
       dcChat.addEventListener('touchstart', (e) => {
-        if (window.innerWidth > 640) return;
+        if (window.innerWidth > 768) return;
         if (!dcChat.parentElement.classList.contains('chat-open')) return;
         const t = e.touches[0]; dsx = t.clientX; dsy = t.clientY; dtr = true;
       }, { passive: true });
@@ -4028,6 +4049,11 @@
       }, { passive: true });
       dcChat.addEventListener('touchend', () => { dtr = false; });
     }
+
+    window.addEventListener('orientationchange', () => {
+      closeSheet();
+      closeSettingsModal();
+    });
 
     applyUiStyle();
   }
