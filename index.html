@@ -290,7 +290,6 @@
   }
   .book-item:hover { border-color: var(--accent); }
 
-  /* «Ручка» перетаскивания — три полоски */
   .book-item .grip {
     position: absolute;
     left: 4px; top: 50%;
@@ -720,7 +719,8 @@
     display: none; z-index: 250;
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    width: 240px;
+    width: 300px;
+    max-height: 70vh; overflow-y: auto;
   }
   .palette.open, .font-panel.open { display: block; }
   .palette h4, .font-panel h4 {
@@ -732,16 +732,35 @@
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 6px; margin-bottom: 12px;
   }
+  .palette-group-title {
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 12px 0 6px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .palette-group-title:first-child { margin-top: 0; }
+  .palette-group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
   .palette-item {
     padding: 6px 4px; border-radius: 6px;
     border: 1px solid var(--border-strong);
     cursor: pointer; text-align: center; font-size: 10px;
     color: var(--fg-mid);
+    transition: border-color .15s, color .15s;
   }
-  .palette-item:hover { border-color: var(--accent); }
-  .palette-item.active { border-color: var(--accent); color: var(--fg); }
+  .palette-item:hover { border-color: var(--accent); color: var(--fg); }
+  .palette-item.active { border-color: var(--accent); color: var(--fg); background: var(--border-strong); }
   .palette-item .sw {
-    height: 22px; border-radius: 4px; margin-bottom: 4px;
+    height: 26px; border-radius: 4px; margin-bottom: 4px;
     display: flex; align-items: center; justify-content: center;
     font-family: Georgia, serif; font-size: 13px;
   }
@@ -1072,7 +1091,7 @@
     #search-panel { width: 92%; right: -92%; }
     #to-top { right: 14px; bottom: 46px; width: 38px; height: 38px; }
     #btn-add-mark { right: 14px; bottom: 96px; width: 38px; height: 38px; }
-    .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 300px; }
+    .palette, .font-panel { right: 8px; width: calc(100vw - 32px); max-width: 340px; }
     footer { padding: 6px 12px; font-size: 10px; }
     #side-progress { display: none !important; }
     #mobile-sheet { display: block; }
@@ -1127,7 +1146,7 @@
       <button id="btn-font" title="Шрифт и интервал">Aa</button>
       <button id="btn-mark" style="color:#e0b84a">🔖 Закладка</button>
       <button id="btn-marks" style="color:#e0b84a">🔖 Закладки</button>
-      <button id="btn-theme">Цвет</button>
+      <button id="btn-theme">🎨 Цвет</button>
       <button id="btn-toc">Содержание</button>
       <button id="btn-library">Библиотека</button>
     </div>
@@ -1135,8 +1154,8 @@
     <button id="btn-menu" title="Меню">☰</button>
 
     <div class="palette" id="palette">
-      <h4>Готовые темы</h4>
-      <div class="palette-grid" id="palette-grid"></div>
+      <h4>Темы оформления</h4>
+      <div id="palette-grid"></div>
       <h4>Свои цвета</h4>
       <div class="palette-custom">
         <div class="custom-row"><label>Фон</label><input type="color" id="col-bg"></div>
@@ -1515,16 +1534,57 @@
       mono: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace"
     };
 
-    const PRESETS = [
-      { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
-      { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
-      { name: 'Сепия', bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
-      { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
-      { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
-      { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
-      { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
-      { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
-      { name: 'Paper', bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' }
+    // ─────────────────────────────────────────────────────────
+    //  РАСШИРЕННАЯ ПАЛИТРА
+    // ─────────────────────────────────────────────────────────
+    const PRESET_GROUPS = [
+      {
+        title: '🌙 Для сна',
+        presets: [
+          { name: 'Сон',         bg: '#14100d', fg: '#c9b6a2', accent: '#8a6f58' },
+          { name: 'Ночник',      bg: '#1a1310', fg: '#d0b8a0', accent: '#9a7856' },
+          { name: 'Свеча',       bg: '#1e1612', fg: '#d9c0a0', accent: '#a8784a' },
+          { name: 'Карамель',    bg: '#191110', fg: '#cbaa98', accent: '#8f5e48' },
+          { name: 'Глубокий сон',bg: '#0f0b0a', fg: '#b09a88', accent: '#7a5f4c' },
+          { name: 'Сумерки',     bg: '#161219', fg: '#b8a8c4', accent: '#7a6a8a' },
+          { name: 'Тёплый уголь',bg: '#171310', fg: '#c4b4a4', accent: '#8a705a' },
+          { name: 'Шоколад',     bg: '#1a1310', fg: '#d4bca8', accent: '#a0785c' }
+        ]
+      },
+      {
+        title: '👁 Для глаз',
+        presets: [
+          { name: 'Сепия',        bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
+          { name: 'Paper',        bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' },
+          { name: 'Песок',        bg: '#ede3c8', fg: '#3b3428', accent: '#8d7a52' },
+          { name: 'Пергамент',    bg: '#f2e8cf', fg: '#413626', accent: '#967a4a' },
+          { name: 'Мягкий зелёный',bg: '#d9e6d2', fg: '#2f3b2a', accent: '#5f7a52' },
+          { name: 'Мятный',       bg: '#e3efe6', fg: '#2a3a30', accent: '#5f8a70' },
+          { name: 'Слоновая кость',bg: '#f5f0e1', fg: '#3a352c', accent: '#8a7d64' },
+          { name: 'Пшеница',      bg: '#f0e6d2', fg: '#3d3528', accent: '#8c7a58' },
+          { name: 'Тёплый беж',   bg: '#efe6d6', fg: '#38322a', accent: '#857a68' }
+        ]
+      },
+      {
+        title: '⬛ Нейтральные',
+        presets: [
+          { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
+          { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
+          { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
+          { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
+          { name: 'Сланцы',bg: '#1c1f26', fg: '#c8ccd4', accent: '#7a8394' }
+        ]
+      },
+      {
+        title: '🎨 Цветные',
+        presets: [
+          { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
+          { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
+          { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
+          { name: 'Лаванда',bg: '#191722', fg: '#c8c4d8', accent: '#7a7094' },
+          { name: 'Графит', bg: '#1a1a1d', fg: '#c8c8cc', accent: '#70707a' }
+        ]
+      }
     ];
 
     // ============================================================
@@ -1653,21 +1713,39 @@
     function buildPresets() {
       if (!paletteGrid) return;
       paletteGrid.innerHTML = '';
-      PRESETS.forEach(pr => {
-        const el = document.createElement('div');
-        el.className = 'palette-item';
-        el.dataset.bg = pr.bg;
-        el.dataset.fg = pr.fg;
-        el.dataset.accent = pr.accent;
-        el.innerHTML = `<div class="sw" style="background:${pr.bg};color:${pr.fg};border:1px solid ${shade(pr.bg,20)}">Aa</div>${pr.name}`;
-        el.addEventListener('click', () => {
-          settings.bg = pr.bg;
-          settings.fg = pr.fg;
-          settings.accent = pr.accent;
-          saveSettings();
-          applySettings();
+
+      PRESET_GROUPS.forEach(group => {
+        const title = document.createElement('div');
+        title.className = 'palette-group-title';
+        title.textContent = group.title;
+        paletteGrid.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'palette-grid';
+
+        group.presets.forEach(pr => {
+          const el = document.createElement('div');
+          el.className = 'palette-item';
+          el.dataset.bg = pr.bg;
+          el.dataset.fg = pr.fg;
+          el.dataset.accent = pr.accent;
+          el.title = pr.name;
+          el.innerHTML =
+            '<div class="sw" style="background:' + pr.bg +
+            ';color:' + pr.fg +
+            ';border:1px solid ' + shade(pr.bg, 20) + '">Aa</div>' +
+            pr.name;
+          el.addEventListener('click', () => {
+            settings.bg = pr.bg;
+            settings.fg = pr.fg;
+            settings.accent = pr.accent;
+            saveSettings();
+            applySettings();
+          });
+          grid.appendChild(el);
         });
-        paletteGrid.appendChild(el);
+
+        paletteGrid.appendChild(grid);
       });
     }
 
@@ -3322,7 +3400,6 @@
         const el = document.createElement('div');
         el.className = 'book-item';
 
-        // Ручка перетаскивания: три горизонтальные полоски
         const grip = document.createElement('div');
         grip.className = 'grip';
         grip.title = 'Перетащите, чтобы изменить порядок';
