@@ -18,6 +18,7 @@
     --fg: #d4d7dc; --fg-dim: #6d737d; --fg-mid: #a8adb5;
     --accent: #8b919b; --accent-contrast: #14161a;
     --col-width: 720px; --line-height: 1.85; --letter-spacing: 0;
+    --font-size: 20px;
     --font-stack: Georgia, 'Times New Roman', serif;
     --mark-color: #e0b84a;
     --safe-top: env(safe-area-inset-top, 0px);
@@ -63,7 +64,8 @@
   }
   .scroll-y { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; min-height: 0; }
 
-  .reader-text { overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto; }
+  .reader-text { overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto;
+    font-size: var(--font-size); }
   .reader-text p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; orphans: 2; widows: 2; }
   .reader-text p:first-child { text-indent: 0; }
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
@@ -183,7 +185,7 @@
   #collection-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
     color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
 
-  /* ====== ШАПКА ЧИТАЛКИ (БЕЗ ИКОНКИ ЮТУБА) ====== */
+  /* ====== ШАПКА ЧИТАЛКИ ====== */
   .reader-topbar {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 12px; padding-top: max(8px, var(--safe-top));
@@ -220,7 +222,7 @@
     min-height: 0; -webkit-overflow-scrolling: touch; }
   #content { max-width: var(--col-width); margin: 0 auto;
     padding: 24px 18px calc(80px + var(--safe-bottom));
-    font-size: 20px; line-height: var(--line-height); color: var(--fg);
+    line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing); width: 100%; }
 
   /* ====== TELEGRAM ====== */
@@ -281,7 +283,7 @@
   #tg-reader-screen.active { display: block; }
   #tg-content { max-width: var(--col-width); margin: 0 auto;
     padding: 20px 16px calc(100px + var(--safe-bottom));
-    font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
+    font-family: var(--font-stack); line-height: 1.7;
     color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
   #tg-content .chapter-title { color: var(--accent); }
   .tg-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
@@ -368,7 +370,7 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
   #yt-watch-scroll { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
   #yt-watch-container { max-width: 1100px; margin: 0 auto; padding: 16px; }
-  #yt-reader-content { font-family: var(--font-stack); font-size: 19px; line-height: 1.75;
+  #yt-reader-content { font-family: var(--font-stack); line-height: 1.75;
     color: var(--fg); letter-spacing: var(--letter-spacing);
     max-width: var(--col-width); margin: 0 auto; padding: 0 8px calc(80px + var(--safe-bottom)); width: 100%; }
   #yt-add-mark-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
@@ -457,7 +459,7 @@
   #dc-reader-screen.active { display: block; }
   #dc-content { max-width: var(--col-width); margin: 0 auto;
     padding: 20px 16px calc(100px + var(--safe-bottom));
-    font-family: var(--font-stack); font-size: 18px; line-height: 1.7;
+    font-family: var(--font-stack); line-height: 1.7;
     color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
   #dc-content .chapter-title { color: var(--accent); font-weight: 700; }
   #dc-content p { color: var(--fg); }
@@ -629,7 +631,6 @@
     background: var(--mark-color); border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%); }
 
-  /* Скрываем ползунок на планшетах и телефонах */
   @media (max-width: 1100px) {
     #side-progress { display: none !important; }
   }
@@ -918,13 +919,13 @@
   @media (max-width: 768px) {
     :root { --col-width: 100%; }
 
-    #content { padding: 16px 14px calc(80px + var(--safe-bottom)); font-size: 18px; }
-    #tg-content { padding: 14px 12px calc(100px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #content { padding: 16px 14px calc(80px + var(--safe-bottom)); }
+    #tg-content { padding: 14px 12px calc(100px + var(--safe-bottom)); line-height: 1.65; }
     #tg-content p { margin-bottom: 1em; text-indent: 1.6em; }
     #tg-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
-    #yt-reader-content { padding: 0 4px calc(80px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #yt-reader-content { padding: 0 4px calc(80px + var(--safe-bottom)); line-height: 1.65; }
     #yt-reader-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    #dc-content { padding: 14px 12px calc(100px + var(--safe-bottom)); font-size: 17px; line-height: 1.65; }
+    #dc-content { padding: 14px 12px calc(100px + var(--safe-bottom)); line-height: 1.65; }
     #dc-content p { margin-bottom: 1em; text-indent: 1.6em; }
 
     #tg-app { position: relative; min-height: 0; }
@@ -1003,13 +1004,11 @@
   @media (max-width: 480px) {
     #yt-header .yt-logo span:not(.play) { font-size: 14px; }
     .yt-card-title { font-size: 13.5px; }
-    #tg-content, #yt-reader-content, #content, #dc-content { font-size: 17px; }
     .sheet-grid { grid-template-columns: 1fr 1fr; }
     .sheet-grid button { font-size: 13px; padding: 12px 8px; }
     #mobile-sheet { padding-left: 12px; padding-right: 12px; }
   }
   @media (max-width: 360px) {
-    #tg-content, #yt-reader-content, #content, #dc-content { font-size: 16px; }
     .sheet-grid { grid-template-columns: 1fr; }
   }
 
@@ -1303,7 +1302,7 @@
   </div>
 </div>
 
-<!-- МОДАЛКА "НАСТРОЙКИ" (единая для всех стилей) -->
+<!-- МОДАЛКА "НАСТРОЙКИ" -->
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
@@ -1314,7 +1313,7 @@
   </div>
 </div>
 
-<!-- ДИАЛОГ ВВОДА (замена prompt) -->
+<!-- ДИАЛОГ ВВОДА -->
 <div id="inline-dialog">
   <div class="dlg">
     <h4 id="inline-dialog-title">Введите значение</h4>
@@ -1326,7 +1325,6 @@
     </div>
   </div>
 </div>
-</body>
 <script>
 (function () {
   'use strict';
@@ -2181,7 +2179,6 @@
     }, 400);
   }
 
-  // Корректная установка thumb'а ползунка (translateY)
   function updateSideThumb(pct) {
     const thumb = $('side-thumb'); const sp = $('side-progress');
     if (!thumb || !sp) return;
@@ -2263,14 +2260,25 @@
     else if (style === 'telegram') renderTelegram();
     else if (style === 'youtube') renderYoutube();
     else if (style === 'discord') renderDiscord();
-    // пересчитать позицию ползунка после смены стиля
     requestAnimationFrame(() => updateSideThumb(getCurrentPercent()));
   }
 
-  function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
-  function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
-  function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
-  function changeLetterSpacing(delta) { settings.letterSpacing = Math.max(-0.05, Math.min(0.3, Math.round((settings.letterSpacing + delta) * 100) / 100)); saveSettings(); applySettings(); }
+  function changeFont(delta) {
+    settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta));
+    saveSettings(); applySettings();
+  }
+  function changeWidth(delta) {
+    settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta));
+    saveSettings(); applySettings();
+  }
+  function changeLineHeight(delta) {
+    settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100));
+    saveSettings(); applySettings();
+  }
+  function changeLetterSpacing(delta) {
+    settings.letterSpacing = Math.max(-0.05, Math.min(0.3, Math.round((settings.letterSpacing + delta) * 100) / 100));
+    saveSettings(); applySettings();
+  }
 
   function applySettings() {
     const { bg, fg, accent } = settings;
@@ -2287,13 +2295,13 @@
     root.style.setProperty('--line-height', settings.lineHeight);
     root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
     root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
+    // ВАЖНО: размер шрифта применяется ко всем читалкам через CSS-переменную
+    root.style.setProperty('--font-size', settings.fontSize + 'px');
 
-    const sl = $('size-label'); if (sl) sl.textContent = settings.fontSize;
-    const wl = $('width-label'); if (wl) wl.textContent = settings.colWidth;
-    const ll = $('lh-label'); if (ll) ll.textContent = settings.lineHeight.toFixed(2);
     const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
     const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth;
     const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
+
     if (currentBookId) {
       const b = loadMeta().find(x => x.id === currentBookId);
       const text = getBookText(currentBookId);
@@ -2340,7 +2348,6 @@
     settingsModalBody.appendChild(t);
   }
 
-  // Только палитра
   function openPaletteOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
@@ -2406,7 +2413,6 @@
       }
     });
 
-    // Свои цвета
     addGroup('Свои цвета');
     const custom = document.createElement('div');
     custom.style.cssText = 'padding:10px 16px 16px;';
@@ -2426,7 +2432,6 @@
     settingsModalBody.appendChild(custom);
   }
 
-  // Только шрифты
   function openFontsOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
@@ -2486,7 +2491,6 @@
     });
     if (!useYouTube && !useDiscord) settingsModalBody.appendChild(wrap);
 
-    // Размер, ширина, интервал — здесь же удобно
     addGroup('Параметры текста');
     const rows = document.createElement('div');
     rows.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
@@ -2523,14 +2527,12 @@
     settingsModalBody.appendChild(rows);
   }
 
-  // Универсальные настройки (все разделы)
   function openUnifiedSettings() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = 'Настройки';
     settingsModalBody.innerHTML = '';
 
-    // Чтение
     addGroup('📖 Чтение');
     const rowsRead = document.createElement('div');
     rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
@@ -2566,7 +2568,6 @@
     rowsRead.appendChild(mkRow('Интервал', lhS.w));
     settingsModalBody.appendChild(rowsRead);
 
-    // Кнопки разделов
     addGroup('🎨 Шрифт и палитра');
     const wrapBtns = document.createElement('div');
     wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
@@ -2580,7 +2581,6 @@
     wrapBtns.appendChild(bPal);
     settingsModalBody.appendChild(wrapBtns);
 
-    // Стиль
     addGroup('🎭 Стиль интерфейса');
     const stylesWrap = document.createElement('div');
     stylesWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:6px;';
@@ -2614,7 +2614,6 @@
     });
     settingsModalBody.appendChild(stylesWrap);
 
-    // Библиотека
     addGroup('📚 Библиотека');
     const libWrap = document.createElement('div');
     libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
@@ -3860,20 +3859,16 @@
       $('library-search').value = ''; renderClassicLibrary(); $('library-search').focus();
     });
 
-    // Единые кнопки "⚙" и "Aa" / "🎨" на всех стилях
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
-    // Настройки (все стили)
     bindIf('btn-menu', openUnifiedSettings);
     bindIf('tg-open-settings', openUnifiedSettings);
     bindIf('tg-open-settings-2', openUnifiedSettings);
     bindIf('yt-open-settings', openUnifiedSettings);
     bindIf('yt-open-settings-2', openUnifiedSettings);
     bindIf('dc-open-settings', openUnifiedSettings);
-    // Шрифт / Палитра (в Classic)
     bindIf('btn-font', openFontsOnly);
     bindIf('btn-theme', openPaletteOnly);
 
-    // Кнопки на нижней панели (мобилка)
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
@@ -3896,7 +3891,6 @@
     bindIf('m-width-dec', () => changeWidth(-40)); bindIf('m-width-inc', () => changeWidth(40));
     bindIf('m-lh-dec', () => changeLineHeight(-0.1)); bindIf('m-lh-inc', () => changeLineHeight(0.1));
 
-    // Добавить книгу / архив
     bindIf('tg-add-book', promptAddBook);
     bindIf('dc-add-book', promptAddBook);
     bindIf('dc-server-add', promptAddArchive);
@@ -3905,7 +3899,6 @@
     bindIf('yt-add-book-side', promptAddBook);
     bindIf('yt-add-archive-side', promptAddArchive);
 
-    // Навигация
     bindIf('btn-library', backClassic);
     bindIf('yt-watch-back', backYoutube);
     bindIf('tg-mobile-back', backTelegram);
@@ -3964,7 +3957,6 @@
       el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); }, { passive: true });
     });
 
-    // Ползунок: клик и перетаскивание
     const sp = $('side-progress'); const sideThumb = $('side-thumb');
     if (sp && sideThumb) {
       let dragging = false;
@@ -4006,7 +3998,6 @@
       sp.addEventListener('touchstart', startDrag, { passive: false });
       sp.addEventListener('mouseenter', () => { sp.classList.add('visible'); clearTimeout(sp._t); });
       sp.addEventListener('mouseleave', showScroller);
-      // клик по треку — сразу перемотка
       sp.addEventListener('click', (e) => {
         if (window.getComputedStyle(sp).display === 'none') return;
         scrollFromPointer(e.clientY);
@@ -4014,7 +4005,6 @@
       });
     }
 
-    // Свайп назад на мобилке
     let touchStartX = 0, touchStartY = 0, touchTracking = false;
     const tgArea = $('tg-chat-area');
     if (tgArea) {
