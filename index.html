@@ -71,7 +71,7 @@
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
-  /* ====== КЛАССИКА ====== */
+  /* ====== БИБЛИОТЕКА (КЛАССИКА) ====== */
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
     align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
@@ -124,14 +124,20 @@
     text-overflow: ellipsis; white-space: nowrap; padding-right: 52px; min-width: 0; }
   .book-item .meta { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .book-item .book-collection { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+
+  /* Категории в карточке книги */
+  .book-item .book-categories { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+  .book-item .cat-tag { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 10px; color: var(--accent); letter-spacing: .3px; text-transform: uppercase;
-    margin-top: 2px; display: inline-block; padding: 2px 7px; border-radius: 8px;
+    padding: 2px 7px; border-radius: 8px;
     background: rgba(139,145,155,.12); border: 1px solid var(--border-strong);
     cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; align-self: flex-start; min-height: 22px; }
-  .book-item .book-collection:hover { border-color: var(--accent); }
-  .book-item .book-collection.none { color: var(--fg-dim); background: transparent; border-style: dashed; }
+    white-space: nowrap; min-height: 22px; display: inline-flex; align-items: center; }
+  .book-item .cat-tag:hover { border-color: var(--accent); }
+  .book-item .cat-tag.none { color: var(--fg-dim); background: transparent; border-style: dashed; }
+  .book-item .cat-tag .cat-x { margin-left: 4px; opacity: .6; }
+  .book-item .cat-tag .cat-x:hover { opacity: 1; color: #ff9a9a; }
+
   .book-item .progress-line { height: 3px; border-radius: 2px; background: var(--border);
     overflow: hidden; margin-top: 2px; }
   .book-item .progress-line span { display: block; height: 100%; background: var(--accent); }
@@ -148,42 +154,48 @@
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
 
-  #collections-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
-  .collection-chip { display: inline-flex; align-items: center; gap: 6px;
+  /* Панель категорий-фильтров */
+  #categories-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
+  .category-chip { display: inline-flex; align-items: center; gap: 6px;
     background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 20px;
     padding: 6px 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 12px; color: var(--fg-mid); cursor: pointer; user-select: none;
     transition: border-color .15s, color .15s, background .15s; max-width: 100%; min-height: 34px; }
-  .collection-chip > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .collection-chip:hover { border-color: var(--accent); color: var(--fg); }
-  .collection-chip.active { border-color: var(--accent); color: var(--fg); background: var(--border-strong); }
-  .collection-chip .count { font-size: 10px; color: var(--fg-dim); font-variant-numeric: tabular-nums; flex-shrink: 0; }
-  .collection-chip.active .count { color: var(--accent); }
-  .collection-chip .chip-actions { display: inline-flex; align-items: center; gap: 1px; flex-shrink: 0; }
-  .collection-chip .chip-edit, .collection-chip .chip-del { background: transparent; border: none;
+  .category-chip > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .category-chip:hover { border-color: var(--accent); color: var(--fg); }
+  .category-chip.active { border-color: var(--accent); color: var(--fg); background: var(--border-strong); }
+  .category-chip .count { font-size: 10px; color: var(--fg-dim); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .category-chip.active .count { color: var(--accent); }
+  .category-chip .chip-actions { display: inline-flex; align-items: center; gap: 1px; flex-shrink: 0; }
+  .category-chip .chip-edit, .category-chip .chip-del { background: transparent; border: none;
     color: var(--fg-dim); padding: 0 4px; font-size: 11px; line-height: 1; cursor: pointer;
     border-radius: 3px; flex-shrink: 0; min-height: 24px; min-width: 24px; }
-  .collection-chip .chip-edit:hover { color: var(--fg); background: var(--border); }
-  .collection-chip .chip-del:hover { color: #ff9a9a; background: #3a1a1a; }
-  .collection-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
-  .collection-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
+  .category-chip .chip-edit:hover { color: var(--fg); background: var(--border); }
+  .category-chip .chip-del:hover { color: #ff9a9a; background: #3a1a1a; }
+  .category-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
+  .category-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
 
-  #collection-menu { position: fixed; z-index: 350; background: var(--bg-panel);
+  /* Меню категорий (множественный выбор) */
+  #category-menu { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 180px; max-width: min(300px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
+    min-width: 200px; max-width: min(320px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #collection-menu.show { display: block; }
-  #collection-menu .cm-item { padding: 10px 12px; font-size: 13px; color: var(--fg-mid);
+  #category-menu.show { display: block; }
+  #category-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
+  #category-menu .cm-item { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
     border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     min-height: 38px; display: flex; align-items: center; gap: 8px; }
-  #collection-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
-  #collection-menu .cm-item.active { color: var(--accent); }
-  #collection-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
-  #collection-menu .cm-item.danger { color: #c97a7a; }
-  #collection-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
-  #collection-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
+  #category-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
+  #category-menu .cm-item.active { color: var(--accent); }
+  #category-menu .cm-item .cm-check { width: 16px; height: 16px; border-radius: 4px;
+    border: 1px solid var(--border-strong); display: inline-flex; align-items: center;
+    justify-content: center; font-size: 11px; flex-shrink: 0; }
+  #category-menu .cm-item.active .cm-check { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+  #category-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
+  #category-menu .cm-item.danger { color: #c97a7a; }
+  #category-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
 
   /* ====== ШАПКА ЧИТАЛКИ ====== */
   .reader-topbar {
@@ -215,7 +227,7 @@
   }
   .reader-topbar .settings-btn:hover { background: var(--border-strong); }
 
-  /* ====== ЧИТАЛКА CLASSIC ====== */
+  /* ====== ЧИТАЛКА ====== */
   #reader-shell { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   #reader-shell.active { display: flex; }
   #reader-screen { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
@@ -224,251 +236,6 @@
     padding: 24px 18px calc(80px + var(--safe-bottom));
     line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing); width: 100%; }
-
-  /* ====== TELEGRAM ====== */
-  #tg-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); min-height: 0; }
-  #tg-sidebar { width: 340px; flex-shrink: 0; background: var(--bg-header);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
-  #tg-side-head { padding: 12px 14px; padding-top: max(12px, var(--safe-top));
-    display: flex; align-items: center; gap: 10px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  #tg-side-head h1 { font-size: 17px; font-weight: 700; flex: 1; color: var(--fg); }
-  #tg-search { margin: 8px 12px; background: var(--bg-input); border-radius: 20px;
-    padding: 9px 14px; font-size: 14px; display: flex; align-items: center; gap: 8px;
-    color: var(--fg-dim); min-width: 0; }
-  #tg-search input { background: transparent; border: none; outline: none;
-    color: var(--fg); font-size: 14px; flex: 1; font-family: inherit; min-width: 0; width: 100%; }
-  #tg-add-book { margin: 0 12px 10px; padding: 10px; background: var(--accent);
-    color: var(--accent-contrast); border: none; border-radius: 8px;
-    font-size: 14px; font-weight: 600; cursor: pointer; min-height: var(--tap); }
-  #tg-add-book:hover { opacity: .9; }
-  #tg-chat-list { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .tg-chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-    cursor: pointer; transition: background .12s; min-width: 0; min-height: 56px; }
-  .tg-chat-item:hover { background: var(--bg-panel); }
-  .tg-chat-item.active { background: var(--bg-panel); }
-  .tg-avatar { width: 44px; height: 44px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--border-strong));
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent-contrast); font-size: 17px; font-weight: 700;
-    flex-shrink: 0; text-transform: uppercase; }
-  .tg-chat-body { flex: 1; min-width: 0; }
-  .tg-chat-name { font-size: 14px; color: var(--fg); font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tg-chat-sub { font-size: 12px; color: var(--fg-dim);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-
-  #tg-collections-bar { padding: 6px 12px 10px; display: flex; flex-wrap: wrap; gap: 6px;
-    border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  #tg-collections-bar .collection-chip { font-size: 12px; padding: 5px 10px; }
-
-  #tg-chat-area { flex: 1; display: flex; flex-direction: column; min-width: 0;
-    position: relative; background: var(--bg); min-height: 0; }
-  #tg-chat-header { padding: 10px 14px; padding-top: max(10px, var(--safe-top));
-    background: var(--bg-header); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px; min-height: 56px; flex-shrink: 0; }
-  #tg-chat-header .name { font-size: 15px; font-weight: 600; }
-  #tg-chat-header .sub { font-size: 12px; color: var(--fg-dim); }
-  #tg-chat-header .actions { margin-left: auto; display: flex; gap: 2px; align-items: center; }
-  .tg-icon-btn { background: transparent; border: none; color: var(--fg-dim);
-    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 17px; cursor: pointer; flex-shrink: 0; }
-  .tg-icon-btn:hover { background: var(--bg-panel); color: var(--fg); }
-  #tg-empty { flex: 1; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; color: var(--fg-dim); gap: 12px; text-align: center; padding: 30px; }
-  #tg-empty .big { font-size: 44px; }
-  #tg-empty p { font-size: 14px; max-width: 340px; line-height: 1.5; }
-  #tg-reader-screen { display: none; flex: 1; overflow-y: auto;
-    background: var(--bg); min-height: 0; -webkit-overflow-scrolling: touch; }
-  #tg-reader-screen.active { display: block; }
-  #tg-content { max-width: var(--col-width); margin: 0 auto;
-    padding: 20px 16px calc(100px + var(--safe-bottom));
-    font-family: var(--font-stack); line-height: 1.7;
-    color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
-  #tg-content .chapter-title { color: var(--accent); }
-  .tg-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
-    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
-    border: none; font-size: 24px; display: none; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,.45); cursor: pointer; z-index: 20; }
-  #tg-chat-area.has-book .tg-fab { display: flex; }
-
-  /* ====== YOUTUBE ====== */
-  #yt-app { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
-  #yt-header { min-height: 56px; flex-shrink: 0; display: flex; align-items: center;
-    gap: 10px; padding: 8px 14px; padding-top: max(8px, var(--safe-top));
-    background: var(--bg-header); border-bottom: 1px solid var(--border);
-    position: relative; z-index: 30; flex-wrap: wrap; }
-  #yt-header .yt-logo { display: flex; align-items: center; gap: 8px;
-    font-size: 17px; font-weight: 700; letter-spacing: -.5px; color: var(--fg); flex-shrink: 0; }
-  #yt-header .yt-logo .play { background: var(--accent); color: var(--accent-contrast);
-    width: 30px; height: 21px; border-radius: 6px; display: flex;
-    align-items: center; justify-content: center; font-size: 11px; }
-  #yt-search-box { flex: 1; max-width: 600px; margin: 0 auto; display: flex; min-width: 0; }
-  #yt-search-box input { flex: 1; min-width: 0; background: var(--bg-input);
-    border: 1px solid var(--border-strong); border-right: none;
-    border-radius: 20px 0 0 20px; padding: 9px 14px; color: var(--fg);
-    font-size: 14px; outline: none; font-family: inherit; width: 100%; }
-  #yt-search-box input:focus { border-color: var(--accent); }
-  #yt-search-box button { background: var(--bg-panel); border: 1px solid var(--border-strong);
-    border-radius: 0 20px 20px 0; padding: 0 14px; color: var(--fg); cursor: pointer; font-size: 15px;
-    flex-shrink: 0; min-height: 40px; }
-  #yt-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-  #yt-sidebar { width: 220px; flex-shrink: 0; background: var(--bg);
-    padding: 10px 8px; overflow-y: auto; border-right: 1px solid var(--border);
-    min-height: 0; -webkit-overflow-scrolling: touch; }
-  .yt-side-item { display: flex; align-items: center; gap: 14px; padding: 10px 12px;
-    border-radius: 9px; font-size: 14px; color: var(--fg); cursor: pointer; margin-bottom: 2px;
-    min-width: 0; min-height: 44px; }
-  .yt-side-item:hover { background: var(--bg-panel); }
-  .yt-side-item.active { background: var(--bg-panel); font-weight: 600; }
-  .yt-side-item .icon { font-size: 19px; width: 24px; text-align: center; flex-shrink: 0; }
-  .yt-side-item > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-  .yt-side-sep { height: 1px; background: var(--border); margin: 10px 6px; }
-  #yt-main { flex: 1; overflow-y: auto; padding: 14px 16px; position: relative; background: var(--bg);
-    min-height: 0; min-width: 0; -webkit-overflow-scrolling: touch; }
-  #yt-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px;
-    margin-bottom: 4px; scrollbar-width: none; }
-  #yt-chips::-webkit-scrollbar { display: none; }
-  .yt-chip { flex-shrink: 0; background: var(--bg-panel); border: 1px solid var(--border-strong);
-    color: var(--fg); border-radius: 8px; padding: 8px 14px; font-size: 13px;
-    cursor: pointer; white-space: nowrap; min-height: 36px; }
-  .yt-chip.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-  #yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px 14px; }
-  .yt-card { cursor: pointer; display: flex; flex-direction: column; min-width: 0; }
-  .yt-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
-    display: flex; align-items: center; justify-content: center; padding: 16px;
-    background: linear-gradient(135deg, var(--bg-panel), var(--bg-header));
-    border: 1px solid var(--border); position: relative; }
-  .yt-thumb .t { color: var(--fg); font-size: 15px; font-weight: 600;
-    line-height: 1.3; text-align: center; display: -webkit-box;
-    -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
-  .yt-thumb .dur { position: absolute; right: 8px; bottom: 8px;
-    background: rgba(0,0,0,.8); color: #fff; font-size: 11px; padding: 2px 6px;
-    border-radius: 4px; font-weight: 600; }
-  .yt-card-body { display: flex; gap: 12px; padding-top: 10px; min-width: 0; }
-  .yt-card-avatar { width: 36px; height: 36px; border-radius: 50%;
-    background: var(--bg-panel); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--fg); font-weight: 600; flex-shrink: 0; }
-  .yt-card-title { font-size: 14px; font-weight: 600; line-height: 1.3;
-    color: var(--fg); display: -webkit-box; -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
-  .yt-card-meta { font-size: 12px; color: var(--fg-dim); margin-top: 4px; line-height: 1.4; }
-  #yt-watch { position: absolute; inset: 0; background: var(--bg);
-    display: none; flex-direction: column; z-index: 25; overflow: hidden; }
-  #yt-watch.show { display: flex; }
-  #yt-watch-top { display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-    padding-top: max(8px, var(--safe-top));
-    background: var(--bg-header); border-bottom: 1px solid var(--border); flex-shrink: 0;
-    flex-wrap: nowrap; min-height: 56px; }
-  #yt-watch-top .back { background: transparent; border: none; color: var(--fg);
-    font-size: 22px; cursor: pointer; padding: 6px 10px; border-radius: 50%; flex-shrink: 0;
-    min-width: 40px; min-height: 40px; }
-  #yt-watch-top .back:hover { background: var(--bg-panel); }
-  #yt-watch-top .title { font-size: 15px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
-  #yt-watch-scroll { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
-  #yt-watch-container { max-width: 1100px; margin: 0 auto; padding: 16px; }
-  #yt-reader-content { font-family: var(--font-stack); line-height: 1.75;
-    color: var(--fg); letter-spacing: var(--letter-spacing);
-    max-width: var(--col-width); margin: 0 auto; padding: 0 8px calc(80px + var(--safe-bottom)); width: 100%; }
-  #yt-add-mark-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
-    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
-    border: none; font-size: 24px; display: none; align-items: center;
-    justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,.45);
-    cursor: pointer; z-index: 20; }
-  #yt-watch.show #yt-add-mark-fab { display: flex; }
-
-  /* ====== DISCORD ====== */
-  #dc-app { display: flex; flex: 1; overflow: hidden; background: var(--bg); min-height: 0;
-    font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: var(--fg); }
-  #dc-servers { width: 72px; flex-shrink: 0; background: var(--bg-header);
-    display: flex; flex-direction: column; align-items: center; padding: 12px 0;
-    gap: 8px; overflow-y: auto; min-height: 0; padding-top: max(12px, var(--safe-top)); }
-  .dc-server-icon { width: 48px; height: 48px; border-radius: 16px;
-    background: var(--bg-panel); display: flex; align-items: center; justify-content: center;
-    color: var(--fg); font-size: 18px; font-weight: 700; cursor: pointer;
-    transition: all .15s; flex-shrink: 0; position: relative; }
-  .dc-server-icon:hover { border-radius: 12px; background: var(--accent); color: var(--accent-contrast); }
-  .dc-server-icon.active { border-radius: 12px; background: var(--accent); color: var(--accent-contrast); }
-  .dc-server-icon.active::before { content: ''; position: absolute; left: -12px; top: 50%;
-    transform: translateY(-50%); width: 4px; height: 32px; background: var(--fg);
-    border-radius: 0 4px 4px 0; }
-  .dc-server-sep { width: 32px; height: 2px; background: var(--border); border-radius: 1px;
-    margin: 4px 0; flex-shrink: 0; }
-  .dc-server-add { color: var(--accent); font-size: 24px; }
-  .dc-server-add:hover { background: var(--accent); color: var(--accent-contrast); }
-
-  #dc-channels { width: 240px; flex-shrink: 0; background: var(--bg-panel);
-    display: flex; flex-direction: column; min-height: 0; }
-  #dc-channels-head { padding: 12px 16px; padding-top: max(12px, var(--safe-top));
-    border-bottom: 1px solid var(--bg-header);
-    box-shadow: 0 1px 0 rgba(0,0,0,.2); flex-shrink: 0; cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
-  #dc-channels-head:hover { background: var(--border); }
-  #dc-channels-head .nm { font-size: 15px; font-weight: 600; color: var(--fg);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #dc-channels-search { margin: 8px; padding: 8px 10px; background: var(--bg-header);
-    border-radius: 4px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 40px; }
-  #dc-channels-search input { background: transparent; border: none; outline: none;
-    color: var(--fg); font-size: 14px; flex: 1; min-width: 0; font-family: inherit; }
-  #dc-channels-search input::placeholder { color: var(--fg-dim); }
-  #dc-channels-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .dc-ch-category { font-size: 11px; font-weight: 700; text-transform: uppercase;
-    color: var(--fg-dim); padding: 16px 8px 4px; letter-spacing: .02em;
-    display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-  .dc-ch-category:first-child { padding-top: 4px; }
-  .dc-ch-item { display: flex; align-items: center; gap: 6px; padding: 8px;
-    border-radius: 4px; color: var(--fg-mid); font-size: 15px; font-weight: 500;
-    cursor: pointer; margin-bottom: 1px; min-width: 0; min-height: 40px; }
-  .dc-ch-item:hover { background: var(--border); color: var(--fg); }
-  .dc-ch-item.active { background: var(--border-strong); color: var(--fg); }
-  .dc-ch-item .hash { font-size: 18px; font-weight: 400; color: var(--fg-dim); flex-shrink: 0; }
-  .dc-ch-item.active .hash { color: var(--fg); }
-  .dc-ch-item .ch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    flex: 1; min-width: 0; }
-  .dc-add-book-btn { margin: 8px; padding: 10px; background: var(--accent); color: var(--accent-contrast);
-    border: none; border-radius: 4px; font-size: 14px; font-weight: 600;
-    cursor: pointer; flex-shrink: 0; min-height: var(--tap); }
-  .dc-add-book-btn:hover { opacity: .9; }
-
-  #dc-chat { flex: 1; display: flex; flex-direction: column; min-width: 0;
-    background: var(--bg); min-height: 0; position: relative; }
-  #dc-chat-header { min-height: 52px; padding: 0 14px; padding-top: max(0px, var(--safe-top));
-    background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px;
-    flex-shrink: 0; box-shadow: 0 1px 0 rgba(0,0,0,.1); }
-  #dc-chat-header .hash-big { font-size: 24px; color: var(--fg-dim); }
-  #dc-chat-header .nm { font-size: 16px; font-weight: 700; color: var(--fg);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-  #dc-chat-header .actions { display: flex; gap: 2px; flex-shrink: 0; align-items: center; }
-  #dc-chat-header .dc-icon-btn { background: transparent; border: none;
-    color: var(--fg-mid); width: 38px; height: 38px; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; cursor: pointer; flex-shrink: 0; }
-  #dc-chat-header .dc-icon-btn:hover { background: var(--bg-panel); color: var(--fg); }
-  #dc-pct-indicator { margin-right: 4px; }
-  #dc-empty { flex: 1; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; color: var(--fg-dim); gap: 12px; text-align: center; padding: 30px; }
-  #dc-empty .big { font-size: 56px; }
-  #dc-empty h2 { color: var(--fg); font-size: 20px; font-weight: 700; }
-  #dc-empty p { font-size: 14px; max-width: 360px; line-height: 1.5; }
-  #dc-reader-screen { display: none; flex: 1; overflow-y: auto;
-    min-height: 0; background: var(--bg); -webkit-overflow-scrolling: touch; }
-  #dc-reader-screen.active { display: block; }
-  #dc-content { max-width: var(--col-width); margin: 0 auto;
-    padding: 20px 16px calc(100px + var(--safe-bottom));
-    font-family: var(--font-stack); line-height: 1.7;
-    color: var(--fg); letter-spacing: var(--letter-spacing); width: 100%; }
-  #dc-content .chapter-title { color: var(--accent); font-weight: 700; }
-  #dc-content p { color: var(--fg); }
-  .dc-fab { position: absolute; right: 16px; bottom: calc(16px + var(--safe-bottom));
-    width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: var(--accent-contrast);
-    border: none; font-size: 22px; display: none; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5); cursor: pointer; z-index: 20; }
-  #dc-chat.has-book .dc-fab { display: flex; }
-  .dc-fab:hover { opacity: .9; }
 
   /* ====== ПАНЕЛИ ====== */
   .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
@@ -581,7 +348,6 @@
   #menu-pop .sep { height: 1px; background: var(--border); margin: 6px 4px; }
   #menu-pop .group-title { font-size: 10px; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--fg-dim); padding: 8px 12px 4px; font-weight: 600; }
-
   #note-editor { position: fixed; inset: 0; background: rgba(0,0,0,.55);
     z-index: 340; display: none; align-items: center; justify-content: center;
     padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -651,7 +417,7 @@
   .sheet-section h5 { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--fg-dim); font-weight: normal; margin-bottom: 8px; }
   .sheet-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; min-width: 0; }
+  .sheet-row .btn-group { flex: 1; justify-content: space-between; padding: 4px 6px; min-width: 0; display: flex; align-items: center; gap: 6px; }
   .sheet-row .btn-group button { min-height: 40px; flex: 1; }
   .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .sheet-grid button { padding: 14px 10px; font-size: 14px; border-radius: 10px;
@@ -670,6 +436,9 @@
     border-radius: 3px; overflow: hidden; margin-left: 10px; min-width: 60px; }
   .m-pct-fill { display: block; height: 100%; width: 0%; background: var(--accent);
     transition: width .15s linear; }
+  .size-label { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 13px; color: var(--fg-mid); font-variant-numeric: tabular-nums;
+    min-width: 46px; text-align: center; }
 
   /* ====== МОДАЛКА НАСТРОЕК ====== */
   #settings-modal { position: fixed; inset: 0; z-index: 450; display: none;
@@ -677,180 +446,41 @@
     padding: 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #settings-modal.open { display: flex; }
   #settings-modal .card { width: 100%; max-width: 480px; max-height: 88vh;
-    overflow-y: auto; border-radius: 14px; -webkit-overflow-scrolling: touch; }
+    overflow-y: auto; border-radius: 14px; -webkit-overflow-scrolling: touch;
+    background: var(--bg-header); color: var(--fg);
+    box-shadow: 0 20px 60px rgba(0,0,0,.6); border: 1px solid var(--border-strong); }
   #settings-modal .card-header { display: flex; align-items: center;
     justify-content: space-between; padding: 14px 16px; position: sticky; top: 0;
-    z-index: 2; background: inherit; }
+    z-index: 2; background: var(--bg-header); border-bottom: 1px solid var(--border); }
   #settings-modal .card-header h3 { font-size: 15px; font-weight: 700; }
   #settings-modal .card-body { padding: 0 0 16px; }
-
-  body.style-classic #settings-modal .card { background: var(--bg-header);
-    color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    border: 1px solid var(--border-strong); }
-  body.style-classic #settings-modal .card-header { background: var(--bg-header);
-    border-bottom: 1px solid var(--border); }
-  body.style-classic .cl-settings-group-title { font-size: 11px; letter-spacing: 1.5px;
+  .cl-settings-group-title { font-size: 11px; letter-spacing: 1.5px;
     text-transform: uppercase; color: var(--fg-dim); font-weight: 600;
     padding: 14px 16px 6px; }
-  body.style-classic .cl-settings-row { display: flex; align-items: center;
+  .cl-settings-row { display: flex; align-items: center;
     gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-classic .cl-settings-row:hover { background: var(--bg-panel); }
-  body.style-classic .cl-settings-row.active { background: var(--bg-panel); }
-  body.style-classic .cl-settings-row .sw { width: 36px; height: 36px;
+  .cl-settings-row:hover { background: var(--bg-panel); }
+  .cl-settings-row.active { background: var(--bg-panel); }
+  .cl-settings-row .sw { width: 36px; height: 36px;
     border-radius: 8px; flex-shrink: 0; border: 2px solid var(--border-strong);
     display: flex; align-items: center; justify-content: center;
     color: var(--fg); font-size: 13px; font-weight: 700; }
-  body.style-classic .cl-settings-row .sw.active { border-color: var(--accent); }
-  body.style-classic .cl-settings-row .info { flex: 1; min-width: 0; }
-  body.style-classic .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-classic .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
-  body.style-classic .cl-settings-row .check { color: var(--accent); font-size: 16px; }
-  body.style-classic .cl-color-rows { padding: 4px 16px 10px; }
-  body.style-classic .cl-color-row { display: flex; align-items: center;
-    justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); min-height: 52px; }
-  body.style-classic .cl-color-row:last-child { border-bottom: none; }
-  body.style-classic .cl-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-classic .cl-color-row input[type=color] { width: 44px; height: 36px;
-    border: 1px solid var(--border-strong); border-radius: 8px;
-    background: var(--bg); padding: 2px; cursor: pointer; }
-  body.style-classic .cl-font-preview { display: flex; align-items: center;
+  .cl-settings-row .sw.active { border-color: var(--accent); }
+  .cl-settings-row .info { flex: 1; min-width: 0; }
+  .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
+  .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  .cl-settings-row .check { color: var(--accent); font-size: 16px; }
+  .cl-font-preview { display: flex; align-items: center;
     gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-classic .cl-font-preview:hover { background: var(--bg-panel); }
-  body.style-classic .cl-font-preview .aa { width: 40px; height: 40px;
+  .cl-font-preview:hover { background: var(--bg-panel); }
+  .cl-font-preview .aa { width: 40px; height: 40px;
     border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     font-size: 18px; flex-shrink: 0; }
-  body.style-classic .cl-font-preview .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-classic .cl-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
-  body.style-classic .cl-font-preview.active .aa { border-color: var(--accent); }
-  body.style-classic .cl-font-preview.active .nm { color: var(--accent); }
-
-  body.style-telegram #settings-modal .card { background: var(--bg-header);
-    color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-  body.style-telegram #settings-modal .card-header { background: var(--bg-header);
-    border-bottom: 1px solid var(--border); }
-  body.style-telegram .tg-settings-group-title { font-size: 11px; font-weight: 600;
-    color: var(--fg-dim); padding: 14px 16px 6px; letter-spacing: .3px; }
-  body.style-telegram .tg-settings-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-telegram .tg-settings-row:hover { background: var(--bg-panel); }
-  body.style-telegram .tg-settings-row.active { background: var(--bg-panel); }
-  body.style-telegram .tg-settings-row .sw { width: 36px; height: 36px;
-    border-radius: 50%; flex-shrink: 0; border: 2px solid var(--border-strong);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--fg); font-size: 13px; font-weight: 700; }
-  body.style-telegram .tg-settings-row .sw.active { border-color: var(--accent); }
-  body.style-telegram .tg-settings-row .info { flex: 1; min-width: 0; }
-  body.style-telegram .tg-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-telegram .tg-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
-  body.style-telegram .tg-settings-row .check { color: var(--accent); font-size: 16px; }
-  body.style-telegram .tg-color-rows { padding: 4px 16px 10px; }
-  body.style-telegram .tg-color-row { display: flex; align-items: center;
-    justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); min-height: 52px; }
-  body.style-telegram .tg-color-row:last-child { border-bottom: none; }
-  body.style-telegram .tg-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-telegram .tg-color-row input[type=color] { width: 44px; height: 36px;
-    border: 1px solid var(--border-strong); border-radius: 8px;
-    background: var(--bg); padding: 2px; cursor: pointer; }
-  body.style-telegram .tg-font-preview { display: flex; align-items: center;
-    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-telegram .tg-font-preview:hover { background: var(--bg-panel); }
-  body.style-telegram .tg-font-preview .aa { width: 40px; height: 40px;
-    border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0; }
-  body.style-telegram .tg-font-preview .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-telegram .tg-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
-  body.style-telegram .tg-font-preview.active .aa { border-color: var(--accent); }
-  body.style-telegram .tg-font-preview.active .nm { color: var(--accent); }
-
-  body.style-youtube #settings-modal .card { background: var(--bg);
-    color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-  body.style-youtube #settings-modal .card-header { background: var(--bg);
-    border-bottom: 1px solid var(--border); }
-  body.style-youtube #settings-modal .card-header h3 { font-size: 16px; font-weight: 700; }
-  body.style-youtube .yt-settings-group-title { font-size: 15px; font-weight: 700;
-    color: var(--fg); padding: 14px 16px 10px; }
-  body.style-youtube .yt-settings-grid { display: grid;
-    grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px 12px; }
-  body.style-youtube .yt-settings-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  body.style-youtube .yt-tile { background: var(--bg-panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 8px 6px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 80px; }
-  body.style-youtube .yt-tile:hover { background: var(--border-strong); }
-  body.style-youtube .yt-tile.active { border-color: var(--fg); }
-  body.style-youtube .yt-tile .sw { width: 100%; height: 56px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: Georgia, serif; font-size: 18px;
-    border: 1px solid var(--border); }
-  body.style-youtube .yt-tile .nm { font-size: 11px; color: var(--fg); font-weight: 600;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  body.style-youtube .yt-font-tile { background: var(--bg-panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 8px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; }
-  body.style-youtube .yt-font-tile:hover { background: var(--border-strong); }
-  body.style-youtube .yt-font-tile.active { border-color: var(--fg); }
-  body.style-youtube .yt-font-tile .aa { font-size: 24px; line-height: 1; }
-  body.style-youtube .yt-font-tile .nm { font-size: 11px; color: var(--fg); font-weight: 600;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-
-  body.style-discord #settings-modal { font-family: 'gg sans', 'Noto Sans', sans-serif; }
-  body.style-discord #settings-modal .card { background: var(--bg-panel);
-    color: var(--fg); box-shadow: 0 20px 60px rgba(0,0,0,.7); border-radius: 8px; }
-  body.style-discord #settings-modal .card-header { background: var(--bg-panel);
-    border-bottom: 1px solid var(--border); }
-  body.style-discord #settings-modal .card-header h3 { color: var(--fg);
-    font-size: 16px; font-weight: 700; }
-  body.style-discord .dc-settings-group-title { font-size: 12px; font-weight: 700;
-    text-transform: uppercase; color: var(--fg-dim); letter-spacing: .02em;
-    padding: 16px 16px 8px; }
-  body.style-discord .dc-settings-grid { display: grid;
-    grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 16px 12px; }
-  body.style-discord .dc-settings-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  body.style-discord .dc-tile { background: var(--bg-header); border: 2px solid transparent;
-    border-radius: 8px; padding: 8px 6px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    transition: border-color .15s; min-height: 80px; }
-  body.style-discord .dc-tile:hover { background: var(--border); }
-  body.style-discord .dc-tile.active { border-color: var(--accent); }
-  body.style-discord .dc-tile .sw { width: 100%; height: 52px; border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: Georgia, serif; font-size: 18px;
-    border: 1px solid var(--bg); }
-  body.style-discord .dc-tile .nm { font-size: 11px; color: var(--fg); font-weight: 600;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  body.style-discord .dc-color-rows { padding: 4px 16px 10px; }
-  body.style-discord .dc-color-row { display: flex; align-items: center;
-    justify-content: space-between; padding: 10px 0;
-    border-bottom: 1px solid var(--border); min-height: 52px; }
-  body.style-discord .dc-color-row:last-child { border-bottom: none; }
-  body.style-discord .dc-color-row label { font-size: 14px; color: var(--fg); }
-  body.style-discord .dc-color-row input[type=color] { width: 44px; height: 36px;
-    border: 1px solid var(--bg); border-radius: 6px;
-    background: var(--bg-header); padding: 2px; cursor: pointer; }
-  body.style-discord .dc-font-preview { display: flex; align-items: center;
-    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-discord .dc-font-preview:hover { background: var(--border); }
-  body.style-discord .dc-font-preview.active { background: var(--border-strong); }
-  body.style-discord .dc-font-preview .aa { width: 40px; height: 40px;
-    border-radius: 50%; background: var(--bg-header); border: 2px solid var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0; color: var(--fg); }
-  body.style-discord .dc-font-preview.active .aa { border-color: var(--accent); }
-  body.style-discord .dc-font-preview .info { flex: 1; min-width: 0; }
-  body.style-discord .dc-font-preview .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-discord .dc-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
-  body.style-discord .dc-font-preview.active .nm { color: var(--accent); }
-  body.style-discord .dc-reset-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
-  body.style-discord .dc-reset-row:hover { background: var(--border); }
-  body.style-discord .dc-reset-row .sw { width: 36px; height: 36px;
-    border-radius: 50%; background: var(--bg-header); border: 1px solid var(--bg);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--fg); }
-  body.style-discord .dc-reset-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  body.style-discord .dc-reset-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  .cl-font-preview .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
+  .cl-font-preview .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  .cl-font-preview.active .aa { border-color: var(--accent); }
+  .cl-font-preview.active .nm { color: var(--accent); }
 
   /* ====== INLINE-ДИАЛОГ ====== */
   #inline-dialog { position: fixed; inset: 0; z-index: 600; display: none;
@@ -872,117 +502,17 @@
   #inline-dialog .dlg .actions .primary { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
   #inline-dialog .dlg .actions .danger { background: #7a2a2a; border-color: #7a2a2a; color: #ffd0d0; }
 
+  #pct-jump { font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+
   /* ====== АДАПТИВ ====== */
-  @media (max-width: 1100px) {
-    #yt-sidebar { width: 180px; }
-    #dc-channels { width: 220px; }
-    #tg-sidebar { width: 300px; }
-
-    #tg-chat-header, #yt-header, #yt-watch-top, #dc-chat-header,
-    #tg-side-head, #dc-channels-head {
-      flex-wrap: wrap;
-      min-height: 56px;
-      padding-top: max(10px, var(--safe-top)) !important;
-      overflow: visible;
-    }
-    #tg-chat-header > *, #yt-header > *, #yt-watch-top > *, #dc-chat-header > * { flex-shrink: 0; }
-    #yt-header #yt-search-box { flex-basis: 100%; order: 3; max-width: 100%; }
-  }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    #tg-sidebar { width: 280px; }
-    #dc-channels { width: 210px; }
-    #yt-sidebar { width: 170px; }
-    .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-    .tg-icon-btn { width: 42px; height: 42px; font-size: 18px; }
-    #dc-chat-header .dc-icon-btn { width: 42px; height: 42px; font-size: 18px; }
-    #yt-watch-top .back { min-width: 44px; min-height: 44px; }
-  }
-
-  @media (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
-    #tg-sidebar { width: 320px; }
-    #dc-channels { width: 230px; }
-    #yt-sidebar { width: 200px; }
-  }
-
-  @media (max-width: 900px) {
-    #tg-sidebar { width: 260px; }
-    #dc-channels { width: 200px; }
-    #dc-servers { width: 64px; }
-    .dc-server-icon { width: 44px; height: 44px; }
-    #yt-sidebar { width: 160px; }
-    .yt-side-item { gap: 10px; padding: 9px 10px; font-size: 13px; }
-    .yt-side-item .icon { font-size: 17px; width: 20px; }
+  @media (max-width: 1024px) {
     .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
   }
 
   @media (max-width: 768px) {
     :root { --col-width: 100%; }
-
     #content { padding: 16px 14px calc(80px + var(--safe-bottom)); }
-    #tg-content { padding: 14px 12px calc(100px + var(--safe-bottom)); line-height: 1.65; }
-    #tg-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    #tg-content .chapter-title { font-size: 1.15em; margin: 1.8em 0 1em; }
-    #yt-reader-content { padding: 0 4px calc(80px + var(--safe-bottom)); line-height: 1.65; }
-    #yt-reader-content p { margin-bottom: 1em; text-indent: 1.6em; }
-    #dc-content { padding: 14px 12px calc(100px + var(--safe-bottom)); line-height: 1.65; }
-    #dc-content p { margin-bottom: 1em; text-indent: 1.6em; }
-
-    #tg-app { position: relative; min-height: 0; }
-    #tg-sidebar { width: 100%; position: absolute; inset: 0; border-right: none;
-      z-index: 2; transition: transform .25s ease; }
-    #tg-chat-area { position: absolute; inset: 0; z-index: 3;
-      transform: translateX(100%); transition: transform .25s ease; display: flex; }
-    #tg-app.chat-open #tg-chat-area { transform: translateX(0); }
-    #tg-app.chat-open #tg-sidebar { transform: translateX(-30%); }
-    #tg-side-head { padding: 10px 12px; padding-top: max(10px, var(--safe-top)); min-height: 56px; }
-    #tg-side-head h1 { font-size: 18px; font-weight: 700; letter-spacing: -.3px; }
-    #tg-side-head .tg-icon-btn { width: 40px; height: 40px; font-size: 18px; }
-    #tg-search { margin: 6px 12px 8px; padding: 9px 14px; border-radius: 12px;
-      background: var(--bg-input); min-height: 42px; }
-    #tg-search input { font-size: 15px; }
-    #tg-add-book { margin: 0 12px 8px; padding: 12px; border-radius: 12px;
-      font-size: 15px; font-weight: 600; min-height: var(--tap); }
-    .tg-chat-item { padding: 10px 14px; gap: 12px; }
-    .tg-avatar { width: 50px; height: 50px; font-size: 20px; }
-    #tg-chat-header { padding: 8px 10px; padding-top: max(8px, var(--safe-top));
-      min-height: 56px; gap: 8px; }
-    #tg-mobile-back { display: flex !important; }
-    #tg-chat-header .actions { gap: 4px; }
-    #tg-reader-screen { background: var(--bg); }
-    .tg-fab { width: 56px; height: 56px; font-size: 26px; right: 14px;
-      bottom: calc(20px + var(--safe-bottom)); }
-
-    #yt-sidebar { display: none; }
-    #yt-header { padding: 8px 12px; padding-top: max(8px, var(--safe-top)); gap: 8px; flex-wrap: wrap; }
-    #yt-header .yt-logo { font-size: 16px; gap: 6px; }
-    #yt-search-box { flex-basis: 100%; max-width: 100%; margin: 0; order: 3; }
-    #yt-main { padding: 10px 10px calc(20px + var(--safe-bottom)); }
-    .yt-chip { padding: 7px 14px; font-size: 13px; border-radius: 20px; }
-    #yt-grid { grid-template-columns: 1fr; gap: 16px; }
-    #yt-watch-top { padding: 8px 10px; padding-top: max(8px, var(--safe-top)); gap: 8px; }
-    #yt-watch-top .tg-icon-btn { width: 36px; height: 36px; font-size: 16px; }
-    #yt-watch-container { padding: 14px 12px calc(100px + var(--safe-bottom)); }
-    #yt-add-mark-fab { width: 56px; height: 56px; font-size: 26px; right: 14px;
-      bottom: calc(20px + var(--safe-bottom)); }
-
-    #dc-servers { display: none; }
-    #dc-app { position: relative; min-height: 0; }
-    #dc-channels { width: 100%; position: absolute; inset: 0; z-index: 2;
-      transition: transform .25s ease; }
-    #dc-chat { position: absolute; inset: 0; z-index: 3;
-      transform: translateX(100%); transition: transform .25s ease; display: flex; }
-    #dc-app.chat-open #dc-chat { transform: translateX(0); }
-    #dc-app.chat-open #dc-channels { transform: translateX(-30%); }
-    #dc-channels-head { padding: 12px 16px; padding-top: max(12px, var(--safe-top)); min-height: 56px; }
-    #dc-chat-header { min-height: 52px; padding: 0 10px; padding-top: max(0px, var(--safe-top)); }
-    #dc-mobile-back { display: flex !important; }
-    #dc-pct-indicator { font-size: 11px; padding: 5px 8px; min-width: 56px; }
-    .dc-fab { width: 54px; height: 54px; font-size: 22px; right: 14px;
-      bottom: calc(20px + var(--safe-bottom)); }
-
     .panel { width: 100%; }
-
     #paste-screen { padding: 10px; }
     textarea#input { padding: 10px; font-size: 15px; height: 140px; max-height: 180px; }
     #paste-screen .actions { gap: 6px; }
@@ -992,18 +522,14 @@
     .book-item .title { font-size: 15px; white-space: normal; padding-right: 0; line-height: 1.3; }
     .book-item .del { right: 8px; }
     .book-item .rename { right: 44px; }
-
     #menu-pop { min-width: 260px; max-width: calc(100vw - 24px); }
     #note-editor { padding: 12px; }
     #note-editor .box { padding: 16px; }
-    #mobile-sheet { display: block; }
     #settings-modal { padding: 8px; }
     #settings-modal .card { max-height: 92vh; }
   }
 
   @media (max-width: 480px) {
-    #yt-header .yt-logo span:not(.play) { font-size: 14px; }
-    .yt-card-title { font-size: 13.5px; }
     .sheet-grid { grid-template-columns: 1fr 1fr; }
     .sheet-grid button { font-size: 13px; padding: 12px 8px; }
     #mobile-sheet { padding-left: 12px; padding-right: 12px; }
@@ -1011,28 +537,18 @@
   @media (max-width: 360px) {
     .sheet-grid { grid-template-columns: 1fr; }
   }
-
   @media (max-height: 500px) and (orientation: landscape) {
     #mobile-sheet { max-height: 95vh; }
-    #yt-watch-top { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
-    #tg-chat-header { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
-    #dc-chat-header { min-height: 44px; }
   }
-
-  #tg-menu-btn, #yt-menu-btn, #dc-menu-btn { background: transparent; border: none;
-    color: var(--fg-dim); width: 42px; height: 42px; border-radius: 50%;
-    font-size: 20px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-  #tg-menu-btn:hover, #yt-menu-btn:hover, #dc-menu-btn:hover {
-    background: var(--bg-panel); color: var(--fg); }
 </style>
 </head>
-<body class="style-classic">
+<body>
+
 <div id="boot-error"></div>
 <div id="file-toast"></div>
 <div id="progress-bar"></div>
 
 <div id="app">
-  <!-- КЛАССИКА -->
   <div id="classic-root" class="screen active">
     <div id="paste-screen" class="active">
       <div class="inner">
@@ -1046,8 +562,8 @@
                  accept=".txt,.md,.markdown,.fb2,.html,.htm,.xhtml,.rtf,.docx,.odt,.epub,.zip,.json,.csv,text/plain,text/html,application/epub+zip,application/zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,text/rtf">
         </div>
         <div id="library">
-          <h3>Библиотека</h3>
-          <div id="collections-bar"></div>
+          <h3>Меню</h3>
+          <div id="categories-bar"></div>
           <div id="library-search-wrap">
             <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off">
             <button id="library-search-clear" title="Очистить">✕</button>
@@ -1067,133 +583,6 @@
     </div>
   </div>
 
-  <!-- TELEGRAM -->
-  <div id="tg-root" class="screen">
-    <div id="tg-app">
-      <div id="tg-sidebar">
-        <div id="tg-side-head">
-          <h1>YVL Books</h1>
-          <button class="tg-icon-btn" id="tg-open-settings" title="Настройки">⚙</button>
-        </div>
-        <div id="tg-search">
-          <span>🔍</span>
-          <input type="text" id="tg-search-input" placeholder="Поиск книг..." autocomplete="off">
-        </div>
-        <div id="tg-collections-bar"></div>
-        <button id="tg-add-book">+ Добавить книгу</button>
-        <div id="tg-chat-list"></div>
-      </div>
-      <div id="tg-chat-area">
-        <div id="tg-chat-header">
-          <button class="tg-icon-btn" id="tg-mobile-back" style="display:none;">←</button>
-          <div style="min-width:0;flex:1;">
-            <div class="name" id="tg-chat-name">Библиотека</div>
-            <div class="sub" id="tg-chat-sub">Выберите книгу слева</div>
-          </div>
-          <div class="actions">
-            <span class="tg-icon-btn" id="tg-pct-badge" style="width:auto;padding:0 8px;border-radius:8px;background:var(--bg-panel);border:1px solid var(--border-strong);font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;cursor:pointer;">0.00%</span>
-            <button class="tg-icon-btn" id="tg-open-settings-2" title="Настройки">⚙</button>
-          </div>
-        </div>
-        <div id="tg-empty">
-          <div class="big">💬</div>
-          <p>Выберите книгу из списка, чтобы начать читать.</p>
-        </div>
-        <div id="tg-reader-screen"><div id="tg-content" class="reader-text"></div></div>
-        <button class="tg-fab" id="tg-add-mark-fab" title="Закладка">🔖</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- YOUTUBE -->
-  <div id="yt-root" class="screen">
-    <div id="yt-app">
-      <div id="yt-header">
-        <div class="yt-logo"><span class="play">▶</span><span>YVL Books</span></div>
-        <div id="yt-search-box">
-          <input type="text" id="yt-search-input" placeholder="Поиск книг...">
-          <button id="yt-search-btn">🔍</button>
-        </div>
-        <button class="tg-icon-btn" id="yt-open-settings" title="Настройки" style="color:var(--fg-dim)">⚙</button>
-      </div>
-      <div id="yt-layout">
-        <div id="yt-sidebar">
-          <div class="yt-side-item active" data-filter="all"><span class="icon">🏠</span>Главная</div>
-          <div class="yt-side-item" data-filter="recent"><span class="icon">🕒</span>Недавние</div>
-          <div class="yt-side-item" data-filter="marks"><span class="icon">🔖</span>С закладками</div>
-          <div class="yt-side-sep"></div>
-          <div style="font-size:11px;color:var(--fg-dim);padding:10px 12px 4px;">Библиотека</div>
-          <div id="yt-sidebar-books"></div>
-          <div class="yt-side-sep"></div>
-          <div class="yt-side-item" id="yt-add-book-side"><span class="icon">＋</span>Добавить книгу</div>
-          <div class="yt-side-item" id="yt-add-archive-side"><span class="icon">📁</span>Добавить архив</div>
-        </div>
-        <div id="yt-main">
-          <div id="yt-chips"></div>
-          <div id="yt-grid"></div>
-          <div id="yt-watch">
-            <div id="yt-watch-top">
-              <button class="back" id="yt-watch-back">←</button>
-              <div class="title" id="yt-watch-title">Книга</div>
-              <div style="margin-left:auto;display:flex;gap:2px;flex-shrink:0;align-items:center;">
-                <span class="tg-icon-btn" id="yt-pct-badge" style="width:auto;padding:0 8px;border-radius:8px;background:var(--bg-panel);border:1px solid var(--border-strong);font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;cursor:pointer;display:none;">0.00%</span>
-                <button class="tg-icon-btn" id="yt-open-settings-2" title="Настройки" style="color:var(--fg-dim)">⚙</button>
-              </div>
-            </div>
-            <div id="yt-watch-scroll">
-              <div id="yt-watch-container"><div id="yt-reader-content" class="reader-text"></div></div>
-            </div>
-            <button id="yt-add-mark-fab" title="Закладка">🔖</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DISCORD -->
-  <div id="dc-root" class="screen">
-    <div id="dc-app">
-      <div id="dc-servers">
-        <div class="dc-server-icon active" title="YVL Books">Y</div>
-        <div class="dc-server-sep"></div>
-        <div id="dc-servers-list"></div>
-        <div class="dc-server-sep"></div>
-        <div class="dc-server-icon dc-server-add" id="dc-server-add" title="Добавить архив">＋</div>
-      </div>
-      <div id="dc-channels">
-        <div id="dc-channels-head" title="YVL Books">
-          <span class="nm">YVL Books</span>
-          <span style="font-size:12px;color:var(--fg-dim);">▾</span>
-        </div>
-        <div id="dc-channels-search">
-          <span style="color:var(--fg-dim);">🔍</span>
-          <input type="text" id="dc-channels-search-input" placeholder="Поиск книг..." autocomplete="off">
-        </div>
-        <div id="dc-channels-list"></div>
-        <button class="dc-add-book-btn" id="dc-add-book">＋ Добавить книгу</button>
-      </div>
-      <div id="dc-chat">
-        <div id="dc-chat-header">
-          <button class="dc-icon-btn" id="dc-mobile-back" style="display:none;">←</button>
-          <span class="hash-big">#</span>
-          <div class="nm" id="dc-chat-name">добро-пожаловать</div>
-          <div class="actions">
-            <span id="dc-pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
-            <button class="dc-icon-btn" id="dc-open-settings" title="Настройки">⚙</button>
-          </div>
-        </div>
-        <div id="dc-empty">
-          <div class="big">#</div>
-          <h2>Добро пожаловать в YVL Books</h2>
-          <p>Выберите книгу в списке каналов слева, чтобы начать читать.</p>
-        </div>
-        <div id="dc-reader-screen"><div id="dc-content" class="reader-text"></div></div>
-        <button class="dc-fab" id="dc-add-mark-fab" title="Закладка">🔖</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ПАНЕЛИ -->
   <div id="toc-panel" class="panel">
     <div class="panel-header"><span>Содержание</span><button id="toc-close">✕</button></div>
     <div class="panel-body" id="toc-list"></div>
@@ -1226,7 +615,8 @@
 
   <div id="menu-pop"></div>
   <div id="drop-overlay">Отпустите файл, чтобы добавить книгу</div>
-  <div id="collection-menu"></div>
+  <div id="category-menu"></div>
+  <div id="pop-overlay"></div>
 
   <div id="note-editor">
     <div class="box">
@@ -1243,7 +633,6 @@
   <div id="side-progress"><div id="side-thumb"></div><div id="side-marks"></div></div>
 </div>
 
-<!-- МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ -->
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
@@ -1292,17 +681,14 @@
       <button id="m-toc">📖 Содержание</button>
       <button id="m-mark" class="mark-btn">🔖 Закладка</button>
       <button id="m-marks" class="mark-btn">🔖 Закладки</button>
-      <button id="m-collections">📁 Архивы</button>
+      <button id="m-categories">Категории</button>
       <button id="m-add-book">＋ Книга</button>
-      <button id="m-add-archive">＋ Архив</button>
-      <button id="m-style" class="wide">🎭 Сменить стиль</button>
-      <button id="m-library" class="wide">📚 Библиотека</button>
+      <button id="m-library" class="wide">Меню</button>
       <button id="m-close" class="wide">✕ Закрыть</button>
     </div>
   </div>
 </div>
 
-<!-- МОДАЛКА "НАСТРОЙКИ" -->
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
@@ -1313,7 +699,6 @@
   </div>
 </div>
 
-<!-- ДИАЛОГ ВВОДА -->
 <div id="inline-dialog">
   <div class="dlg">
     <h4 id="inline-dialog-title">Введите значение</h4>
@@ -1325,6 +710,7 @@
     </div>
   </div>
 </div>
+
 <script>
 (function () {
   'use strict';
@@ -1446,12 +832,9 @@
   const DEFAULTS = {
     bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
     fontSize: 20, colWidth: 720, lineHeight: 1.85,
-    letterSpacing: 0, fontFamily: 'serif', uiStyle: 'classic'
+    letterSpacing: 0, fontFamily: 'serif'
   };
   const FONT_STACKS = {
-    telegram: "-apple-system, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    youtube:  "'Roboto', -apple-system, 'Segoe UI', Arial, sans-serif",
-    discord:  "'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
     serif:"Georgia, 'Times New Roman', serif",
     sans:"-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     mono:"'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace",
@@ -1480,56 +863,35 @@
     courier:"'Courier Prime', 'Courier New', Courier, monospace"
   };
   const FONTS = [
-    {id:'telegram',name:'Telegram',group:'📱 Приложения',sample:"-apple-system, 'Segoe UI', Roboto, sans-serif"},
-    {id:'youtube',name:'YouTube',group:'📱 Приложения',sample:"'Roboto', -apple-system, sans-serif"},
-    {id:'discord',name:'Discord (gg sans)',group:'📱 Приложения',sample:"'gg sans', 'Noto Sans', sans-serif"},
-    {id:'serif',name:'Georgia',group:'Serif',sample:'Georgia, serif'},
-    {id:'literata',name:'Literata',group:'Serif',sample:"'Literata', Georgia, serif"},
-    {id:'ptSerif',name:'PT Serif',group:'Serif',sample:"'PT Serif', Georgia, serif"},
-    {id:'notoSerif',name:'Noto Serif',group:'Serif',sample:"'Noto Serif', Georgia, serif"},
-    {id:'lora',name:'Lora',group:'Serif',sample:"'Lora', Georgia, serif"},
-    {id:'merriweather',name:'Merriweather',group:'Serif',sample:"'Merriweather', Georgia, serif"},
-    {id:'cormorant',name:'Cormorant',group:'Serif',sample:"'Cormorant Garamond', Georgia, serif"},
-    {id:'alegreya',name:'Alegreya',group:'Serif',sample:"'Alegreya', Georgia, serif"},
-    {id:'crimson',name:'Crimson',group:'Serif',sample:"'Crimson Text', Georgia, serif"},
-    {id:'spectral',name:'Spectral',group:'Serif',sample:"'Spectral', Georgia, serif"},
-    {id:'sourceSerif',name:'Source Serif',group:'Serif',sample:"'Source Serif 4', Georgia, serif"},
-    {id:'sans',name:'System Sans',group:'Sans',sample:"-apple-system, Segoe UI, Roboto, sans-serif"},
-    {id:'inter',name:'Inter',group:'Sans',sample:"'Inter', sans-serif"},
-    {id:'openSans',name:'Open Sans',group:'Sans',sample:"'Open Sans', sans-serif"},
-    {id:'notoSans',name:'Noto Sans',group:'Sans',sample:"'Noto Sans', sans-serif"},
-    {id:'roboto',name:'Roboto',group:'Sans',sample:"'Roboto', sans-serif"},
-    {id:'manrope',name:'Manrope',group:'Sans',sample:"'Manrope', sans-serif"},
-    {id:'nunito',name:'Nunito',group:'Sans',sample:"'Nunito', sans-serif"},
-    {id:'rubik',name:'Rubik',group:'Sans',sample:"'Rubik', sans-serif"},
-    {id:'montserrat',name:'Montserrat',group:'Sans',sample:"'Montserrat', sans-serif"},
-    {id:'ibmPlexSans',name:'IBM Plex Sans',group:'Sans',sample:"'IBM Plex Sans', sans-serif"},
-    {id:'sourceSans',name:'Source Sans',group:'Sans',sample:"'Source Sans 3', sans-serif"},
-    {id:'mono',name:'System Mono',group:'Mono',sample:'monospace'},
-    {id:'jetbrains',name:'JetBrains Mono',group:'Mono',sample:"'JetBrains Mono', monospace"},
-    {id:'ibmPlexMono',name:'IBM Plex Mono',group:'Mono',sample:"'IBM Plex Mono', monospace"},
-    {id:'courier',name:'Courier Prime',group:'Mono',sample:"'Courier Prime', monospace"}
+    {id:'serif',name:'Georgia',sample:'Georgia, serif'},
+    {id:'literata',name:'Literata',sample:"'Literata', Georgia, serif"},
+    {id:'ptSerif',name:'PT Serif',sample:"'PT Serif', Georgia, serif"},
+    {id:'notoSerif',name:'Noto Serif',sample:"'Noto Serif', Georgia, serif"},
+    {id:'lora',name:'Lora',sample:"'Lora', Georgia, serif"},
+    {id:'merriweather',name:'Merriweather',sample:"'Merriweather', Georgia, serif"},
+    {id:'cormorant',name:'Cormorant',sample:"'Cormorant Garamond', Georgia, serif"},
+    {id:'alegreya',name:'Alegreya',sample:"'Alegreya', Georgia, serif"},
+    {id:'crimson',name:'Crimson',sample:"'Crimson Text', Georgia, serif"},
+    {id:'spectral',name:'Spectral',sample:"'Spectral', Georgia, serif"},
+    {id:'sourceSerif',name:'Source Serif',sample:"'Source Serif 4', Georgia, serif"},
+    {id:'sans',name:'System Sans',sample:"-apple-system, Segoe UI, Roboto, sans-serif"},
+    {id:'inter',name:'Inter',sample:"'Inter', sans-serif"},
+    {id:'openSans',name:'Open Sans',sample:"'Open Sans', sans-serif"},
+    {id:'notoSans',name:'Noto Sans',sample:"'Noto Sans', sans-serif"},
+    {id:'roboto',name:'Roboto',sample:"'Roboto', sans-serif"},
+    {id:'manrope',name:'Manrope',sample:"'Manrope', sans-serif"},
+    {id:'nunito',name:'Nunito',sample:"'Nunito', sans-serif"},
+    {id:'rubik',name:'Rubik',sample:"'Rubik', sans-serif"},
+    {id:'montserrat',name:'Montserrat',sample:"'Montserrat', sans-serif"},
+    {id:'ibmPlexSans',name:'IBM Plex Sans',sample:"'IBM Plex Sans', sans-serif"},
+    {id:'sourceSans',name:'Source Sans',sample:"'Source Sans 3', sans-serif"},
+    {id:'mono',name:'System Mono',sample:'monospace'},
+    {id:'jetbrains',name:'JetBrains Mono',sample:"'JetBrains Mono', monospace"},
+    {id:'ibmPlexMono',name:'IBM Plex Mono',sample:"'IBM Plex Mono', monospace"},
+    {id:'courier',name:'Courier Prime',sample:"'Courier Prime', monospace"}
   ];
   const PRESET_GROUPS = [
-    { title: '📱 Стили приложений', presets: [
-      { name: 'Telegram Dark', bg: '#17212b', fg: '#e6e8eb', accent: '#65a9d0' },
-      { name: 'Telegram Day',  bg: '#ffffff', fg: '#1c1c1c', accent: '#419fd9' },
-      { name: 'YouTube Dark',  bg: '#0f0f0f', fg: '#f1f1f1', accent: '#ff0033' },
-      { name: 'YouTube Light', bg: '#ffffff', fg: '#0f0f0f', accent: '#ff0000' },
-      { name: 'Discord Dark',  bg: '#313338', fg: '#dbdee1', accent: '#5865f2' },
-      { name: 'Discord Light', bg: '#ffffff', fg: '#060607', accent: '#5865f2' },
-      { name: 'Discord OLED',  bg: '#0d0d0d', fg: '#dbdee1', accent: '#5865f2' }
-    ]},
-    { title: '🎮 Discord', presets: [
-      { name: 'Discord Blurple', bg: '#313338', fg: '#dbdee1', accent: '#5865f2' },
-      { name: 'Discord Dark',    bg: '#2b2d31', fg: '#dbdee1', accent: '#5865f2' },
-      { name: 'Discord Darker',  bg: '#1e1f22', fg: '#dbdee1', accent: '#5865f2' },
-      { name: 'Discord Green',   bg: '#313338', fg: '#dbdee1', accent: '#3ba55c' },
-      { name: 'Discord Red',     bg: '#313338', fg: '#dbdee1', accent: '#ed4245' },
-      { name: 'Discord Yellow',  bg: '#313338', fg: '#dbdee1', accent: '#faa61a' },
-      { name: 'Discord Fuchsia', bg: '#313338', fg: '#dbdee1', accent: '#eb459e' }
-    ]},
-    { title: '🌙 Для сна', presets: [
+    { title: 'Для сна', presets: [
       { name: 'Сон',        bg: '#14100d', fg: '#c9b6a2', accent: '#8a6f58' },
       { name: 'Ночник',     bg: '#1a1310', fg: '#d0b8a0', accent: '#9a7856' },
       { name: 'Свеча',      bg: '#1e1612', fg: '#d9c0a0', accent: '#a8784a' },
@@ -1539,7 +901,7 @@
       { name: 'Тёплый уголь',bg:'#171310', fg: '#c4b4a4', accent: '#8a705a' },
       { name: 'Шоколад',    bg: '#1a1310', fg: '#d4bca8', accent: '#a0785c' }
     ]},
-    { title: '☀️ Светлое', presets: [
+    { title: 'Светлое', presets: [
       { name: 'Сепия',      bg: '#f4ecd8', fg: '#3a3226', accent: '#8a7a5c' },
       { name: 'Paper',      bg: '#e8e4dc', fg: '#33302b', accent: '#7a736a' },
       { name: 'Песок',      bg: '#ede3c8', fg: '#3b3428', accent: '#8d7a52' },
@@ -1550,14 +912,14 @@
       { name: 'Пшеница',    bg: '#f0e6d2', fg: '#3d3528', accent: '#8c7a58' },
       { name: 'Тёплый беж', bg: '#efe6d6', fg: '#38322a', accent: '#857a68' }
     ]},
-    { title: '⬛ Нейтральные', presets: [
+    { title: 'Нейтральные', presets: [
       { name: 'Ночь',  bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b' },
       { name: 'Уголь', bg: '#1a1a1a', fg: '#cccccc', accent: '#888888' },
       { name: 'День',  bg: '#ffffff', fg: '#1a1a1a', accent: '#666666' },
       { name: 'Крем',  bg: '#faf6ee', fg: '#2b2b2b', accent: '#8a8a8a' },
       { name: 'Сланцы',bg: '#1c1f26', fg: '#c8ccd4', accent: '#7a8394' }
     ]},
-    { title: '🎨 Цветные', presets: [
+    { title: 'Цветные', presets: [
       { name: 'Океан', bg: '#0f1a22', fg: '#c0d4e0', accent: '#5a7d94' },
       { name: 'Лес',   bg: '#131a15', fg: '#c8d4c8', accent: '#6d8a6d' },
       { name: 'Вино',  bg: '#1a1214', fg: '#d8c8cc', accent: '#8a6d75' },
@@ -1568,42 +930,45 @@
   function loadSettings() {
     try {
       const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
-      const m = Object.assign({}, DEFAULTS, s);
-      if (!['classic','telegram','youtube','discord'].includes(m.uiStyle)) m.uiStyle = 'classic';
-      return m;
+      return Object.assign({}, DEFAULTS, s);
     } catch (e) { return Object.assign({}, DEFAULTS); }
   }
   let settings = loadSettings();
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
   // ===== ХРАНИЛИЩЕ =====
-  const META_KEY = 'reader_books_meta_v3';
+  const META_KEY = 'reader_books_meta_v4';
   const TEXT_PREFIX = 'reader_book_text_';
-  const OLD_BOOKS_KEY = 'reader_books';
-  const OLD_META_KEY = 'reader_books_meta_v2';
+  const OLD_META_KEY = 'reader_books_meta_v3';
+  const OLD_COLLECTIONS_KEY = 'reader_collections_v2';
+
   function loadMeta() {
     try {
       const raw = localStorage.getItem(META_KEY);
-      if (raw) return JSON.parse(raw) || [];
+      if (raw) return migrateMeta(JSON.parse(raw) || []);
     } catch (e) {}
     try {
-      const v2 = JSON.parse(localStorage.getItem(OLD_META_KEY) || '[]');
-      if (Array.isArray(v2) && v2.length) { saveMeta(v2); return v2; }
-    } catch (e) {}
-    try {
-      const old = JSON.parse(localStorage.getItem(OLD_BOOKS_KEY) || '[]');
+      const old = JSON.parse(localStorage.getItem(OLD_META_KEY) || '[]');
       if (Array.isArray(old) && old.length) {
-        const meta = old.map(b => {
-          const { text, ...rest } = b;
-          try { localStorage.setItem(TEXT_PREFIX + b.id, text || ''); } catch (e) {}
-          return rest;
+        const migrated = old.map(b => {
+          const cats = b.collection ? [b.collection] : [];
+          const { collection, ...rest } = b;
+          return Object.assign({}, rest, { categories: cats });
         });
-        saveMeta(meta);
-        try { localStorage.removeItem(OLD_BOOKS_KEY); } catch (e) {}
-        return meta;
+        saveMeta(migrated);
+        return migrated;
       }
     } catch (e) {}
     return [];
+  }
+  function migrateMeta(arr) {
+    if (!Array.isArray(arr)) return [];
+    return arr.map(b => {
+      if (Array.isArray(b.categories)) return b;
+      const cats = b.collection ? [b.collection] : [];
+      const { collection, ...rest } = b;
+      return Object.assign({}, rest, { categories: cats });
+    });
   }
   function saveMeta(arr) {
     try { localStorage.setItem(META_KEY, JSON.stringify(arr)); }
@@ -1621,11 +986,22 @@
     try { localStorage.removeItem(marksKey(id)); } catch (e) {}
   }
 
-  const COLLECTIONS_KEY = 'reader_collections_v2';
-  function loadCollections() {
-    try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || '[]'); } catch (e) { return []; }
+  const CATEGORIES_KEY = 'reader_categories_v3';
+  function loadCategories() {
+    try {
+      const raw = localStorage.getItem(CATEGORIES_KEY);
+      if (raw) return JSON.parse(raw) || [];
+    } catch (e) {}
+    try {
+      const old = JSON.parse(localStorage.getItem(OLD_COLLECTIONS_KEY) || '[]');
+      if (Array.isArray(old) && old.length) {
+        saveCategories(old);
+        return old;
+      }
+    } catch (e) {}
+    return [];
   }
-  function saveCollections(arr) { try { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(arr)); } catch (e) {} }
+  function saveCategories(arr) { try { localStorage.setItem(CATEGORIES_KEY, JSON.stringify(arr)); } catch (e) {} }
   function marksKey(bookId) { return 'reader_marks_' + (bookId || 'scratch'); }
   function loadMarks(bookId) {
     try { return JSON.parse(localStorage.getItem(marksKey(bookId)) || '[]'); } catch (e) { return []; }
@@ -1646,11 +1022,6 @@
     return 'Без названия';
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
-  function dcSlug(title) {
-    return String(title || 'book').toLowerCase()
-      .replace(/ё/g, 'е').replace(/[^\wа-я0-9]+/gi, '-')
-      .replace(/^-+|-+$/g, '').slice(0, 40) || 'book';
-  }
 
   // ===== СОСТОЯНИЕ =====
   let currentBookId = null;
@@ -1662,8 +1033,7 @@
   let searchDebounceTimer = null;
   let editingMarkId = null;
   let pendingMarkAnchor = null;
-  let ytFilter = 'all';
-  let activeCollection = null;
+  let activeCategory = null;
   let saveScrollTimer = null;
 
   // ===== КОНТЕНТ =====
@@ -1692,22 +1062,8 @@
     return false;
   }
 
-  function getActiveReaderEl() {
-    switch (settings.uiStyle) {
-      case 'telegram': return $('tg-reader-screen');
-      case 'youtube': return $('yt-watch-scroll');
-      case 'discord': return $('dc-reader-screen');
-      default: return $('reader-screen');
-    }
-  }
-  function getActiveContentEl() {
-    switch (settings.uiStyle) {
-      case 'telegram': return $('tg-content');
-      case 'youtube': return $('yt-reader-content');
-      case 'discord': return $('dc-content');
-      default: return $('content');
-    }
-  }
+  function getActiveReaderEl() { return $('reader-screen'); }
+  function getActiveContentEl() { return $('content'); }
   function getReaderScrollHeight() {
     const el = getActiveReaderEl(); if (!el) return 0;
     return Math.max(0, el.scrollHeight - el.clientHeight);
@@ -1757,7 +1113,7 @@
     if (typeof pos.chapter === 'number') activeChapter = pos.chapter;
   }
 
-  function renderBookIntoContent(text, contentEl, accentColor) {
+  function renderBookIntoContent(text, contentEl) {
     if (!contentEl) { chapters = []; return; }
     contentEl.innerHTML = ''; chapters = [];
     const paragraphs = splitIntoParagraphs(text);
@@ -1768,7 +1124,6 @@
       el.textContent = p; el.dataset.pIndex = idx;
       if (isChapterTitle(p)) {
         el.classList.add('chapter-title');
-        if (accentColor) el.style.color = accentColor;
         chapterCount++;
         chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
       }
@@ -2030,8 +1385,8 @@
   function findInBook(query) {
     const result = []; if (!query) return result;
     const q = normalizeSearch(query.trim()); if (!q) return result;
-    const content = getActiveContentEl(); const readerEl = getActiveReaderEl();
-    if (!content || !readerEl) return result;
+    const content = getActiveContentEl();
+    if (!content) return result;
     const paras = content.querySelectorAll('p');
     const maxScroll = getReaderScrollHeight();
     const chapterRanges = chapters.map(ch => ({ title: ch.title, startIndex: ch.pIndex }));
@@ -2182,8 +1537,7 @@
   function updateSideThumb(pct) {
     const thumb = $('side-thumb'); const sp = $('side-progress');
     if (!thumb || !sp) return;
-    const visible = window.getComputedStyle(sp).display !== 'none';
-    if (!visible) return;
+    if (window.getComputedStyle(sp).display === 'none') return;
     const trackH = sp.clientHeight;
     const thumbH = thumb.offsetHeight || 40;
     const usable = Math.max(1, trackH - thumbH);
@@ -2196,11 +1550,6 @@
     const pb = $('progress-bar'); if (pb) pb.style.width = pct + '%';
 
     const ind = $('pct-indicator'); if (ind) ind.textContent = pct.toFixed(2) + '%';
-    const tgBadge = $('tg-pct-badge'); if (tgBadge) tgBadge.textContent = pct.toFixed(2) + '%';
-    const ytBadge = $('yt-pct-badge');
-    if (ytBadge) { ytBadge.textContent = pct.toFixed(2) + '%'; ytBadge.style.display = currentBookId ? 'inline-flex' : 'none'; }
-    const dcInd = $('dc-pct-indicator'); if (dcInd) dcInd.textContent = pct.toFixed(2) + '%';
-
     const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
     const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
 
@@ -2230,7 +1579,6 @@
   const mobileSheet = $('mobile-sheet');
   const sheetOverlay = $('sheet-overlay');
   const sheetHandle = $('sheet-handle');
-  function openSheet() { mobileSheet?.classList.add('open'); sheetOverlay?.classList.add('open'); }
   function closeSheet() { mobileSheet?.classList.remove('open'); sheetOverlay?.classList.remove('open'); }
   if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
   let sheetTouchStartY = null;
@@ -2243,26 +1591,6 @@
     sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
   }
 
-  // ===== UI СТИЛИ =====
-  const UI_STYLES = [
-    { id: 'classic', name: 'Классика' },
-    { id: 'telegram', name: 'Telegram' },
-    { id: 'youtube', name: 'YouTube' },
-    { id: 'discord', name: 'Discord' }
-  ];
-  function applyUiStyle() {
-    const style = settings.uiStyle || 'classic';
-    document.body.className = 'style-' + style;
-    qsa('#app > .screen').forEach(el => el.classList.remove('active'));
-    const map = { classic: 'classic-root', telegram: 'tg-root', youtube: 'yt-root', discord: 'dc-root' };
-    const screen = $(map[style]); if (screen) screen.classList.add('active');
-    if (style === 'classic') renderClassicLibrary();
-    else if (style === 'telegram') renderTelegram();
-    else if (style === 'youtube') renderYoutube();
-    else if (style === 'discord') renderDiscord();
-    requestAnimationFrame(() => updateSideThumb(getCurrentPercent()));
-  }
-
   function changeFont(delta) {
     settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta));
     saveSettings(); applySettings();
@@ -2273,10 +1601,6 @@
   }
   function changeLineHeight(delta) {
     settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100));
-    saveSettings(); applySettings();
-  }
-  function changeLetterSpacing(delta) {
-    settings.letterSpacing = Math.max(-0.05, Math.min(0.3, Math.round((settings.letterSpacing + delta) * 100) / 100));
     saveSettings(); applySettings();
   }
 
@@ -2295,7 +1619,6 @@
     root.style.setProperty('--line-height', settings.lineHeight);
     root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
     root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
-    // ВАЖНО: размер шрифта применяется ко всем читалкам через CSS-переменную
     root.style.setProperty('--font-size', settings.fontSize + 'px');
 
     const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
@@ -2303,27 +1626,18 @@
     const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
 
     if (currentBookId) {
-      const b = loadMeta().find(x => x.id === currentBookId);
       const text = getBookText(currentBookId);
-      if (b) {
-        let target = null, accent = null;
-        if (settings.uiStyle === 'classic') target = $('content');
-        else if (settings.uiStyle === 'telegram') { target = $('tg-content'); accent = 'var(--accent)'; }
-        else if (settings.uiStyle === 'youtube') { target = $('yt-reader-content'); accent = 'var(--fg)'; }
-        else if (settings.uiStyle === 'discord') { target = $('dc-content'); accent = 'var(--accent)'; }
-        if (target) {
-          const savedPos = captureReadingPosition();
-          renderBookIntoContent(text, target, accent);
-          requestAnimationFrame(() => {
-            if (savedPos) restoreReadingPosition(savedPos);
-            updateAllProgress();
-          });
-        }
+      const target = $('content');
+      if (target) {
+        const savedPos = captureReadingPosition();
+        renderBookIntoContent(text, target);
+        requestAnimationFrame(() => {
+          if (savedPos) restoreReadingPosition(savedPos);
+          updateAllProgress();
+        });
       }
     }
-    if (settings.uiStyle === 'classic') {
-      try { renderClassicLibrary(); } catch (e) {}
-    }
+    renderClassicLibrary();
   }
 
   // ===== МОДАЛКА НАСТРОЕК =====
@@ -2338,13 +1652,8 @@
   });
 
   function addGroup(title) {
-    const style = settings.uiStyle || 'classic';
-    const useDiscord = style === 'discord';
-    const useYouTube = style === 'youtube';
-    const useTelegram = style === 'telegram';
-    const cls = useDiscord ? 'dc-settings-group-title' : (useYouTube ? 'yt-settings-group-title' : (useTelegram ? 'tg-settings-group-title' : 'cl-settings-group-title'));
     const t = document.createElement('div');
-    t.className = cls; t.textContent = title;
+    t.className = 'cl-settings-group-title'; t.textContent = title;
     settingsModalBody.appendChild(t);
   }
 
@@ -2353,64 +1662,22 @@
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = 'Палитра';
     settingsModalBody.innerHTML = '';
-    const style = settings.uiStyle || 'classic';
-    const useDiscord = style === 'discord';
-    const useYouTube = style === 'youtube';
-    const useTelegram = style === 'telegram';
 
     PRESET_GROUPS.forEach(group => {
-      const t = document.createElement('div');
-      t.className = useDiscord ? 'dc-settings-group-title' : (useYouTube ? 'yt-settings-group-title' : (useTelegram ? 'tg-settings-group-title' : 'cl-settings-group-title'));
-      t.textContent = group.title;
-      settingsModalBody.appendChild(t);
-
-      if (useYouTube) {
-        const grid = document.createElement('div');
-        grid.className = 'yt-settings-grid';
-        group.presets.forEach(pr => {
-          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-          const tile = document.createElement('div');
-          tile.className = 'yt-tile' + (isActive ? ' active' : '');
-          tile.innerHTML = '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--fg)' : shade(pr.bg,20)) + ';">Aa</div>' +
-            '<div class="nm">' + escapeHtml(pr.name) + '</div>';
-          tile.addEventListener('click', () => {
-            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-            saveSettings(); applySettings(); openPaletteOnly();
-          });
-          grid.appendChild(tile);
+      addGroup(group.title);
+      group.presets.forEach(pr => {
+        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
+        const row = document.createElement('div');
+        row.className = 'cl-settings-row' + (isActive ? ' active' : '');
+        row.innerHTML = '<div class="sw' + (isActive ? ' active' : '') + '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
+          '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div><div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
+          (isActive ? '<div class="check">✓</div>' : '');
+        row.addEventListener('click', () => {
+          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
+          saveSettings(); applySettings(); openPaletteOnly();
         });
-        settingsModalBody.appendChild(grid);
-      } else if (useDiscord) {
-        const grid = document.createElement('div');
-        grid.className = 'dc-settings-grid';
-        group.presets.forEach(pr => {
-          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-          const tile = document.createElement('div');
-          tile.className = 'dc-tile' + (isActive ? ' active' : '');
-          tile.innerHTML = '<div class="sw" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
-            '<div class="nm">' + escapeHtml(pr.name) + '</div>';
-          tile.addEventListener('click', () => {
-            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-            saveSettings(); applySettings(); openPaletteOnly();
-          });
-          grid.appendChild(tile);
-        });
-        settingsModalBody.appendChild(grid);
-      } else {
-        group.presets.forEach(pr => {
-          const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-          const row = document.createElement('div');
-          row.className = (useTelegram ? 'tg-settings-row' : 'cl-settings-row') + (isActive ? ' active' : '');
-          row.innerHTML = '<div class="sw' + (isActive ? ' active' : '') + '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
-            '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div><div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
-            (isActive ? '<div class="check">✓</div>' : '');
-          row.addEventListener('click', () => {
-            settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-            saveSettings(); applySettings(); openPaletteOnly();
-          });
-          settingsModalBody.appendChild(row);
-        });
-      }
+        settingsModalBody.appendChild(row);
+      });
     });
 
     addGroup('Свои цвета');
@@ -2437,59 +1704,18 @@
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = 'Шрифт';
     settingsModalBody.innerHTML = '';
-    const style = settings.uiStyle || 'classic';
-    const useDiscord = style === 'discord';
-    const useYouTube = style === 'youtube';
-    const useTelegram = style === 'telegram';
 
-    addGroup('📖 Шрифт текста');
-    let currentGrid = null;
-    let currentGroup = null;
-    const wrap = document.createElement('div');
-    if (useYouTube) { wrap.className = 'yt-settings-grid'; wrap.style.padding = '0 16px 12px'; }
-    else if (useDiscord) { wrap.className = 'dc-settings-grid'; wrap.style.padding = '0 16px 12px'; }
-    else wrap.style.cssText = 'padding:0 0 8px;';
-
+    addGroup('Шрифт текста');
     FONTS.forEach(f => {
-      if (useYouTube || useDiscord) {
-        if (f.group !== currentGroup) {
-          currentGroup = f.group;
-          const t = document.createElement('div');
-          t.className = useDiscord ? 'dc-settings-group-title' : 'yt-settings-group-title';
-          t.textContent = currentGroup;
-          settingsModalBody.appendChild(t);
-          currentGrid = document.createElement('div');
-          currentGrid.className = useDiscord ? 'dc-settings-grid' : 'yt-settings-grid';
-          settingsModalBody.appendChild(currentGrid);
-        }
-        const isActive = settings.fontFamily === f.id;
-        if (useYouTube) {
-          const tile = document.createElement('div');
-          tile.className = 'yt-font-tile' + (isActive ? ' active' : '');
-          tile.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div><div class="nm">' + escapeHtml(f.name) + '</div>';
-          tile.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
-          currentGrid.appendChild(tile);
-        } else {
-          const row = document.createElement('div');
-          row.className = 'dc-font-preview' + (isActive ? ' active' : '');
-          row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-            '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
-            (isActive ? '<div class="check" style="color:var(--accent);font-size:16px;">✓</div>' : '');
-          row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
-          currentGrid.appendChild(row);
-        }
-      } else {
-        const isActive = settings.fontFamily === f.id;
-        const row = document.createElement('div');
-        row.className = (useTelegram ? 'tg-font-preview' : 'cl-font-preview') + (isActive ? ' active' : '');
-        row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-          '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
-          (isActive ? '<div class="check">✓</div>' : '');
-        row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
-        wrap.appendChild(row);
-      }
+      const isActive = settings.fontFamily === f.id;
+      const row = document.createElement('div');
+      row.className = 'cl-font-preview' + (isActive ? ' active' : '');
+      row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
+        (isActive ? '<div class="check">✓</div>' : '');
+      row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
+      settingsModalBody.appendChild(row);
     });
-    if (!useYouTube && !useDiscord) settingsModalBody.appendChild(wrap);
 
     addGroup('Параметры текста');
     const rows = document.createElement('div');
@@ -2533,7 +1759,7 @@
     settingsModalTitle.textContent = 'Настройки';
     settingsModalBody.innerHTML = '';
 
-    addGroup('📖 Чтение');
+    addGroup('Чтение');
     const rowsRead = document.createElement('div');
     rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
     const mkRow = (label, ctrl) => {
@@ -2568,7 +1794,7 @@
     rowsRead.appendChild(mkRow('Интервал', lhS.w));
     settingsModalBody.appendChild(rowsRead);
 
-    addGroup('🎨 Шрифт и палитра');
+    addGroup('Шрифт и палитра');
     const wrapBtns = document.createElement('div');
     wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
     const bFont = document.createElement('button');
@@ -2576,45 +1802,12 @@
     bFont.addEventListener('click', () => { closeSettingsModal(); setTimeout(openFontsOnly, 120); });
     wrapBtns.appendChild(bFont);
     const bPal = document.createElement('button');
-    bPal.textContent = '🎨 Палитра'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bPal.textContent = 'Палитра'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
     bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
     wrapBtns.appendChild(bPal);
     settingsModalBody.appendChild(wrapBtns);
 
-    addGroup('🎭 Стиль интерфейса');
-    const stylesWrap = document.createElement('div');
-    stylesWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:6px;';
-    UI_STYLES.forEach(st => {
-      const isActive = settings.uiStyle === st.id;
-      const row = document.createElement('button');
-      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:' + (isActive ? 'var(--border-strong)' : 'var(--bg-panel)') + ';border:1px solid ' + (isActive ? 'var(--accent)' : 'var(--border-strong)') + ';color:var(--fg);font-size:14px;text-align:left;min-height:44px;cursor:pointer;';
-      row.textContent = (isActive ? '✓ ' : '') + st.name;
-      row.addEventListener('click', () => {
-        if (currentBookId) {
-          const pos = captureReadingPosition();
-          if (pos) {
-            const list = loadMeta();
-            const idx = list.findIndex(x => x.id === currentBookId);
-            if (idx >= 0) {
-              list[idx].scroll = pos.scrollTop; list[idx].pct = pos.pct; list[idx].chapter = pos.chapter;
-              list[idx].pIndex = pos.pIndex; list[idx].offsetInPara = pos.offsetInPara;
-              saveMeta(list);
-            }
-          }
-        }
-        settings.uiStyle = st.id; saveSettings();
-        applyUiStyle();
-        if (currentBookId) {
-          const targetPos = loadMeta().find(x => x.id === currentBookId);
-          setTimeout(() => openBookInCurrentStyle(currentBookId, targetPos), 30);
-        }
-        closeSettingsModal();
-      });
-      stylesWrap.appendChild(row);
-    });
-    settingsModalBody.appendChild(stylesWrap);
-
-    addGroup('📚 Библиотека');
+    addGroup('Меню');
     const libWrap = document.createElement('div');
     libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
     const mkBtn = (label, fn) => {
@@ -2624,109 +1817,306 @@
       b.addEventListener('click', fn);
       libWrap.appendChild(b);
     };
-    mkBtn('＋ Добавить книгу', () => { closeSettingsModal(); setTimeout(promptAddBook, 180); });
-    mkBtn('＋ Добавить архив', () => { closeSettingsModal(); setTimeout(promptAddArchive, 180); });
-    mkBtn('📁 Архивы', () => { closeSettingsModal(); setTimeout(openCollectionsManager, 180); });
-    mkBtn('📖 Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
-    mkBtn('🔖 Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
-    mkBtn('🔍 Поиск по книге', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
-    mkBtn('📚 Вернуться в библиотеку', () => {
-      closeSettingsModal();
-      if (settings.uiStyle === 'classic') backClassic();
-      else if (settings.uiStyle === 'telegram') backTelegram();
-      else if (settings.uiStyle === 'youtube') backYoutube();
-      else if (settings.uiStyle === 'discord') backDiscord();
-    });
+    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
+    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
+    mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
     settingsModalBody.appendChild(libWrap);
   }
 
-  // ===== УНИВЕРСАЛЬНОЕ МЕНЮ КНИГИ =====
+  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ПОПАПОВ =====
+  const popOverlay = $('pop-overlay');
+
+  function ensurePopOverlay() {
+    if (!popOverlay) return;
+    popOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:345;display:none;';
+    popOverlay.addEventListener('click', () => {
+      const catMenu = $('category-menu');
+      const popMenu = $('menu-pop');
+      if (catMenu) catMenu.classList.remove('show');
+      if (popMenu) popMenu.classList.remove('show');
+      popOverlay.style.display = 'none';
+    });
+  }
+  ensurePopOverlay();
+
+  function closeAllPopups() {
+    const catMenu = $('category-menu');
+    const popMenu = $('menu-pop');
+    if (catMenu) catMenu.classList.remove('show');
+    if (popMenu) popMenu.classList.remove('show');
+    if (popOverlay) popOverlay.style.display = 'none';
+  }
+
+  function showPopOverlayFor(el) {
+    if (!popOverlay || !el) return;
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      popOverlay.style.display = 'block';
+    }
+  }
+
+  // Глобальное закрытие меню
+  document.addEventListener('click', (e) => {
+    const catMenu = $('category-menu');
+    const popMenu = $('menu-pop');
+    if (catMenu && catMenu.classList.contains('show')) {
+      if (!catMenu.contains(e.target) &&
+          !(e.target.closest && e.target.closest('.cat-tag')) &&
+          !(e.target.closest && e.target.closest('.category-chip'))) {
+        catMenu.classList.remove('show');
+        if (popOverlay && !popMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      }
+    }
+    if (popMenu && popMenu.classList.contains('show')) {
+      if (!popMenu.contains(e.target) &&
+          !(e.target.closest && e.target.closest('.category-chip'))) {
+        popMenu.classList.remove('show');
+        if (popOverlay && !catMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      }
+    }
+  });
+
+  // Escape закрывает всё
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAllPopups();
+    }
+  });
+
+  // ===== МЕНЕДЖЕР КАТЕГОРИЙ =====
+  function openCategoriesManager() {
+    const pop = $('menu-pop'); if (!pop) return;
+    closeAllPopups();
+    pop.innerHTML = ''; pop.style.transform = '';
+    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
+
+    // Шапка с кнопкой закрытия
+    const head = document.createElement('div');
+    head.className = 'group-head';
+    const title = document.createElement('div');
+    title.className = 'group-title';
+    title.textContent = 'Категории';
+    head.appendChild(title);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'pop-close';
+    closeBtn.textContent = '✕';
+    closeBtn.title = 'Закрыть';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pop.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+    });
+    head.appendChild(closeBtn);
+    pop.appendChild(head);
+
+    const cats = loadCategories(); const books = loadMeta();
+    if (!cats.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
+      empty.textContent = 'Пока нет категорий.'; pop.appendChild(empty);
+    } else {
+      cats.forEach(c => {
+        const row = document.createElement('div'); row.className = 'mi';
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
+        const nm = document.createElement('span');
+        const count = books.filter(b => (b.categories || []).includes(c.id)).length;
+        nm.textContent = c.name + ' (' + count + ')';
+        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        const edit = document.createElement('button');
+        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
+        edit.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askText('Название категории:', c.name).then(n => {
+            if (n !== null && n.trim()) {
+              const arr = loadCategories(); const cc = arr.find(x => x.id === c.id);
+              if (cc) cc.name = n.trim(); saveCategories(arr);
+              openCategoriesManager(); renderClassicLibrary();
+            }
+          });
+        });
+        const del = document.createElement('button');
+        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askConfirm('Удалить категорию «' + c.name + '»? Книги останутся.', 'Удалить', true).then(ok => {
+            if (!ok) return;
+            saveCategories(loadCategories().filter(x => x.id !== c.id));
+            const arr = loadMeta(); arr.forEach(b => {
+              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
+            });
+            saveMeta(arr);
+            if (activeCategory === c.id) activeCategory = null;
+            openCategoriesManager(); renderClassicLibrary();
+          });
+        });
+        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
+        pop.appendChild(row);
+      });
+    }
+    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
+    const addBtn = document.createElement('div'); addBtn.className = 'mi';
+    addBtn.textContent = '+ Новая категория';
+    addBtn.addEventListener('click', () => {
+      askText('Название новой категории:').then(n => {
+        if (n !== null && n.trim()) {
+          const arr = loadCategories();
+          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+          saveCategories(arr); openCategoriesManager(); renderClassicLibrary();
+        }
+      });
+    });
+    pop.appendChild(addBtn);
+
+    pop.style.left = '50%'; pop.style.top = '50%';
+    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
+    showPopOverlayFor(pop);
+  }
+
+  function promptAddCategory() {
+    askText('Название новой категории:').then(n => {
+      if (n !== null && n.trim()) {
+        const arr = loadCategories();
+        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+        saveCategories(arr);
+        renderClassicLibrary();
+        toast('Категория создана');
+      }
+    });
+  }
+
+  // ===== МЕНЮ КНИГИ =====
   function showBookMenu(bookId, anchorEl) {
-    const menu = $('collection-menu'); if (!menu) return;
+    const menu = $('category-menu'); if (!menu) return;
+    closeAllPopups();
     const books = loadMeta(); const b = books.find(x => x.id === bookId);
     if (!b) return;
-    const cur = b.collection || '';
-    const cols = loadCollections();
+    const currentCats = Array.isArray(b.categories) ? b.categories.slice() : [];
+    const cats = loadCategories();
     menu.innerHTML = '';
 
-    function mkItem(text, active, cb, danger) {
-      const it = document.createElement('div');
-      it.className = 'cm-item' + (active ? ' active' : '') + (danger ? ' danger' : '');
-      it.textContent = text;
-      it.addEventListener('click', () => { cb(); menu.classList.remove('show'); });
-      menu.appendChild(it);
-    }
+    // Шапка с кнопкой закрытия
+    const head = document.createElement('div');
+    head.className = 'cm-head';
+    const headTitle = document.createElement('div');
+    headTitle.className = 'cm-head-title';
+    headTitle.textContent = b.title || 'Книга';
+    head.appendChild(headTitle);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'cm-close';
+    closeBtn.textContent = '✕';
+    closeBtn.title = 'Закрыть';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+    });
+    head.appendChild(closeBtn);
+    menu.appendChild(head);
+
     function mkTitle(text) {
       const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text;
       menu.appendChild(t);
     }
+    function mkSep() {
+      const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s);
+    }
 
-    mkTitle(b.title || 'Книга');
-    mkItem('✎ Переименовать', false, () => {
+    // переименование
+    const renameItem = document.createElement('div');
+    renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
+    renameItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
       askText('Новое название:', b.title).then(n => {
         if (n !== null && n.trim()) {
           const arr = loadMeta(); const bk = arr.find(x => x.id === bookId);
           if (bk) bk.title = n.trim(); saveMeta(arr);
-          if (currentBookId === bookId) {
-            if (settings.uiStyle === 'telegram') { const el = $('tg-chat-name'); if (el) el.textContent = n.trim(); }
-            else if (settings.uiStyle === 'discord') { const el = $('dc-chat-name'); if (el) el.textContent = dcSlug(n.trim()); }
-            else if (settings.uiStyle === 'youtube') { const el = $('yt-watch-title'); if (el) el.textContent = n.trim(); }
-          }
-          renderAll();
+          renderClassicLibrary();
         }
       });
     });
+    menu.appendChild(renameItem);
 
-    const sep1 = document.createElement('div'); sep1.className = 'cm-sep'; menu.appendChild(sep1);
-    mkTitle('Архив');
-    mkItem('🚫 Без архива', cur === '', () => {
-      const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
-      if (bb) { bb.collection = ''; saveMeta(arr); }
-      renderAll();
-    });
-    if (cols.length) {
-      cols.forEach(c => {
-        mkItem('📁 ' + c.name, cur === c.id, () => {
-          const arr = loadMeta(); const bb = arr.find(x => x.id === bookId);
-          if (bb) { bb.collection = c.id; saveMeta(arr); }
-          renderAll();
+    mkSep();
+    mkTitle('Категории (можно несколько)');
+
+    if (!cats.length) {
+      const empty = document.createElement('div');
+      empty.className = 'cm-item';
+      empty.style.cssText = 'color:var(--fg-dim);cursor:default;';
+      empty.textContent = 'Нет категорий';
+      menu.appendChild(empty);
+    } else {
+      cats.forEach(c => {
+        const isActive = currentCats.includes(c.id);
+        const item = document.createElement('div');
+        item.className = 'cm-item' + (isActive ? ' active' : '');
+        item.innerHTML = '<span class="cm-check">' + (isActive ? '✓' : '') + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(c.name) + '</span>';
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const arr = loadMeta(); const bk = arr.find(x => x.id === bookId);
+          if (!bk) return;
+          if (!Array.isArray(bk.categories)) bk.categories = [];
+          if (bk.categories.includes(c.id)) bk.categories = bk.categories.filter(id => id !== c.id);
+          else bk.categories.push(c.id);
+          saveMeta(arr);
+          const nowActive = bk.categories.includes(c.id);
+          item.classList.toggle('active', nowActive);
+          item.querySelector('.cm-check').textContent = nowActive ? '✓' : '';
+          renderClassicLibrary();
         });
+        menu.appendChild(item);
       });
     }
-    mkItem('＋ Новый архив…', false, () => {
-      askText('Название нового архива:').then(n => {
+
+    // создать новую категорию и сразу привязать
+    const addCatItem = document.createElement('div');
+    addCatItem.className = 'cm-item';
+    addCatItem.textContent = '＋ Новая категория…';
+    addCatItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+      askText('Название новой категории:').then(n => {
         if (n !== null && n.trim()) {
-          const arr = loadCollections();
+          const arr = loadCategories();
           const id = 'c' + Date.now();
           arr.push({ id, name: n.trim(), created: Date.now() });
-          saveCollections(arr);
-          const bks = loadMeta(); const bb = bks.find(x => x.id === bookId);
-          if (bb) { bb.collection = id; saveMeta(bks); }
-          renderAll();
+          saveCategories(arr);
+          const bks = loadMeta(); const bk = bks.find(x => x.id === bookId);
+          if (bk) {
+            if (!Array.isArray(bk.categories)) bk.categories = [];
+            if (!bk.categories.includes(id)) bk.categories.push(id);
+            saveMeta(bks);
+          }
+          renderClassicLibrary();
         }
       });
     });
+    menu.appendChild(addCatItem);
 
-    const sep3 = document.createElement('div'); sep3.className = 'cm-sep'; menu.appendChild(sep3);
-    mkItem('🗑 Удалить книгу', false, () => {
+    mkSep();
+    const delItem = document.createElement('div');
+    delItem.className = 'cm-item danger';
+    delItem.textContent = 'Удалить книгу';
+    delItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
       askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
         if (!ok) return;
         removeBookData(bookId);
         saveMeta(loadMeta().filter(x => x.id !== bookId));
-        if (currentBookId === bookId) {
-          if (settings.uiStyle === 'classic') backClassic();
-          else if (settings.uiStyle === 'telegram') backTelegram();
-          else if (settings.uiStyle === 'youtube') backYoutube();
-          else if (settings.uiStyle === 'discord') backDiscord();
-        }
-        renderAll();
+        if (currentBookId === bookId) backClassic();
+        renderClassicLibrary();
       });
-    }, true);
+    });
+    menu.appendChild(delItem);
 
     const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 20, bottom: 80, top: 60 };
-    menu.style.left = Math.max(8, Math.min(window.innerWidth - 260, rect.left)) + 'px';
+    menu.style.left = Math.max(8, Math.min(window.innerWidth - 340, rect.left)) + 'px';
     menu.style.top = (rect.bottom + 6) + 'px';
     menu.classList.add('show');
+    showPopOverlayFor(menu);
     setTimeout(() => {
       const mh = menu.offsetHeight || 280;
       if (rect.bottom + 6 + mh > window.innerHeight - 8) {
@@ -2735,26 +2125,18 @@
     }, 0);
   }
 
-  document.addEventListener('click', (e) => {
-    const menu = $('collection-menu');
-    if (!menu || !menu.classList.contains('show')) return;
-    if (menu.contains(e.target)) return;
-    if (e.target.closest && e.target.closest('.book-collection, .collection-chip')) return;
-    menu.classList.remove('show');
-  });
-
-  // ===== КЛАССИКА =====
+  // ===== КЛАССИКА: рендер библиотеки =====
   function renderClassicLibrary() {
     const libraryList = $('library-list'); if (!libraryList) return;
-    renderCollectionsBar();
+    renderCategoriesBar();
     const all = loadMeta(); const sorted = sortBooks(all);
     const searchEl = $('library-search');
     const query = (searchEl && searchEl.value || '').trim().toLowerCase();
     const wrap = $('library-search-wrap'); if (wrap) wrap.classList.toggle('has-value', !!query);
 
     let books = sorted;
-    if (activeCollection === '') books = books.filter(b => !b.collection);
-    else if (activeCollection) books = books.filter(b => b.collection === activeCollection);
+    if (activeCategory === '') books = books.filter(b => !(b.categories || []).length);
+    else if (activeCategory) books = books.filter(b => (b.categories || []).includes(activeCategory));
     const filtered = query ? books.filter(b => (b.title || '').toLowerCase().includes(query)) : books;
 
     libraryList.innerHTML = '';
@@ -2768,7 +2150,7 @@
     if (!filtered.length) { if (noResults) noResults.classList.add('show'); return; }
     if (noResults) noResults.classList.remove('show');
 
-    const cols = loadCollections();
+    const cats = loadCategories();
     filtered.forEach(b => {
       const el = document.createElement('div');
       el.className = 'book-item'; el.dataset.bookId = b.id;
@@ -2778,12 +2160,43 @@
       el.appendChild(grip);
       const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
       el.appendChild(title);
-      const colEl = document.createElement('div');
-      colEl.className = 'book-collection' + (b.collection ? '' : ' none');
-      const colName = b.collection ? (cols.find(c => c.id === b.collection)?.name || 'Архив') : 'Без архива';
-      colEl.textContent = '📁 ' + colName;
-      colEl.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, colEl); });
-      el.appendChild(colEl);
+
+      // теги категорий
+      const catWrap = document.createElement('div');
+      catWrap.className = 'book-categories';
+      const bookCats = Array.isArray(b.categories) ? b.categories : [];
+      if (!bookCats.length) {
+        const tag = document.createElement('div');
+        tag.className = 'cat-tag none';
+        tag.textContent = 'Без категории';
+        tag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, tag); });
+        catWrap.appendChild(tag);
+      } else {
+        bookCats.forEach(cid => {
+          const cat = cats.find(c => c.id === cid);
+          if (!cat) return;
+          const tag = document.createElement('div');
+          tag.className = 'cat-tag';
+          tag.innerHTML = escapeHtml(cat.name) + ' <span class="cat-x" title="Убрать">✕</span>';
+          tag.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (e.target.classList.contains('cat-x')) {
+              const arr = loadMeta(); const bk = arr.find(x => x.id === b.id);
+              if (bk) bk.categories = (bk.categories || []).filter(id => id !== cid);
+              saveMeta(arr); renderClassicLibrary();
+            } else showBookMenu(b.id, tag);
+          });
+          catWrap.appendChild(tag);
+        });
+        const addTag = document.createElement('div');
+        addTag.className = 'cat-tag none';
+        addTag.textContent = '＋';
+        addTag.title = 'Добавить категорию';
+        addTag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, addTag); });
+        catWrap.appendChild(addTag);
+      }
+      el.appendChild(catWrap);
+
       const meta = document.createElement('div'); meta.className = 'meta';
       let metaText = (b.words || countWords(getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
       const marksCount = loadMarks(b.id).length;
@@ -2822,7 +2235,7 @@
       });
       el.appendChild(del);
       el.addEventListener('click', (e) => {
-        if (e.target.closest('.del, .rename, .book-collection, .grip')) return;
+        if (e.target.closest('.del, .rename, .cat-tag, .grip')) return;
         openBookClassic(b.id);
       });
       el.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, el); });
@@ -2831,6 +2244,7 @@
     });
   }
 
+  // ===== Перетаскивание книг =====
   let dragState = null;
   function clearDragHighlights(container) {
     if (!container) return;
@@ -2864,7 +2278,7 @@
     const map = new Map(list.map(b => [b.id, b]));
     const updated = meta.map(b => map.get(b.id) || b);
     saveMeta(updated);
-    renderAll();
+    renderClassicLibrary();
   }
   function attachBookDragHandlers(el, bookId) {
     const grip = el.querySelector('.grip');
@@ -2919,93 +2333,14 @@
     window.addEventListener('pointercancel', onUp);
   }
 
-  // ===== КОЛЛЕКЦИИ =====
-  function promptAddArchive() {
-    askText('Название нового архива:').then(n => {
-      if (n !== null && n.trim()) {
-        const arr = loadCollections();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCollections(arr);
-        renderAll();
-        toast('Архив создан');
-      }
-    });
-  }
-  function openCollectionsManager() {
-    const pop = $('menu-pop'); if (!pop) return;
-    pop.innerHTML = ''; pop.style.transform = '';
-    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
-
-    const title = document.createElement('div'); title.className = 'group-title';
-    title.textContent = '📁 Архивы (папки)'; pop.appendChild(title);
-
-    const cols = loadCollections(); const books = loadMeta();
-    if (!cols.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
-      empty.textContent = 'Пока нет архивов.'; pop.appendChild(empty);
-    } else {
-      cols.forEach(c => {
-        const row = document.createElement('div'); row.className = 'mi';
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
-        const nm = document.createElement('span');
-        const count = books.filter(b => b.collection === c.id).length;
-        nm.textContent = '📁 ' + c.name + ' (' + count + ')';
-        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-        const edit = document.createElement('button');
-        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askText('Название архива:', c.name).then(n => {
-            if (n !== null && n.trim()) {
-              const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
-              if (cc) cc.name = n.trim(); saveCollections(arr);
-              openCollectionsManager(); renderAll();
-            }
-          });
-        });
-        const del = document.createElement('button');
-        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askConfirm('Удалить архив «' + c.name + '»? Книги останутся без архива.', 'Удалить', true).then(ok => {
-            if (!ok) return;
-            saveCollections(loadCollections().filter(x => x.id !== c.id));
-            const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
-            saveMeta(arr);
-            if (activeCollection === c.id) activeCollection = null;
-            openCollectionsManager(); renderAll();
-          });
-        });
-        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
-        pop.appendChild(row);
-      });
-    }
-    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
-    const addBtn = document.createElement('div'); addBtn.className = 'mi';
-    addBtn.textContent = '+ Новый архив';
-    addBtn.addEventListener('click', () => {
-      askText('Название нового архива:').then(n => {
-        if (n !== null && n.trim()) {
-          const arr = loadCollections();
-          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-          saveCollections(arr); openCollectionsManager(); renderAll();
-        }
-      });
-    });
-    pop.appendChild(addBtn);
-
-    pop.style.left = '50%'; pop.style.top = '50%';
-    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
-  }
-
-  function renderCollectionsBar() {
-    const bar = $('collections-bar'); if (!bar) return;
-    const cols = loadCollections(); const books = loadMeta();
+  // ===== ПАНЕЛЬ ФИЛЬТРОВ КАТЕГОРИЙ =====
+  function renderCategoriesBar() {
+    const bar = $('categories-bar'); if (!bar) return;
+    const cats = loadCategories(); const books = loadMeta();
     bar.innerHTML = '';
     function makeChip(label, count, isActive, onClick, extra) {
       const el = document.createElement('div');
-      el.className = 'collection-chip' + (isActive ? ' active' : '');
+      el.className = 'category-chip' + (isActive ? ' active' : '');
       const nameSpan = document.createElement('span');
       nameSpan.textContent = label; nameSpan.title = label;
       el.appendChild(nameSpan);
@@ -3016,24 +2351,24 @@
       bar.appendChild(el);
       return el;
     }
-    makeChip('Все', books.length, activeCollection === null, () => { activeCollection = null; renderAll(); });
-    const noneCount = books.filter(b => !b.collection).length;
-    if (noneCount > 0) makeChip('Без архива', noneCount, activeCollection === '', () => { activeCollection = ''; renderAll(); });
-    cols.forEach(c => {
-      const cnt = books.filter(b => b.collection === c.id).length;
-      makeChip(c.name, cnt, activeCollection === c.id, () => {
-        activeCollection = (activeCollection === c.id) ? null : c.id;
-        renderAll();
+    makeChip('Все', books.length, activeCategory === null, () => { activeCategory = null; renderClassicLibrary(); });
+    const noneCount = books.filter(b => !(b.categories || []).length).length;
+    if (noneCount > 0) makeChip('Без категории', noneCount, activeCategory === '', () => { activeCategory = ''; renderClassicLibrary(); });
+    cats.forEach(c => {
+      const cnt = books.filter(b => (b.categories || []).includes(c.id)).length;
+      makeChip(c.name, cnt, activeCategory === c.id, () => {
+        activeCategory = (activeCategory === c.id) ? null : c.id;
+        renderClassicLibrary();
       }, (el) => {
         const actions = document.createElement('span'); actions.className = 'chip-actions';
         const edit = document.createElement('button'); edit.className = 'chip-edit'; edit.textContent = '✎';
         edit.addEventListener('click', (e) => {
           e.stopPropagation();
-          askText('Название архива:', c.name).then(n => {
+          askText('Название категории:', c.name).then(n => {
             if (n !== null) {
-              const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
-              if (cc) { cc.name = n.trim() || c.name; saveCollections(arr); }
-              renderAll();
+              const arr = loadCategories(); const cc = arr.find(x => x.id === c.id);
+              if (cc) { cc.name = n.trim() || c.name; saveCategories(arr); }
+              renderClassicLibrary();
             }
           });
         });
@@ -3041,285 +2376,37 @@
         const del = document.createElement('button'); del.className = 'chip-del'; del.textContent = '✕';
         del.addEventListener('click', (e) => {
           e.stopPropagation();
-          askConfirm('Удалить архив «' + c.name + '»?', 'Удалить', true).then(ok => {
+          askConfirm('Удалить категорию «' + c.name + '»?', 'Удалить', true).then(ok => {
             if (!ok) return;
-            saveCollections(loadCollections().filter(x => x.id !== c.id));
-            const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
-            saveMeta(arr); if (activeCollection === c.id) activeCollection = null; renderAll();
+            saveCategories(loadCategories().filter(x => x.id !== c.id));
+            const arr = loadMeta(); arr.forEach(b => {
+              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
+            });
+            saveMeta(arr); if (activeCategory === c.id) activeCategory = null; renderClassicLibrary();
           });
         });
         actions.appendChild(del);
         el.appendChild(actions);
       });
     });
-    const addChip = makeChip('+ Архив', '', false, promptAddArchive);
+    const addChip = makeChip('+ Категория', '', false, promptAddCategory);
     addChip.classList.add('add-chip');
   }
 
-  function renderTgCollectionsBar() {
-    const bar = $('tg-collections-bar'); if (!bar) return;
-    bar.innerHTML = '';
-    const cols = loadCollections(); const books = loadMeta();
-    const all = document.createElement('div');
-    all.className = 'collection-chip' + (activeCollection === null ? ' active' : '');
-    all.innerHTML = '<span>Все</span><span class="count">' + books.length + '</span>';
-    all.addEventListener('click', () => { activeCollection = null; renderTelegramChatList(); renderTgCollectionsBar(); });
-    bar.appendChild(all);
-    const noneCount = books.filter(b => !b.collection).length;
-    if (noneCount) {
-      const none = document.createElement('div');
-      none.className = 'collection-chip' + (activeCollection === '' ? ' active' : '');
-      none.innerHTML = '<span>Без архива</span><span class="count">' + noneCount + '</span>';
-      none.addEventListener('click', () => { activeCollection = ''; renderTelegramChatList(); renderTgCollectionsBar(); });
-      bar.appendChild(none);
-    }
-    cols.forEach(c => {
-      const cnt = books.filter(b => b.collection === c.id).length;
-      const chip = document.createElement('div');
-      chip.className = 'collection-chip' + (activeCollection === c.id ? ' active' : '');
-      chip.innerHTML = '<span></span><span class="count">' + cnt + '</span>';
-      chip.querySelector('span').textContent = '📁 ' + c.name;
-      chip.addEventListener('click', () => {
-        activeCollection = (activeCollection === c.id) ? null : c.id;
-        renderTelegramChatList(); renderTgCollectionsBar();
-      });
-      bar.appendChild(chip);
-    });
-    const add = document.createElement('div');
-    add.className = 'collection-chip add-chip';
-    add.innerHTML = '<span>+ Архив</span>';
-    add.addEventListener('click', promptAddArchive);
-    bar.appendChild(add);
-  }
-
-  function renderYtCollectionChips() {
-    const chips = $('yt-chips'); if (!chips) return;
-    chips.innerHTML = '';
-    const filters = [
-      { id: 'all', label: 'Все' },
-      { id: 'recent', label: 'Недавние' },
-      { id: 'marks', label: 'С закладками' }
-    ];
-    filters.forEach(f => {
-      const el = document.createElement('div');
-      el.className = 'yt-chip' + (ytFilter === f.id ? ' active' : '');
-      el.textContent = f.label;
-      el.addEventListener('click', () => { ytFilter = f.id; renderYoutubeChips(); renderYoutubeGrid(); });
-      chips.appendChild(el);
-    });
-    const sep = document.createElement('div');
-    sep.style.cssText = 'width:1px;background:var(--border);margin:0 4px;flex-shrink:0;';
-    chips.appendChild(sep);
-
-    const cols = loadCollections(); const books = loadMeta();
-    const noneCount = books.filter(b => !b.collection).length;
-    if (noneCount) {
-      const el = document.createElement('div');
-      el.className = 'yt-chip' + (activeCollection === '' ? ' active' : '');
-      el.textContent = 'Без архива';
-      el.addEventListener('click', () => { activeCollection = (activeCollection === '') ? null : ''; renderYoutubeChips(); renderYoutubeGrid(); });
-      chips.appendChild(el);
-    }
-    cols.forEach(c => {
-      const el = document.createElement('div');
-      el.className = 'yt-chip' + (activeCollection === c.id ? ' active' : '');
-      el.textContent = '📁 ' + c.name;
-      el.addEventListener('click', () => {
-        activeCollection = (activeCollection === c.id) ? null : c.id;
-        renderYoutubeChips(); renderYoutubeGrid();
-      });
-      let tmr = null;
-      el.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        tmr = setTimeout(() => { tmr = null; manageArchiveMenu(c, el); }, 500);
-      });
-      el.addEventListener('pointerup', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-      el.addEventListener('pointercancel', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-      el.addEventListener('pointermove', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-      el.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, el); });
-      chips.appendChild(el);
-    });
-    const add = document.createElement('div');
-    add.className = 'yt-chip';
-    add.textContent = '+ Архив';
-    add.addEventListener('click', promptAddArchive);
-    chips.appendChild(add);
-  }
-
-  function manageArchiveMenu(c, anchorEl) {
-    const menu = $('collection-menu'); if (!menu) return;
-    menu.innerHTML = '';
-    function mkItem(text, cb, danger) {
-      const it = document.createElement('div');
-      it.className = 'cm-item' + (danger ? ' danger' : '');
-      it.textContent = text;
-      it.addEventListener('click', () => { cb(); menu.classList.remove('show'); });
-      menu.appendChild(it);
-    }
-    const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = '📁 ' + c.name;
-    menu.appendChild(t);
-    mkItem('✎ Переименовать', () => {
-      askText('Название архива:', c.name).then(n => {
-        if (n !== null && n.trim()) {
-          const arr = loadCollections(); const cc = arr.find(x => x.id === c.id);
-          if (cc) cc.name = n.trim(); saveCollections(arr); renderAll();
-        }
-      });
-    });
-    mkItem('🗑 Удалить архив', () => {
-      askConfirm('Удалить архив «' + c.name + '»?', 'Удалить', true).then(ok => {
-        if (!ok) return;
-        saveCollections(loadCollections().filter(x => x.id !== c.id));
-        const arr = loadMeta(); arr.forEach(b => { if (b.collection === c.id) b.collection = ''; });
-        saveMeta(arr); if (activeCollection === c.id) activeCollection = null; renderAll();
-      });
-    }, true);
-
-    const rect = anchorEl.getBoundingClientRect();
-    menu.style.left = Math.max(8, Math.min(window.innerWidth - 260, rect.left)) + 'px';
-    menu.style.top = (rect.bottom + 6) + 'px';
-    menu.classList.add('show');
-    setTimeout(() => {
-      const mh = menu.offsetHeight || 160;
-      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
-        menu.style.top = Math.max(8, rect.top - mh - 6) + 'px';
-      }
-    }, 0);
-  }
-
-  function renderDcChannels() {
-    const list = $('dc-channels-list'); if (!list) return;
-    list.innerHTML = '';
-    const books = sortBooks(loadMeta());
-    const searchEl = $('dc-channels-search-input');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    let filtered = books;
-    if (activeCollection === '') filtered = filtered.filter(b => !b.collection);
-    else if (activeCollection) filtered = filtered.filter(b => b.collection === activeCollection);
-    if (query) filtered = filtered.filter(b => (b.title || '').toLowerCase().includes(query));
-
-    if (!filtered.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:20px 12px;text-align:center;color:var(--fg-dim);font-size:13px;';
-      empty.textContent = 'Нет книг. Нажмите «＋ Добавить книгу».';
-      list.appendChild(empty); return;
-    }
-
-    const cat = document.createElement('div');
-    cat.className = 'dc-ch-category';
-    cat.innerHTML = '<span>ТЕКСТОВЫЕ КАНАЛЫ</span><span>▾</span>';
-    list.appendChild(cat);
-
-    filtered.forEach(b => {
-      const item = document.createElement('div');
-      item.className = 'dc-ch-item' + (b.id === currentBookId ? ' active' : '');
-      item.dataset.bookId = b.id;
-      item.innerHTML = '<span class="hash">#</span><span class="ch-name">' + escapeHtml(dcSlug(b.title)) + '</span>';
-      item.title = b.title + (b.pct > 0 ? ' · ' + (b.pct * 100).toFixed(1) + '%' : '');
-      item.addEventListener('click', () => renderDiscordBook(b.id, true));
-      let pressTimer = null;
-      item.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, item); }, 500);
-      });
-      item.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
-      list.appendChild(item);
-    });
-
-    const cols = loadCollections();
-    if (cols.length) {
-      const sep = document.createElement('div');
-      sep.className = 'dc-ch-category';
-      sep.innerHTML = '<span>АРХИВЫ</span><span>▾</span>';
-      list.appendChild(sep);
-      cols.forEach(c => {
-        const item = document.createElement('div');
-        item.className = 'dc-ch-item' + (activeCollection === c.id ? ' active' : '');
-        const cnt = books.filter(b => b.collection === c.id).length;
-        item.innerHTML = '<span class="hash" style="font-size:14px;">📁</span>' +
-          '<span class="ch-name">' + escapeHtml(c.name) + '</span>' +
-          '<span style="font-size:11px;color:var(--fg-dim);flex-shrink:0;">' + cnt + '</span>';
-        item.addEventListener('click', () => {
-          activeCollection = (activeCollection === c.id) ? null : c.id;
-          renderDcChannels();
-        });
-        let tmr = null;
-        item.addEventListener('pointerdown', (e) => {
-          if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-          tmr = setTimeout(() => { tmr = null; manageArchiveMenu(c, item); }, 500);
-        });
-        item.addEventListener('pointerup', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-        item.addEventListener('pointercancel', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-        item.addEventListener('pointermove', () => { if (tmr) { clearTimeout(tmr); tmr = null; } });
-        item.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, item); });
-        list.appendChild(item);
-      });
-    }
-  }
-
-  function renderDcServers() {
-    const list = $('dc-servers-list'); if (!list) return;
-    list.innerHTML = '';
-    const cols = loadCollections();
-    cols.forEach(c => {
-      const icon = document.createElement('div');
-      icon.className = 'dc-server-icon';
-      icon.title = c.name;
-      icon.textContent = (c.name || '?').trim().charAt(0).toUpperCase();
-      icon.addEventListener('click', () => {
-        activeCollection = (activeCollection === c.id) ? null : c.id;
-        renderDcChannels();
-      });
-      icon.addEventListener('contextmenu', (e) => { e.preventDefault(); manageArchiveMenu(c, icon); });
-      list.appendChild(icon);
-    });
-  }
-
-  // ===== ОТКРЫТИЕ КНИГ =====
-  function openBookInCurrentStyle(id, savedPos) {
+  // ===== ОТКРЫТИЕ КНИГИ =====
+  function openBookClassic(id) {
     const b = loadMeta().find(x => x.id === id);
     if (!b) return;
     currentBookId = id; currentMarks = loadMarks(id);
-    const pos = savedPos || { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
-    if (settings.uiStyle === 'classic') {
-      $('paste-screen').classList.remove('active');
-      $('reader-shell').classList.add('active');
-      renderBookIntoContent(getBookText(id), $('content'), null);
-    } else if (settings.uiStyle === 'telegram') {
-      const empty = $('tg-empty'); if (empty) empty.style.display = 'none';
-      const rs = $('tg-reader-screen'); if (rs) rs.classList.add('active');
-      renderBookIntoContent(getBookText(id), $('tg-content'), 'var(--accent)');
-      $('tg-chat-area').classList.add('has-book');
-      $('tg-app').classList.add('chat-open');
-      const nameEl = $('tg-chat-name'); if (nameEl) nameEl.textContent = b.title;
-      const subEl = $('tg-chat-sub'); if (subEl) subEl.textContent = (b.words || 0).toLocaleString('ru-RU') + ' слов';
-      renderTelegramChatList();
-    } else if (settings.uiStyle === 'youtube') {
-      const watch = $('yt-watch'); if (watch) watch.classList.add('show');
-      const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
-      renderBookIntoContent(getBookText(id), $('yt-reader-content'), 'var(--fg)');
-      const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
-      const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'inline-flex';
-      renderYoutubeSidebar();
-    } else if (settings.uiStyle === 'discord') {
-      const empty = $('dc-empty'); if (empty) empty.style.display = 'none';
-      const rs = $('dc-reader-screen'); if (rs) rs.classList.add('active');
-      renderBookIntoContent(getBookText(id), $('dc-content'), 'var(--accent)');
-      $('dc-chat').classList.add('has-book');
-      $('dc-app').classList.add('chat-open');
-      const nameEl = $('dc-chat-name'); if (nameEl) nameEl.textContent = dcSlug(b.title);
-      renderDcChannels();
-    }
+    $('paste-screen').classList.remove('active');
+    $('reader-shell').classList.add('active');
+    renderBookIntoContent(getBookText(id), $('content'));
+    const pos = { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
     requestAnimationFrame(() => {
-      if (pos) restoreReadingPosition(pos);
+      restoreReadingPosition(pos);
       updateAllProgress();
     });
   }
-
-  function openBookClassic(id) { openBookInCurrentStyle(id, null); }
   function backClassic() {
     currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
     $('paste-screen').classList.add('active');
@@ -3327,220 +2414,21 @@
     renderClassicLibrary();
   }
 
-  // ===== TELEGRAM =====
-  function renderTelegram() {
-    renderTgCollectionsBar();
-    renderTelegramChatList();
-    if (currentBookId) {
-      const b = loadMeta().find(x => x.id === currentBookId);
-      if (b) openBookInCurrentStyle(currentBookId, {
-        pIndex: b.pIndex, offsetInPara: b.offsetInPara,
-        scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
-      });
-    }
-  }
-  function renderTelegramChatList() {
-    const list = $('tg-chat-list'); if (!list) return;
-    list.innerHTML = '';
-    let all = sortBooks(loadMeta());
-    if (activeCollection === '') all = all.filter(b => !b.collection);
-    else if (activeCollection) all = all.filter(b => b.collection === activeCollection);
-    const searchEl = $('tg-search-input');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    const filtered = query ? all.filter(b => (b.title || '').toLowerCase().includes(query)) : all;
-    if (!filtered.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:20px;text-align:center;color:var(--fg-dim);font-size:13px;';
-      empty.textContent = 'Нет книг. Нажмите «+ Добавить книгу».';
-      list.appendChild(empty); return;
-    }
-    filtered.forEach(b => {
-      const item = document.createElement('div');
-      item.className = 'tg-chat-item' + (b.id === currentBookId ? ' active' : '');
-      item.dataset.bookId = b.id;
-      const initial = (b.title || '?').trim().charAt(0).toUpperCase();
-      item.innerHTML = '<div class="tg-avatar">' + escapeHtml(initial) + '</div>' +
-        '<div class="tg-chat-body"><div class="tg-chat-name">' + escapeHtml(b.title) + '</div>' +
-        '<div class="tg-chat-sub">' + (b.words || 0).toLocaleString('ru-RU') + ' слов' +
-        (b.pct > 0 ? ' · ' + (b.pct * 100).toFixed(1) + '%' : '') + '</div></div>';
-      item.addEventListener('click', () => renderTelegramBook(b.id, true));
-      let pressTimer = null;
-      item.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, item); }, 500);
-      });
-      item.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
-      list.appendChild(item);
-    });
-  }
-  function renderTelegramBook(id, fromList) {
-    const b = loadMeta().find(x => x.id === id); if (!b) return;
-    openBookInCurrentStyle(id, fromList ? null : {
-      pIndex: b.pIndex, offsetInPara: b.offsetInPara,
-      scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
-    });
-    if (fromList) $('tg-app').classList.add('chat-open');
-  }
-  function backTelegram() {
-    currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
-    $('tg-reader-screen').classList.remove('active');
-    $('tg-empty').style.display = 'flex';
-    $('tg-chat-area').classList.remove('has-book');
-    $('tg-app').classList.remove('chat-open');
-    $('tg-chat-name').textContent = 'Библиотека';
-    $('tg-chat-sub').textContent = 'Выберите книгу слева';
-    renderTelegramChatList();
-  }
-
-  // ===== YOUTUBE =====
-  function renderYoutube() {
-    renderYoutubeSidebar();
-    renderYoutubeChips();
-    renderYoutubeGrid();
-    if (currentBookId) {
-      const b = loadMeta().find(x => x.id === currentBookId);
-      if (b) {
-        const watch = $('yt-watch'); if (watch) watch.classList.add('show');
-        const titleEl = $('yt-watch-title'); if (titleEl) titleEl.textContent = b.title;
-        renderBookIntoContent(getBookText(currentBookId), $('yt-reader-content'), 'var(--fg)');
-        const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'flex';
-        const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'inline-flex';
-        requestAnimationFrame(() => {
-          restoreReadingPosition({
-            pIndex: b.pIndex, offsetInPara: b.offsetInPara,
-            scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
-          });
-          updateAllProgress();
-        });
-      }
-    }
-  }
-  function renderYoutubeSidebar() {
-    const sb = $('yt-sidebar-books'); if (!sb) return;
-    sb.innerHTML = '';
-    const all = sortBooks(loadMeta());
-    all.forEach(b => {
-      const item = document.createElement('div');
-      item.className = 'yt-side-item';
-      const initial = (b.title || '?').trim().charAt(0).toUpperCase();
-      item.innerHTML = '<span class="icon" style="background:var(--bg-panel);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid var(--border);">' + escapeHtml(initial) + '</span>' +
-        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(b.title) + '</span>';
-      item.addEventListener('click', () => renderYoutubeBook(b.id));
-      item.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, item); });
-      sb.appendChild(item);
-    });
-  }
-  function renderYoutubeChips() { renderYtCollectionChips(); }
-  function renderYoutubeGrid() {
-    const grid = $('yt-grid'); if (!grid) return;
-    let all = sortBooks(loadMeta());
-    if (activeCollection === '') all = all.filter(b => !b.collection);
-    else if (activeCollection) all = all.filter(b => b.collection === activeCollection);
-    const searchEl = $('yt-search-input');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    if (query) all = all.filter(b => (b.title || '').toLowerCase().includes(query));
-    if (ytFilter === 'recent') all = all.filter(b => (b.scroll || 0) > 0).sort((a, b) => (b.scroll || 0) - (a.scroll || 0));
-    else if (ytFilter === 'marks') all = all.filter(b => loadMarks(b.id).length > 0);
-
-    grid.innerHTML = '';
-    if (!all.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--fg-dim);padding:40px;font-size:14px;">Нет книг в этом разделе.</div>';
-      return;
-    }
-    all.forEach(b => {
-      const card = document.createElement('div'); card.className = 'yt-card';
-      card.dataset.bookId = b.id;
-      const words = b.words || 0;
-      card.innerHTML =
-        '<div class="yt-thumb"><div class="t">' + escapeHtml(b.title) + '</div>' +
-        '<span class="dur">' + words.toLocaleString('ru-RU') + ' сл.</span></div>' +
-        '<div class="yt-card-body"><div class="yt-card-avatar">' + escapeHtml((b.title || '?').trim().charAt(0).toUpperCase()) + '</div>' +
-        '<div style="min-width:0;"><div class="yt-card-title">' + escapeHtml(b.title) + '</div>' +
-        '<div class="yt-card-meta">' + (b.pct > 0 ? (b.pct * 100).toFixed(1) + '% прочитано' : 'Не начато') +
-        ' · ' + (loadMarks(b.id).length || 0) + ' закладок</div></div></div>';
-      card.addEventListener('click', () => renderYoutubeBook(b.id));
-      let pressTimer = null;
-      card.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
-        pressTimer = setTimeout(() => { pressTimer = null; showBookMenu(b.id, card); }, 500);
-      });
-      card.addEventListener('pointerup', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      card.addEventListener('pointercancel', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      card.addEventListener('pointermove', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      card.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, card); });
-      grid.appendChild(card);
-    });
-  }
-  function renderYoutubeBook(id) {
-    const b = loadMeta().find(x => x.id === id); if (!b) return;
-    openBookInCurrentStyle(id, null);
-  }
-  function backYoutube() {
-    currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
-    $('yt-watch').classList.remove('show');
-    const fab = $('yt-add-mark-fab'); if (fab) fab.style.display = 'none';
-    const yb = $('yt-pct-badge'); if (yb) yb.style.display = 'none';
-    renderYoutubeGrid();
-  }
-
-  // ===== DISCORD =====
-  function renderDiscord() {
-    renderDcServers();
-    renderDcChannels();
-    if (currentBookId) {
-      const b = loadMeta().find(x => x.id === currentBookId);
-      if (b) {
-        const empty = $('dc-empty'); if (empty) empty.style.display = 'none';
-        const rs = $('dc-reader-screen'); if (rs) rs.classList.add('active');
-        renderBookIntoContent(getBookText(currentBookId), $('dc-content'), 'var(--accent)');
-        $('dc-chat').classList.add('has-book');
-        $('dc-app').classList.add('chat-open');
-        const nameEl = $('dc-chat-name'); if (nameEl) nameEl.textContent = dcSlug(b.title);
-        requestAnimationFrame(() => {
-          restoreReadingPosition({
-            pIndex: b.pIndex, offsetInPara: b.offsetInPara,
-            scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
-          });
-          updateAllProgress();
-        });
-      }
-    }
-  }
-  function renderDiscordBook(id, fromList) {
-    const b = loadMeta().find(x => x.id === id); if (!b) return;
-    openBookInCurrentStyle(id, fromList ? null : {
-      pIndex: b.pIndex, offsetInPara: b.offsetInPara,
-      scrollTop: b.scroll, pct: b.pct, chapter: b.chapter
-    });
-    if (fromList) $('dc-app').classList.add('chat-open');
-  }
-  function backDiscord() {
-    currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
-    $('dc-reader-screen').classList.remove('active');
-    $('dc-empty').style.display = 'flex';
-    $('dc-chat').classList.remove('has-book');
-    $('dc-app').classList.remove('chat-open');
-    $('dc-chat-name').textContent = 'добро-пожаловать';
-    renderDcChannels();
-  }
-
   // ===== ДОБАВЛЕНИЕ КНИГ =====
-  function addBookRecord(title, text, collectionId) {
+  function addBookRecord(title, text, categoryId) {
     const meta = loadMeta();
     let minOrder = 0;
     meta.forEach(b => { if (typeof b.order === 'number' && b.order < minOrder) minOrder = b.order; });
     const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
     const ok = setBookText(id, text.trim());
     if (!ok) return null;
+    const cats = categoryId ? [categoryId] : [];
     meta.push({
       id, title: title || guessTitle(text),
       words: countWords(text), scroll: 0, chapter: -1, pct: 0,
       pIndex: 0, offsetInPara: 0,
       added: Date.now(), order: minOrder - 1,
-      collection: collectionId || ''
+      categories: cats
     });
     saveMeta(meta);
     return id;
@@ -3550,17 +2438,11 @@
     if (t === null) return;
     const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
     if (text === null || !text.trim()) { toast('Нет текста', true); return; }
-    const cid = (typeof activeCollection === 'string' && activeCollection) ? activeCollection : '';
+    const cid = (typeof activeCategory === 'string' && activeCategory) ? activeCategory : '';
     const id = addBookRecord(t.trim() || guessTitle(text), text, cid);
     if (!id) return;
-    renderAll();
+    renderClassicLibrary();
     toast('Книга добавлена');
-  }
-  function renderAll() {
-    if (settings.uiStyle === 'classic') renderClassicLibrary();
-    else if (settings.uiStyle === 'telegram') { renderTgCollectionsBar(); renderTelegramChatList(); }
-    else if (settings.uiStyle === 'youtube') { renderYoutubeSidebar(); renderYoutubeChips(); renderYoutubeGrid(); }
-    else if (settings.uiStyle === 'discord') { renderDcServers(); renderDcChannels(); }
   }
 
   // ===== ФАЙЛЫ =====
@@ -3747,10 +2629,10 @@
       }
       text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n').trim();
       if (!text) { toast('Не удалось извлечь текст', true); return; }
-      const cid = (typeof activeCollection === 'string' && activeCollection) ? activeCollection : '';
+      const cid = (typeof activeCategory === 'string' && activeCategory) ? activeCategory : '';
       const id = addBookRecord(name || guessTitle(text), text, cid);
       if (!id) return;
-      renderAll();
+      renderClassicLibrary();
       toast('Загружено: ' + (name || guessTitle(text)));
     } catch (err) {
       console.error(err); toast('Ошибка: ' + (err.message || err), true);
@@ -3812,22 +2694,19 @@
   }
   document.addEventListener('click', (e) => {
     const pctEl = $('pct-indicator'); const mPctEl = $('m-pct-indicator');
-    const dcPctEl = $('dc-pct-indicator'); const tgBadge = $('tg-pct-badge'); const ytBadge = $('yt-pct-badge');
     if (e.target === pctEl) { e.stopPropagation(); openPctJump(pctEl); return; }
     if (e.target === mPctEl) { e.stopPropagation(); openPctJump(mPctEl); return; }
-    if (e.target === dcPctEl) { e.stopPropagation(); openPctJump(dcPctEl); return; }
-    if (e.target === tgBadge) { e.stopPropagation(); openPctJump(tgBadge); return; }
-    if (e.target === ytBadge) { e.stopPropagation(); openPctJump(ytBadge); return; }
     if (pctJumpEl && pctJumpEl.style.display === 'flex') {
       if (pctJumpEl.contains(e.target)) return;
       pctJumpEl.style.display = 'none';
     }
   });
 
-  // ===== СТАРТ =====
+  // ===== ИНИЦИАЛИЗАЦИЯ =====
   function init() {
     loadMeta();
     applySettings();
+    renderClassicLibrary();
 
     const btnRead = $('btn-read');
     if (btnRead) btnRead.addEventListener('click', async () => {
@@ -3861,62 +2740,20 @@
 
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
     bindIf('btn-menu', openUnifiedSettings);
-    bindIf('tg-open-settings', openUnifiedSettings);
-    bindIf('tg-open-settings-2', openUnifiedSettings);
-    bindIf('yt-open-settings', openUnifiedSettings);
-    bindIf('yt-open-settings-2', openUnifiedSettings);
-    bindIf('dc-open-settings', openUnifiedSettings);
-    bindIf('btn-font', openFontsOnly);
-    bindIf('btn-theme', openPaletteOnly);
 
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
     bindIf('m-marks', () => { closeSheet(); setTimeout(openMarks, 180); });
     bindIf('m-mark', () => { closeSheet(); addMark(); });
-    bindIf('m-library', () => {
-      closeSheet();
-      if (settings.uiStyle === 'classic') backClassic();
-      else if (settings.uiStyle === 'telegram') backTelegram();
-      else if (settings.uiStyle === 'youtube') backYoutube();
-      else if (settings.uiStyle === 'discord') backDiscord();
-    });
-    bindIf('m-style', () => { closeSheet(); setTimeout(openUnifiedSettings, 180); });
+    bindIf('m-categories', () => { closeSheet(); setTimeout(openCategoriesManager, 180); });
+    bindIf('m-library', () => { closeSheet(); backClassic(); });
     bindIf('m-theme', () => { closeSheet(); setTimeout(openPaletteOnly, 180); });
     bindIf('m-font', () => { closeSheet(); setTimeout(openFontsOnly, 180); });
-    bindIf('m-collections', () => { closeSheet(); setTimeout(openCollectionsManager, 180); });
     bindIf('m-add-book', () => { closeSheet(); setTimeout(promptAddBook, 180); });
-    bindIf('m-add-archive', () => { closeSheet(); setTimeout(promptAddArchive, 180); });
     bindIf('m-font-dec', () => changeFont(-2)); bindIf('m-font-inc', () => changeFont(2));
     bindIf('m-width-dec', () => changeWidth(-40)); bindIf('m-width-inc', () => changeWidth(40));
     bindIf('m-lh-dec', () => changeLineHeight(-0.1)); bindIf('m-lh-inc', () => changeLineHeight(0.1));
-
-    bindIf('tg-add-book', promptAddBook);
-    bindIf('dc-add-book', promptAddBook);
-    bindIf('dc-server-add', promptAddArchive);
-    bindIf('yt-add-book-btn', promptAddBook);
-    bindIf('yt-add-archive-btn', promptAddArchive);
-    bindIf('yt-add-book-side', promptAddBook);
-    bindIf('yt-add-archive-side', promptAddArchive);
-
-    bindIf('btn-library', backClassic);
-    bindIf('yt-watch-back', backYoutube);
-    bindIf('tg-mobile-back', backTelegram);
-    bindIf('dc-mobile-back', backDiscord);
-
-    const tgSearch = $('tg-search-input'); if (tgSearch) tgSearch.addEventListener('input', renderTelegramChatList);
-    const ytSearch = $('yt-search-input'); if (ytSearch) ytSearch.addEventListener('input', renderYoutubeGrid);
-    const ytSearchBtn = $('yt-search-btn'); if (ytSearchBtn) ytSearchBtn.addEventListener('click', renderYoutubeGrid);
-    const dcSearch = $('dc-channels-search-input'); if (dcSearch) dcSearch.addEventListener('input', renderDcChannels);
-
-    document.querySelectorAll('.yt-side-item[data-filter]').forEach(el => {
-      el.addEventListener('click', () => {
-        ytFilter = el.dataset.filter;
-        document.querySelectorAll('.yt-side-item[data-filter]').forEach(x => x.classList.remove('active'));
-        el.classList.add('active');
-        renderYoutubeChips(); renderYoutubeGrid();
-      });
-    });
 
     let dragCounter = 0;
     window.addEventListener('dragenter', (e) => {
@@ -3952,10 +2789,8 @@
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); openMarks(); }
     });
 
-    ['reader-screen','tg-reader-screen','yt-watch-scroll','dc-reader-screen'].forEach(id => {
-      const el = $(id); if (!el) return;
-      el.addEventListener('scroll', () => { updateAllProgress(); showScroller(); }, { passive: true });
-    });
+    const rs = $('reader-screen');
+    if (rs) rs.addEventListener('scroll', () => { updateAllProgress(); showScroller(); }, { passive: true });
 
     const sp = $('side-progress'); const sideThumb = $('side-thumb');
     if (sp && sideThumb) {
@@ -4005,47 +2840,16 @@
       });
     }
 
-    let touchStartX = 0, touchStartY = 0, touchTracking = false;
-    const tgArea = $('tg-chat-area');
-    if (tgArea) {
-      tgArea.addEventListener('touchstart', (e) => {
-        if (window.innerWidth > 768) return;
-        if (!tgArea.parentElement.classList.contains('chat-open')) return;
-        const t = e.touches[0];
-        touchStartX = t.clientX; touchStartY = t.clientY; touchTracking = true;
-      }, { passive: true });
-      tgArea.addEventListener('touchmove', (e) => {
-        if (!touchTracking) return;
-        const t = e.touches[0]; const dx = t.clientX - touchStartX; const dy = t.clientY - touchStartY;
-        if (Math.abs(dy) > Math.abs(dx) + 20) { touchTracking = false; return; }
-        if (dx > 100 && Math.abs(dy) < 60) { touchTracking = false; backTelegram(); }
-      }, { passive: true });
-      tgArea.addEventListener('touchend', () => { touchTracking = false; });
-    }
-
-    const dcChat = $('dc-chat');
-    if (dcChat) {
-      let dsx = 0, dsy = 0, dtr = false;
-      dcChat.addEventListener('touchstart', (e) => {
-        if (window.innerWidth > 768) return;
-        if (!dcChat.parentElement.classList.contains('chat-open')) return;
-        const t = e.touches[0]; dsx = t.clientX; dsy = t.clientY; dtr = true;
-      }, { passive: true });
-      dcChat.addEventListener('touchmove', (e) => {
-        if (!dtr) return;
-        const t = e.touches[0]; const dx = t.clientX - dsx; const dy = t.clientY - dsy;
-        if (Math.abs(dy) > Math.abs(dx) + 20) { dtr = false; return; }
-        if (dx > 100 && Math.abs(dy) < 60) { dtr = false; backDiscord(); }
-      }, { passive: true });
-      dcChat.addEventListener('touchend', () => { dtr = false; });
-    }
-
     window.addEventListener('orientationchange', () => {
       closeSheet();
       closeSettingsModal();
+      closeAllPopups();
     });
 
-    applyUiStyle();
+    window.addEventListener('resize', () => {
+      // На мобильных попапы центрируются, при ресайзе — прячем оверлей
+      if (window.innerWidth > 768 && popOverlay) popOverlay.style.display = 'none';
+    });
   }
 
   try { init(); } catch (err) {
