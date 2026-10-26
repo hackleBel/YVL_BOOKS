@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#14161a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>YVL BOOKS</title>
+<title>🕸️</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
@@ -552,7 +552,6 @@
   <div id="classic-root" class="screen active">
     <div id="paste-screen" class="active">
       <div class="inner">
-        <p class="lead">Вставьте текст книги, загрузите файл или перетащите его в окно.</p>
         <textarea id="input" placeholder="Сюда текст..." spellcheck="false"></textarea>
         <div class="actions">
           <button id="btn-read">Читать</button>
@@ -562,7 +561,6 @@
                  accept=".txt,.md,.markdown,.fb2,.html,.htm,.xhtml,.rtf,.docx,.odt,.epub,.zip,.json,.csv,text/plain,text/html,application/epub+zip,application/zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,text/rtf">
         </div>
         <div id="library">
-          <h3>Меню</h3>
           <div id="categories-bar"></div>
           <div id="library-search-wrap">
             <input type="text" id="library-search" placeholder="Поиск по названию..." autocomplete="off">
@@ -575,7 +573,7 @@
     </div>
     <div id="reader-shell">
       <div class="reader-topbar">
-        <div class="logo"><span>YVL Books</span></div>
+        <div class="logo"><span>🕸️</span></div>
         <span class="pct" id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
         <button class="settings-btn" id="btn-menu" title="Настройки">⚙</button>
       </div>
@@ -591,7 +589,7 @@
 
   <div id="marks-panel" class="panel">
     <div class="panel-header">
-      <span>🔖 Закладки</span>
+      <span>Закладки</span>
       <div id="marks-header-actions">
         <button id="marks-clear">Очистить</button>
         <button id="marks-close">✕</button>
@@ -603,7 +601,7 @@
   <div class="panel-overlay" id="marks-overlay"></div>
 
   <div id="search-panel" class="panel">
-    <div class="panel-header"><span>🔍 Поиск по книге</span><div><button id="search-close">✕</button></div></div>
+    <div class="panel-header"><span>Поиск слова</span><div><button id="search-close">✕</button></div></div>
     <div id="search-input-wrap">
       <input type="text" id="book-search-input" placeholder="Слово или фраза…" autocomplete="off" spellcheck="false">
       <button id="book-search-clear" title="Очистить">✕</button>
@@ -675,12 +673,12 @@
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
-      <button id="m-search">🔍 Поиск</button>
-      <button id="m-font">Aa Шрифт</button>
-      <button id="m-theme">🎨 Цвет</button>
-      <button id="m-toc">📖 Содержание</button>
-      <button id="m-mark" class="mark-btn">🔖 Закладка</button>
-      <button id="m-marks" class="mark-btn">🔖 Закладки</button>
+      <button id="m-search">Поиск</button>
+      <button id="m-font">Шрифт</button>
+      <button id="m-theme">Цвет</button>
+      <button id="m-toc">Содержание</button>
+      <button id="m-mark" class="mark-btn">Сделать закладку</button>
+      <button id="m-marks" class="mark-btn">Закладки</button>
       <button id="m-categories">Категории</button>
       <button id="m-add-book">＋ Книга</button>
       <button id="m-library" class="wide">Меню</button>
@@ -692,7 +690,7 @@
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
-      <h3 id="settings-modal-title">Настройки</h3>
+      <h3 id="settings-modal-title">⚙</h3>
       <button id="settings-modal-close" style="background:transparent;border:none;color:var(--fg-dim);font-size:22px;cursor:pointer;">✕</button>
     </div>
     <div class="card-body" id="settings-modal-body"></div>
@@ -1660,7 +1658,7 @@
   function openPaletteOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
-    settingsModalTitle.textContent = 'Палитра';
+    settingsModalTitle.textContent = 'Цвет';
     settingsModalBody.innerHTML = '';
 
     PRESET_GROUPS.forEach(group => {
@@ -1756,10 +1754,10 @@
   function openUnifiedSettings() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
-    settingsModalTitle.textContent = 'Настройки';
+    settingsModalTitle.textContent = '⚙';
     settingsModalBody.innerHTML = '';
 
-    addGroup('Чтение');
+    addGroup('');
     const rowsRead = document.createElement('div');
     rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
     const mkRow = (label, ctrl) => {
@@ -1794,20 +1792,20 @@
     rowsRead.appendChild(mkRow('Интервал', lhS.w));
     settingsModalBody.appendChild(rowsRead);
 
-    addGroup('Шрифт и палитра');
+    addGroup('');
     const wrapBtns = document.createElement('div');
     wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
     const bFont = document.createElement('button');
-    bFont.textContent = 'Aa Шрифт'; bFont.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bFont.textContent = 'Шрифт'; bFont.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
     bFont.addEventListener('click', () => { closeSettingsModal(); setTimeout(openFontsOnly, 120); });
     wrapBtns.appendChild(bFont);
     const bPal = document.createElement('button');
-    bPal.textContent = 'Палитра'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bPal.textContent = 'Цвет'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
     bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
     wrapBtns.appendChild(bPal);
     settingsModalBody.appendChild(wrapBtns);
 
-    addGroup('Меню');
+    addGroup('');
     const libWrap = document.createElement('div');
     libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
     const mkBtn = (label, fn) => {
@@ -1817,9 +1815,10 @@
       b.addEventListener('click', fn);
       libWrap.appendChild(b);
     };
-    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
-    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
     mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
+    mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
+    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
     mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
     settingsModalBody.appendChild(libWrap);
   }
