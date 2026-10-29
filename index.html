@@ -71,15 +71,12 @@
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
-  /* ====== БИБЛИОТЕКА ====== */
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
     align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
   #paste-screen.active { display: flex; }
   #paste-screen .inner { width: 100%; max-width: 860px; display: flex; flex-direction: column;
     min-height: 0; padding-bottom: calc(16px + var(--safe-bottom)); }
-  #paste-screen p.lead { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 13px; color: var(--fg-dim); margin-bottom: 10px; text-align: center; }
   textarea#input { width: 100%; height: 160px; min-height: 120px; max-height: 220px;
     background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px;
@@ -90,9 +87,6 @@
     flex-wrap: wrap; flex-shrink: 0; }
   #paste-screen .actions button { min-height: var(--tap); font-size: 14px; padding: 10px 16px; }
   #library { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px; }
-  #library h3 { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--fg-dim); margin-bottom: 10px; font-weight: normal;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
   #library-search-wrap { margin-bottom: 10px; display: flex; gap: 6px; align-items: center; }
   #library-search { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 12px;
@@ -194,7 +188,6 @@
   #category-menu .cm-item.danger { color: #c97a7a; }
   #category-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
 
-  /* ====== ШАПКА ЧИТАЛКИ ====== */
   .reader-topbar {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 12px; padding-top: max(8px, var(--safe-top));
@@ -391,12 +384,8 @@
     background: var(--mark-color); border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%); }
 
-  @media (max-width: 1100px) {
-    #side-progress { display: none !important; }
-  }
-  @media (hover: none) and (pointer: coarse) {
-    #side-progress { display: none !important; }
-  }
+  @media (max-width: 1100px) { #side-progress { display: none !important; } }
+  @media (hover: none) and (pointer: coarse) { #side-progress { display: none !important; } }
 
   #mobile-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-panel);
     border-top: 1px solid var(--border-strong); border-radius: 18px 18px 0 0;
@@ -485,32 +474,41 @@
   .cl-font-preview.active .aa { border-color: var(--accent); }
   .cl-font-preview.active .nm { color: var(--accent); }
 
-  /* ====== RGB-РЕДАКТОР ====== */
-  .rgb-editor { padding: 8px 16px 14px; }
-  .rgb-editor .rgb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .rgb-editor .rgb-head label { flex: 1; font-size: 14px; color: var(--fg); }
-  .rgb-editor .rgb-preview { width: 44px; height: 36px; border-radius: 8px;
-    border: 1px solid var(--border-strong); flex-shrink: 0; }
-  .rgb-editor .rgb-hex { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .rgb-editor .rgb-hex input[type=text] { flex: 1; min-width: 0;
-    background: var(--bg-input); color: var(--fg); border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: 'JetBrains Mono', monospace;
-    outline: none; letter-spacing: .5px; text-transform: lowercase; }
-  .rgb-editor .rgb-hex input[type=text]:focus { border-color: var(--accent); }
-  .rgb-editor .rgb-slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .rgb-editor .rgb-slider-row .lbl { width: 14px; font-size: 12px; font-weight: 700; color: var(--fg-dim); flex-shrink: 0; }
-  .rgb-editor .rgb-slider-row input[type=range] { flex: 1; min-width: 0; -webkit-appearance: none;
-    appearance: none; height: 6px; border-radius: 3px; background: var(--border-strong); outline: none; }
-  .rgb-editor .rgb-slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none;
-    width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
-    border: 2px solid var(--bg); cursor: pointer; }
-  .rgb-editor .rgb-slider-row input[type=range]::-moz-range-thumb { width: 16px; height: 16px;
-    border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); cursor: pointer; }
-  .rgb-editor .rgb-slider-row .val { width: 36px; text-align: right; font-size: 12px;
-    font-variant-numeric: tabular-nums; color: var(--fg-mid); flex-shrink: 0; }
-  .rgb-editor .rgb-slider-row.r input[type=range] { background: linear-gradient(90deg, #000, #f00); }
-  .rgb-editor .rgb-slider-row.g input[type=range] { background: linear-gradient(90deg, #000, #0f0); }
-  .rgb-editor .rgb-slider-row.b input[type=range] { background: linear-gradient(90deg, #000, #00f); }
+  /* ====== КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА (без RGB-ползунков) ====== */
+  .color-editor { padding: 4px 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .color-editor .ce-head { display: flex; align-items: center; gap: 12px; }
+  .color-editor .ce-head label { flex: 1; font-size: 14px; color: var(--fg); }
+  .color-editor .ce-swatch {
+    width: 52px; height: 44px; border-radius: 10px; flex-shrink: 0;
+    border: 2px solid var(--border-strong); cursor: pointer; position: relative;
+    overflow: hidden; transition: border-color .15s, transform .1s;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+  }
+  .color-editor .ce-swatch:hover { border-color: var(--accent); }
+  .color-editor .ce-swatch:active { transform: scale(.97); }
+  .color-editor .ce-swatch input[type=color] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; border: none; padding: 0;
+  }
+  .color-editor .ce-swatch::after {
+    content: '🎨'; position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center; font-size: 18px;
+    pointer-events: none; opacity: .65; mix-blend-mode: difference;
+  }
+  .color-editor .ce-hex {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .color-editor .ce-hex input[type=text] {
+    flex: 1; min-width: 0;
+    background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 9px 10px; font-size: 13px;
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    outline: none; letter-spacing: .4px; text-transform: lowercase;
+    min-height: 38px;
+  }
+  .color-editor .ce-hex input[type=text]:focus { border-color: var(--accent); }
+  .color-editor .ce-hex input[type=text].invalid { border-color: #c97a7a; }
 
   .palette-actions { display: flex; gap: 8px; padding: 6px 16px 14px; flex-wrap: wrap; }
   .palette-actions button { flex: 1; min-width: 130px; padding: 12px; min-height: var(--tap); border-radius: 10px; }
@@ -565,16 +563,11 @@
     .sheet-grid button { font-size: 13px; padding: 12px 8px; }
     #mobile-sheet { padding-left: 12px; padding-right: 12px; }
   }
-  @media (max-width: 360px) {
-    .sheet-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-height: 500px) and (orientation: landscape) {
-    #mobile-sheet { max-height: 95vh; }
-  }
+  @media (max-width: 360px) { .sheet-grid { grid-template-columns: 1fr; } }
+  @media (max-height: 500px) and (orientation: landscape) { #mobile-sheet { max-height: 95vh; } }
 </style>
 </head>
 <body>
-
 <div id="boot-error"></div>
 <div id="file-toast"></div>
 <div id="progress-bar"></div>
@@ -804,15 +797,6 @@
     if (!/^#[0-9a-f]{6}$/.test(s)) return null;
     return s;
   }
-  function hexToRgb(hex) {
-    const n = normalizeHex(hex) || '#000000';
-    const v = parseInt(n.slice(1), 16);
-    return { r: (v>>16)&255, g: (v>>8)&255, b: v&255 };
-  }
-  function rgbToHex(r, g, b) {
-    const c = (x) => Math.max(0, Math.min(255, x|0)).toString(16).padStart(2, '0');
-    return '#' + c(r) + c(g) + c(b);
-  }
 
   // ===== INLINE-ДИАЛОГ =====
   const inlineDlg = $('inline-dialog');
@@ -860,15 +844,10 @@
     if (e.key === 'Escape') { e.preventDefault(); closeInlineDialog(null); }
   });
 
-  function askText(title, value, placeholder) {
-    return openInlineDialog({ title, value, placeholder });
-  }
-  function askLongText(title, value, placeholder) {
-    return openInlineDialog({ title, value, placeholder, textarea: true });
-  }
+  function askText(title, value, placeholder) { return openInlineDialog({ title, value, placeholder }); }
+  function askLongText(title, value, placeholder) { return openInlineDialog({ title, value, placeholder, textarea: true }); }
   function askConfirm(title, okText, danger) {
-    return openInlineDialog({ title, okText: okText || 'OK', danger: !!danger, hideCancel: false, value: '' })
-      .then(v => v !== null);
+    return openInlineDialog({ title, okText: okText || 'OK', danger: !!danger, hideCancel: false, value: '' }).then(v => v !== null);
   }
 
   // ===== НАСТРОЙКИ =====
@@ -1008,12 +987,8 @@
   const TEXT_PREFIX = 'reader_book_text_';
   const OLD_META_KEY = 'reader_books_meta_v3';
   const OLD_COLLECTIONS_KEY = 'reader_collections_v2';
-
   function loadMeta() {
-    try {
-      const raw = localStorage.getItem(META_KEY);
-      if (raw) return migrateMeta(JSON.parse(raw) || []);
-    } catch (e) {}
+    try { const raw = localStorage.getItem(META_KEY); if (raw) return migrateMeta(JSON.parse(raw) || []); } catch (e) {}
     try {
       const old = JSON.parse(localStorage.getItem(OLD_META_KEY) || '[]');
       if (Array.isArray(old) && old.length) {
@@ -1022,8 +997,7 @@
           const { collection, ...rest } = b;
           return Object.assign({}, rest, { categories: cats });
         });
-        saveMeta(migrated);
-        return migrated;
+        saveMeta(migrated); return migrated;
       }
     } catch (e) {}
     return [];
@@ -1041,9 +1015,7 @@
     try { localStorage.setItem(META_KEY, JSON.stringify(arr)); }
     catch (e) { toast('Не удалось сохранить библиотеку', true); }
   }
-  function getBookText(id) {
-    try { return localStorage.getItem(TEXT_PREFIX + id) || ''; } catch (e) { return ''; }
-  }
+  function getBookText(id) { try { return localStorage.getItem(TEXT_PREFIX + id) || ''; } catch (e) { return ''; } }
   function setBookText(id, text) {
     try { localStorage.setItem(TEXT_PREFIX + id, text); return true; }
     catch (e) { toast('Текст книги слишком велик', true); return false; }
@@ -1052,29 +1024,16 @@
     try { localStorage.removeItem(TEXT_PREFIX + id); } catch (e) {}
     try { localStorage.removeItem(marksKey(id)); } catch (e) {}
   }
-
   const CATEGORIES_KEY = 'reader_categories_v3';
   function loadCategories() {
-    try {
-      const raw = localStorage.getItem(CATEGORIES_KEY);
-      if (raw) return JSON.parse(raw) || [];
-    } catch (e) {}
-    try {
-      const old = JSON.parse(localStorage.getItem(OLD_COLLECTIONS_KEY) || '[]');
-      if (Array.isArray(old) && old.length) {
-        saveCategories(old);
-        return old;
-      }
-    } catch (e) {}
+    try { const raw = localStorage.getItem(CATEGORIES_KEY); if (raw) return JSON.parse(raw) || []; } catch (e) {}
+    try { const old = JSON.parse(localStorage.getItem(OLD_COLLECTIONS_KEY) || '[]'); if (Array.isArray(old) && old.length) { saveCategories(old); return old; } } catch (e) {}
     return [];
   }
   function saveCategories(arr) { try { localStorage.setItem(CATEGORIES_KEY, JSON.stringify(arr)); } catch (e) {} }
   function marksKey(bookId) { return 'reader_marks_' + (bookId || 'scratch'); }
-  function loadMarks(bookId) {
-    try { return JSON.parse(localStorage.getItem(marksKey(bookId)) || '[]'); } catch (e) { return []; }
-  }
+  function loadMarks(bookId) { try { return JSON.parse(localStorage.getItem(marksKey(bookId)) || '[]'); } catch (e) { return []; } }
   function saveMarks(bookId, arr) { try { localStorage.setItem(marksKey(bookId), JSON.stringify(arr)); } catch (e) {} }
-
   function sortBooks(list) {
     return list.slice().sort((a, b) => {
       const ao = typeof a.order === 'number' ? a.order : 0;
@@ -1128,7 +1087,6 @@
     }
     return false;
   }
-
   function getActiveReaderEl() { return $('reader-screen'); }
   function getActiveContentEl() { return $('content'); }
   function getReaderScrollHeight() {
@@ -1140,7 +1098,6 @@
     const max = el.scrollHeight - el.clientHeight;
     return max > 0 ? (el.scrollTop / max) * 100 : 0;
   }
-
   function captureReadingPosition() {
     const el = getActiveReaderEl(); const content = getActiveContentEl();
     if (!el || !content) return null;
@@ -1179,7 +1136,6 @@
     }
     if (typeof pos.chapter === 'number') activeChapter = pos.chapter;
   }
-
   function renderBookIntoContent(text, contentEl) {
     if (!contentEl) { chapters = []; return; }
     contentEl.innerHTML = ''; chapters = [];
@@ -1600,7 +1556,6 @@
       saveMeta(list);
     }, 400);
   }
-
   function updateSideThumb(pct) {
     const thumb = $('side-thumb'); const sp = $('side-progress');
     if (!thumb || !sp) return;
@@ -1611,17 +1566,13 @@
     const y = (Math.max(0, Math.min(100, pct)) / 100) * usable;
     thumb.style.transform = 'translateY(' + y + 'px)';
   }
-
   function updateAllProgress() {
     const pct = getCurrentPercent();
     const pb = $('progress-bar'); if (pb) pb.style.width = pct + '%';
-
     const ind = $('pct-indicator'); if (ind) ind.textContent = pct.toFixed(2) + '%';
     const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
     const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
-
     updateSideThumb(pct);
-
     const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
     if (chapters.length && el) {
       let idx = -1;
@@ -1657,19 +1608,9 @@
     }, { passive: true });
     sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
   }
-
-  function changeFont(delta) {
-    settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta));
-    saveSettings(); applySettings();
-  }
-  function changeWidth(delta) {
-    settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta));
-    saveSettings(); applySettings();
-  }
-  function changeLineHeight(delta) {
-    settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100));
-    saveSettings(); applySettings();
-  }
+  function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
+  function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
+  function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
 
   function applySettings() {
     const { bg, fg, accent } = settings;
@@ -1687,11 +1628,9 @@
     root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
     root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
     root.style.setProperty('--font-size', settings.fontSize + 'px');
-
     const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
     const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth;
     const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
-
     if (currentBookId) {
       const text = getBookText(currentBookId);
       const target = $('content');
@@ -1714,10 +1653,7 @@
   const settingsModalClose = $('settings-modal-close');
   function closeSettingsModal() { settingsModal?.classList.remove('open'); }
   if (settingsModalClose) settingsModalClose.addEventListener('click', closeSettingsModal);
-  if (settingsModal) settingsModal.addEventListener('click', (e) => {
-    if (e.target === settingsModal) closeSettingsModal();
-  });
-
+  if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
   function addGroup(title) {
     if (!title) return;
     const t = document.createElement('div');
@@ -1725,81 +1661,68 @@
     settingsModalBody.appendChild(t);
   }
 
-  // --- RGB-редактор ---
-  function makeRgbEditor(label, key) {
+  // --- КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА: color picker + HEX ---
+  function makeColorEditor(label, key) {
     const wrap = document.createElement('div');
-    wrap.className = 'rgb-editor';
+    wrap.className = 'color-editor';
     const initial = normalizeHex(settings[key]) || '#000000';
-    let rgb = hexToRgb(initial);
 
     const head = document.createElement('div');
-    head.className = 'rgb-head';
+    head.className = 'ce-head';
     const lb = document.createElement('label'); lb.textContent = label;
-    const prev = document.createElement('div');
-    prev.className = 'rgb-preview'; prev.style.background = initial;
-    head.appendChild(lb); head.appendChild(prev);
+    const swatch = document.createElement('div');
+    swatch.className = 'ce-swatch';
+    swatch.style.background = initial;
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color'; colorInput.value = initial;
+    swatch.appendChild(colorInput);
+    head.appendChild(lb); head.appendChild(swatch);
     wrap.appendChild(head);
 
     const hexRow = document.createElement('div');
-    hexRow.className = 'rgb-hex';
+    hexRow.className = 'ce-hex';
     const hexInp = document.createElement('input');
     hexInp.type = 'text'; hexInp.value = initial; hexInp.maxLength = 7;
     hexInp.placeholder = '#rrggbb';
-    hexInp.addEventListener('input', () => {
-      const v = normalizeHex(hexInp.value);
-      if (v) {
-        rgb = hexToRgb(v); syncSliders(v);
-        applyColor(v, false);
-      }
-    });
-    hexInp.addEventListener('blur', () => {
-      const v = normalizeHex(hexInp.value) || rgbToHex(rgb.r, rgb.g, rgb.b);
-      hexInp.value = v; rgb = hexToRgb(v); syncSliders(v); applyColor(v, true);
-    });
     hexRow.appendChild(hexInp);
     wrap.appendChild(hexRow);
 
-    function mkSlider(ch, cls, color) {
-      const row = document.createElement('div');
-      row.className = 'rgb-slider-row ' + cls;
-      const l = document.createElement('span'); l.className = 'lbl'; l.textContent = ch.toUpperCase();
-      const inp = document.createElement('input'); inp.type = 'range'; inp.min = 0; inp.max = 255;
-      inp.value = rgb[ch];
-      const val = document.createElement('span'); val.className = 'val'; val.textContent = rgb[ch];
-      inp.addEventListener('input', () => {
-        rgb[ch] = parseInt(inp.value, 10) || 0;
-        val.textContent = rgb[ch];
-        const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-        hexInp.value = hex; prev.style.background = hex;
-        applyColor(hex, false);
-      });
-      row.appendChild(l); row.appendChild(inp); row.appendChild(val);
-      return { row, inp, val };
-    }
-    const sr = mkSlider('r', 'r', '#ff0000');
-    const sg = mkSlider('g', 'g', '#00ff00');
-    const sb = mkSlider('b', 'b', '#0000ff');
-    wrap.appendChild(sr.row); wrap.appendChild(sg.row); wrap.appendChild(sb.row);
-
-    function syncSliders(hex) {
-      const c = hexToRgb(hex);
-      rgb = c;
-      sr.inp.value = c.r; sr.val.textContent = c.r;
-      sg.inp.value = c.g; sg.val.textContent = c.g;
-      sb.inp.value = c.b; sb.val.textContent = c.b;
-      prev.style.background = hex;
-    }
-    function applyColor(hex, save) {
-      settings[key] = hex;
-      if (save) saveSettings();
+    function applyHex(hex, persist) {
+      const v = normalizeHex(hex); if (!v) return;
+      settings[key] = v;
+      if (persist) saveSettings();
       applySettings();
-      prev.style.background = hex;
+      swatch.style.background = v;
+      colorInput.value = v;
+      hexInp.classList.remove('invalid');
+      if (hexInp.value.toLowerCase() !== v) hexInp.value = v;
     }
+
+    colorInput.addEventListener('input', () => {
+      applyHex(colorInput.value, false);
+    });
+    colorInput.addEventListener('change', () => {
+      applyHex(colorInput.value, true);
+    });
+    hexInp.addEventListener('input', () => {
+      const v = normalizeHex(hexInp.value);
+      if (v) { hexInp.classList.remove('invalid'); applyHex(v, false); }
+      else hexInp.classList.add('invalid');
+    });
+    hexInp.addEventListener('blur', () => {
+      const v = normalizeHex(hexInp.value);
+      if (v) applyHex(v, true);
+      else { hexInp.value = normalizeHex(settings[key]) || '#000000'; hexInp.classList.remove('invalid'); }
+    });
+    hexInp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); }
+    });
+
     return wrap;
   }
 
-  // --- Рендер списка схем ---
-  function renderPaletteRow(p, groupKey, onApply) {
+  // --- Рендер строки схемы ---
+  function renderPaletteRow(p, groupKey) {
     const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
     const row = document.createElement('div');
     row.className = 'cl-settings-row' + (isActive ? ' active' : '');
@@ -1869,7 +1792,7 @@
     settingsModalTitle.textContent = 'Цвет';
     settingsModalBody.innerHTML = '';
 
-    // 1. Свои цвета (закреплённые сверху)
+    // 1. Мои сохранённые схемы (закреплённые сверху)
     const custom = loadCustomPalettes();
     const pinned = custom.filter(p => p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
     const unpinned = custom.filter(p => !p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
@@ -1885,11 +1808,11 @@
       }
     }
 
-    // 2. Сохранить текущие как свои
+    // 2. Кнопка "Сохранить текущие"
     addGroup('Свои цвета');
     const acts = document.createElement('div'); acts.className = 'palette-actions';
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = '＋ Сохранить текущие как свою схему';
+    saveBtn.textContent = '💾 Сохранить текущие цвета';
     saveBtn.style.background = 'var(--bg-panel)';
     saveBtn.addEventListener('click', () => {
       askText('Название схемы:', 'Моя схема ' + (loadCustomPalettes().length + 1)).then(n => {
@@ -1909,18 +1832,16 @@
     acts.appendChild(saveBtn);
     settingsModalBody.appendChild(acts);
 
-    // 3. Редактор RGB
-    addGroup('Точная настройка (RGB / HEX)');
-    settingsModalBody.appendChild(makeRgbEditor('Фон', 'bg'));
-    settingsModalBody.appendChild(makeRgbEditor('Текст', 'fg'));
-    settingsModalBody.appendChild(makeRgbEditor('Акцент', 'accent'));
+    // 3. Компактный редактор цвета: три строки (фон / текст / акцент)
+    addGroup('Свои цвета (пипетка)');
+    settingsModalBody.appendChild(makeColorEditor('Фон', 'bg'));
+    settingsModalBody.appendChild(makeColorEditor('Текст', 'fg'));
+    settingsModalBody.appendChild(makeColorEditor('Акцент', 'accent'));
 
     // 4. Пресеты
     PRESET_GROUPS.forEach(group => {
       addGroup(group.title);
-      group.presets.forEach(pr => {
-        settingsModalBody.appendChild(renderPaletteRow(pr, 'preset'));
-      });
+      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr, 'preset')));
     });
   }
 
@@ -2064,7 +1985,6 @@
     });
   }
   ensurePopOverlay();
-
   function closeAllPopups() {
     const catMenu = $('category-menu');
     const popMenu = $('menu-pop');
@@ -2072,12 +1992,10 @@
     if (popMenu) popMenu.classList.remove('show');
     if (popOverlay) popOverlay.style.display = 'none';
   }
-
   function showPopOverlayFor(el) {
     if (!popOverlay || !el) return;
     if (window.innerWidth <= 768) popOverlay.style.display = 'block';
   }
-
   document.addEventListener('click', (e) => {
     const catMenu = $('category-menu');
     const popMenu = $('menu-pop');
@@ -2097,10 +2015,7 @@
       }
     }
   });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAllPopups();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
 
   // ===== МЕНЕДЖЕР КАТЕГОРИЙ =====
   function openCategoriesManager() {
@@ -2112,19 +2027,15 @@
     const head = document.createElement('div');
     head.className = 'group-head';
     const title = document.createElement('div');
-    title.className = 'group-title';
-    title.textContent = 'Категории';
+    title.className = 'group-title'; title.textContent = 'Категории';
     head.appendChild(title);
     const closeBtn = document.createElement('button');
-    closeBtn.className = 'pop-close';
-    closeBtn.textContent = '✕';
+    closeBtn.className = 'pop-close'; closeBtn.textContent = '✕';
     closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      pop.classList.remove('show');
+      e.stopPropagation(); pop.classList.remove('show');
       if (popOverlay) popOverlay.style.display = 'none';
     });
-    head.appendChild(closeBtn);
-    pop.appendChild(head);
+    head.appendChild(closeBtn); pop.appendChild(head);
 
     const cats = loadCategories(); const books = loadMeta();
     if (!cats.length) {
@@ -2188,7 +2099,6 @@
     pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
     showPopOverlayFor(pop);
   }
-
   function promptAddCategory() {
     askText('Название новой категории:').then(n => {
       if (n !== null && n.trim()) {
@@ -2211,30 +2121,20 @@
     const cats = loadCategories();
     menu.innerHTML = '';
 
-    const head = document.createElement('div');
-    head.className = 'cm-head';
+    const head = document.createElement('div'); head.className = 'cm-head';
     const headTitle = document.createElement('div');
-    headTitle.className = 'cm-head-title';
-    headTitle.textContent = b.title || 'Книга';
+    headTitle.className = 'cm-head-title'; headTitle.textContent = b.title || 'Книга';
     head.appendChild(headTitle);
     const closeBtn = document.createElement('button');
-    closeBtn.className = 'cm-close';
-    closeBtn.textContent = '✕';
+    closeBtn.className = 'cm-close'; closeBtn.textContent = '✕';
     closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menu.classList.remove('show');
+      e.stopPropagation(); menu.classList.remove('show');
       if (popOverlay) popOverlay.style.display = 'none';
     });
-    head.appendChild(closeBtn);
-    menu.appendChild(head);
+    head.appendChild(closeBtn); menu.appendChild(head);
 
-    function mkTitle(text) {
-      const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text;
-      menu.appendChild(t);
-    }
-    function mkSep() {
-      const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s);
-    }
+    function mkTitle(text) { const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text; menu.appendChild(t); }
+    function mkSep() { const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s); }
 
     const renameItem = document.createElement('div');
     renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
@@ -2253,7 +2153,6 @@
 
     mkSep();
     mkTitle('Категории (можно несколько)');
-
     if (!cats.length) {
       const empty = document.createElement('div');
       empty.className = 'cm-item';
@@ -2284,8 +2183,7 @@
     }
 
     const addCatItem = document.createElement('div');
-    addCatItem.className = 'cm-item';
-    addCatItem.textContent = '＋ Новая категория…';
+    addCatItem.className = 'cm-item'; addCatItem.textContent = '＋ Новая категория…';
     addCatItem.addEventListener('click', () => {
       menu.classList.remove('show');
       if (popOverlay) popOverlay.style.display = 'none';
@@ -2309,8 +2207,7 @@
 
     mkSep();
     const delItem = document.createElement('div');
-    delItem.className = 'cm-item danger';
-    delItem.textContent = 'Удалить книгу';
+    delItem.className = 'cm-item danger'; delItem.textContent = 'Удалить книгу';
     delItem.addEventListener('click', () => {
       menu.classList.remove('show');
       if (popOverlay) popOverlay.style.display = 'none';
@@ -2459,8 +2356,7 @@
   let dragState = null;
   function clearDragHighlights(container) {
     if (!container) return;
-    container.querySelectorAll('.drop-before, .drop-after')
-      .forEach(el => el.classList.remove('drop-before', 'drop-after'));
+    container.querySelectorAll('.drop-before, .drop-after').forEach(el => el.classList.remove('drop-before', 'drop-after'));
   }
   function findDropTarget(container, x, y, dragEl) {
     if (!container) return null;
@@ -2559,8 +2455,7 @@
       el.appendChild(cnt);
       if (extra) extra(el);
       el.addEventListener('click', (e) => { if (e.target.closest('.chip-actions')) return; onClick(); });
-      bar.appendChild(el);
-      return el;
+      bar.appendChild(el); return el;
     }
     makeChip('Все', books.length, activeCategory === null, () => { activeCategory = null; renderClassicLibrary(); });
     const noneCount = books.filter(b => !(b.categories || []).length).length;
@@ -3056,7 +2951,6 @@
       closeSettingsModal();
       closeAllPopups();
     });
-
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768 && popOverlay) popOverlay.style.display = 'none';
     });
