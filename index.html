@@ -6,11 +6,17 @@
 <meta name="theme-color" content="#14161a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>🕸️</title>
+<title>🕸️ Читалка</title>
+
+<!-- ============================================================
+     ЧАСТЬ 1. HTML + CSS (интерфейс)
+     ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+
 <style>
+  /* ---------- БАЗА ---------- */
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
     --bg: #14161a; --bg-header: #191c21; --bg-panel: #1e2228; --bg-input: #191c21;
@@ -71,6 +77,7 @@
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
+  /* ---------- ЭКРАН ВСТАВКИ ---------- */
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
     align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
@@ -167,38 +174,108 @@
   .category-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
   .category-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
 
-  #category-menu { position: fixed; z-index: 350; background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 200px; max-width: min(320px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
-    box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #category-menu.show { display: block; }
-  #category-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
-  #category-menu .cm-item { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
-    border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    min-height: 38px; display: flex; align-items: center; gap: 8px; }
-  #category-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
-  #category-menu .cm-item.active { color: var(--accent); }
-  #category-menu .cm-item .cm-check { width: 16px; height: 16px; border-radius: 4px;
-    border: 1px solid var(--border-strong); display: inline-flex; align-items: center;
-    justify-content: center; font-size: 11px; flex-shrink: 0; }
-  #category-menu .cm-item.active .cm-check { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
-  #category-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
-  #category-menu .cm-item.danger { color: #c97a7a; }
-  #category-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
+  /* ---------- ПАНЕЛИ ---------- */
+  .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
+    background: var(--bg-header); border-left: 1px solid var(--border);
+    z-index: 300; transform: translateX(100%); transition: transform .25s ease;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+  .panel.open { transform: translateX(0); }
+  .panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase;
+    flex-shrink: 0; gap: 8px; min-height: 52px; }
+  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
+  .panel-overlay.open { display: block; }
 
+  .toc-item { padding: 12px 18px; font-size: 13px; color: var(--fg-mid);
+    cursor: pointer; line-height: 1.4; border-left: 2px solid transparent;
+    display: flex; justify-content: space-between; gap: 10px; align-items: baseline; min-height: 44px; }
+  .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
+  .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
+  .toc-item .toc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+  .toc-item .toc-pct { font-size: 11px; color: var(--fg-dim);
+    font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: .2px; }
+  .toc-item.active .toc-pct { color: var(--accent); }
+  #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
+  #toc-toolbar { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+  #toc-toolbar button { padding: 6px 10px; font-size: 12px; min-height: 34px; flex: 1; min-width: 100px; }
+  #toc-hint { padding: 8px 14px; font-size: 11px; color: var(--fg-dim); line-height: 1.4; border-bottom: 1px solid var(--border); }
+
+  #marks-header-actions { display: flex; gap: 6px; }
+  #marks-header button { padding: 6px 10px; font-size: 12px; min-height: 34px; }
+  #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  #marks-search { width: 100%; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 9px 12px;
+    font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; min-height: 38px; }
+  #marks-search:focus { border-color: var(--accent); }
+  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .mark-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
+    cursor: pointer; position: relative; transition: background .15s; }
+  .mark-item:hover { background: var(--bg-panel); }
+  .mark-item .mark-title { font-size: 12px; color: var(--fg-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-right: 30px; }
+  .mark-item .mark-text { font-size: 13px; color: var(--fg); line-height: 1.4;
+    margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+  .mark-item .mark-date { font-size: 10px; color: var(--fg-dim); }
+  .mark-item .mark-note { font-size: 12px; color: var(--mark-color);
+    background: rgba(224,184,74,.08); border-left: 2px solid var(--mark-color);
+    padding: 6px 8px; border-radius: 3px; margin: 6px 0; line-height: 1.35;
+    word-break: break-word; white-space: pre-wrap; }
+  .mark-item .mark-del { position: absolute; top: 10px; right: 10px;
+    background: transparent; border: none; color: var(--fg-dim); font-size: 14px;
+    padding: 6px 10px; line-height: 1; border-radius: 4px; cursor: pointer; min-height: 32px; min-width: 32px; }
+  .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
+  #marks-empty { padding: 24px 20px; font-size: 13px; color: var(--fg-dim); text-align: center; line-height: 1.5; }
+
+  #search-panel { width: min(400px, 100vw); }
+  #search-input-wrap { padding: 10px 14px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  #book-search-input { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 9px 12px; font-size: 14px; outline: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 100%; width: 100%; min-height: 38px; }
+  #book-search-input:focus { border-color: var(--accent); }
+  #book-search-clear { background: transparent; border: 1px solid var(--border-strong);
+    color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer;
+    line-height: 1; border-radius: 8px; display: none; flex-shrink: 0; min-width: 38px; min-height: 38px; }
+  #search-input-wrap.has-value #book-search-clear { display: block; }
+  #search-meta { padding: 8px 14px 12px; font-size: 12px; color: var(--fg-dim);
+    font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); min-height: 20px; flex-shrink: 0; }
+  #search-meta strong { color: var(--accent); font-weight: 600; }
+  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
+  .search-item { padding: 12px 16px; border-bottom: 1px solid var(--border);
+    cursor: pointer; position: relative; transition: background .15s; }
+  .search-item:hover { background: var(--bg-panel); }
+  .search-item.active { background: var(--bg-panel); border-left: 2px solid var(--accent); }
+  .search-item .s-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 5px; min-width: 0; }
+  .search-item .s-chapter { font-size: 11px; color: var(--fg-dim);
+    text-transform: uppercase; letter-spacing: 1px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+  .search-item .s-pct { font-size: 12px; color: var(--accent);
+    font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;
+    background: rgba(139,145,155,.12); padding: 2px 8px; border-radius: 8px; }
+  .search-item.active .s-pct { background: var(--accent); color: var(--bg); }
+  .search-item .s-text { font-size: 12px; color: var(--fg-mid); line-height: 1.45; word-break: break-word; }
+  .search-item .s-text mark { background: var(--accent); color: var(--accent-contrast);
+    border-radius: 2px; padding: 0 2px; }
+  #search-empty { padding: 24px 16px; font-size: 13px; color: var(--fg-dim); text-align: center; line-height: 1.5; }
+  .find-hit { background: rgba(139,145,155,.35); border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--accent); transition: background .4s; }
+
+  /* ---------- ЧИТАЛКА ---------- */
   .reader-topbar {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 12px; padding-top: max(8px, var(--safe-top));
     background: var(--bg-header); border-bottom: 1px solid var(--border);
     flex-shrink: 0; min-height: 52px;
   }
-  .reader-topbar .logo {
-    display: flex; align-items: center; gap: 0;
+  .reader-topbar .logo { display: flex; align-items: center; gap: 0;
     font-weight: 700; font-size: 15px; color: var(--fg);
-    flex-shrink: 0; letter-spacing: -.3px;
-  }
+    flex-shrink: 0; letter-spacing: -.3px; }
   .reader-topbar .pct {
     margin-left: auto; margin-right: 4px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -226,146 +303,6 @@
     line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing); width: 100%; }
 
-  .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
-    background: var(--bg-header); border-left: 1px solid var(--border);
-    z-index: 300; transform: translateX(100%); transition: transform .25s ease;
-    display: flex; flex-direction: column;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-  .panel.open { transform: translateX(0); }
-  .panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase;
-    flex-shrink: 0; gap: 8px; min-height: 52px; }
-  .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
-  .panel-overlay.open { display: block; }
-
-  .toc-item { padding: 12px 18px; font-size: 13px; color: var(--fg-mid);
-    cursor: pointer; line-height: 1.4; border-left: 2px solid transparent;
-    display: flex; justify-content: space-between; gap: 10px; align-items: baseline; min-height: 44px; }
-  .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
-  .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
-  .toc-item .toc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    flex: 1; min-width: 0; }
-  .toc-item .toc-pct { font-size: 11px; color: var(--fg-dim);
-    font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: .2px; }
-  .toc-item.active .toc-pct { color: var(--accent); }
-  #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
-
-  #marks-header-actions { display: flex; gap: 6px; }
-  #marks-header button { padding: 6px 10px; font-size: 12px; min-height: 34px; }
-  #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  #marks-search { width: 100%; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px; padding: 9px 12px;
-    font-size: 13px; outline: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    min-height: 38px; }
-  #marks-search:focus { border-color: var(--accent); }
-  #marks-list { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .mark-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
-    cursor: pointer; position: relative; transition: background .15s; }
-  .mark-item:hover { background: var(--bg-panel); }
-  .mark-item .mark-title { font-size: 12px; color: var(--fg-dim);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-right: 30px; }
-  .mark-item .mark-text { font-size: 13px; color: var(--fg); line-height: 1.4;
-    margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
-  .mark-item .mark-date { font-size: 10px; color: var(--fg-dim); }
-  .mark-item .mark-note { font-size: 12px; color: var(--mark-color);
-    background: rgba(224,184,74,.08); border-left: 2px solid var(--mark-color);
-    padding: 6px 8px; border-radius: 3px; margin: 6px 0; line-height: 1.35;
-    word-break: break-word; white-space: pre-wrap; }
-  .mark-item .mark-del { position: absolute; top: 10px; right: 10px;
-    background: transparent; border: none; color: var(--fg-dim); font-size: 14px;
-    padding: 6px 10px; line-height: 1; border-radius: 4px; cursor: pointer;
-    min-height: 32px; min-width: 32px; }
-  .mark-item .mark-del:hover { background: var(--border-strong); color: var(--fg); }
-  #marks-empty { padding: 24px 20px; font-size: 13px; color: var(--fg-dim);
-    text-align: center; line-height: 1.5; }
-
-  #search-panel { width: min(400px, 100vw); }
-  #search-input-wrap { padding: 10px 14px; border-bottom: 1px solid var(--border);
-    display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-  #book-search-input { flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
-    border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 9px 12px; font-size: 14px; outline: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 100%; width: 100%; min-height: 38px; }
-  #book-search-input:focus { border-color: var(--accent); }
-  #book-search-clear { background: transparent; border: 1px solid var(--border-strong);
-    color: var(--fg-dim); font-size: 14px; padding: 8px 10px; cursor: pointer;
-    line-height: 1; border-radius: 8px; display: none; flex-shrink: 0; min-width: 38px; min-height: 38px; }
-  #search-input-wrap.has-value #book-search-clear { display: block; }
-  #search-meta { padding: 8px 14px 12px; font-size: 12px; color: var(--fg-dim);
-    font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); min-height: 20px;
-    flex-shrink: 0; }
-  #search-meta strong { color: var(--accent); font-weight: 600; }
-  #search-results { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .search-item { padding: 12px 16px; border-bottom: 1px solid var(--border);
-    cursor: pointer; position: relative; transition: background .15s; }
-  .search-item:hover { background: var(--bg-panel); }
-  .search-item.active { background: var(--bg-panel); border-left: 2px solid var(--accent); }
-  .search-item .s-head { display: flex; justify-content: space-between;
-    align-items: baseline; gap: 8px; margin-bottom: 5px; min-width: 0; }
-  .search-item .s-chapter { font-size: 11px; color: var(--fg-dim);
-    text-transform: uppercase; letter-spacing: 1px; overflow: hidden;
-    text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-  .search-item .s-pct { font-size: 12px; color: var(--accent);
-    font-variant-numeric: tabular-nums; font-weight: 600; flex-shrink: 0;
-    background: rgba(139,145,155,.12); padding: 2px 8px; border-radius: 8px; }
-  .search-item.active .s-pct { background: var(--accent); color: var(--bg); }
-  .search-item .s-text { font-size: 12px; color: var(--fg-mid);
-    line-height: 1.45; word-break: break-word; }
-  .search-item .s-text mark { background: var(--accent); color: var(--accent-contrast);
-    border-radius: 2px; padding: 0 2px; }
-  #search-empty { padding: 24px 16px; font-size: 13px; color: var(--fg-dim);
-    text-align: center; line-height: 1.5; }
-  .find-hit { background: rgba(139,145,155,.35); border-radius: 3px;
-    box-shadow: 0 0 0 1px var(--accent); transition: background .4s; }
-
-  #menu-pop { position: fixed; z-index: 350; background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 220px; max-width: calc(100vw - 24px);
-    box-shadow: 0 12px 40px rgba(0,0,0,.55);
-    display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #menu-pop.show { display: block; }
-  #menu-pop .mi { padding: 10px 12px; font-size: 13px; color: var(--fg-mid);
-    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-    min-height: 40px; }
-  #menu-pop .mi:hover { background: var(--border-strong); color: var(--fg); }
-  #menu-pop .mi.active { color: var(--accent); }
-  #menu-pop .sep { height: 1px; background: var(--border); margin: 6px 4px; }
-  #menu-pop .group-title { font-size: 10px; letter-spacing: 1.2px;
-    text-transform: uppercase; color: var(--fg-dim); padding: 8px 12px 4px; font-weight: 600; }
-  #note-editor { position: fixed; inset: 0; background: rgba(0,0,0,.55);
-    z-index: 340; display: none; align-items: center; justify-content: center;
-    padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #note-editor.open { display: flex; }
-  #note-editor .box { width: 100%; max-width: 480px; background: var(--bg-panel);
-    border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.6); max-height: 90vh; display: flex; flex-direction: column; }
-  #note-editor h4 { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--mark-color); margin-bottom: 10px; font-weight: normal; flex-shrink: 0; }
-  #note-editor .preview { font-size: 12px; color: var(--fg-dim);
-    margin-bottom: 12px; line-height: 1.4; max-height: 60px; overflow: hidden;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    word-break: break-word; flex-shrink: 0; }
-  #note-editor textarea { width: 100%; min-height: 90px; background: var(--bg-input);
-    color: var(--fg); border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 10px; font-size: 14px; line-height: 1.5; font-family: inherit;
-    resize: vertical; outline: none; max-width: 100%; }
-  #note-editor textarea:focus { border-color: var(--accent); }
-  #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-shrink: 0; }
-  #note-editor .actions button { padding: 10px 16px; font-size: 13px; min-height: var(--tap); }
-  #note-editor .actions .primary { background: var(--mark-color); color: var(--bg);
-    border-color: var(--mark-color); }
-
-  #drop-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65);
-    display: none; align-items: center; justify-content: center; z-index: 500;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-    font-size: 18px; color: var(--fg); pointer-events: none; border: 2px dashed var(--accent);
-    padding: 20px; text-align: center; }
-  #drop-overlay.show { display: flex; }
-
   #progress-bar { position: fixed; top: 0; left: 0; height: 2px;
     background: var(--accent); width: 0%; z-index: 100; }
 
@@ -383,10 +320,10 @@
   .side-mark { position: absolute; right: 3px; width: 10px; height: 3px;
     background: var(--mark-color); border-radius: 2px;
     box-shadow: 0 0 4px rgba(224,184,74,.7); transform: translateY(-50%); }
-
   @media (max-width: 1100px) { #side-progress { display: none !important; } }
   @media (hover: none) and (pointer: coarse) { #side-progress { display: none !important; } }
 
+  /* ---------- МОБИЛЬНАЯ ПАНЕЛЬ ---------- */
   #mobile-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-panel);
     border-top: 1px solid var(--border-strong); border-radius: 18px 18px 0 0;
     box-shadow: 0 -12px 40px rgba(0,0,0,.55); z-index: 400; transform: translateY(110%);
@@ -423,6 +360,7 @@
     font-size: 13px; color: var(--fg-mid); font-variant-numeric: tabular-nums;
     min-width: 46px; text-align: center; }
 
+  /* ---------- НАСТРОЙКИ ---------- */
   #settings-modal { position: fixed; inset: 0; z-index: 450; display: none;
     background: rgba(0,0,0,.55); align-items: center; justify-content: center;
     padding: 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -474,7 +412,6 @@
   .cl-font-preview.active .aa { border-color: var(--accent); }
   .cl-font-preview.active .nm { color: var(--accent); }
 
-  /* ====== КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА (без RGB-ползунков) ====== */
   .color-editor { padding: 4px 16px 14px; display: flex; flex-direction: column; gap: 8px; }
   .color-editor .ce-head { display: flex; align-items: center; gap: 12px; }
   .color-editor .ce-head label { flex: 1; font-size: 14px; color: var(--fg); }
@@ -482,31 +419,23 @@
     width: 52px; height: 44px; border-radius: 10px; flex-shrink: 0;
     border: 2px solid var(--border-strong); cursor: pointer; position: relative;
     overflow: hidden; transition: border-color .15s, transform .1s;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
-  }
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
   .color-editor .ce-swatch:hover { border-color: var(--accent); }
   .color-editor .ce-swatch:active { transform: scale(.97); }
   .color-editor .ce-swatch input[type=color] {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    opacity: 0; cursor: pointer; border: none; padding: 0;
-  }
+    opacity: 0; cursor: pointer; border: none; padding: 0; }
   .color-editor .ce-swatch::after {
     content: '🎨'; position: absolute; inset: 0; display: flex;
     align-items: center; justify-content: center; font-size: 18px;
-    pointer-events: none; opacity: .65; mix-blend-mode: difference;
-  }
-  .color-editor .ce-hex {
-    display: flex; align-items: center; gap: 6px;
-  }
+    pointer-events: none; opacity: .65; mix-blend-mode: difference; }
+  .color-editor .ce-hex { display: flex; align-items: center; gap: 6px; }
   .color-editor .ce-hex input[type=text] {
-    flex: 1; min-width: 0;
-    background: var(--bg-input); color: var(--fg);
+    flex: 1; min-width: 0; background: var(--bg-input); color: var(--fg);
     border: 1px solid var(--border-strong); border-radius: 8px;
     padding: 9px 10px; font-size: 13px;
     font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-    outline: none; letter-spacing: .4px; text-transform: lowercase;
-    min-height: 38px;
-  }
+    outline: none; letter-spacing: .4px; text-transform: lowercase; min-height: 38px; }
   .color-editor .ce-hex input[type=text]:focus { border-color: var(--accent); }
   .color-editor .ce-hex input[type=text].invalid { border-color: #c97a7a; }
 
@@ -534,10 +463,73 @@
 
   #pct-jump { font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
 
+  #menu-pop { position: fixed; z-index: 350; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
+    min-width: 220px; max-width: calc(100vw - 24px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    display: none; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+  #menu-pop.show { display: block; }
+  #menu-pop .mi { padding: 10px 12px; font-size: 13px; color: var(--fg-mid);
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 40px; }
+  #menu-pop .mi:hover { background: var(--border-strong); color: var(--fg); }
+  #menu-pop .mi.active { color: var(--accent); }
+  #menu-pop .sep { height: 1px; background: var(--border); margin: 6px 4px; }
+  #menu-pop .group-title { font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--fg-dim); padding: 8px 12px 4px; font-weight: 600; }
+
+  #category-menu { position: fixed; z-index: 350; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
+    min-width: 200px; max-width: min(320px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+  #category-menu.show { display: block; }
+  #category-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
+  #category-menu .cm-item { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
+    border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    min-height: 38px; display: flex; align-items: center; gap: 8px; }
+  #category-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
+  #category-menu .cm-item.active { color: var(--accent); }
+  #category-menu .cm-item .cm-check { width: 16px; height: 16px; border-radius: 4px;
+    border: 1px solid var(--border-strong); display: inline-flex; align-items: center;
+    justify-content: center; font-size: 11px; flex-shrink: 0; }
+  #category-menu .cm-item.active .cm-check { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+  #category-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
+  #category-menu .cm-item.danger { color: #c97a7a; }
+  #category-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
+
+  #note-editor { position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    z-index: 340; display: none; align-items: center; justify-content: center;
+    padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+  #note-editor.open { display: flex; }
+  #note-editor .box { width: 100%; max-width: 480px; background: var(--bg-panel);
+    border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6); max-height: 90vh; display: flex; flex-direction: column; }
+  #note-editor h4 { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--mark-color); margin-bottom: 10px; font-weight: normal; flex-shrink: 0; }
+  #note-editor .preview { font-size: 12px; color: var(--fg-dim);
+    margin-bottom: 12px; line-height: 1.4; max-height: 60px; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    word-break: break-word; flex-shrink: 0; }
+  #note-editor textarea { width: 100%; min-height: 90px; background: var(--bg-input);
+    color: var(--fg); border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px; font-size: 14px; line-height: 1.5; font-family: inherit;
+    resize: vertical; outline: none; max-width: 100%; }
+  #note-editor textarea:focus { border-color: var(--accent); }
+  #note-editor .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-shrink: 0; }
+  #note-editor .actions button { padding: 10px 16px; font-size: 13px; min-height: var(--tap); }
+  #note-editor .actions .primary { background: var(--mark-color); color: var(--bg); border-color: var(--mark-color); }
+
+  #drop-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65);
+    display: none; align-items: center; justify-content: center; z-index: 500;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 18px; color: var(--fg); pointer-events: none; border: 2px dashed var(--accent);
+    padding: 20px; text-align: center; }
+  #drop-overlay.show { display: flex; }
+
   @media (max-width: 1024px) {
     .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
   }
-
   @media (max-width: 768px) {
     :root { --col-width: 100%; }
     #content { padding: 16px 14px calc(80px + var(--safe-bottom)); }
@@ -557,7 +549,6 @@
     #settings-modal { padding: 8px; }
     #settings-modal .card { max-height: 92vh; }
   }
-
   @media (max-width: 480px) {
     .sheet-grid { grid-template-columns: 1fr 1fr; }
     .sheet-grid button { font-size: 13px; padding: 12px 8px; }
@@ -568,6 +559,10 @@
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     ЧАСТЬ 1 (продолжение). HTML-разметка
+     ============================================================ -->
 <div id="boot-error"></div>
 <div id="file-toast"></div>
 <div id="progress-bar"></div>
@@ -605,12 +600,19 @@
     </div>
   </div>
 
+  <!-- TOC -->
   <div id="toc-panel" class="panel">
     <div class="panel-header"><span>Содержание</span><button id="toc-close">✕</button></div>
+    <div id="toc-hint">Заголовки распознаются автоматически: «Глава 1», «Часть I», «ПРОЛОГ» (капсом), «# Заголовок», «***». Если главы не найдены — нажмите «Разметить вручную».</div>
+    <div id="toc-toolbar">
+      <button id="toc-rescan">Пересканировать</button>
+      <button id="toc-manual">Разметить вручную</button>
+    </div>
     <div class="panel-body" id="toc-list"></div>
   </div>
   <div class="panel-overlay" id="toc-overlay"></div>
 
+  <!-- Закладки -->
   <div id="marks-panel" class="panel">
     <div class="panel-header">
       <span>Закладки</span>
@@ -624,6 +626,7 @@
   </div>
   <div class="panel-overlay" id="marks-overlay"></div>
 
+  <!-- Поиск -->
   <div id="search-panel" class="panel">
     <div class="panel-header"><span>Поиск слова</span><div><button id="search-close">✕</button></div></div>
     <div id="search-input-wrap">
@@ -655,6 +658,7 @@
   <div id="side-progress"><div id="side-thumb"></div><div id="side-marks"></div></div>
 </div>
 
+<!-- Мобильная панель -->
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
@@ -711,6 +715,7 @@
   </div>
 </div>
 
+<!-- Настройки -->
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
@@ -721,6 +726,7 @@
   </div>
 </div>
 
+<!-- Инлайн-диалог -->
 <div id="inline-dialog">
   <div class="dlg">
     <h4 id="inline-dialog-title">Введите значение</h4>
@@ -732,9 +738,15 @@
     </div>
   </div>
 </div>
+
+<!-- ============================================================
+     ЧАСТЬ 2. ЯДРО (утилиты, хранилище, настройки, парсинг файлов)
+     ============================================================ -->
 <script>
 (function () {
   'use strict';
+
+  /* ---------- УТИЛИТЫ ---------- */
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
 
@@ -798,7 +810,7 @@
     return s;
   }
 
-  // ===== INLINE-ДИАЛОГ =====
+  /* ---------- INLINE-ДИАЛОГ ---------- */
   const inlineDlg = $('inline-dialog');
   const inlineTitle = $('inline-dialog-title');
   const inlineInput = $('inline-dialog-input');
@@ -850,7 +862,7 @@
     return openInlineDialog({ title, okText: okText || 'OK', danger: !!danger, hideCancel: false, value: '' }).then(v => v !== null);
   }
 
-  // ===== НАСТРОЙКИ =====
+  /* ---------- НАСТРОЙКИ ---------- */
   const DEFAULTS = {
     bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
     fontSize: 20, colWidth: 720, lineHeight: 1.85,
@@ -958,7 +970,7 @@
   let settings = loadSettings();
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
-  // ===== СВОИ ЦВЕТОВЫЕ СХЕМЫ =====
+  /* ---------- СВОИ ЦВЕТОВЫЕ СХЕМЫ ---------- */
   const CUSTOM_PALETTES_KEY = 'reader_custom_palettes_v1';
   function loadCustomPalettes() {
     try {
@@ -982,21 +994,19 @@
     try { localStorage.setItem(CUSTOM_PALETTES_KEY, JSON.stringify(arr)); } catch (e) {}
   }
 
-  // ===== ХРАНИЛИЩЕ КНИГ =====
-  const META_KEY = 'reader_books_meta_v4';
+  /* ---------- ХРАНИЛИЩЕ КНИГ ---------- */
+  const META_KEY = 'reader_books_meta_v5';
   const TEXT_PREFIX = 'reader_book_text_';
-  const OLD_META_KEY = 'reader_books_meta_v3';
+  const TOC_OVERRIDE_PREFIX = 'reader_toc_override_';
+  const OLD_META_KEY = 'reader_books_meta_v4';
   const OLD_COLLECTIONS_KEY = 'reader_collections_v2';
+
   function loadMeta() {
     try { const raw = localStorage.getItem(META_KEY); if (raw) return migrateMeta(JSON.parse(raw) || []); } catch (e) {}
     try {
       const old = JSON.parse(localStorage.getItem(OLD_META_KEY) || '[]');
       if (Array.isArray(old) && old.length) {
-        const migrated = old.map(b => {
-          const cats = b.collection ? [b.collection] : [];
-          const { collection, ...rest } = b;
-          return Object.assign({}, rest, { categories: cats });
-        });
+        const migrated = migrateMeta(old);
         saveMeta(migrated); return migrated;
       }
     } catch (e) {}
@@ -1005,10 +1015,8 @@
   function migrateMeta(arr) {
     if (!Array.isArray(arr)) return [];
     return arr.map(b => {
-      if (Array.isArray(b.categories)) return b;
-      const cats = b.collection ? [b.collection] : [];
-      const { collection, ...rest } = b;
-      return Object.assign({}, rest, { categories: cats });
+      if (!Array.isArray(b.categories)) b.categories = [];
+      return b;
     });
   }
   function saveMeta(arr) {
@@ -1020,9 +1028,19 @@
     try { localStorage.setItem(TEXT_PREFIX + id, text); return true; }
     catch (e) { toast('Текст книги слишком велик', true); return false; }
   }
+  function getTocOverride(id) {
+    try { return JSON.parse(localStorage.getItem(TOC_OVERRIDE_PREFIX + id) || 'null'); } catch (e) { return null; }
+  }
+  function setTocOverride(id, arr) {
+    try {
+      if (arr && arr.length) localStorage.setItem(TOC_OVERRIDE_PREFIX + id, JSON.stringify(arr));
+      else localStorage.removeItem(TOC_OVERRIDE_PREFIX + id);
+    } catch (e) {}
+  }
   function removeBookData(id) {
     try { localStorage.removeItem(TEXT_PREFIX + id); } catch (e) {}
     try { localStorage.removeItem(marksKey(id)); } catch (e) {}
+    try { localStorage.removeItem(TOC_OVERRIDE_PREFIX + id); } catch (e) {}
   }
   const CATEGORIES_KEY = 'reader_categories_v3';
   function loadCategories() {
@@ -1049,20 +1067,7 @@
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
 
-  // ===== СОСТОЯНИЕ =====
-  let currentBookId = null;
-  let currentMarks = [];
-  let chapters = [];
-  let activeChapter = -1;
-  let currentSearchHits = [];
-  let currentSearchIndex = -1;
-  let searchDebounceTimer = null;
-  let editingMarkId = null;
-  let pendingMarkAnchor = null;
-  let activeCategory = null;
-  let saveScrollTimer = null;
-
-  // ===== КОНТЕНТ =====
+  /* ---------- РАЗБИЕНИЕ НА АБЗАЦЫ ---------- */
   function splitIntoParagraphs(text) {
     const blocks = String(text || '').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
     if (blocks.length <= 1) {
@@ -1072,1560 +1077,37 @@
     }
     return blocks;
   }
+
+  /* ---------- РАСПОЗНАВАНИЕ ЗАГОЛОВКОВ (мягкое) ---------- */
   function isChapterTitle(text) {
     if (!text) return false;
     const t = text.trim();
-    if (t.length > 90 || t.length < 2) return false;
+    if (t.length > 120 || t.length < 2) return false;
+    // 1. Явные маркеры
     const patterns = [
-      /^(глава|часть|книга|том|chapter|part|book|volume)\s+[\divxlcdm]+/i,
+      /^(глава|часть|книга|том|пролог|эпилог|chapter|part|book|volume|prologue|epilogue)\b/i,
       /^[IVXLCDM]{1,7}\.?\s*$/, /^\d+\.?\s*$/, /^#{1,3}\s+/, /^\*{3,}$/
     ];
     for (const p of patterns) if (p.test(t)) return true;
+    // 2. Короткая строка без точки в конце, где много заглавных
     if (t.length < 70 && !/[.!?…]$/.test(t)) {
-      const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / Math.max(1, t.replace(/\s/g,'').length);
-      if (upperRatio > 0.6) return true;
+      const letters = t.replace(/\s/g,'');
+      if (letters.length > 0) {
+        const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / letters.length;
+        if (upperRatio > 0.6) return true;
+      }
+    }
+    // 3. Короткая строка без точки, начинающаяся с заглавной — только если она стоит отдельным блоком
+    //    (это ловит «Пролог», «Эпилог», «Вступление», но может ловить и обычные короткие абзацы)
+    if (t.length <= 40 && !/[.!?…]$/.test(t) && /^[А-ЯЁA-Z]/.test(t)) {
+      // отсекаем слишком «обычные» слова
+      const common = /^(он|она|они|оно|это|там|тут|так|вот|что|как|где|когда|если|но|и|а|да|нет)$/i;
+      if (!common.test(t)) return true;
     }
     return false;
   }
-  function getActiveReaderEl() { return $('reader-screen'); }
-  function getActiveContentEl() { return $('content'); }
-  function getReaderScrollHeight() {
-    const el = getActiveReaderEl(); if (!el) return 0;
-    return Math.max(0, el.scrollHeight - el.clientHeight);
-  }
-  function getCurrentPercent() {
-    const el = getActiveReaderEl(); if (!el) return 0;
-    const max = el.scrollHeight - el.clientHeight;
-    return max > 0 ? (el.scrollTop / max) * 100 : 0;
-  }
-  function captureReadingPosition() {
-    const el = getActiveReaderEl(); const content = getActiveContentEl();
-    if (!el || !content) return null;
-    const y = el.scrollTop + 40;
-    const paras = content.querySelectorAll('p');
-    let targetIdx = -1, offsetInPara = 0;
-    for (let i = 0; i < paras.length; i++) {
-      const p = paras[i];
-      if (p.offsetTop + p.offsetHeight > y) {
-        targetIdx = i;
-        offsetInPara = Math.max(0, Math.min(p.offsetHeight, y - p.offsetTop));
-        break;
-      }
-    }
-    if (targetIdx < 0 && paras.length) { targetIdx = 0; offsetInPara = 0; }
-    const max = el.scrollHeight - el.clientHeight;
-    return {
-      pIndex: targetIdx, offsetInPara: offsetInPara, scrollTop: el.scrollTop,
-      pct: max > 0 ? el.scrollTop / max : 0, chapter: activeChapter
-    };
-  }
-  function restoreReadingPosition(pos) {
-    if (!pos) return;
-    const el = getActiveReaderEl(); const content = getActiveContentEl();
-    if (!el || !content) return;
-    const paras = content.querySelectorAll('p');
-    if (typeof pos.pIndex === 'number' && paras[pos.pIndex]) {
-      const p = paras[pos.pIndex];
-      const target = Math.max(0, p.offsetTop + (pos.offsetInPara || 0) - 40);
-      el.scrollTop = target;
-    } else if (typeof pos.scrollTop === 'number') {
-      el.scrollTop = pos.scrollTop;
-    } else if (typeof pos.pct === 'number') {
-      const max = el.scrollHeight - el.clientHeight;
-      el.scrollTop = pos.pct * Math.max(0, max);
-    }
-    if (typeof pos.chapter === 'number') activeChapter = pos.chapter;
-  }
-  function renderBookIntoContent(text, contentEl) {
-    if (!contentEl) { chapters = []; return; }
-    contentEl.innerHTML = ''; chapters = [];
-    const paragraphs = splitIntoParagraphs(text);
-    let chapterCount = 0;
-    const frag = document.createDocumentFragment();
-    paragraphs.forEach((p, idx) => {
-      const el = document.createElement('p');
-      el.textContent = p; el.dataset.pIndex = idx;
-      if (isChapterTitle(p)) {
-        el.classList.add('chapter-title');
-        chapterCount++;
-        chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
-      }
-      frag.appendChild(el);
-    });
-    contentEl.appendChild(frag);
-    buildToc();
-  }
 
-  // ===== ПАНЕЛИ =====
-  const tocPanel = $('toc-panel');
-  const tocList = $('toc-list');
-  const tocClose = $('toc-close');
-  const tocOverlay = $('toc-overlay');
-  const marksPanel = $('marks-panel');
-  const marksList = $('marks-list');
-  const marksClose = $('marks-close');
-  const marksOverlay = $('marks-overlay');
-  const marksClear = $('marks-clear');
-  const marksSearch = $('marks-search');
-  const searchPanel = $('search-panel');
-  const searchOverlay = $('search-overlay');
-  const searchClose = $('search-close');
-  const bookSearchInput = $('book-search-input');
-  const bookSearchClear = $('book-search-clear');
-  const searchInputWrap = $('search-input-wrap');
-  const searchMeta = $('search-meta');
-  const searchResults = $('search-results');
-  const noteEditor = $('note-editor');
-  const noteTitle = $('note-title');
-  const notePreview = $('note-preview');
-  const noteInput = $('note-input');
-  const noteCancel = $('note-cancel');
-  const noteSave = $('note-save');
-
-  function openToc() {
-    if (!currentBookId) { toast('Сначала откройте книгу', true); return; }
-    if (!tocPanel) return;
-    updateTocPercents(); tocPanel.classList.add('open'); tocOverlay.classList.add('open');
-    highlightActiveToc();
-  }
-  function closeToc() {
-    if (!tocPanel) return;
-    tocPanel.classList.remove('open'); tocOverlay.classList.remove('open');
-  }
-  if (tocClose) tocClose.addEventListener('click', closeToc);
-  if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
-
-  function updateTocPercents() {
-    if (!tocList || !chapters.length) return;
-    const items = tocList.querySelectorAll('.toc-item');
-    if (!items.length) return;
-    const max = getReaderScrollHeight();
-    if (max <= 0) { items.forEach(i => { const p = i.querySelector('.toc-pct'); if (p) p.textContent = '0.00%'; }); return; }
-    chapters.forEach((ch, i) => {
-      const item = items[i]; if (!item) return;
-      const pctEl = item.querySelector('.toc-pct'); if (!pctEl) return;
-      const p = Math.max(0, Math.min(100, (ch.el.offsetTop / max) * 100));
-      pctEl.textContent = p.toFixed(2) + '%';
-    });
-  }
-  function highlightActiveToc() {
-    if (!tocList) return;
-    const items = tocList.querySelectorAll('.toc-item');
-    items.forEach((el, i) => el.classList.toggle('active', i === activeChapter));
-    if (activeChapter >= 0 && items[activeChapter]) items[activeChapter].scrollIntoView({ block: 'nearest' });
-  }
-  function goToChapter(i) {
-    if (i < 0 || i >= chapters.length) return;
-    activeChapter = i;
-    chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    highlightActiveToc();
-  }
-  function buildToc() {
-    if (!tocList) return;
-    tocList.innerHTML = '';
-    if (!chapters.length) {
-      const empty = document.createElement('div'); empty.id = 'toc-empty';
-      empty.textContent = 'Главы не найдены. Оформите заголовки как «Глава 1», «Часть I» или капсом.';
-      tocList.appendChild(empty); return;
-    }
-    chapters.forEach((ch, i) => {
-      const el = document.createElement('div'); el.className = 'toc-item';
-      const name = document.createElement('span'); name.className = 'toc-name'; name.textContent = ch.title;
-      const pct = document.createElement('span'); pct.className = 'toc-pct'; pct.textContent = '0.00%';
-      el.appendChild(name); el.appendChild(pct);
-      el.addEventListener('click', () => { goToChapter(i); closeToc(); });
-      tocList.appendChild(el);
-    });
-    requestAnimationFrame(updateTocPercents);
-  }
-
-  // ===== ЗАКЛАДКИ =====
-  function getCurrentSnippet() {
-    const el = getActiveReaderEl(); const content = getActiveContentEl();
-    if (!el || !content) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
-    const y = el.scrollTop + 40;
-    const paras = content.querySelectorAll('p');
-    let target = null, targetIndex = -1;
-    for (let i = 0; i < paras.length; i++) {
-      const p = paras[i];
-      if (p.offsetTop + p.offsetHeight > y) { target = p; targetIndex = i; break; }
-    }
-    if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
-    if (!target) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
-    const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
-    const ratio = offsetInPara / Math.max(1, target.offsetHeight);
-    const text = (target.textContent || '').trim();
-    const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
-    let chapterTitle = '';
-    for (let i = 0; i < chapters.length; i++) {
-      if (chapters[i].el.offsetTop <= y) chapterTitle = chapters[i].title; else break;
-    }
-    const max = getReaderScrollHeight();
-    const pct = max > 0 ? el.scrollTop / max : 0;
-    return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio, pos: el.scrollTop, pct };
-  }
-  function addMark() {
-    if (!currentBookId) { toast('Сначала откройте книгу', true); return; }
-    pendingMarkAnchor = getCurrentSnippet(); openNoteEditor(null);
-  }
-  function commitPendingMark(note) {
-    if (!pendingMarkAnchor) return;
-    const mark = Object.assign({}, pendingMarkAnchor, {
-      id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
-      note: note || '', date: Date.now()
-    });
-    pendingMarkAnchor = null;
-    currentMarks.push(mark); saveMarks(currentBookId, currentMarks);
-    renderSideMarks(); renderMarksList();
-    toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
-  }
-  function openNoteEditor(markId) {
-    editingMarkId = markId;
-    if (markId) {
-      const m = currentMarks.find(x => x.id === markId); if (!m) return;
-      noteTitle.textContent = 'Заметка к закладке';
-      notePreview.textContent = m.text || ''; noteInput.value = m.note || '';
-    } else if (pendingMarkAnchor) {
-      noteTitle.textContent = 'Новая закладка — заметка';
-      notePreview.textContent = pendingMarkAnchor.text || ''; noteInput.value = '';
-    }
-    noteEditor.classList.add('open');
-    setTimeout(() => noteInput.focus(), 50);
-  }
-  function closeNoteEditor(save) {
-    if (save) {
-      const val = noteInput.value.trim();
-      if (editingMarkId) {
-        const m = currentMarks.find(x => x.id === editingMarkId);
-        if (m) { m.note = val; saveMarks(currentBookId, currentMarks); renderMarksList(); }
-      } else if (pendingMarkAnchor) commitPendingMark(val);
-    } else pendingMarkAnchor = null;
-    editingMarkId = null;
-    noteEditor.classList.remove('open'); noteInput.value = '';
-  }
-  if (noteCancel) noteCancel.addEventListener('click', () => closeNoteEditor(false));
-  if (noteSave) noteSave.addEventListener('click', () => closeNoteEditor(true));
-  if (noteEditor) noteEditor.addEventListener('click', (e) => { if (e.target === noteEditor) closeNoteEditor(false); });
-  if (noteInput) noteInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(false); }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); closeNoteEditor(true); }
-  });
-  function removeMark(id) {
-    currentMarks = currentMarks.filter(m => m.id !== id);
-    saveMarks(currentBookId, currentMarks); renderSideMarks(); renderMarksList();
-  }
-  function clearMarks() {
-    if (!currentMarks.length) return;
-    askConfirm('Удалить все закладки этой книги?', 'Удалить', true).then(ok => {
-      if (!ok) return;
-      currentMarks = []; saveMarks(currentBookId, currentMarks); renderSideMarks(); renderMarksList();
-    });
-  }
-  function renderMarksList() {
-    if (!marksList) return;
-    const query = (marksSearch && marksSearch.value || '').trim().toLowerCase();
-    marksList.innerHTML = '';
-    if (!currentMarks.length) {
-      const empty = document.createElement('div'); empty.id = 'marks-empty';
-      empty.textContent = 'Пока нет закладок. Нажмите 🔖.'; marksList.appendChild(empty); return;
-    }
-    const filtered = query ? currentMarks.filter(m =>
-      (m.text || '').toLowerCase().includes(query) ||
-      (m.chapter || '').toLowerCase().includes(query) ||
-      (m.note || '').toLowerCase().includes(query)) : currentMarks;
-    if (!filtered.length) {
-      const empty = document.createElement('div'); empty.id = 'marks-empty';
-      empty.textContent = 'Ничего не найдено'; marksList.appendChild(empty); return;
-    }
-    const sorted = filtered.slice().sort((a, b) => {
-      const ai = typeof a.pIndex === 'number' ? a.pIndex : 0;
-      const bi = typeof b.pIndex === 'number' ? b.pIndex : 0;
-      if (ai !== bi) return ai - bi;
-      return (a.offsetInPara || 0) - (b.offsetInPara || 0);
-    });
-    sorted.forEach(m => {
-      const el = document.createElement('div'); el.className = 'mark-item';
-      const title = document.createElement('div'); title.className = 'mark-title';
-      title.textContent = (m.chapter || 'Без главы') + ' · ' + ((m.pct || 0) * 100).toFixed(2) + '%';
-      const text = document.createElement('div'); text.className = 'mark-text';
-      text.textContent = m.text || '(пусто)';
-      el.appendChild(title); el.appendChild(text);
-      if (m.note) {
-        const note = document.createElement('div'); note.className = 'mark-note';
-        note.textContent = m.note;
-        note.addEventListener('click', (e) => { e.stopPropagation(); openNoteEditor(m.id); });
-        el.appendChild(note);
-      }
-      const date = document.createElement('div'); date.className = 'mark-date'; date.textContent = formatDate(m.date);
-      const del = document.createElement('button'); del.className = 'mark-del'; del.textContent = '✕';
-      del.addEventListener('click', (e) => { e.stopPropagation(); removeMark(m.id); });
-      el.appendChild(date); el.appendChild(del);
-      el.addEventListener('click', () => { scrollToAnchor(m); closeMarks(); });
-      marksList.appendChild(el);
-    });
-  }
-  function renderSideMarks() {
-    const sideMarks = $('side-marks'); if (!sideMarks) return;
-    sideMarks.innerHTML = '';
-    const total = getReaderScrollHeight(); if (total <= 0) return;
-    currentMarks.forEach(m => {
-      const mark = document.createElement('div'); mark.className = 'side-mark';
-      const pct = Math.max(0, Math.min(1, m.pct || 0));
-      mark.style.top = (pct * 100) + '%';
-      mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
-      sideMarks.appendChild(mark);
-    });
-  }
-  function scrollToAnchor(item) {
-    const el = getActiveReaderEl(); const content = getActiveContentEl();
-    if (!el || !content) return;
-    const paras = content.querySelectorAll('p');
-    let top = 0;
-    if (typeof item.pIndex === 'number' && paras[item.pIndex]) {
-      const p = paras[item.pIndex]; const h = Math.max(1, p.offsetHeight);
-      let offset = item.offsetInPara;
-      if (typeof offset !== 'number' || isNaN(offset)) offset = (item.ratio || 0) * h;
-      offset = Math.min(offset, h); top = p.offsetTop + offset;
-    } else top = item.pos || 0;
-    el.scrollTo({ top, behavior: 'smooth' });
-  }
-  function openMarks() {
-    if (!currentBookId) { toast('Сначала откройте книгу', true); return; }
-    if (!marksPanel) return;
-    renderMarksList(); marksPanel.classList.add('open'); marksOverlay.classList.add('open');
-  }
-  function closeMarks() {
-    if (!marksPanel) return;
-    marksPanel.classList.remove('open'); marksOverlay.classList.remove('open');
-  }
-  if (marksClose) marksClose.addEventListener('click', closeMarks);
-  if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
-  if (marksClear) marksClear.addEventListener('click', clearMarks);
-  if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
-
-  // ===== ПОИСК =====
-  function normalizeSearch(str) { return String(str).toLowerCase().replace(/ё/g, 'е'); }
-  function findInBook(query) {
-    const result = []; if (!query) return result;
-    const q = normalizeSearch(query.trim()); if (!q) return result;
-    const content = getActiveContentEl();
-    if (!content) return result;
-    const paras = content.querySelectorAll('p');
-    const maxScroll = getReaderScrollHeight();
-    const chapterRanges = chapters.map(ch => ({ title: ch.title, startIndex: ch.pIndex }));
-    function chapterForPara(pIndex) {
-      let title = '';
-      for (let i = 0; i < chapterRanges.length; i++) {
-        if (chapterRanges[i].startIndex <= pIndex) title = chapterRanges[i].title; else break;
-      }
-      return title;
-    }
-    for (let i = 0; i < paras.length; i++) {
-      const p = paras[i]; const rawText = p.textContent || '';
-      if (!rawText) continue;
-      const hay = normalizeSearch(rawText); let from = 0;
-      while (from <= hay.length) {
-        const pos = hay.indexOf(q, from); if (pos === -1) break;
-        const endPos = pos + q.length;
-        const cStart = Math.max(0, pos - 60); const cEnd = Math.min(rawText.length, endPos + 60);
-        const before = rawText.slice(cStart, pos); const hitText = rawText.slice(pos, endPos);
-        const after = rawText.slice(endPos, cEnd);
-        const prefix = cStart > 0 ? '…' : ''; const suffix = cEnd < rawText.length ? '…' : '';
-        const snippet = prefix + before + '\u0001' + hitText + '\u0002' + after + suffix;
-        let pct = 0;
-        if (maxScroll > 0) {
-          const h = Math.max(1, p.offsetHeight);
-          const totalChars = Math.max(1, rawText.length);
-          const fracInside = (pos + hitText.length / 2) / totalChars;
-          const offset = Math.min(h, fracInside * h);
-          pct = (p.offsetTop + offset) / maxScroll;
-          pct = Math.max(0, Math.min(1, pct));
-        }
-        result.push({ pIndex: i, charStart: pos, charEnd: endPos, snippet, pct, chapter: chapterForPara(i) });
-        from = pos + Math.max(1, q.length);
-        if (result.length >= 300) return result;
-      }
-    }
-    return result;
-  }
-  function renderSearchResults() {
-    if (!searchResults) return;
-    searchResults.innerHTML = '';
-    if (!bookSearchInput || !bookSearchInput.value.trim()) {
-      searchInputWrap.classList.remove('has-value'); searchMeta.textContent = '';
-      const empty = document.createElement('div'); empty.id = 'search-empty';
-      empty.textContent = 'Введите слово или фразу.'; searchResults.appendChild(empty); return;
-    }
-    searchInputWrap.classList.add('has-value');
-    if (!currentSearchHits.length) {
-      searchMeta.innerHTML = 'Ничего не найдено';
-      const empty = document.createElement('div'); empty.id = 'search-empty';
-      empty.textContent = 'По запросу «' + bookSearchInput.value.trim() + '» ничего нет.';
-      searchResults.appendChild(empty); return;
-    }
-    const activeNum = currentSearchIndex >= 0 ? currentSearchIndex + 1 : 0;
-    searchMeta.innerHTML = 'Найдено: <strong>' + currentSearchHits.length + '</strong>' +
-      (activeNum ? ' · активный: <strong>' + activeNum + '</strong>' : '');
-    currentSearchHits.forEach((h, idx) => {
-      const el = document.createElement('div');
-      el.className = 'search-item' + (idx === currentSearchIndex ? ' active' : '');
-      const head = document.createElement('div'); head.className = 's-head';
-      const chap = document.createElement('div'); chap.className = 's-chapter';
-      chap.textContent = h.chapter || 'Без главы';
-      const pct = document.createElement('span'); pct.className = 's-pct';
-      pct.textContent = (h.pct * 100).toFixed(2) + '%';
-      head.appendChild(chap); head.appendChild(pct);
-      const text = document.createElement('div'); text.className = 's-text';
-      const parts = h.snippet.split(/(\u0001|\u0002)/); let inside = false;
-      parts.forEach(p => {
-        if (p === '\u0001') { inside = true; return; }
-        if (p === '\u0002') { inside = false; return; }
-        if (!p) return;
-        if (inside) { const m = document.createElement('mark'); m.textContent = p; text.appendChild(m); }
-        else text.appendChild(document.createTextNode(p));
-      });
-      el.appendChild(head); el.appendChild(text);
-      el.addEventListener('click', () => { scrollToSearchHit(idx); closeSearch(); });
-      searchResults.appendChild(el);
-    });
-    if (currentSearchIndex >= 0) {
-      const activeEl = searchResults.children[currentSearchIndex];
-      if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
-    }
-  }
-  function scrollToSearchHit(index) {
-    if (index < 0 || index >= currentSearchHits.length) return;
-    const hit = currentSearchHits[index];
-    const content = getActiveContentEl(); if (!content) return;
-    const paras = content.querySelectorAll('p'); const el = paras[hit.pIndex]; if (!el) return;
-    currentSearchIndex = index;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('find-hit'); setTimeout(() => el.classList.remove('find-hit'), 1200);
-    renderSearchResults();
-  }
-  function openSearch() {
-    if (!currentBookId) { toast('Сначала откройте книгу', true); return; }
-    searchPanel.classList.add('open'); searchOverlay.classList.add('open');
-    renderSearchResults();
-    setTimeout(() => { if (bookSearchInput) { bookSearchInput.focus(); bookSearchInput.select(); } }, 60);
-  }
-  function closeSearch() {
-    if (!searchPanel) return;
-    searchPanel.classList.remove('open'); searchOverlay.classList.remove('open');
-  }
-  if (searchClose) searchClose.addEventListener('click', closeSearch);
-  if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
-  if (bookSearchClear) bookSearchClear.addEventListener('click', () => {
-    bookSearchInput.value = ''; currentSearchHits = []; currentSearchIndex = -1;
-    renderSearchResults(); bookSearchInput.focus();
-  });
-  if (bookSearchInput) {
-    bookSearchInput.addEventListener('input', () => {
-      searchInputWrap.classList.toggle('has-value', !!bookSearchInput.value.trim());
-      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(() => {
-        currentSearchHits = findInBook(bookSearchInput.value); currentSearchIndex = -1;
-        renderSearchResults();
-      }, 220);
-    });
-    bookSearchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault(); if (!currentSearchHits.length) return;
-        const next = currentSearchIndex < 0 ? 0 : (currentSearchIndex + 1) % currentSearchHits.length;
-        scrollToSearchHit(next);
-      }
-      if (e.key === 'Escape') { e.preventDefault(); closeSearch(); }
-    });
-  }
-
-  // ===== ПРОГРЕСС =====
-  function scheduleSaveProgress() {
-    if (!currentBookId) return;
-    if (saveScrollTimer) clearTimeout(saveScrollTimer);
-    saveScrollTimer = setTimeout(() => {
-      const list = loadMeta();
-      const idx = list.findIndex(x => x.id === currentBookId);
-      if (idx < 0) return;
-      const pos = captureReadingPosition();
-      if (!pos) return;
-      list[idx].scroll = pos.scrollTop;
-      list[idx].pct = pos.pct;
-      list[idx].chapter = pos.chapter;
-      list[idx].pIndex = pos.pIndex;
-      list[idx].offsetInPara = pos.offsetInPara;
-      saveMeta(list);
-    }, 400);
-  }
-  function updateSideThumb(pct) {
-    const thumb = $('side-thumb'); const sp = $('side-progress');
-    if (!thumb || !sp) return;
-    if (window.getComputedStyle(sp).display === 'none') return;
-    const trackH = sp.clientHeight;
-    const thumbH = thumb.offsetHeight || 40;
-    const usable = Math.max(1, trackH - thumbH);
-    const y = (Math.max(0, Math.min(100, pct)) / 100) * usable;
-    thumb.style.transform = 'translateY(' + y + 'px)';
-  }
-  function updateAllProgress() {
-    const pct = getCurrentPercent();
-    const pb = $('progress-bar'); if (pb) pb.style.width = pct + '%';
-    const ind = $('pct-indicator'); if (ind) ind.textContent = pct.toFixed(2) + '%';
-    const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
-    const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
-    updateSideThumb(pct);
-    const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
-    if (chapters.length && el) {
-      let idx = -1;
-      for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].el.offsetTop - 80 <= st) idx = i; else break;
-      }
-      if (idx !== activeChapter) { activeChapter = idx; highlightActiveToc(); }
-    }
-    scheduleSaveProgress();
-    updateTocPercents(); renderSideMarks();
-  }
-  function showScroller() {
-    const sp = $('side-progress'); if (!sp) return;
-    if (window.getComputedStyle(sp).display === 'none') return;
-    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
-    sp.classList.add('visible');
-    clearTimeout(sp._t);
-    sp._t = setTimeout(() => { if (!sp.classList.contains('dragging')) sp.classList.remove('visible'); }, 500);
-  }
-
-  // ===== МОБИЛЬНАЯ ПАНЕЛЬ =====
-  const mobileSheet = $('mobile-sheet');
-  const sheetOverlay = $('sheet-overlay');
-  const sheetHandle = $('sheet-handle');
-  function closeSheet() { mobileSheet?.classList.remove('open'); sheetOverlay?.classList.remove('open'); }
-  if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
-  let sheetTouchStartY = null;
-  if (sheetHandle) {
-    sheetHandle.addEventListener('touchstart', (e) => { sheetTouchStartY = e.touches[0].clientY; }, { passive: true });
-    sheetHandle.addEventListener('touchmove', (e) => {
-      if (sheetTouchStartY === null) return;
-      if (e.touches[0].clientY - sheetTouchStartY > 60) { closeSheet(); sheetTouchStartY = null; }
-    }, { passive: true });
-    sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
-  }
-  function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
-  function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
-  function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
-
-  function applySettings() {
-    const { bg, fg, accent } = settings;
-    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
-    root.style.setProperty('--accent-contrast', contrastColor(accent));
-    root.style.setProperty('--bg-header', shade(bg, 6));
-    root.style.setProperty('--bg-panel', shade(bg, 10));
-    root.style.setProperty('--bg-input', shade(bg, 6));
-    root.style.setProperty('--border', shade(bg, 14));
-    root.style.setProperty('--border-strong', shade(bg, 22));
-    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
-    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
-    root.style.setProperty('--col-width', settings.colWidth + 'px');
-    root.style.setProperty('--line-height', settings.lineHeight);
-    root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
-    root.style.setProperty('--font-stack', FONT_STACKS[settings.fontFamily] || FONT_STACKS.serif);
-    root.style.setProperty('--font-size', settings.fontSize + 'px');
-    const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
-    const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth;
-    const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
-    if (currentBookId) {
-      const text = getBookText(currentBookId);
-      const target = $('content');
-      if (target) {
-        const savedPos = captureReadingPosition();
-        renderBookIntoContent(text, target);
-        requestAnimationFrame(() => {
-          if (savedPos) restoreReadingPosition(savedPos);
-          updateAllProgress();
-        });
-      }
-    }
-    renderClassicLibrary();
-  }
-
-  // ===== МОДАЛКА НАСТРОЕК =====
-  const settingsModal = $('settings-modal');
-  const settingsModalTitle = $('settings-modal-title');
-  const settingsModalBody = $('settings-modal-body');
-  const settingsModalClose = $('settings-modal-close');
-  function closeSettingsModal() { settingsModal?.classList.remove('open'); }
-  if (settingsModalClose) settingsModalClose.addEventListener('click', closeSettingsModal);
-  if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
-  function addGroup(title) {
-    if (!title) return;
-    const t = document.createElement('div');
-    t.className = 'cl-settings-group-title'; t.textContent = title;
-    settingsModalBody.appendChild(t);
-  }
-
-   // --- КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА: color picker + HEX ---
-  function makeColorEditor(label, key) {
-    const wrap = document.createElement('div');
-    wrap.className = 'color-editor';
-    const initial = normalizeHex(settings[key]) || '#000000';
-
-    const head = document.createElement('div');
-    head.className = 'ce-head';
-    const lb = document.createElement('label'); lb.textContent = label;
-    const swatch = document.createElement('div');
-    swatch.className = 'ce-swatch';
-    swatch.style.background = initial;
-    const colorInput = document.createElement('input');
-    colorInput.type = 'color'; colorInput.value = initial;
-    swatch.appendChild(colorInput);
-    head.appendChild(lb); head.appendChild(swatch);
-    wrap.appendChild(head);
-
-    const hexRow = document.createElement('div');
-    hexRow.className = 'ce-hex';
-    const hexInp = document.createElement('input');
-    hexInp.type = 'text';
-    hexInp.value = initial;
-    // ВАЖНО: не maxLength=7, иначе нельзя вставить/стереть полностью
-    hexInp.placeholder = '#rrggbb';
-    hexInp.autocomplete = 'off';
-    hexInp.spellcheck = false;
-    hexInp.inputMode = 'text';
-    hexRow.appendChild(hexInp);
-    wrap.appendChild(hexRow);
-
-    // Обновить визуал свотча и color input
-    function syncVisual(hex) {
-      swatch.style.background = hex;
-      colorInput.value = hex;
-    }
-
-    // Применить цвет СРАЗУ: settings -> CSS -> визуал
-    function applyNow(hex) {
-      const v = normalizeHex(hex);
-      if (!v) return false;
-      settings[key] = v;
-      saveSettings();
-      // Мгновенно перекрашиваем CSS-переменные (без перерисовки книги)
-      paintCssFromSettings();
-      // Обновляем свой свотч + color input
-      syncVisual(v);
-      // Обновляем превью других редакторов на этом же экране (если открыт)
-      if (settingsModal && settingsModal.classList.contains('open')) {
-        // мягкое обновление полей HEX соседних редакторов
-        document.querySelectorAll('.color-editor').forEach(ed => {
-          // не трогаем тот, что сейчас в фокусе
-          const inp = ed.querySelector('.ce-hex input[type=text]');
-          const k = ed.dataset.key;
-          if (!inp || !k) return;
-          if (document.activeElement === inp) return;
-          const cur = normalizeHex(settings[k]);
-          if (cur && inp.value.toLowerCase() !== cur) inp.value = cur;
-        });
-      }
-      return true;
-    }
-
-    // --- color picker ---
-    colorInput.addEventListener('input', () => {
-      const v = normalizeHex(colorInput.value);
-      if (v) applyNow(v);
-    });
-    colorInput.addEventListener('change', () => {
-      const v = normalizeHex(colorInput.value);
-      if (v) applyNow(v);
-    });
-
-    // --- hex input: НЕ трогаем значение, пока пользователь вводит ---
-    hexInp.addEventListener('input', () => {
-      const raw = hexInp.value.trim().toLowerCase();
-      const v = normalizeHex(raw);
-      if (v) {
-        hexInp.classList.remove('invalid');
-        // Применяем цвет, но НЕ переписываем значение в поле (иначе «дописывает нули»)
-        settings[key] = v;
-        saveSettings();
-        paintCssFromSettings();
-        swatch.style.background = v;
-        colorInput.value = v;
-      } else {
-        hexInp.classList.add('invalid');
-      }
-    });
-
-    // По blur — финализируем: приводим к #rrggbb или откатываем
-    hexInp.addEventListener('blur', () => {
-      const v = normalizeHex(hexInp.value);
-      if (v) {
-        settings[key] = v;
-        saveSettings();
-        paintCssFromSettings();
-        hexInp.value = v;
-        hexInp.classList.remove('invalid');
-        syncVisual(v);
-      } else {
-        hexInp.value = normalizeHex(settings[key]) || '#000000';
-        hexInp.classList.remove('invalid');
-      }
-    });
-
-    hexInp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); }
-    });
-
-    wrap.dataset.key = key;
-    return wrap;
-  }
-
-  // Единая функция: применяет settings.bg/fg/accent к CSS-переменным.
-  // НЕ перерисовывает книгу и библиотеку — чтобы не сбивать фокус.
-  function paintCssFromSettings() {
-    const bg = normalizeHex(settings.bg) || '#000000';
-    const fg = normalizeHex(settings.fg) || '#ffffff';
-    const accent = normalizeHex(settings.accent) || '#888888';
-
-    root.style.setProperty('--bg', bg);
-    root.style.setProperty('--fg', fg);
-    root.style.setProperty('--accent', accent);
-    root.style.setProperty('--accent-contrast', contrastColor(accent));
-    root.style.setProperty('--bg-header', shade(bg, 6));
-    root.style.setProperty('--bg-panel', shade(bg, 10));
-    root.style.setProperty('--bg-input', shade(bg, 6));
-    root.style.setProperty('--border', shade(bg, 14));
-    root.style.setProperty('--border-strong', shade(bg, 22));
-    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
-    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
-  }
-
-  // --- Рендер строки схемы ---
-  function renderPaletteRow(p, groupKey) {
-    const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
-    const row = document.createElement('div');
-    row.className = 'cl-settings-row' + (isActive ? ' active' : '');
-    const sw = document.createElement('div');
-    sw.className = 'sw' + (isActive ? ' active' : '');
-    sw.style.background = p.bg; sw.style.color = p.fg;
-    sw.style.borderColor = isActive ? 'var(--accent)' : shade(p.bg,20);
-    sw.textContent = 'Aa';
-    const info = document.createElement('div'); info.className = 'info';
-    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = p.name;
-    const sub = document.createElement('div'); sub.className = 'sub';
-    sub.textContent = p.bg + ' · ' + p.fg + ' · ' + p.accent;
-    info.appendChild(nm); info.appendChild(sub);
-    row.appendChild(sw); row.appendChild(info);
-
-    if (groupKey === 'custom') {
-      const acts = document.createElement('div'); acts.className = 'row-actions';
-      const pin = document.createElement('button');
-      pin.className = 'pin-btn' + (p.pinned ? ' pinned' : '');
-      pin.textContent = p.pinned ? '📌' : '📍';
-      pin.title = p.pinned ? 'Открепить' : 'Закрепить';
-      pin.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const arr = loadCustomPalettes();
-        const it = arr.find(x => x.id === p.id); if (it) it.pinned = !it.pinned;
-        saveCustomPalettes(arr); openPaletteOnly();
-      });
-      const edit = document.createElement('button');
-      edit.textContent = '✎'; edit.title = 'Переименовать';
-      edit.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askText('Название цвета:', p.name).then(n => {
-          if (n !== null && n.trim()) {
-            const arr = loadCustomPalettes();
-            const it = arr.find(x => x.id === p.id); if (it) it.name = n.trim();
-            saveCustomPalettes(arr); openPaletteOnly();
-          }
-        });
-      });
-      const del = document.createElement('button');
-      del.className = 'del-btn'; del.textContent = '✕'; del.title = 'Удалить';
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askConfirm('Удалить цвет «' + p.name + '»?', 'Удалить', true).then(ok => {
-          if (!ok) return;
-          saveCustomPalettes(loadCustomPalettes().filter(x => x.id !== p.id));
-          openPaletteOnly();
-        });
-      });
-      acts.appendChild(pin); acts.appendChild(edit); acts.appendChild(del);
-      row.appendChild(acts);
-    } else if (isActive) {
-      const chk = document.createElement('div'); chk.className = 'check'; chk.textContent = '✓';
-      row.appendChild(chk);
-    }
-
-    row.addEventListener('click', () => {
-      settings.bg = p.bg; settings.fg = p.fg; settings.accent = p.accent;
-      saveSettings(); applySettings(); openPaletteOnly();
-    });
-    return row;
-  }
-
-  function openPaletteOnly() {
-    if (!settingsModal) return;
-    settingsModal.classList.add('open');
-    settingsModalTitle.textContent = 'Цвет';
-    settingsModalBody.innerHTML = '';
-
-    // 1. Мои сохранённые схемы (закреплённые сверху)
-    const custom = loadCustomPalettes();
-    const pinned = custom.filter(p => p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
-    const unpinned = custom.filter(p => !p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
-
-    if (pinned.length || unpinned.length) {
-      if (pinned.length) {
-        addGroup('📌 Закреплённые');
-        pinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom')));
-      }
-      if (unpinned.length) {
-        addGroup('Мои цвета');
-        unpinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom')));
-      }
-    }
-
-    // 2. Кнопка "Сохранить текущие"
-    addGroup('Свои цвета');
-    const acts = document.createElement('div'); acts.className = 'palette-actions';
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = '💾 Сохранить текущие цвета';
-    saveBtn.style.background = 'var(--bg-panel)';
-    saveBtn.addEventListener('click', () => {
-      askText('Название схемы:', 'Моя схема ' + (loadCustomPalettes().length + 1)).then(n => {
-        if (n === null) return;
-        const name = (n || '').trim() || ('Схема ' + (loadCustomPalettes().length + 1));
-        const arr = loadCustomPalettes();
-        arr.push({
-          id: 'p' + Date.now() + Math.random().toString(36).slice(2,6),
-          name, bg: settings.bg, fg: settings.fg, accent: settings.accent,
-          pinned: false, created: Date.now()
-        });
-        saveCustomPalettes(arr);
-        openPaletteOnly();
-        toast('Схема сохранена');
-      });
-    });
-    acts.appendChild(saveBtn);
-    settingsModalBody.appendChild(acts);
-
-    // 3. Компактный редактор цвета: три строки (фон / текст / акцент)
-    addGroup('Свои цвета (пипетка)');
-    settingsModalBody.appendChild(makeColorEditor('Фон', 'bg'));
-    settingsModalBody.appendChild(makeColorEditor('Текст', 'fg'));
-    settingsModalBody.appendChild(makeColorEditor('Акцент', 'accent'));
-
-    // 4. Пресеты
-    PRESET_GROUPS.forEach(group => {
-      addGroup(group.title);
-      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr, 'preset')));
-    });
-  }
-
-  function openFontsOnly() {
-    if (!settingsModal) return;
-    settingsModal.classList.add('open');
-    settingsModalTitle.textContent = 'Шрифт';
-    settingsModalBody.innerHTML = '';
-
-    addGroup('Шрифт текста');
-    FONTS.forEach(f => {
-      const isActive = settings.fontFamily === f.id;
-      const row = document.createElement('div');
-      row.className = 'cl-font-preview' + (isActive ? ' active' : '');
-      row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
-        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
-        (isActive ? '<div class="check">✓</div>' : '');
-      row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
-      settingsModalBody.appendChild(row);
-    });
-
-    addGroup('Параметры текста');
-    const rows = document.createElement('div');
-    rows.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
-    const mkRow = (label, ctrl) => {
-      const r = document.createElement('div');
-      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
-      const lb = document.createElement('div');
-      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);';
-      lb.textContent = label;
-      r.appendChild(lb); r.appendChild(ctrl);
-      return r;
-    };
-    const mkStepper = (val, onChange) => {
-      const w = document.createElement('div');
-      w.style.cssText = 'display:flex;align-items:center;gap:6px;';
-      const dec = document.createElement('button'); dec.textContent = '−';
-      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      dec.addEventListener('click', () => onChange(-1));
-      const valEl = document.createElement('div');
-      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
-      valEl.textContent = val;
-      const inc = document.createElement('button'); inc.textContent = '+';
-      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      inc.addEventListener('click', () => onChange(1));
-      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
-      return { w, valEl };
-    };
-    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
-    rows.appendChild(mkRow('Размер', fs.w));
-    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
-    rows.appendChild(mkRow('Ширина', wS.w));
-    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
-    rows.appendChild(mkRow('Интервал', lhS.w));
-    settingsModalBody.appendChild(rows);
-  }
-
-  function openUnifiedSettings() {
-    if (!settingsModal) return;
-    settingsModal.classList.add('open');
-    settingsModalTitle.textContent = '⚙';
-    settingsModalBody.innerHTML = '';
-
-    addGroup('');
-    const rowsRead = document.createElement('div');
-    rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
-    const mkRow = (label, ctrl) => {
-      const r = document.createElement('div');
-      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
-      const lb = document.createElement('div');
-      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);';
-      lb.textContent = label;
-      r.appendChild(lb); r.appendChild(ctrl);
-      return r;
-    };
-    const mkStepper = (val, onChange) => {
-      const w = document.createElement('div');
-      w.style.cssText = 'display:flex;align-items:center;gap:6px;';
-      const dec = document.createElement('button'); dec.textContent = '−';
-      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      dec.addEventListener('click', () => onChange(-1));
-      const valEl = document.createElement('div');
-      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
-      valEl.textContent = val;
-      const inc = document.createElement('button'); inc.textContent = '+';
-      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      inc.addEventListener('click', () => onChange(1));
-      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
-      return { w, valEl };
-    };
-    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
-    rowsRead.appendChild(mkRow('Размер текста', fs.w));
-    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
-    rowsRead.appendChild(mkRow('Ширина колонки', wS.w));
-    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
-    rowsRead.appendChild(mkRow('Интервал', lhS.w));
-    settingsModalBody.appendChild(rowsRead);
-
-    addGroup('');
-    const wrapBtns = document.createElement('div');
-    wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
-    const bFont = document.createElement('button');
-    bFont.textContent = 'Шрифт'; bFont.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
-    bFont.addEventListener('click', () => { closeSettingsModal(); setTimeout(openFontsOnly, 120); });
-    wrapBtns.appendChild(bFont);
-    const bPal = document.createElement('button');
-    bPal.textContent = 'Цвет'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
-    bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
-    wrapBtns.appendChild(bPal);
-    settingsModalBody.appendChild(wrapBtns);
-
-    addGroup('');
-    const libWrap = document.createElement('div');
-    libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
-    const mkBtn = (label, fn) => {
-      const b = document.createElement('button');
-      b.textContent = label;
-      b.style.cssText = 'padding:12px 14px;border-radius:10px;font-size:14px;text-align:left;min-height:var(--tap);background:var(--bg-panel);border:1px solid var(--border-strong);color:var(--fg);cursor:pointer;';
-      b.addEventListener('click', fn);
-      libWrap.appendChild(b);
-    };
-    mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
-    mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
-    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
-    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
-    mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
-    settingsModalBody.appendChild(libWrap);
-  }
-
-  // ===== ПОПАПЫ =====
-  const popOverlay = $('pop-overlay');
-  function ensurePopOverlay() {
-    if (!popOverlay) return;
-    popOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:345;display:none;';
-    popOverlay.addEventListener('click', () => {
-      const catMenu = $('category-menu');
-      const popMenu = $('menu-pop');
-      if (catMenu) catMenu.classList.remove('show');
-      if (popMenu) popMenu.classList.remove('show');
-      popOverlay.style.display = 'none';
-    });
-  }
-  ensurePopOverlay();
-  function closeAllPopups() {
-    const catMenu = $('category-menu');
-    const popMenu = $('menu-pop');
-    if (catMenu) catMenu.classList.remove('show');
-    if (popMenu) popMenu.classList.remove('show');
-    if (popOverlay) popOverlay.style.display = 'none';
-  }
-  function showPopOverlayFor(el) {
-    if (!popOverlay || !el) return;
-    if (window.innerWidth <= 768) popOverlay.style.display = 'block';
-  }
-  document.addEventListener('click', (e) => {
-    const catMenu = $('category-menu');
-    const popMenu = $('menu-pop');
-    if (catMenu && catMenu.classList.contains('show')) {
-      if (!catMenu.contains(e.target) &&
-          !(e.target.closest && e.target.closest('.cat-tag')) &&
-          !(e.target.closest && e.target.closest('.category-chip'))) {
-        catMenu.classList.remove('show');
-        if (popOverlay && !popMenu?.classList.contains('show')) popOverlay.style.display = 'none';
-      }
-    }
-    if (popMenu && popMenu.classList.contains('show')) {
-      if (!popMenu.contains(e.target) &&
-          !(e.target.closest && e.target.closest('.category-chip'))) {
-        popMenu.classList.remove('show');
-        if (popOverlay && !catMenu?.classList.contains('show')) popOverlay.style.display = 'none';
-      }
-    }
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
-
-  // ===== МЕНЕДЖЕР КАТЕГОРИЙ =====
-  function openCategoriesManager() {
-    const pop = $('menu-pop'); if (!pop) return;
-    closeAllPopups();
-    pop.innerHTML = ''; pop.style.transform = '';
-    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
-
-    const head = document.createElement('div');
-    head.className = 'group-head';
-    const title = document.createElement('div');
-    title.className = 'group-title'; title.textContent = 'Категории';
-    head.appendChild(title);
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'pop-close'; closeBtn.textContent = '✕';
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); pop.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-    });
-    head.appendChild(closeBtn); pop.appendChild(head);
-
-    const cats = loadCategories(); const books = loadMeta();
-    if (!cats.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
-      empty.textContent = 'Пока нет категорий.'; pop.appendChild(empty);
-    } else {
-      cats.forEach(c => {
-        const row = document.createElement('div'); row.className = 'mi';
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
-        const nm = document.createElement('span');
-        const count = books.filter(b => (b.categories || []).includes(c.id)).length;
-        nm.textContent = c.name + ' (' + count + ')';
-        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-        const edit = document.createElement('button');
-        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askText('Название категории:', c.name).then(n => {
-            if (n !== null && n.trim()) {
-              const arr = loadCategories(); const cc = arr.find(x => x.id === c.id);
-              if (cc) cc.name = n.trim(); saveCategories(arr);
-              openCategoriesManager(); renderClassicLibrary();
-            }
-          });
-        });
-        const del = document.createElement('button');
-        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askConfirm('Удалить категорию «' + c.name + '»? Книги останутся.', 'Удалить', true).then(ok => {
-            if (!ok) return;
-            saveCategories(loadCategories().filter(x => x.id !== c.id));
-            const arr = loadMeta(); arr.forEach(b => {
-              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
-            });
-            saveMeta(arr);
-            if (activeCategory === c.id) activeCategory = null;
-            openCategoriesManager(); renderClassicLibrary();
-          });
-        });
-        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
-        pop.appendChild(row);
-      });
-    }
-    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
-    const addBtn = document.createElement('div'); addBtn.className = 'mi';
-    addBtn.textContent = '+ Новая категория';
-    addBtn.addEventListener('click', () => {
-      askText('Название новой категории:').then(n => {
-        if (n !== null && n.trim()) {
-          const arr = loadCategories();
-          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-          saveCategories(arr); openCategoriesManager(); renderClassicLibrary();
-        }
-      });
-    });
-    pop.appendChild(addBtn);
-
-    pop.style.left = '50%'; pop.style.top = '50%';
-    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
-    showPopOverlayFor(pop);
-  }
-  function promptAddCategory() {
-    askText('Название новой категории:').then(n => {
-      if (n !== null && n.trim()) {
-        const arr = loadCategories();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        saveCategories(arr);
-        renderClassicLibrary();
-        toast('Категория создана');
-      }
-    });
-  }
-
-  // ===== МЕНЮ КНИГИ =====
-  function showBookMenu(bookId, anchorEl) {
-    const menu = $('category-menu'); if (!menu) return;
-    closeAllPopups();
-    const books = loadMeta(); const b = books.find(x => x.id === bookId);
-    if (!b) return;
-    const currentCats = Array.isArray(b.categories) ? b.categories.slice() : [];
-    const cats = loadCategories();
-    menu.innerHTML = '';
-
-    const head = document.createElement('div'); head.className = 'cm-head';
-    const headTitle = document.createElement('div');
-    headTitle.className = 'cm-head-title'; headTitle.textContent = b.title || 'Книга';
-    head.appendChild(headTitle);
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'cm-close'; closeBtn.textContent = '✕';
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-    });
-    head.appendChild(closeBtn); menu.appendChild(head);
-
-    function mkTitle(text) { const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text; menu.appendChild(t); }
-    function mkSep() { const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s); }
-
-    const renameItem = document.createElement('div');
-    renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
-    renameItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askText('Новое название:', b.title).then(n => {
-        if (n !== null && n.trim()) {
-          const arr = loadMeta(); const bk = arr.find(x => x.id === bookId);
-          if (bk) bk.title = n.trim(); saveMeta(arr);
-          renderClassicLibrary();
-        }
-      });
-    });
-    menu.appendChild(renameItem);
-
-    mkSep();
-    mkTitle('Категории (можно несколько)');
-    if (!cats.length) {
-      const empty = document.createElement('div');
-      empty.className = 'cm-item';
-      empty.style.cssText = 'color:var(--fg-dim);cursor:default;';
-      empty.textContent = 'Нет категорий';
-      menu.appendChild(empty);
-    } else {
-      cats.forEach(c => {
-        const isActive = currentCats.includes(c.id);
-        const item = document.createElement('div');
-        item.className = 'cm-item' + (isActive ? ' active' : '');
-        item.innerHTML = '<span class="cm-check">' + (isActive ? '✓' : '') + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(c.name) + '</span>';
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const arr = loadMeta(); const bk = arr.find(x => x.id === bookId);
-          if (!bk) return;
-          if (!Array.isArray(bk.categories)) bk.categories = [];
-          if (bk.categories.includes(c.id)) bk.categories = bk.categories.filter(id => id !== c.id);
-          else bk.categories.push(c.id);
-          saveMeta(arr);
-          const nowActive = bk.categories.includes(c.id);
-          item.classList.toggle('active', nowActive);
-          item.querySelector('.cm-check').textContent = nowActive ? '✓' : '';
-          renderClassicLibrary();
-        });
-        menu.appendChild(item);
-      });
-    }
-
-    const addCatItem = document.createElement('div');
-    addCatItem.className = 'cm-item'; addCatItem.textContent = '＋ Новая категория…';
-    addCatItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askText('Название новой категории:').then(n => {
-        if (n !== null && n.trim()) {
-          const arr = loadCategories();
-          const id = 'c' + Date.now();
-          arr.push({ id, name: n.trim(), created: Date.now() });
-          saveCategories(arr);
-          const bks = loadMeta(); const bk = bks.find(x => x.id === bookId);
-          if (bk) {
-            if (!Array.isArray(bk.categories)) bk.categories = [];
-            if (!bk.categories.includes(id)) bk.categories.push(id);
-            saveMeta(bks);
-          }
-          renderClassicLibrary();
-        }
-      });
-    });
-    menu.appendChild(addCatItem);
-
-    mkSep();
-    const delItem = document.createElement('div');
-    delItem.className = 'cm-item danger'; delItem.textContent = 'Удалить книгу';
-    delItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
-        if (!ok) return;
-        removeBookData(bookId);
-        saveMeta(loadMeta().filter(x => x.id !== bookId));
-        if (currentBookId === bookId) backClassic();
-        renderClassicLibrary();
-      });
-    });
-    menu.appendChild(delItem);
-
-    const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 20, bottom: 80, top: 60 };
-    menu.style.left = Math.max(8, Math.min(window.innerWidth - 340, rect.left)) + 'px';
-    menu.style.top = (rect.bottom + 6) + 'px';
-    menu.classList.add('show');
-    showPopOverlayFor(menu);
-    setTimeout(() => {
-      const mh = menu.offsetHeight || 280;
-      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
-        menu.style.top = Math.max(8, (rect.top || 60) - mh - 6) + 'px';
-      }
-    }, 0);
-  }
-
-  // ===== БИБЛИОТЕКА =====
-  function renderClassicLibrary() {
-    const libraryList = $('library-list'); if (!libraryList) return;
-    renderCategoriesBar();
-    const all = loadMeta(); const sorted = sortBooks(all);
-    const searchEl = $('library-search');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    const wrap = $('library-search-wrap'); if (wrap) wrap.classList.toggle('has-value', !!query);
-
-    let books = sorted;
-    if (activeCategory === '') books = books.filter(b => !(b.categories || []).length);
-    else if (activeCategory) books = books.filter(b => (b.categories || []).includes(activeCategory));
-    const filtered = query ? books.filter(b => (b.title || '').toLowerCase().includes(query)) : books;
-
-    libraryList.innerHTML = '';
-    const noResults = $('library-no-results');
-    if (!sorted.length) {
-      if (noResults) noResults.classList.remove('show');
-      const empty = document.createElement('div'); empty.id = 'library-empty';
-      empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
-      libraryList.appendChild(empty); return;
-    }
-    if (!filtered.length) { if (noResults) noResults.classList.add('show'); return; }
-    if (noResults) noResults.classList.remove('show');
-
-    const cats = loadCategories();
-    filtered.forEach(b => {
-      const el = document.createElement('div');
-      el.className = 'book-item'; el.dataset.bookId = b.id;
-      const grip = document.createElement('div'); grip.className = 'grip';
-      grip.title = 'Перетащите, чтобы изменить порядок';
-      grip.innerHTML = '<span></span><span></span><span></span>';
-      el.appendChild(grip);
-      const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
-      el.appendChild(title);
-
-      const catWrap = document.createElement('div');
-      catWrap.className = 'book-categories';
-      const bookCats = Array.isArray(b.categories) ? b.categories : [];
-      if (!bookCats.length) {
-        const tag = document.createElement('div');
-        tag.className = 'cat-tag none';
-        tag.textContent = 'Без категории';
-        tag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, tag); });
-        catWrap.appendChild(tag);
-      } else {
-        bookCats.forEach(cid => {
-          const cat = cats.find(c => c.id === cid);
-          if (!cat) return;
-          const tag = document.createElement('div');
-          tag.className = 'cat-tag';
-          tag.innerHTML = escapeHtml(cat.name) + ' <span class="cat-x" title="Убрать">✕</span>';
-          tag.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (e.target.classList.contains('cat-x')) {
-              const arr = loadMeta(); const bk = arr.find(x => x.id === b.id);
-              if (bk) bk.categories = (bk.categories || []).filter(id => id !== cid);
-              saveMeta(arr); renderClassicLibrary();
-            } else showBookMenu(b.id, tag);
-          });
-          catWrap.appendChild(tag);
-        });
-        const addTag = document.createElement('div');
-        addTag.className = 'cat-tag none';
-        addTag.textContent = '＋';
-        addTag.title = 'Добавить категорию';
-        addTag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, addTag); });
-        catWrap.appendChild(addTag);
-      }
-      el.appendChild(catWrap);
-
-      const meta = document.createElement('div'); meta.className = 'meta';
-      let metaText = (b.words || countWords(getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
-      const marksCount = loadMarks(b.id).length;
-      if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
-      if (b.pct > 0) metaText += ' · ' + (b.pct * 100).toFixed(2) + '%';
-      meta.textContent = metaText; el.appendChild(meta);
-      if (b.pct > 0.00005) {
-        const line = document.createElement('div'); line.className = 'progress-line';
-        const span = document.createElement('span');
-        span.style.width = Math.min(100, (b.pct || 0) * 100) + '%';
-        line.appendChild(span); el.appendChild(line);
-      }
-      const rename = document.createElement('button');
-      rename.className = 'rename'; rename.textContent = '✎';
-      rename.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askText('Новое название:', b.title).then(n => {
-          if (n !== null && n.trim()) {
-            const arr = loadMeta(); const bk = arr.find(x => x.id === b.id);
-            if (bk) bk.title = n.trim(); saveMeta(arr); renderClassicLibrary();
-          }
-        });
-      });
-      el.appendChild(rename);
-      const del = document.createElement('button');
-      del.className = 'del'; del.textContent = '✕';
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
-          if (!ok) return;
-          removeBookData(b.id);
-          saveMeta(loadMeta().filter(x => x.id !== b.id));
-          if (currentBookId === b.id) backClassic();
-          renderClassicLibrary();
-        });
-      });
-      el.appendChild(del);
-      el.addEventListener('click', (e) => {
-        if (e.target.closest('.del, .rename, .cat-tag, .grip')) return;
-        openBookClassic(b.id);
-      });
-      el.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, el); });
-      attachBookDragHandlers(el, b.id);
-      libraryList.appendChild(el);
-    });
-  }
-
-  // ===== Перетаскивание книг =====
-  let dragState = null;
-  function clearDragHighlights(container) {
-    if (!container) return;
-    container.querySelectorAll('.drop-before, .drop-after').forEach(el => el.classList.remove('drop-before', 'drop-after'));
-  }
-  function findDropTarget(container, x, y, dragEl) {
-    if (!container) return null;
-    const els = Array.from(container.querySelectorAll('[data-book-id]')).filter(el => el !== dragEl);
-    if (!els.length) return null;
-    let best = null, bestDist = Infinity;
-    for (const el of els) {
-      const r = el.getBoundingClientRect();
-      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return { el, rect: r };
-      const dx = x < r.left ? r.left - x : (x > r.right ? x - r.right : 0);
-      const dy = y < r.top ? r.top - y : (y > r.bottom ? y - r.bottom : 0);
-      const d = dx * dx + dy * dy;
-      if (d < bestDist) { bestDist = d; best = { el, rect: r }; }
-    }
-    if (best && bestDist < 140 * 140) return best;
-    return null;
-  }
-  function commitReorder(dragId, targetId, placeAfter) {
-    const meta = loadMeta(); const list = sortBooks(meta);
-    const dragIdx = list.findIndex(b => b.id === dragId); if (dragIdx < 0) return;
-    const [moved] = list.splice(dragIdx, 1);
-    let targetIdx = list.findIndex(b => b.id === targetId);
-    if (targetIdx < 0) list.splice(dragIdx, 0, moved);
-    else { if (placeAfter) targetIdx += 1; list.splice(targetIdx, 0, moved); }
-    list.forEach((b, i) => { b.order = i; });
-    const map = new Map(list.map(b => [b.id, b]));
-    const updated = meta.map(b => map.get(b.id) || b);
-    saveMeta(updated);
-    renderClassicLibrary();
-  }
-  function attachBookDragHandlers(el, bookId) {
-    const grip = el.querySelector('.grip');
-    if (!grip) return;
-    const container = el.parentElement;
-    grip.addEventListener('pointerdown', (e) => { e.preventDefault(); startBookDrag(e, el, bookId, container); });
-  }
-  function startBookDrag(e, bookEl, bookId, container) {
-    if (dragState) return;
-    dragState = { id: bookId, el: bookEl, startX: e.clientX, startY: e.clientY, pointerId: e.pointerId, active: false };
-    try { bookEl.setPointerCapture && bookEl.setPointerCapture(e.pointerId); } catch (_) {}
-    const onMove = (ev) => {
-      if (!dragState || ev.pointerId !== dragState.pointerId) return;
-      const dx = ev.clientX - dragState.startX;
-      const dy = ev.clientY - dragState.startY;
-      if (!dragState.active) {
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        dragState.active = true; dragState.el.classList.add('dragging');
-        document.body.style.userSelect = 'none';
-      }
-      clearDragHighlights(container);
-      const target = findDropTarget(container, ev.clientX, ev.clientY, dragState.el);
-      if (target) {
-        const midY = target.rect.top + target.rect.height / 2;
-        target.el.classList.add(ev.clientY < midY ? 'drop-before' : 'drop-after');
-      }
-      if (ev.cancelable) ev.preventDefault();
-    };
-    const onUp = (ev) => {
-      if (!dragState || ev.pointerId !== dragState.pointerId) return;
-      const wasActive = dragState.active;
-      const dragEl = dragState.el; const dragId = dragState.id;
-      const target = findDropTarget(container, ev.clientX, ev.clientY, dragEl);
-      let targetId = null, placeAfter = false;
-      if (target) {
-        targetId = target.el.dataset.bookId;
-        const midY = target.rect.top + target.rect.height / 2;
-        placeAfter = ev.clientY >= midY;
-      }
-      dragEl.classList.remove('dragging');
-      clearDragHighlights(container);
-      document.body.style.userSelect = '';
-      try { dragEl.releasePointerCapture && dragEl.releasePointerCapture(ev.pointerId); } catch (_) {}
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onUp);
-      dragState = null;
-      if (wasActive && targetId && targetId !== dragId) commitReorder(dragId, targetId, placeAfter);
-    };
-    window.addEventListener('pointermove', onMove, { passive: false });
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
-  }
-
-  // ===== ПАНЕЛЬ ФИЛЬТРОВ =====
-  function renderCategoriesBar() {
-    const bar = $('categories-bar'); if (!bar) return;
-    const cats = loadCategories(); const books = loadMeta();
-    bar.innerHTML = '';
-    function makeChip(label, count, isActive, onClick, extra) {
-      const el = document.createElement('div');
-      el.className = 'category-chip' + (isActive ? ' active' : '');
-      const nameSpan = document.createElement('span');
-      nameSpan.textContent = label; nameSpan.title = label;
-      el.appendChild(nameSpan);
-      const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = count;
-      el.appendChild(cnt);
-      if (extra) extra(el);
-      el.addEventListener('click', (e) => { if (e.target.closest('.chip-actions')) return; onClick(); });
-      bar.appendChild(el); return el;
-    }
-    makeChip('Все', books.length, activeCategory === null, () => { activeCategory = null; renderClassicLibrary(); });
-    const noneCount = books.filter(b => !(b.categories || []).length).length;
-    if (noneCount > 0) makeChip('Без категории', noneCount, activeCategory === '', () => { activeCategory = ''; renderClassicLibrary(); });
-    cats.forEach(c => {
-      const cnt = books.filter(b => (b.categories || []).includes(c.id)).length;
-      makeChip(c.name, cnt, activeCategory === c.id, () => {
-        activeCategory = (activeCategory === c.id) ? null : c.id;
-        renderClassicLibrary();
-      }, (el) => {
-        const actions = document.createElement('span'); actions.className = 'chip-actions';
-        const edit = document.createElement('button'); edit.className = 'chip-edit'; edit.textContent = '✎';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askText('Название категории:', c.name).then(n => {
-            if (n !== null) {
-              const arr = loadCategories(); const cc = arr.find(x => x.id === c.id);
-              if (cc) { cc.name = n.trim() || c.name; saveCategories(arr); }
-              renderClassicLibrary();
-            }
-          });
-        });
-        actions.appendChild(edit);
-        const del = document.createElement('button'); del.className = 'chip-del'; del.textContent = '✕';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askConfirm('Удалить категорию «' + c.name + '»?', 'Удалить', true).then(ok => {
-            if (!ok) return;
-            saveCategories(loadCategories().filter(x => x.id !== c.id));
-            const arr = loadMeta(); arr.forEach(b => {
-              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
-            });
-            saveMeta(arr); if (activeCategory === c.id) activeCategory = null; renderClassicLibrary();
-          });
-        });
-        actions.appendChild(del);
-        el.appendChild(actions);
-      });
-    });
-    const addChip = makeChip('+ Категория', '', false, promptAddCategory);
-    addChip.classList.add('add-chip');
-  }
-
-  // ===== ОТКРЫТИЕ КНИГИ =====
-  function openBookClassic(id) {
-    const b = loadMeta().find(x => x.id === id);
-    if (!b) return;
-    currentBookId = id; currentMarks = loadMarks(id);
-    $('paste-screen').classList.remove('active');
-    $('reader-shell').classList.add('active');
-    renderBookIntoContent(getBookText(id), $('content'));
-    const pos = { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
-    requestAnimationFrame(() => {
-      restoreReadingPosition(pos);
-      updateAllProgress();
-    });
-  }
-  function backClassic() {
-    currentBookId = null; currentMarks = []; chapters = []; activeChapter = -1;
-    $('paste-screen').classList.add('active');
-    $('reader-shell').classList.remove('active');
-    renderClassicLibrary();
-  }
-
-  // ===== ДОБАВЛЕНИЕ КНИГ =====
-  function addBookRecord(title, text, categoryId) {
-    const meta = loadMeta();
-    let minOrder = 0;
-    meta.forEach(b => { if (typeof b.order === 'number' && b.order < minOrder) minOrder = b.order; });
-    const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
-    const ok = setBookText(id, text.trim());
-    if (!ok) return null;
-    const cats = categoryId ? [categoryId] : [];
-    meta.push({
-      id, title: title || guessTitle(text),
-      words: countWords(text), scroll: 0, chapter: -1, pct: 0,
-      pIndex: 0, offsetInPara: 0,
-      added: Date.now(), order: minOrder - 1,
-      categories: cats
-    });
-    saveMeta(meta);
-    return id;
-  }
-  async function promptAddBook() {
-    const t = await askText('Название книги:', 'Новая книга');
-    if (t === null) return;
-    const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
-    if (text === null || !text.trim()) { toast('Нет текста', true); return; }
-    const cid = (typeof activeCategory === 'string' && activeCategory) ? activeCategory : '';
-    const id = addBookRecord(t.trim() || guessTitle(text), text, cid);
-    if (!id) return;
-    renderClassicLibrary();
-    toast('Книга добавлена');
-  }
-
-  // ===== ФАЙЛЫ =====
+  /* ---------- ЧТЕНИЕ ФАЙЛОВ ---------- */
   function decodeBuffer(buffer) {
     const bytes = new Uint8Array(buffer);
     if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF)
@@ -2819,7 +1301,1608 @@
     }
   }
 
-  // ===== PCT JUMP =====
+  /* ---------- ЭКСПОРТ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ДЛЯ ЧАСТИ 3 ---------- */
+  window.__READER_CORE__ = {
+    $, root, showError, toast, escapeHtml, formatDate, shade, mix, contrastColor, normalizeHex,
+    askText, askLongText, askConfirm, openInlineDialog,
+    DEFAULTS, FONT_STACKS, FONTS, PRESET_GROUPS,
+    loadSettings, saveSettings, getSettings: () => settings, setSettings: (s) => { settings = s; },
+    loadCustomPalettes, saveCustomPalettes,
+    loadMeta, saveMeta, getBookText, setBookText, getTocOverride, setTocOverride,
+    removeBookData, loadCategories, saveCategories, marksKey, loadMarks, saveMarks,
+    sortBooks, guessTitle, countWords, splitIntoParagraphs, isChapterTitle, readFile,
+    addBookRecord,
+    CUSTOM_PALETTES_KEY, META_KEY, TEXT_PREFIX, TOC_OVERRIDE_PREFIX, CATEGORIES_KEY
+  };
+
+  /* ---------- ЗАГЛУШКА addBookRecord (реальная реализация — в части 3) ---------- */
+  function addBookRecord(title, text, categoryId) {
+    const meta = loadMeta();
+    let minOrder = 0;
+    meta.forEach(b => { if (typeof b.order === 'number' && b.order < minOrder) minOrder = b.order; });
+    const id = 'b' + Date.now() + Math.random().toString(36).slice(2, 7);
+    const ok = setBookText(id, text.trim());
+    if (!ok) return null;
+    const cats = categoryId ? [categoryId] : [];
+    meta.push({
+      id, title: title || guessTitle(text),
+      words: countWords(text), scroll: 0, chapter: -1, pct: 0,
+      pIndex: 0, offsetInPara: 0,
+      added: Date.now(), order: minOrder - 1,
+      categories: cats
+    });
+    saveMeta(meta);
+    return id;
+  }
+  window.__READER_CORE__.addBookRecord = addBookRecord;
+
+  // глобальные переменные состояния (используются в части 3)
+  window.__READER_STATE__ = {
+    currentBookId: null,
+    currentMarks: [],
+    chapters: [],
+    activeChapter: -1,
+    currentSearchHits: [],
+    currentSearchIndex: -1,
+    searchDebounceTimer: null,
+    editingMarkId: null,
+    pendingMarkAnchor: null,
+    activeCategory: null,
+    saveScrollTimer: null
+  };
+})();
+</script>
+
+<!-- ============================================================
+     ЧАСТЬ 3. UI-ЛОГИКА (библиотека, читалка, TOC, закладки, поиск, меню)
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+  const C = window.__READER_CORE__;
+  const S = window.__READER_STATE__;
+  const $ = C.$;
+  const root = C.root;
+  const toast = C.toast;
+  const escapeHtml = C.escapeHtml;
+  const formatDate = C.formatDate;
+  const shade = C.shade;
+  const mix = C.mix;
+  const contrastColor = C.contrastColor;
+  const normalizeHex = C.normalizeHex;
+  const askText = C.askText;
+  const askLongText = C.askLongText;
+  const askConfirm = C.askConfirm;
+
+  let settings = C.getSettings();
+
+  function saveSettings() { C.saveSettings(); }
+  function reloadSettings() { settings = C.getSettings(); }
+
+  /* ---------- ЭЛЕМЕНТЫ ---------- */
+  const tocPanel = $('toc-panel');
+  const tocList = $('toc-list');
+  const tocClose = $('toc-close');
+  const tocOverlay = $('toc-overlay');
+  const marksPanel = $('marks-panel');
+  const marksList = $('marks-list');
+  const marksClose = $('marks-close');
+  const marksOverlay = $('marks-overlay');
+  const marksClear = $('marks-clear');
+  const marksSearch = $('marks-search');
+  const searchPanel = $('search-panel');
+  const searchOverlay = $('search-overlay');
+  const searchClose = $('search-close');
+  const bookSearchInput = $('book-search-input');
+  const bookSearchClear = $('book-search-clear');
+  const searchInputWrap = $('search-input-wrap');
+  const searchMeta = $('search-meta');
+  const searchResults = $('search-results');
+  const noteEditor = $('note-editor');
+  const noteTitle = $('note-title');
+  const notePreview = $('note-preview');
+  const noteInput = $('note-input');
+  const noteCancel = $('note-cancel');
+  const noteSave = $('note-save');
+
+  /* ---------- ПРОКРУТКА / ПРОГРЕСС ---------- */
+  function getActiveReaderEl() { return $('reader-screen'); }
+  function getActiveContentEl() { return $('content'); }
+  function getReaderScrollHeight() {
+    const el = getActiveReaderEl(); if (!el) return 0;
+    return Math.max(0, el.scrollHeight - el.clientHeight);
+  }
+  function getCurrentPercent() {
+    const el = getActiveReaderEl(); if (!el) return 0;
+    const max = el.scrollHeight - el.clientHeight;
+    return max > 0 ? (el.scrollTop / max) * 100 : 0;
+  }
+  function captureReadingPosition() {
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return null;
+    const y = el.scrollTop + 40;
+    const paras = content.querySelectorAll('p');
+    let targetIdx = -1, offsetInPara = 0;
+    for (let i = 0; i < paras.length; i++) {
+      const p = paras[i];
+      if (p.offsetTop + p.offsetHeight > y) {
+        targetIdx = i;
+        offsetInPara = Math.max(0, Math.min(p.offsetHeight, y - p.offsetTop));
+        break;
+      }
+    }
+    if (targetIdx < 0 && paras.length) { targetIdx = 0; offsetInPara = 0; }
+    const max = el.scrollHeight - el.clientHeight;
+    return {
+      pIndex: targetIdx, offsetInPara: offsetInPara, scrollTop: el.scrollTop,
+      pct: max > 0 ? el.scrollTop / max : 0, chapter: S.activeChapter
+    };
+  }
+  function restoreReadingPosition(pos) {
+    if (!pos) return;
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return;
+    const paras = content.querySelectorAll('p');
+    if (typeof pos.pIndex === 'number' && paras[pos.pIndex]) {
+      const p = paras[pos.pIndex];
+      const target = Math.max(0, p.offsetTop + (pos.offsetInPara || 0) - 40);
+      el.scrollTop = target;
+    } else if (typeof pos.scrollTop === 'number') {
+      el.scrollTop = pos.scrollTop;
+    } else if (typeof pos.pct === 'number') {
+      const max = el.scrollHeight - el.clientHeight;
+      el.scrollTop = pos.pct * Math.max(0, max);
+    }
+    if (typeof pos.chapter === 'number') S.activeChapter = pos.chapter;
+  }
+
+  /* ---------- РЕНДЕР КНИГИ ---------- */
+  function renderBookIntoContent(text, contentEl) {
+    if (!contentEl) { S.chapters = []; return; }
+    contentEl.innerHTML = ''; S.chapters = [];
+    const paragraphs = C.splitIntoParagraphs(text);
+    let chapterCount = 0;
+    const frag = document.createDocumentFragment();
+    paragraphs.forEach((p, idx) => {
+      const el = document.createElement('p');
+      el.textContent = p; el.dataset.pIndex = idx;
+      if (C.isChapterTitle(p)) {
+        el.classList.add('chapter-title');
+        chapterCount++;
+        S.chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
+      }
+      frag.appendChild(el);
+    });
+    contentEl.appendChild(frag);
+    buildToc();
+  }
+
+  /* ---------- TOC ---------- */
+  function buildToc() {
+    if (!tocList) return;
+    tocList.innerHTML = '';
+    if (!S.chapters.length) {
+      const empty = document.createElement('div'); empty.id = 'toc-empty';
+      empty.textContent = 'Главы не найдены. Нажмите «Разметить вручную» или оформите заголовки как «Глава 1», «Часть I», «ПРОЛОГ» (капсом), «# Заголовок», «***».';
+      tocList.appendChild(empty); return;
+    }
+    S.chapters.forEach((ch, i) => {
+      const el = document.createElement('div'); el.className = 'toc-item';
+      const name = document.createElement('span'); name.className = 'toc-name'; name.textContent = ch.title;
+      const pct = document.createElement('span'); pct.className = 'toc-pct'; pct.textContent = '0.00%';
+      el.appendChild(name); el.appendChild(pct);
+      el.addEventListener('click', () => { goToChapter(i); closeToc(); });
+      tocList.appendChild(el);
+    });
+    requestAnimationFrame(updateTocPercents);
+  }
+  function updateTocPercents() {
+    if (!tocList || !S.chapters.length) return;
+    const items = tocList.querySelectorAll('.toc-item');
+    if (!items.length) return;
+    const max = getReaderScrollHeight();
+    if (max <= 0) { items.forEach(i => { const p = i.querySelector('.toc-pct'); if (p) p.textContent = '0.00%'; }); return; }
+    S.chapters.forEach((ch, i) => {
+      const item = items[i]; if (!item) return;
+      const pctEl = item.querySelector('.toc-pct'); if (!pctEl) return;
+      const p = Math.max(0, Math.min(100, (ch.el.offsetTop / max) * 100));
+      pctEl.textContent = p.toFixed(2) + '%';
+    });
+  }
+  function highlightActiveToc() {
+    if (!tocList) return;
+    const items = tocList.querySelectorAll('.toc-item');
+    items.forEach((el, i) => el.classList.toggle('active', i === S.activeChapter));
+    if (S.activeChapter >= 0 && items[S.activeChapter]) items[S.activeChapter].scrollIntoView({ block: 'nearest' });
+  }
+  function goToChapter(i) {
+    if (i < 0 || i >= S.chapters.length) return;
+    S.activeChapter = i;
+    S.chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    highlightActiveToc();
+  }
+  function openToc() {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    if (!tocPanel) return;
+    updateTocPercents(); tocPanel.classList.add('open'); tocOverlay.classList.add('open');
+    highlightActiveToc();
+  }
+  function closeToc() {
+    if (!tocPanel) return;
+    tocPanel.classList.remove('open'); tocOverlay.classList.remove('open');
+  }
+  if (tocClose) tocClose.addEventListener('click', closeToc);
+  if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
+
+  // Пересканировать TOC вручную
+  const tocRescan = $('toc-rescan');
+  if (tocRescan) tocRescan.addEventListener('click', () => {
+    if (!S.currentBookId) return;
+    const text = C.getBookText(S.currentBookId);
+    const savedPos = captureReadingPosition();
+    renderBookIntoContent(text, $('content'));
+    requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
+    toast('Содержание пересканировано');
+  });
+
+  // Ручная разметка TOC: диалог со списком абзацев
+  const tocManual = $('toc-manual');
+  if (tocManual) tocManual.addEventListener('click', () => {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    openManualTocDialog();
+  });
+
+  function openManualTocDialog() {
+    const content = getActiveContentEl();
+    if (!content) return;
+    const paras = content.querySelectorAll('p');
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:12px;font-family:-apple-system,Segoe UI,Roboto,sans-serif;';
+    const box = document.createElement('div');
+    box.style.cssText = 'width:100%;max-width:560px;max-height:88vh;background:var(--bg-panel);border:1px solid var(--border-strong);border-radius:14px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+    const head = document.createElement('div');
+    head.style.cssText = 'padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;';
+    head.innerHTML = '<h3 style="font-size:15px;font-weight:700;margin:0;">Ручная разметка глав</h3>';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕';
+    closeBtn.style.cssText = 'background:transparent;border:none;color:var(--fg-dim);font-size:20px;cursor:pointer;';
+    closeBtn.addEventListener('click', () => overlay.remove());
+    head.appendChild(closeBtn); box.appendChild(head);
+
+    const hint = document.createElement('div');
+    hint.style.cssText = 'padding:10px 16px;font-size:12px;color:var(--fg-dim);line-height:1.4;border-bottom:1px solid var(--border);';
+    hint.textContent = 'Отметьте абзацы, которые должны стать главами. Отмеченные сохранятся как ручное содержание и будут использоваться вместо автоматического.';
+    box.appendChild(hint);
+
+    const list = document.createElement('div');
+    list.style.cssText = 'flex:1;overflow-y:auto;padding:6px 0;min-height:0;';
+    const saved = C.getTocOverride(S.currentBookId) || [];
+    const savedSet = new Set(saved.map(x => x.pIndex));
+    paras.forEach((p, idx) => {
+      const row = document.createElement('label');
+      row.style.cssText = 'display:flex;gap:8px;padding:8px 16px;font-size:13px;line-height:1.35;cursor:pointer;align-items:flex-start;border-bottom:1px solid var(--border);';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = savedSet.has(idx);
+      cb.style.cssText = 'margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:var(--accent);';
+      const span = document.createElement('span');
+      span.textContent = p.textContent.length > 140 ? p.textContent.slice(0,140) + '…' : p.textContent;
+      span.style.cssText = 'flex:1;min-width:0;word-break:break-word;';
+      row.appendChild(cb); row.appendChild(span);
+      cb.addEventListener('change', () => { row.dataset.checked = cb.checked ? '1' : ''; });
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+
+    const actions = document.createElement('div');
+    actions.style.cssText = 'padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;';
+    const clear = document.createElement('button');
+    clear.textContent = 'Сбросить';
+    clear.style.cssText = 'flex:1;padding:10px;';
+    clear.addEventListener('click', () => {
+      C.setTocOverride(S.currentBookId, []);
+      overlay.remove();
+      const text = C.getBookText(S.currentBookId);
+      const savedPos = captureReadingPosition();
+      renderBookIntoContent(text, $('content'));
+      requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
+      toast('Ручная разметка сброшена');
+    });
+    const save = document.createElement('button');
+    save.textContent = 'Сохранить';
+    save.style.cssText = 'flex:1;padding:10px;background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;';
+    save.addEventListener('click', () => {
+      const chosen = [];
+      list.querySelectorAll('label').forEach((row, idx) => {
+        const cb = row.querySelector('input[type=checkbox]');
+        if (cb && cb.checked) {
+          const p = paras[idx];
+          chosen.push({ pIndex: idx, title: (p.textContent || '').slice(0, 120) });
+        }
+      });
+      C.setTocOverride(S.currentBookId, chosen);
+      overlay.remove();
+      const text = C.getBookText(S.currentBookId);
+      const savedPos = captureReadingPosition();
+      renderBookIntoContent(text, $('content'));
+      requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
+      toast('Сохранено глав: ' + chosen.length);
+    });
+    actions.appendChild(clear); actions.appendChild(save);
+    box.appendChild(actions);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }
+
+  // Применяем ручное оглавление при рендере: переопределяем isChapterTitle для этой книги
+  const origIsChapterTitle = C.isChapterTitle;
+  function isChapterTitleForCurrent(text, pIndex) {
+    if (S.currentBookId) {
+      const override = C.getTocOverride(S.currentBookId);
+      if (override && override.length) {
+        return override.some(x => x.pIndex === pIndex);
+      }
+    }
+    return origIsChapterTitle(text);
+  }
+
+  // Перепишем renderBookIntoContent с учётом override
+  function renderBookIntoContentWithOverride(text, contentEl) {
+    if (!contentEl) { S.chapters = []; return; }
+    contentEl.innerHTML = ''; S.chapters = [];
+    const paragraphs = C.splitIntoParagraphs(text);
+    let chapterCount = 0;
+    const frag = document.createDocumentFragment();
+    paragraphs.forEach((p, idx) => {
+      const el = document.createElement('p');
+      el.textContent = p; el.dataset.pIndex = idx;
+      if (isChapterTitleForCurrent(p, idx)) {
+        el.classList.add('chapter-title');
+        chapterCount++;
+        S.chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
+      }
+      frag.appendChild(el);
+    });
+    contentEl.appendChild(frag);
+    buildToc();
+  }
+  // подменяем функцию
+  renderBookIntoContent = renderBookIntoContentWithOverride;
+
+  /* ---------- ЗАКЛАДКИ ---------- */
+  function getCurrentSnippet() {
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
+    const y = el.scrollTop + 40;
+    const paras = content.querySelectorAll('p');
+    let target = null, targetIndex = -1;
+    for (let i = 0; i < paras.length; i++) {
+      const p = paras[i];
+      if (p.offsetTop + p.offsetHeight > y) { target = p; targetIndex = i; break; }
+    }
+    if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
+    if (!target) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
+    const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
+    const ratio = offsetInPara / Math.max(1, target.offsetHeight);
+    const text = (target.textContent || '').trim();
+    const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
+    let chapterTitle = '';
+    for (let i = 0; i < S.chapters.length; i++) {
+      if (S.chapters[i].el.offsetTop <= y) chapterTitle = S.chapters[i].title; else break;
+    }
+    const max = getReaderScrollHeight();
+    const pct = max > 0 ? el.scrollTop / max : 0;
+    return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio, pos: el.scrollTop, pct };
+  }
+  function addMark() {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    S.pendingMarkAnchor = getCurrentSnippet(); openNoteEditor(null);
+  }
+  function commitPendingMark(note) {
+    if (!S.pendingMarkAnchor) return;
+    const mark = Object.assign({}, S.pendingMarkAnchor, {
+      id: 'm' + Date.now() + Math.random().toString(36).slice(2, 6),
+      note: note || '', date: Date.now()
+    });
+    S.pendingMarkAnchor = null;
+    S.currentMarks.push(mark); C.saveMarks(S.currentBookId, S.currentMarks);
+    renderSideMarks(); renderMarksList();
+    toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
+  }
+  function openNoteEditor(markId) {
+    S.editingMarkId = markId;
+    if (markId) {
+      const m = S.currentMarks.find(x => x.id === markId); if (!m) return;
+      noteTitle.textContent = 'Заметка к закладке';
+      notePreview.textContent = m.text || ''; noteInput.value = m.note || '';
+    } else if (S.pendingMarkAnchor) {
+      noteTitle.textContent = 'Новая закладка — заметка';
+      notePreview.textContent = S.pendingMarkAnchor.text || ''; noteInput.value = '';
+    }
+    noteEditor.classList.add('open');
+    setTimeout(() => noteInput.focus(), 50);
+  }
+  function closeNoteEditor(save) {
+    if (save) {
+      const val = noteInput.value.trim();
+      if (S.editingMarkId) {
+        const m = S.currentMarks.find(x => x.id === S.editingMarkId);
+        if (m) { m.note = val; C.saveMarks(S.currentBookId, S.currentMarks); renderMarksList(); }
+      } else if (S.pendingMarkAnchor) commitPendingMark(val);
+    } else S.pendingMarkAnchor = null;
+    S.editingMarkId = null;
+    noteEditor.classList.remove('open'); noteInput.value = '';
+  }
+  if (noteCancel) noteCancel.addEventListener('click', () => closeNoteEditor(false));
+  if (noteSave) noteSave.addEventListener('click', () => closeNoteEditor(true));
+  if (noteEditor) noteEditor.addEventListener('click', (e) => { if (e.target === noteEditor) closeNoteEditor(false); });
+  if (noteInput) noteInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(false); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); closeNoteEditor(true); }
+  });
+  function removeMark(id) {
+    S.currentMarks = S.currentMarks.filter(m => m.id !== id);
+    C.saveMarks(S.currentBookId, S.currentMarks); renderSideMarks(); renderMarksList();
+  }
+  function clearMarks() {
+    if (!S.currentMarks.length) return;
+    askConfirm('Удалить все закладки этой книги?', 'Удалить', true).then(ok => {
+      if (!ok) return;
+      S.currentMarks = []; C.saveMarks(S.currentBookId, S.currentMarks); renderSideMarks(); renderMarksList();
+    });
+  }
+  function renderMarksList() {
+    if (!marksList) return;
+    const query = (marksSearch && marksSearch.value || '').trim().toLowerCase();
+    marksList.innerHTML = '';
+    if (!S.currentMarks.length) {
+      const empty = document.createElement('div'); empty.id = 'marks-empty';
+      empty.textContent = 'Пока нет закладок. Нажмите 🔖.'; marksList.appendChild(empty); return;
+    }
+    const filtered = query ? S.currentMarks.filter(m =>
+      (m.text || '').toLowerCase().includes(query) ||
+      (m.chapter || '').toLowerCase().includes(query) ||
+      (m.note || '').toLowerCase().includes(query)) : S.currentMarks;
+    if (!filtered.length) {
+      const empty = document.createElement('div'); empty.id = 'marks-empty';
+      empty.textContent = 'Ничего не найдено'; marksList.appendChild(empty); return;
+    }
+    const sorted = filtered.slice().sort((a, b) => {
+      const ai = typeof a.pIndex === 'number' ? a.pIndex : 0;
+      const bi = typeof b.pIndex === 'number' ? b.pIndex : 0;
+      if (ai !== bi) return ai - bi;
+      return (a.offsetInPara || 0) - (b.offsetInPara || 0);
+    });
+    sorted.forEach(m => {
+      const el = document.createElement('div'); el.className = 'mark-item';
+      const title = document.createElement('div'); title.className = 'mark-title';
+      title.textContent = (m.chapter || 'Без главы') + ' · ' + ((m.pct || 0) * 100).toFixed(2) + '%';
+      const text = document.createElement('div'); text.className = 'mark-text';
+      text.textContent = m.text || '(пусто)';
+      el.appendChild(title); el.appendChild(text);
+      if (m.note) {
+        const note = document.createElement('div'); note.className = 'mark-note';
+        note.textContent = m.note;
+        note.addEventListener('click', (e) => { e.stopPropagation(); openNoteEditor(m.id); });
+        el.appendChild(note);
+      }
+      const date = document.createElement('div'); date.className = 'mark-date'; date.textContent = formatDate(m.date);
+      const del = document.createElement('button'); del.className = 'mark-del'; del.textContent = '✕';
+      del.addEventListener('click', (e) => { e.stopPropagation(); removeMark(m.id); });
+      el.appendChild(date); el.appendChild(del);
+      el.addEventListener('click', () => { scrollToAnchor(m); closeMarks(); });
+      marksList.appendChild(el);
+    });
+  }
+  function renderSideMarks() {
+    const sideMarks = $('side-marks'); if (!sideMarks) return;
+    sideMarks.innerHTML = '';
+    const total = getReaderScrollHeight(); if (total <= 0) return;
+    S.currentMarks.forEach(m => {
+      const mark = document.createElement('div'); mark.className = 'side-mark';
+      const pct = Math.max(0, Math.min(1, m.pct || 0));
+      mark.style.top = (pct * 100) + '%';
+      mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
+      sideMarks.appendChild(mark);
+    });
+  }
+  function scrollToAnchor(item) {
+    const el = getActiveReaderEl(); const content = getActiveContentEl();
+    if (!el || !content) return;
+    const paras = content.querySelectorAll('p');
+    let top = 0;
+    if (typeof item.pIndex === 'number' && paras[item.pIndex]) {
+      const p = paras[item.pIndex]; const h = Math.max(1, p.offsetHeight);
+      let offset = item.offsetInPara;
+      if (typeof offset !== 'number' || isNaN(offset)) offset = (item.ratio || 0) * h;
+      offset = Math.min(offset, h); top = p.offsetTop + offset;
+    } else top = item.pos || 0;
+    el.scrollTo({ top, behavior: 'smooth' });
+  }
+  function openMarks() {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    if (!marksPanel) return;
+    renderMarksList(); marksPanel.classList.add('open'); marksOverlay.classList.add('open');
+  }
+  function closeMarks() {
+    if (!marksPanel) return;
+    marksPanel.classList.remove('open'); marksOverlay.classList.remove('open');
+  }
+  if (marksClose) marksClose.addEventListener('click', closeMarks);
+  if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
+  if (marksClear) marksClear.addEventListener('click', clearMarks);
+  if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
+
+  /* ---------- ПОИСК ---------- */
+  function normalizeSearch(str) { return String(str).toLowerCase().replace(/ё/g, 'е'); }
+  function findInBook(query) {
+    const result = []; if (!query) return result;
+    const q = normalizeSearch(query.trim()); if (!q) return result;
+    const content = getActiveContentEl();
+    if (!content) return result;
+    const paras = content.querySelectorAll('p');
+    const maxScroll = getReaderScrollHeight();
+    const chapterRanges = S.chapters.map(ch => ({ title: ch.title, startIndex: ch.pIndex }));
+    function chapterForPara(pIndex) {
+      let title = '';
+      for (let i = 0; i < chapterRanges.length; i++) {
+        if (chapterRanges[i].startIndex <= pIndex) title = chapterRanges[i].title; else break;
+      }
+      return title;
+    }
+    for (let i = 0; i < paras.length; i++) {
+      const p = paras[i]; const rawText = p.textContent || '';
+      if (!rawText) continue;
+      const hay = normalizeSearch(rawText); let from = 0;
+      while (from <= hay.length) {
+        const pos = hay.indexOf(q, from); if (pos === -1) break;
+        const endPos = pos + q.length;
+        const cStart = Math.max(0, pos - 60); const cEnd = Math.min(rawText.length, endPos + 60);
+        const before = rawText.slice(cStart, pos); const hitText = rawText.slice(pos, endPos);
+        const after = rawText.slice(endPos, cEnd);
+        const prefix = cStart > 0 ? '…' : ''; const suffix = cEnd < rawText.length ? '…' : '';
+        const snippet = prefix + before + '\u0001' + hitText + '\u0002' + after + suffix;
+        let pct = 0;
+        if (maxScroll > 0) {
+          const h = Math.max(1, p.offsetHeight);
+          const totalChars = Math.max(1, rawText.length);
+          const fracInside = (pos + hitText.length / 2) / totalChars;
+          const offset = Math.min(h, fracInside * h);
+          pct = (p.offsetTop + offset) / maxScroll;
+          pct = Math.max(0, Math.min(1, pct));
+        }
+        result.push({ pIndex: i, charStart: pos, charEnd: endPos, snippet, pct, chapter: chapterForPara(i) });
+        from = pos + Math.max(1, q.length);
+        if (result.length >= 300) return result;
+      }
+    }
+    return result;
+  }
+  function renderSearchResults() {
+    if (!searchResults) return;
+    searchResults.innerHTML = '';
+    if (!bookSearchInput || !bookSearchInput.value.trim()) {
+      searchInputWrap.classList.remove('has-value'); searchMeta.textContent = '';
+      const empty = document.createElement('div'); empty.id = 'search-empty';
+      empty.textContent = 'Введите слово или фразу.'; searchResults.appendChild(empty); return;
+    }
+    searchInputWrap.classList.add('has-value');
+    if (!S.currentSearchHits.length) {
+      searchMeta.innerHTML = 'Ничего не найдено';
+      const empty = document.createElement('div'); empty.id = 'search-empty';
+      empty.textContent = 'По запросу «' + bookSearchInput.value.trim() + '» ничего нет.';
+      searchResults.appendChild(empty); return;
+    }
+    const activeNum = S.currentSearchIndex >= 0 ? S.currentSearchIndex + 1 : 0;
+    searchMeta.innerHTML = 'Найдено: <strong>' + S.currentSearchHits.length + '</strong>' +
+      (activeNum ? ' · активный: <strong>' + activeNum + '</strong>' : '');
+    S.currentSearchHits.forEach((h, idx) => {
+      const el = document.createElement('div');
+      el.className = 'search-item' + (idx === S.currentSearchIndex ? ' active' : '');
+      const head = document.createElement('div'); head.className = 's-head';
+      const chap = document.createElement('div'); chap.className = 's-chapter';
+      chap.textContent = h.chapter || 'Без главы';
+      const pct = document.createElement('span'); pct.className = 's-pct';
+      pct.textContent = (h.pct * 100).toFixed(2) + '%';
+      head.appendChild(chap); head.appendChild(pct);
+      const text = document.createElement('div'); text.className = 's-text';
+      const parts = h.snippet.split(/(\u0001|\u0002)/); let inside = false;
+      parts.forEach(p => {
+        if (p === '\u0001') { inside = true; return; }
+        if (p === '\u0002') { inside = false; return; }
+        if (!p) return;
+        if (inside) { const m = document.createElement('mark'); m.textContent = p; text.appendChild(m); }
+        else text.appendChild(document.createTextNode(p));
+      });
+      el.appendChild(head); el.appendChild(text);
+      el.addEventListener('click', () => { scrollToSearchHit(idx); closeSearch(); });
+      searchResults.appendChild(el);
+    });
+    if (S.currentSearchIndex >= 0) {
+      const activeEl = searchResults.children[S.currentSearchIndex];
+      if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+    }
+  }
+  function scrollToSearchHit(index) {
+    if (index < 0 || index >= S.currentSearchHits.length) return;
+    const hit = S.currentSearchHits[index];
+    const content = getActiveContentEl(); if (!content) return;
+    const paras = content.querySelectorAll('p'); const el = paras[hit.pIndex]; if (!el) return;
+    S.currentSearchIndex = index;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('find-hit'); setTimeout(() => el.classList.remove('find-hit'), 1200);
+    renderSearchResults();
+  }
+  function openSearch() {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    searchPanel.classList.add('open'); searchOverlay.classList.add('open');
+    renderSearchResults();
+    setTimeout(() => { if (bookSearchInput) { bookSearchInput.focus(); bookSearchInput.select(); } }, 60);
+  }
+  function closeSearch() {
+    if (!searchPanel) return;
+    searchPanel.classList.remove('open'); searchOverlay.classList.remove('open');
+  }
+  if (searchClose) searchClose.addEventListener('click', closeSearch);
+  if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
+  if (bookSearchClear) bookSearchClear.addEventListener('click', () => {
+    bookSearchInput.value = ''; S.currentSearchHits = []; S.currentSearchIndex = -1;
+    renderSearchResults(); bookSearchInput.focus();
+  });
+  if (bookSearchInput) {
+    bookSearchInput.addEventListener('input', () => {
+      searchInputWrap.classList.toggle('has-value', !!bookSearchInput.value.trim());
+      if (S.searchDebounceTimer) clearTimeout(S.searchDebounceTimer);
+      S.searchDebounceTimer = setTimeout(() => {
+        S.currentSearchHits = findInBook(bookSearchInput.value); S.currentSearchIndex = -1;
+        renderSearchResults();
+      }, 220);
+    });
+    bookSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); if (!S.currentSearchHits.length) return;
+        const next = S.currentSearchIndex < 0 ? 0 : (S.currentSearchIndex + 1) % S.currentSearchHits.length;
+        scrollToSearchHit(next);
+      }
+      if (e.key === 'Escape') { e.preventDefault(); closeSearch(); }
+    });
+  }
+
+  /* ---------- ПРОГРЕСС / СКРОЛЛ ---------- */
+  function scheduleSaveProgress() {
+    if (!S.currentBookId) return;
+    if (S.saveScrollTimer) clearTimeout(S.saveScrollTimer);
+    S.saveScrollTimer = setTimeout(() => {
+      const list = C.loadMeta();
+      const idx = list.findIndex(x => x.id === S.currentBookId);
+      if (idx < 0) return;
+      const pos = captureReadingPosition();
+      if (!pos) return;
+      list[idx].scroll = pos.scrollTop;
+      list[idx].pct = pos.pct;
+      list[idx].chapter = pos.chapter;
+      list[idx].pIndex = pos.pIndex;
+      list[idx].offsetInPara = pos.offsetInPara;
+      C.saveMeta(list);
+    }, 400);
+  }
+  function updateSideThumb(pct) {
+    const thumb = $('side-thumb'); const sp = $('side-progress');
+    if (!thumb || !sp) return;
+    if (window.getComputedStyle(sp).display === 'none') return;
+    const trackH = sp.clientHeight;
+    const thumbH = thumb.offsetHeight || 40;
+    const usable = Math.max(1, trackH - thumbH);
+    const y = (Math.max(0, Math.min(100, pct)) / 100) * usable;
+    thumb.style.transform = 'translateY(' + y + 'px)';
+  }
+  function updateAllProgress() {
+    const pct = getCurrentPercent();
+    const pb = $('progress-bar'); if (pb) pb.style.width = pct + '%';
+    const ind = $('pct-indicator'); if (ind) ind.textContent = pct.toFixed(2) + '%';
+    const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
+    const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
+    updateSideThumb(pct);
+    const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
+    if (S.chapters.length && el) {
+      let idx = -1;
+      for (let i = 0; i < S.chapters.length; i++) {
+        if (S.chapters[i].el.offsetTop - 80 <= st) idx = i; else break;
+      }
+      if (idx !== S.activeChapter) { S.activeChapter = idx; highlightActiveToc(); }
+    }
+    scheduleSaveProgress();
+    updateTocPercents(); renderSideMarks();
+  }
+  function showScroller() {
+    const sp = $('side-progress'); if (!sp) return;
+    if (window.getComputedStyle(sp).display === 'none') return;
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+    sp.classList.add('visible');
+    clearTimeout(sp._t);
+    sp._t = setTimeout(() => { if (!sp.classList.contains('dragging')) sp.classList.remove('visible'); }, 500);
+  }
+
+  /* ---------- МОБИЛЬНАЯ ПАНЕЛЬ ---------- */
+  const mobileSheet = $('mobile-sheet');
+  const sheetOverlay = $('sheet-overlay');
+  const sheetHandle = $('sheet-handle');
+  function closeSheet() { mobileSheet?.classList.remove('open'); sheetOverlay?.classList.remove('open'); }
+  if (sheetOverlay) sheetOverlay.addEventListener('click', closeSheet);
+  let sheetTouchStartY = null;
+  if (sheetHandle) {
+    sheetHandle.addEventListener('touchstart', (e) => { sheetTouchStartY = e.touches[0].clientY; }, { passive: true });
+    sheetHandle.addEventListener('touchmove', (e) => {
+      if (sheetTouchStartY === null) return;
+      if (e.touches[0].clientY - sheetTouchStartY > 60) { closeSheet(); sheetTouchStartY = null; }
+    }, { passive: true });
+    sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
+  }
+  function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
+  function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
+  function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
+
+  function applySettings() {
+    const { bg, fg, accent } = settings;
+    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
+    root.style.setProperty('--accent-contrast', contrastColor(accent));
+    root.style.setProperty('--bg-header', shade(bg, 6));
+    root.style.setProperty('--bg-panel', shade(bg, 10));
+    root.style.setProperty('--bg-input', shade(bg, 6));
+    root.style.setProperty('--border', shade(bg, 14));
+    root.style.setProperty('--border-strong', shade(bg, 22));
+    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
+    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+    root.style.setProperty('--col-width', settings.colWidth + 'px');
+    root.style.setProperty('--line-height', settings.lineHeight);
+    root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
+    root.style.setProperty('--font-stack', C.FONT_STACKS[settings.fontFamily] || C.FONT_STACKS.serif);
+    root.style.setProperty('--font-size', settings.fontSize + 'px');
+    const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
+    const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth;
+    const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
+    if (S.currentBookId) {
+      const text = C.getBookText(S.currentBookId);
+      const target = $('content');
+      if (target) {
+        const savedPos = captureReadingPosition();
+        renderBookIntoContent(text, target);
+        requestAnimationFrame(() => {
+          if (savedPos) restoreReadingPosition(savedPos);
+          updateAllProgress();
+        });
+      }
+    }
+    renderClassicLibrary();
+  }
+
+  /* ---------- МОДАЛКА НАСТРОЕК ---------- */
+  const settingsModal = $('settings-modal');
+  const settingsModalTitle = $('settings-modal-title');
+  const settingsModalBody = $('settings-modal-body');
+  const settingsModalClose = $('settings-modal-close');
+  function closeSettingsModal() { settingsModal?.classList.remove('open'); }
+  if (settingsModalClose) settingsModalClose.addEventListener('click', closeSettingsModal);
+  if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
+  function addGroup(title) {
+    if (!title) return;
+    const t = document.createElement('div');
+    t.className = 'cl-settings-group-title'; t.textContent = title;
+    settingsModalBody.appendChild(t);
+  }
+
+  function makeColorEditor(label, key) {
+    const wrap = document.createElement('div');
+    wrap.className = 'color-editor';
+    const initial = normalizeHex(settings[key]) || '#000000';
+    const head = document.createElement('div');
+    head.className = 'ce-head';
+    const lb = document.createElement('label'); lb.textContent = label;
+    const swatch = document.createElement('div');
+    swatch.className = 'ce-swatch';
+    swatch.style.background = initial;
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color'; colorInput.value = initial;
+    swatch.appendChild(colorInput);
+    head.appendChild(lb); head.appendChild(swatch);
+    wrap.appendChild(head);
+    const hexRow = document.createElement('div');
+    hexRow.className = 'ce-hex';
+    const hexInp = document.createElement('input');
+    hexInp.type = 'text';
+    hexInp.value = initial;
+    hexInp.placeholder = '#rrggbb';
+    hexInp.autocomplete = 'off';
+    hexInp.spellcheck = false;
+    hexInp.inputMode = 'text';
+    hexRow.appendChild(hexInp);
+    wrap.appendChild(hexRow);
+
+    function syncVisual(hex) { swatch.style.background = hex; colorInput.value = hex; }
+    function applyNow(hex) {
+      const v = normalizeHex(hex);
+      if (!v) return false;
+      settings[key] = v; saveSettings(); paintCssFromSettings(); syncVisual(v);
+      return true;
+    }
+    colorInput.addEventListener('input', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
+    colorInput.addEventListener('change', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
+    hexInp.addEventListener('input', () => {
+      const raw = hexInp.value.trim().toLowerCase();
+      const v = normalizeHex(raw);
+      if (v) {
+        hexInp.classList.remove('invalid');
+        settings[key] = v; saveSettings(); paintCssFromSettings();
+        swatch.style.background = v; colorInput.value = v;
+      } else hexInp.classList.add('invalid');
+    });
+    hexInp.addEventListener('blur', () => {
+      const v = normalizeHex(hexInp.value);
+      if (v) {
+        settings[key] = v; saveSettings(); paintCssFromSettings();
+        hexInp.value = v; hexInp.classList.remove('invalid'); syncVisual(v);
+      } else {
+        hexInp.value = normalizeHex(settings[key]) || '#000000';
+        hexInp.classList.remove('invalid');
+      }
+    });
+    hexInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); } });
+    wrap.dataset.key = key;
+    return wrap;
+  }
+  function paintCssFromSettings() {
+    const bg = normalizeHex(settings.bg) || '#000000';
+    const fg = normalizeHex(settings.fg) || '#ffffff';
+    const accent = normalizeHex(settings.accent) || '#888888';
+    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
+    root.style.setProperty('--accent-contrast', contrastColor(accent));
+    root.style.setProperty('--bg-header', shade(bg, 6));
+    root.style.setProperty('--bg-panel', shade(bg, 10));
+    root.style.setProperty('--bg-input', shade(bg, 6));
+    root.style.setProperty('--border', shade(bg, 14));
+    root.style.setProperty('--border-strong', shade(bg, 22));
+    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
+    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+  }
+
+  function renderPaletteRow(p, groupKey) {
+    const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
+    const row = document.createElement('div');
+    row.className = 'cl-settings-row' + (isActive ? ' active' : '');
+    const sw = document.createElement('div');
+    sw.className = 'sw' + (isActive ? ' active' : '');
+    sw.style.background = p.bg; sw.style.color = p.fg;
+    sw.style.borderColor = isActive ? 'var(--accent)' : shade(p.bg,20);
+    sw.textContent = 'Aa';
+    const info = document.createElement('div'); info.className = 'info';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = p.name;
+    const sub = document.createElement('div'); sub.className = 'sub';
+    sub.textContent = p.bg + ' · ' + p.fg + ' · ' + p.accent;
+    info.appendChild(nm); info.appendChild(sub);
+    row.appendChild(sw); row.appendChild(info);
+    if (groupKey === 'custom') {
+      const acts = document.createElement('div'); acts.className = 'row-actions';
+      const pin = document.createElement('button');
+      pin.className = 'pin-btn' + (p.pinned ? ' pinned' : '');
+      pin.textContent = p.pinned ? '📌' : '📍';
+      pin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const arr = C.loadCustomPalettes();
+        const it = arr.find(x => x.id === p.id); if (it) it.pinned = !it.pinned;
+        C.saveCustomPalettes(arr); openPaletteOnly();
+      });
+      const edit = document.createElement('button');
+      edit.textContent = '✎';
+      edit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askText('Название цвета:', p.name).then(n => {
+          if (n !== null && n.trim()) {
+            const arr = C.loadCustomPalettes();
+            const it = arr.find(x => x.id === p.id); if (it) it.name = n.trim();
+            C.saveCustomPalettes(arr); openPaletteOnly();
+          }
+        });
+      });
+      const del = document.createElement('button');
+      del.className = 'del-btn'; del.textContent = '✕';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askConfirm('Удалить цвет «' + p.name + '»?', 'Удалить', true).then(ok => {
+          if (!ok) return;
+          C.saveCustomPalettes(C.loadCustomPalettes().filter(x => x.id !== p.id));
+          openPaletteOnly();
+        });
+      });
+      acts.appendChild(pin); acts.appendChild(edit); acts.appendChild(del);
+      row.appendChild(acts);
+    } else if (isActive) {
+      const chk = document.createElement('div'); chk.className = 'check'; chk.textContent = '✓';
+      row.appendChild(chk);
+    }
+    row.addEventListener('click', () => {
+      settings.bg = p.bg; settings.fg = p.fg; settings.accent = p.accent;
+      saveSettings(); applySettings(); openPaletteOnly();
+    });
+    return row;
+  }
+
+  function openPaletteOnly() {
+    if (!settingsModal) return;
+    settingsModal.classList.add('open');
+    settingsModalTitle.textContent = 'Цвет';
+    settingsModalBody.innerHTML = '';
+    const custom = C.loadCustomPalettes();
+    const pinned = custom.filter(p => p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
+    const unpinned = custom.filter(p => !p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
+    if (pinned.length) { addGroup('📌 Закреплённые'); pinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom'))); }
+    if (unpinned.length) { addGroup('Мои цвета'); unpinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom'))); }
+    addGroup('Свои цвета');
+    const acts = document.createElement('div'); acts.className = 'palette-actions';
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '💾 Сохранить текущие цвета';
+    saveBtn.style.background = 'var(--bg-panel)';
+    saveBtn.addEventListener('click', () => {
+      askText('Название схемы:', 'Моя схема ' + (C.loadCustomPalettes().length + 1)).then(n => {
+        if (n === null) return;
+        const name = (n || '').trim() || ('Схема ' + (C.loadCustomPalettes().length + 1));
+        const arr = C.loadCustomPalettes();
+        arr.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), name, bg: settings.bg, fg: settings.fg, accent: settings.accent, pinned: false, created: Date.now() });
+        C.saveCustomPalettes(arr); openPaletteOnly(); toast('Схема сохранена');
+      });
+    });
+    acts.appendChild(saveBtn); settingsModalBody.appendChild(acts);
+    addGroup('Свои цвета (пипетка)');
+    settingsModalBody.appendChild(makeColorEditor('Фон', 'bg'));
+    settingsModalBody.appendChild(makeColorEditor('Текст', 'fg'));
+    settingsModalBody.appendChild(makeColorEditor('Акцент', 'accent'));
+    C.PRESET_GROUPS.forEach(group => {
+      addGroup(group.title);
+      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr, 'preset')));
+    });
+  }
+
+  function openFontsOnly() {
+    if (!settingsModal) return;
+    settingsModal.classList.add('open');
+    settingsModalTitle.textContent = 'Шрифт';
+    settingsModalBody.innerHTML = '';
+    addGroup('Шрифт текста');
+    C.FONTS.forEach(f => {
+      const isActive = settings.fontFamily === f.id;
+      const row = document.createElement('div');
+      row.className = 'cl-font-preview' + (isActive ? ' active' : '');
+      row.innerHTML = '<div class="aa" style="font-family:' + f.sample + ';">Aa</div>' +
+        '<div class="info"><div class="nm">' + escapeHtml(f.name) + '</div><div class="sub">' + (isActive ? 'Выбран' : 'Применить') + '</div></div>' +
+        (isActive ? '<div class="check">✓</div>' : '');
+      row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
+      settingsModalBody.appendChild(row);
+    });
+    addGroup('Параметры текста');
+    const rows = document.createElement('div');
+    rows.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
+    const mkRow = (label, ctrl) => {
+      const r = document.createElement('div');
+      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
+      const lb = document.createElement('div');
+      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);'; lb.textContent = label;
+      r.appendChild(lb); r.appendChild(ctrl); return r;
+    };
+    const mkStepper = (val, onChange) => {
+      const w = document.createElement('div'); w.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      const dec = document.createElement('button'); dec.textContent = '−';
+      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      dec.addEventListener('click', () => onChange(-1));
+      const valEl = document.createElement('div');
+      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
+      valEl.textContent = val;
+      const inc = document.createElement('button'); inc.textContent = '+';
+      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      inc.addEventListener('click', () => onChange(1));
+      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
+      return { w, valEl };
+    };
+    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
+    rows.appendChild(mkRow('Размер', fs.w));
+    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
+    rows.appendChild(mkRow('Ширина', wS.w));
+    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
+    rows.appendChild(mkRow('Интервал', lhS.w));
+    settingsModalBody.appendChild(rows);
+  }
+
+  function openUnifiedSettings() {
+    if (!settingsModal) return;
+    settingsModal.classList.add('open');
+    settingsModalTitle.textContent = '⚙';
+    settingsModalBody.innerHTML = '';
+    addGroup('');
+    const rowsRead = document.createElement('div');
+    rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
+    const mkRow = (label, ctrl) => {
+      const r = document.createElement('div');
+      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
+      const lb = document.createElement('div');
+      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);'; lb.textContent = label;
+      r.appendChild(lb); r.appendChild(ctrl); return r;
+    };
+    const mkStepper = (val, onChange) => {
+      const w = document.createElement('div'); w.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      const dec = document.createElement('button'); dec.textContent = '−';
+      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      dec.addEventListener('click', () => onChange(-1));
+      const valEl = document.createElement('div');
+      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
+      valEl.textContent = val;
+      const inc = document.createElement('button'); inc.textContent = '+';
+      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
+      inc.addEventListener('click', () => onChange(1));
+      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
+      return { w, valEl };
+    };
+    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
+    rowsRead.appendChild(mkRow('Размер текста', fs.w));
+    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
+    rowsRead.appendChild(mkRow('Ширина колонки', wS.w));
+    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
+    rowsRead.appendChild(mkRow('Интервал', lhS.w));
+    settingsModalBody.appendChild(rowsRead);
+    addGroup('');
+    const wrapBtns = document.createElement('div');
+    wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
+    const bFont = document.createElement('button');
+    bFont.textContent = 'Шрифт'; bFont.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bFont.addEventListener('click', () => { closeSettingsModal(); setTimeout(openFontsOnly, 120); });
+    wrapBtns.appendChild(bFont);
+    const bPal = document.createElement('button');
+    bPal.textContent = 'Цвет'; bPal.style.cssText = 'flex:1;min-width:120px;padding:12px;min-height:var(--tap);border-radius:10px;';
+    bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
+    wrapBtns.appendChild(bPal);
+    settingsModalBody.appendChild(wrapBtns);
+    addGroup('');
+    const libWrap = document.createElement('div');
+    libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
+    const mkBtn = (label, fn) => {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'padding:12px 14px;border-radius:10px;font-size:14px;text-align:left;min-height:var(--tap);background:var(--bg-panel);border:1px solid var(--border-strong);color:var(--fg);cursor:pointer;';
+      b.addEventListener('click', fn); libWrap.appendChild(b);
+    };
+    mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
+    mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
+    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
+    mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
+    settingsModalBody.appendChild(libWrap);
+  }
+
+  /* ---------- ПОПАПЫ ---------- */
+  const popOverlay = $('pop-overlay');
+  function ensurePopOverlay() {
+    if (!popOverlay) return;
+    popOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:345;display:none;';
+    popOverlay.addEventListener('click', () => {
+      const catMenu = $('category-menu');
+      const popMenu = $('menu-pop');
+      if (catMenu) catMenu.classList.remove('show');
+      if (popMenu) popMenu.classList.remove('show');
+      popOverlay.style.display = 'none';
+    });
+  }
+  ensurePopOverlay();
+  function closeAllPopups() {
+    const catMenu = $('category-menu');
+    const popMenu = $('menu-pop');
+    if (catMenu) catMenu.classList.remove('show');
+    if (popMenu) popMenu.classList.remove('show');
+    if (popOverlay) popOverlay.style.display = 'none';
+  }
+  function showPopOverlayFor(el) {
+    if (!popOverlay || !el) return;
+    if (window.innerWidth <= 768) popOverlay.style.display = 'block';
+  }
+  document.addEventListener('click', (e) => {
+    const catMenu = $('category-menu');
+    const popMenu = $('menu-pop');
+    if (catMenu && catMenu.classList.contains('show')) {
+      if (!catMenu.contains(e.target) &&
+          !(e.target.closest && e.target.closest('.cat-tag')) &&
+          !(e.target.closest && e.target.closest('.category-chip'))) {
+        catMenu.classList.remove('show');
+        if (popOverlay && !popMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      }
+    }
+    if (popMenu && popMenu.classList.contains('show')) {
+      if (!popMenu.contains(e.target) &&
+          !(e.target.closest && e.target.closest('.category-chip'))) {
+        popMenu.classList.remove('show');
+        if (popOverlay && !catMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      }
+    }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
+
+  /* ---------- КАТЕГОРИИ ---------- */
+  function openCategoriesManager() {
+    const pop = $('menu-pop'); if (!pop) return;
+    closeAllPopups();
+    pop.innerHTML = ''; pop.style.transform = '';
+    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
+    const head = document.createElement('div'); head.className = 'group-head';
+    const title = document.createElement('div');
+    title.className = 'group-title'; title.textContent = 'Категории';
+    head.appendChild(title);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'pop-close'; closeBtn.textContent = '✕';
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none'; });
+    head.appendChild(closeBtn); pop.appendChild(head);
+    const cats = C.loadCategories(); const books = C.loadMeta();
+    if (!cats.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
+      empty.textContent = 'Пока нет категорий.'; pop.appendChild(empty);
+    } else {
+      cats.forEach(c => {
+        const row = document.createElement('div'); row.className = 'mi';
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
+        const nm = document.createElement('span');
+        const count = books.filter(b => (b.categories || []).includes(c.id)).length;
+        nm.textContent = c.name + ' (' + count + ')';
+        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        const edit = document.createElement('button');
+        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
+        edit.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askText('Название категории:', c.name).then(n => {
+            if (n !== null && n.trim()) {
+              const arr = C.loadCategories(); const cc = arr.find(x => x.id === c.id);
+              if (cc) cc.name = n.trim(); C.saveCategories(arr);
+              openCategoriesManager(); renderClassicLibrary();
+            }
+          });
+        });
+        const del = document.createElement('button');
+        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askConfirm('Удалить категорию «' + c.name + '»? Книги останутся.', 'Удалить', true).then(ok => {
+            if (!ok) return;
+            C.saveCategories(C.loadCategories().filter(x => x.id !== c.id));
+            const arr = C.loadMeta(); arr.forEach(b => {
+              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
+            });
+            C.saveMeta(arr);
+            if (S.activeCategory === c.id) S.activeCategory = null;
+            openCategoriesManager(); renderClassicLibrary();
+          });
+        });
+        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
+        pop.appendChild(row);
+      });
+    }
+    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
+    const addBtn = document.createElement('div'); addBtn.className = 'mi';
+    addBtn.textContent = '+ Новая категория';
+    addBtn.addEventListener('click', () => {
+      askText('Название новой категории:').then(n => {
+        if (n !== null && n.trim()) {
+          const arr = C.loadCategories();
+          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+          C.saveCategories(arr); openCategoriesManager(); renderClassicLibrary();
+        }
+      });
+    });
+    pop.appendChild(addBtn);
+    pop.style.left = '50%'; pop.style.top = '50%';
+    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
+    showPopOverlayFor(pop);
+  }
+  function promptAddCategory() {
+    askText('Название новой категории:').then(n => {
+      if (n !== null && n.trim()) {
+        const arr = C.loadCategories();
+        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
+        C.saveCategories(arr); renderClassicLibrary(); toast('Категория создана');
+      }
+    });
+  }
+
+  /* ---------- МЕНЮ КНИГИ ---------- */
+  function showBookMenu(bookId, anchorEl) {
+    const menu = $('category-menu'); if (!menu) return;
+    closeAllPopups();
+    const books = C.loadMeta(); const b = books.find(x => x.id === bookId);
+    if (!b) return;
+    const currentCats = Array.isArray(b.categories) ? b.categories.slice() : [];
+    const cats = C.loadCategories();
+    menu.innerHTML = '';
+    const head = document.createElement('div'); head.className = 'cm-head';
+    const headTitle = document.createElement('div');
+    headTitle.className = 'cm-head-title'; headTitle.textContent = b.title || 'Книга';
+    head.appendChild(headTitle);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'cm-close'; closeBtn.textContent = '✕';
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none'; });
+    head.appendChild(closeBtn); menu.appendChild(head);
+    function mkTitle(text) { const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text; menu.appendChild(t); }
+    function mkSep() { const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s); }
+    const renameItem = document.createElement('div');
+    renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
+    renameItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+      askText('Новое название:', b.title).then(n => {
+        if (n !== null && n.trim()) {
+          const arr = C.loadMeta(); const bk = arr.find(x => x.id === bookId);
+          if (bk) bk.title = n.trim(); C.saveMeta(arr);
+          renderClassicLibrary();
+        }
+      });
+    });
+    menu.appendChild(renameItem);
+    mkSep(); mkTitle('Категории (можно несколько)');
+    if (!cats.length) {
+      const empty = document.createElement('div');
+      empty.className = 'cm-item'; empty.style.cssText = 'color:var(--fg-dim);cursor:default;';
+      empty.textContent = 'Нет категорий'; menu.appendChild(empty);
+    } else {
+      cats.forEach(c => {
+        const isActive = currentCats.includes(c.id);
+        const item = document.createElement('div');
+        item.className = 'cm-item' + (isActive ? ' active' : '');
+        item.innerHTML = '<span class="cm-check">' + (isActive ? '✓' : '') + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(c.name) + '</span>';
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const arr = C.loadMeta(); const bk = arr.find(x => x.id === bookId);
+          if (!bk) return;
+          if (!Array.isArray(bk.categories)) bk.categories = [];
+          if (bk.categories.includes(c.id)) bk.categories = bk.categories.filter(id => id !== c.id);
+          else bk.categories.push(c.id);
+          C.saveMeta(arr);
+          const nowActive = bk.categories.includes(c.id);
+          item.classList.toggle('active', nowActive);
+          item.querySelector('.cm-check').textContent = nowActive ? '✓' : '';
+          renderClassicLibrary();
+        });
+        menu.appendChild(item);
+      });
+    }
+    const addCatItem = document.createElement('div');
+    addCatItem.className = 'cm-item'; addCatItem.textContent = '＋ Новая категория…';
+    addCatItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+      askText('Название новой категории:').then(n => {
+        if (n !== null && n.trim()) {
+          const arr = C.loadCategories();
+          const id = 'c' + Date.now();
+          arr.push({ id, name: n.trim(), created: Date.now() });
+          C.saveCategories(arr);
+          const bks = C.loadMeta(); const bk = bks.find(x => x.id === bookId);
+          if (bk) {
+            if (!Array.isArray(bk.categories)) bk.categories = [];
+            if (!bk.categories.includes(id)) bk.categories.push(id);
+            C.saveMeta(bks);
+          }
+          renderClassicLibrary();
+        }
+      });
+    });
+    menu.appendChild(addCatItem);
+    mkSep();
+    const delItem = document.createElement('div');
+    delItem.className = 'cm-item danger'; delItem.textContent = 'Удалить книгу';
+    delItem.addEventListener('click', () => {
+      menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+      askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
+        if (!ok) return;
+        C.removeBookData(bookId);
+        C.saveMeta(C.loadMeta().filter(x => x.id !== bookId));
+        if (S.currentBookId === bookId) backClassic();
+        renderClassicLibrary();
+      });
+    });
+    menu.appendChild(delItem);
+    const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 20, bottom: 80, top: 60 };
+    menu.style.left = Math.max(8, Math.min(window.innerWidth - 340, rect.left)) + 'px';
+    menu.style.top = (rect.bottom + 6) + 'px';
+    menu.classList.add('show');
+    showPopOverlayFor(menu);
+    setTimeout(() => {
+      const mh = menu.offsetHeight || 280;
+      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
+        menu.style.top = Math.max(8, (rect.top || 60) - mh - 6) + 'px';
+      }
+    }, 0);
+  }
+
+  /* ---------- БИБЛИОТЕКА ---------- */
+  function renderClassicLibrary() {
+    const libraryList = $('library-list'); if (!libraryList) return;
+    renderCategoriesBar();
+    const all = C.loadMeta(); const sorted = C.sortBooks(all);
+    const searchEl = $('library-search');
+    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
+    const wrap = $('library-search-wrap'); if (wrap) wrap.classList.toggle('has-value', !!query);
+    let books = sorted;
+    if (S.activeCategory === '') books = books.filter(b => !(b.categories || []).length);
+    else if (S.activeCategory) books = books.filter(b => (b.categories || []).includes(S.activeCategory));
+    const filtered = query ? books.filter(b => (b.title || '').toLowerCase().includes(query)) : books;
+    libraryList.innerHTML = '';
+    const noResults = $('library-no-results');
+    if (!sorted.length) {
+      if (noResults) noResults.classList.remove('show');
+      const empty = document.createElement('div'); empty.id = 'library-empty';
+      empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
+      libraryList.appendChild(empty); return;
+    }
+    if (!filtered.length) { if (noResults) noResults.classList.add('show'); return; }
+    if (noResults) noResults.classList.remove('show');
+    const cats = C.loadCategories();
+    filtered.forEach(b => {
+      const el = document.createElement('div');
+      el.className = 'book-item'; el.dataset.bookId = b.id;
+      const grip = document.createElement('div'); grip.className = 'grip';
+      grip.title = 'Перетащите, чтобы изменить порядок';
+      grip.innerHTML = '<span></span><span></span><span></span>';
+      el.appendChild(grip);
+      const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
+      el.appendChild(title);
+      const catWrap = document.createElement('div'); catWrap.className = 'book-categories';
+      const bookCats = Array.isArray(b.categories) ? b.categories : [];
+      if (!bookCats.length) {
+        const tag = document.createElement('div'); tag.className = 'cat-tag none'; tag.textContent = 'Без категории';
+        tag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, tag); });
+        catWrap.appendChild(tag);
+      } else {
+        bookCats.forEach(cid => {
+          const cat = cats.find(c => c.id === cid); if (!cat) return;
+          const tag = document.createElement('div'); tag.className = 'cat-tag';
+          tag.innerHTML = escapeHtml(cat.name) + ' <span class="cat-x" title="Убрать">✕</span>';
+          tag.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (e.target.classList.contains('cat-x')) {
+              const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
+              if (bk) bk.categories = (bk.categories || []).filter(id => id !== cid);
+              C.saveMeta(arr); renderClassicLibrary();
+            } else showBookMenu(b.id, tag);
+          });
+          catWrap.appendChild(tag);
+        });
+        const addTag = document.createElement('div'); addTag.className = 'cat-tag none';
+        addTag.textContent = '＋'; addTag.title = 'Добавить категорию';
+        addTag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, addTag); });
+        catWrap.appendChild(addTag);
+      }
+      el.appendChild(catWrap);
+      const meta = document.createElement('div'); meta.className = 'meta';
+      let metaText = (b.words || C.countWords(C.getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
+      const marksCount = C.loadMarks(b.id).length;
+      if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
+      if (b.pct > 0) metaText += ' · ' + (b.pct * 100).toFixed(2) + '%';
+      meta.textContent = metaText; el.appendChild(meta);
+      if (b.pct > 0.00005) {
+        const line = document.createElement('div'); line.className = 'progress-line';
+        const span = document.createElement('span');
+        span.style.width = Math.min(100, (b.pct || 0) * 100) + '%';
+        line.appendChild(span); el.appendChild(line);
+      }
+      const rename = document.createElement('button');
+      rename.className = 'rename'; rename.textContent = '✎';
+      rename.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askText('Новое название:', b.title).then(n => {
+          if (n !== null && n.trim()) {
+            const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
+            if (bk) bk.title = n.trim(); C.saveMeta(arr); renderClassicLibrary();
+          }
+        });
+      });
+      el.appendChild(rename);
+      const del = document.createElement('button');
+      del.className = 'del'; del.textContent = '✕';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
+          if (!ok) return;
+          C.removeBookData(b.id);
+          C.saveMeta(C.loadMeta().filter(x => x.id !== b.id));
+          if (S.currentBookId === b.id) backClassic();
+          renderClassicLibrary();
+        });
+      });
+      el.appendChild(del);
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.del, .rename, .cat-tag, .grip')) return;
+        openBookClassic(b.id);
+      });
+      el.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, el); });
+      attachBookDragHandlers(el, b.id);
+      libraryList.appendChild(el);
+    });
+  }
+
+  /* ---------- ПЕРЕТАСКИВАНИЕ КНИГ ---------- */
+  let dragState = null;
+  function clearDragHighlights(container) {
+    if (!container) return;
+    container.querySelectorAll('.drop-before, .drop-after').forEach(el => el.classList.remove('drop-before', 'drop-after'));
+  }
+  function findDropTarget(container, x, y, dragEl) {
+    if (!container) return null;
+    const els = Array.from(container.querySelectorAll('[data-book-id]')).filter(el => el !== dragEl);
+    if (!els.length) return null;
+    let best = null, bestDist = Infinity;
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return { el, rect: r };
+      const dx = x < r.left ? r.left - x : (x > r.right ? x - r.right : 0);
+      const dy = y < r.top ? r.top - y : (y > r.bottom ? y - r.bottom : 0);
+      const d = dx * dx + dy * dy;
+      if (d < bestDist) { bestDist = d; best = { el, rect: r }; }
+    }
+    if (best && bestDist < 140 * 140) return best;
+    return null;
+  }
+  function commitReorder(dragId, targetId, placeAfter) {
+    const meta = C.loadMeta(); const list = C.sortBooks(meta);
+    const dragIdx = list.findIndex(b => b.id === dragId); if (dragIdx < 0) return;
+    const [moved] = list.splice(dragIdx, 1);
+    let targetIdx = list.findIndex(b => b.id === targetId);
+    if (targetIdx < 0) list.splice(dragIdx, 0, moved);
+    else { if (placeAfter) targetIdx += 1; list.splice(targetIdx, 0, moved); }
+    list.forEach((b, i) => { b.order = i; });
+    const map = new Map(list.map(b => [b.id, b]));
+    const updated = meta.map(b => map.get(b.id) || b);
+    C.saveMeta(updated);
+    renderClassicLibrary();
+  }
+  function attachBookDragHandlers(el, bookId) {
+    const grip = el.querySelector('.grip');
+    if (!grip) return;
+    const container = el.parentElement;
+    grip.addEventListener('pointerdown', (e) => { e.preventDefault(); startBookDrag(e, el, bookId, container); });
+  }
+  function startBookDrag(e, bookEl, bookId, container) {
+    if (dragState) return;
+    dragState = { id: bookId, el: bookEl, startX: e.clientX, startY: e.clientY, pointerId: e.pointerId, active: false };
+    try { bookEl.setPointerCapture && bookEl.setPointerCapture(e.pointerId); } catch (_) {}
+    const onMove = (ev) => {
+      if (!dragState || ev.pointerId !== dragState.pointerId) return;
+      const dx = ev.clientX - dragState.startX;
+      const dy = ev.clientY - dragState.startY;
+      if (!dragState.active) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        dragState.active = true; dragState.el.classList.add('dragging');
+        document.body.style.userSelect = 'none';
+      }
+      clearDragHighlights(container);
+      const target = findDropTarget(container, ev.clientX, ev.clientY, dragState.el);
+      if (target) {
+        const midY = target.rect.top + target.rect.height / 2;
+        target.el.classList.add(ev.clientY < midY ? 'drop-before' : 'drop-after');
+      }
+      if (ev.cancelable) ev.preventDefault();
+    };
+    const onUp = (ev) => {
+      if (!dragState || ev.pointerId !== dragState.pointerId) return;
+      const wasActive = dragState.active;
+      const dragEl = dragState.el; const dragId = dragState.id;
+      const target = findDropTarget(container, ev.clientX, ev.clientY, dragEl);
+      let targetId = null, placeAfter = false;
+      if (target) {
+        targetId = target.el.dataset.bookId;
+        const midY = target.rect.top + target.rect.height / 2;
+        placeAfter = ev.clientY >= midY;
+      }
+      dragEl.classList.remove('dragging');
+      clearDragHighlights(container);
+      document.body.style.userSelect = '';
+      try { dragEl.releasePointerCapture && dragEl.releasePointerCapture(ev.pointerId); } catch (_) {}
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      dragState = null;
+      if (wasActive && targetId && targetId !== dragId) commitReorder(dragId, targetId, placeAfter);
+    };
+    window.addEventListener('pointermove', onMove, { passive: false });
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  }
+
+  /* ---------- ПАНЕЛЬ ФИЛЬТРОВ ---------- */
+  function renderCategoriesBar() {
+    const bar = $('categories-bar'); if (!bar) return;
+    const cats = C.loadCategories(); const books = C.loadMeta();
+    bar.innerHTML = '';
+    function makeChip(label, count, isActive, onClick, extra) {
+      const el = document.createElement('div');
+      el.className = 'category-chip' + (isActive ? ' active' : '');
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = label; nameSpan.title = label;
+      el.appendChild(nameSpan);
+      const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = count;
+      el.appendChild(cnt);
+      if (extra) extra(el);
+      el.addEventListener('click', (e) => { if (e.target.closest('.chip-actions')) return; onClick(); });
+      bar.appendChild(el); return el;
+    }
+    makeChip('Все', books.length, S.activeCategory === null, () => { S.activeCategory = null; renderClassicLibrary(); });
+    const noneCount = books.filter(b => !(b.categories || []).length).length;
+    if (noneCount > 0) makeChip('Без категории', noneCount, S.activeCategory === '', () => { S.activeCategory = ''; renderClassicLibrary(); });
+    cats.forEach(c => {
+      const cnt = books.filter(b => (b.categories || []).includes(c.id)).length;
+      makeChip(c.name, cnt, S.activeCategory === c.id, () => {
+        S.activeCategory = (S.activeCategory === c.id) ? null : c.id;
+        renderClassicLibrary();
+      }, (el) => {
+        const actions = document.createElement('span'); actions.className = 'chip-actions';
+        const edit = document.createElement('button'); edit.className = 'chip-edit'; edit.textContent = '✎';
+        edit.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askText('Название категории:', c.name).then(n => {
+            if (n !== null) {
+              const arr = C.loadCategories(); const cc = arr.find(x => x.id === c.id);
+              if (cc) { cc.name = n.trim() || c.name; C.saveCategories(arr); }
+              renderClassicLibrary();
+            }
+          });
+        });
+        actions.appendChild(edit);
+        const del = document.createElement('button'); del.className = 'chip-del'; del.textContent = '✕';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          askConfirm('Удалить категорию «' + c.name + '»?', 'Удалить', true).then(ok => {
+            if (!ok) return;
+            C.saveCategories(C.loadCategories().filter(x => x.id !== c.id));
+            const arr = C.loadMeta(); arr.forEach(b => {
+              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
+            });
+            C.saveMeta(arr); if (S.activeCategory === c.id) S.activeCategory = null; renderClassicLibrary();
+          });
+        });
+        actions.appendChild(del);
+        el.appendChild(actions);
+      });
+    });
+    const addChip = makeChip('+ Категория', '', false, promptAddCategory);
+    addChip.classList.add('add-chip');
+  }
+
+  /* ---------- ОТКРЫТИЕ КНИГИ ---------- */
+  function openBookClassic(id) {
+    const b = C.loadMeta().find(x => x.id === id);
+    if (!b) return;
+    S.currentBookId = id; S.currentMarks = C.loadMarks(id);
+    $('paste-screen').classList.remove('active');
+    $('reader-shell').classList.add('active');
+    renderBookIntoContent(C.getBookText(id), $('content'));
+    const pos = { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
+    requestAnimationFrame(() => {
+      restoreReadingPosition(pos);
+      updateAllProgress();
+    });
+  }
+  function backClassic() {
+    S.currentBookId = null; S.currentMarks = []; S.chapters = []; S.activeChapter = -1;
+    $('paste-screen').classList.add('active');
+    $('reader-shell').classList.remove('active');
+    renderClassicLibrary();
+  }
+
+  /* ---------- ДОБАВЛЕНИЕ КНИГ ---------- */
+  async function promptAddBook() {
+    const t = await askText('Название книги:', 'Новая книга');
+    if (t === null) return;
+    const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
+    if (text === null || !text.trim()) { toast('Нет текста', true); return; }
+    const cid = (typeof S.activeCategory === 'string' && S.activeCategory) ? S.activeCategory : '';
+    const id = C.addBookRecord(t.trim() || C.guessTitle(text), text, cid);
+    if (!id) return;
+    renderClassicLibrary();
+    toast('Книга добавлена');
+  }
+
+  /* ---------- PCT JUMP ---------- */
   let pctJumpEl = null;
   function ensurePctJump() {
     if (pctJumpEl) return pctJumpEl;
@@ -2882,9 +2965,9 @@
     }
   });
 
-  // ===== ИНИЦИАЛИЗАЦИЯ =====
+  /* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
   function init() {
-    loadMeta();
+    C.loadMeta();
     applySettings();
     renderClassicLibrary();
 
@@ -2892,7 +2975,7 @@
     if (btnRead) btnRead.addEventListener('click', async () => {
       const text = $('input').value;
       if (!text.trim()) { toast('Вставьте текст', true); return; }
-      const id = addBookRecord(guessTitle(text), text);
+      const id = C.addBookRecord(C.guessTitle(text), text);
       if (id) { $('input').value = ''; openBookClassic(id); }
     });
     const btnFile = $('btn-file'); const fileInput = $('file-input');
@@ -2900,16 +2983,14 @@
       btnFile.addEventListener('click', () => fileInput.click());
       fileInput.addEventListener('change', (e) => {
         const f = e.target.files && e.target.files[0];
-        if (f) readFile(f); fileInput.value = '';
+        if (f) C.readFile(f); fileInput.value = '';
       });
     }
     const btnClear = $('btn-clear');
     if (btnClear) btnClear.addEventListener('click', () => {
       const input = $('input');
       if (!input.value.trim()) { input.focus(); return; }
-      askConfirm('Очистить поле?', 'Очистить', true).then(ok => {
-        if (ok) { input.value = ''; input.focus(); }
-      });
+      askConfirm('Очистить поле?', 'Очистить', true).then(ok => { if (ok) { input.value = ''; input.focus(); } });
     });
     const libSearch = $('library-search');
     if (libSearch) libSearch.addEventListener('input', renderClassicLibrary);
@@ -2920,7 +3001,6 @@
 
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
     bindIf('btn-menu', openUnifiedSettings);
-
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
@@ -2952,7 +3032,7 @@
       e.preventDefault(); dragCounter = 0;
       $('drop-overlay').classList.remove('show');
       const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) readFile(f);
+      if (f) C.readFile(f);
     });
 
     document.addEventListener('keydown', (e) => {
@@ -3021,9 +3101,7 @@
     }
 
     window.addEventListener('orientationchange', () => {
-      closeSheet();
-      closeSettingsModal();
-      closeAllPopups();
+      closeSheet(); closeSettingsModal(); closeAllPopups();
     });
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768 && popOverlay) popOverlay.style.display = 'none';
@@ -3031,7 +3109,7 @@
   }
 
   try { init(); } catch (err) {
-    showError(err && err.message ? err.message : String(err));
+    C.showError(err && err.message ? err.message : String(err));
     console.error(err);
   }
 })();
