@@ -71,7 +71,7 @@
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
-  /* ====== БИБЛИОТЕКА (КЛАССИКА) ====== */
+  /* ====== БИБЛИОТЕКА ====== */
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
     align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
@@ -125,7 +125,6 @@
   .book-item .meta { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* Категории в карточке книги */
   .book-item .book-categories { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
   .book-item .cat-tag { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 10px; color: var(--accent); letter-spacing: .3px; text-transform: uppercase;
@@ -154,7 +153,6 @@
   #library-no-results { display: none; }
   #library-no-results.show { display: block; }
 
-  /* Панель категорий-фильтров */
   #categories-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
   .category-chip { display: inline-flex; align-items: center; gap: 6px;
     background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: 20px;
@@ -175,7 +173,6 @@
   .category-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
   .category-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
 
-  /* Меню категорий (множественный выбор) */
   #category-menu { position: fixed; z-index: 350; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
     min-width: 200px; max-width: min(320px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
@@ -227,7 +224,6 @@
   }
   .reader-topbar .settings-btn:hover { background: var(--border-strong); }
 
-  /* ====== ЧИТАЛКА ====== */
   #reader-shell { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   #reader-shell.active { display: flex; }
   #reader-screen { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
@@ -237,7 +233,6 @@
     line-height: var(--line-height); color: var(--fg);
     letter-spacing: var(--letter-spacing); width: 100%; }
 
-  /* ====== ПАНЕЛИ ====== */
   .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
     z-index: 300; transform: translateX(100%); transition: transform .25s ease;
@@ -381,7 +376,6 @@
   #progress-bar { position: fixed; top: 0; left: 0; height: 2px;
     background: var(--accent); width: 0%; z-index: 100; }
 
-  /* ====== ПОЛЗУНОК ПРОКРУТКИ (ТОЛЬКО ПК) ====== */
   #side-progress { position: fixed; right: 6px; top: 60px; bottom: 40px;
     width: 22px; background: transparent; z-index: 90; cursor: pointer;
     opacity: 0; transition: opacity .35s; touch-action: none; }
@@ -440,7 +434,6 @@
     font-size: 13px; color: var(--fg-mid); font-variant-numeric: tabular-nums;
     min-width: 46px; text-align: center; }
 
-  /* ====== МОДАЛКА НАСТРОЕК ====== */
   #settings-modal { position: fixed; inset: 0; z-index: 450; display: none;
     background: rgba(0,0,0,.55); align-items: center; justify-content: center;
     padding: 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -458,7 +451,7 @@
     text-transform: uppercase; color: var(--fg-dim); font-weight: 600;
     padding: 14px 16px 6px; }
   .cl-settings-row { display: flex; align-items: center;
-    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
+    gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; position: relative; }
   .cl-settings-row:hover { background: var(--bg-panel); }
   .cl-settings-row.active { background: var(--bg-panel); }
   .cl-settings-row .sw { width: 36px; height: 36px;
@@ -467,9 +460,19 @@
     color: var(--fg); font-size: 13px; font-weight: 700; }
   .cl-settings-row .sw.active { border-color: var(--accent); }
   .cl-settings-row .info { flex: 1; min-width: 0; }
-  .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500; }
-  .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+  .cl-settings-row .nm { font-size: 14px; color: var(--fg); font-weight: 500;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cl-settings-row .sub { font-size: 12px; color: var(--fg-dim); margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cl-settings-row .check { color: var(--accent); font-size: 16px; }
+  .cl-settings-row .row-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .cl-settings-row .row-actions button { background: transparent; border: none;
+    color: var(--fg-dim); font-size: 13px; padding: 4px 6px; line-height: 1;
+    border-radius: 6px; cursor: pointer; min-height: 32px; min-width: 32px; }
+  .cl-settings-row .row-actions button:hover { color: var(--fg); background: var(--border-strong); }
+  .cl-settings-row .row-actions .pin-btn.pinned { color: var(--mark-color); }
+  .cl-settings-row .row-actions .del-btn:hover { color: #ff9a9a; background: #3a1a1a; }
+
   .cl-font-preview { display: flex; align-items: center;
     gap: 12px; padding: 10px 16px; cursor: pointer; min-height: 52px; }
   .cl-font-preview:hover { background: var(--bg-panel); }
@@ -482,7 +485,36 @@
   .cl-font-preview.active .aa { border-color: var(--accent); }
   .cl-font-preview.active .nm { color: var(--accent); }
 
-  /* ====== INLINE-ДИАЛОГ ====== */
+  /* ====== RGB-РЕДАКТОР ====== */
+  .rgb-editor { padding: 8px 16px 14px; }
+  .rgb-editor .rgb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .rgb-editor .rgb-head label { flex: 1; font-size: 14px; color: var(--fg); }
+  .rgb-editor .rgb-preview { width: 44px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border-strong); flex-shrink: 0; }
+  .rgb-editor .rgb-hex { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .rgb-editor .rgb-hex input[type=text] { flex: 1; min-width: 0;
+    background: var(--bg-input); color: var(--fg); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: 'JetBrains Mono', monospace;
+    outline: none; letter-spacing: .5px; text-transform: lowercase; }
+  .rgb-editor .rgb-hex input[type=text]:focus { border-color: var(--accent); }
+  .rgb-editor .rgb-slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .rgb-editor .rgb-slider-row .lbl { width: 14px; font-size: 12px; font-weight: 700; color: var(--fg-dim); flex-shrink: 0; }
+  .rgb-editor .rgb-slider-row input[type=range] { flex: 1; min-width: 0; -webkit-appearance: none;
+    appearance: none; height: 6px; border-radius: 3px; background: var(--border-strong); outline: none; }
+  .rgb-editor .rgb-slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none;
+    width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+    border: 2px solid var(--bg); cursor: pointer; }
+  .rgb-editor .rgb-slider-row input[type=range]::-moz-range-thumb { width: 16px; height: 16px;
+    border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); cursor: pointer; }
+  .rgb-editor .rgb-slider-row .val { width: 36px; text-align: right; font-size: 12px;
+    font-variant-numeric: tabular-nums; color: var(--fg-mid); flex-shrink: 0; }
+  .rgb-editor .rgb-slider-row.r input[type=range] { background: linear-gradient(90deg, #000, #f00); }
+  .rgb-editor .rgb-slider-row.g input[type=range] { background: linear-gradient(90deg, #000, #0f0); }
+  .rgb-editor .rgb-slider-row.b input[type=range] { background: linear-gradient(90deg, #000, #00f); }
+
+  .palette-actions { display: flex; gap: 8px; padding: 6px 16px 14px; flex-wrap: wrap; }
+  .palette-actions button { flex: 1; min-width: 130px; padding: 12px; min-height: var(--tap); border-radius: 10px; }
+
   #inline-dialog { position: fixed; inset: 0; z-index: 600; display: none;
     background: rgba(0,0,0,.55); align-items: center; justify-content: center;
     padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -504,7 +536,6 @@
 
   #pct-jump { font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
 
-  /* ====== АДАПТИВ ====== */
   @media (max-width: 1024px) {
     .book-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
   }
@@ -708,12 +739,10 @@
     </div>
   </div>
 </div>
-
 <script>
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  const qsa = (sel, root) => (root || document).querySelectorAll(sel);
   const root = document.documentElement;
 
   function showError(msg) {
@@ -767,6 +796,22 @@
       const luma = (0.299*r + 0.587*g + 0.114*b) / 255;
       return luma > 0.55 ? '#14161a' : '#ffffff';
     } catch (e) { return '#ffffff'; }
+  }
+  function normalizeHex(v) {
+    let s = String(v || '').trim().toLowerCase();
+    if (!s.startsWith('#')) s = '#' + s;
+    if (/^#([0-9a-f]{3})$/.test(s)) s = '#' + s[1]+s[1]+s[2]+s[2]+s[3]+s[3];
+    if (!/^#[0-9a-f]{6}$/.test(s)) return null;
+    return s;
+  }
+  function hexToRgb(hex) {
+    const n = normalizeHex(hex) || '#000000';
+    const v = parseInt(n.slice(1), 16);
+    return { r: (v>>16)&255, g: (v>>8)&255, b: v&255 };
+  }
+  function rgbToHex(r, g, b) {
+    const c = (x) => Math.max(0, Math.min(255, x|0)).toString(16).padStart(2, '0');
+    return '#' + c(r) + c(g) + c(b);
   }
 
   // ===== INLINE-ДИАЛОГ =====
@@ -934,7 +979,31 @@
   let settings = loadSettings();
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
-  // ===== ХРАНИЛИЩЕ =====
+  // ===== СВОИ ЦВЕТОВЫЕ СХЕМЫ =====
+  const CUSTOM_PALETTES_KEY = 'reader_custom_palettes_v1';
+  function loadCustomPalettes() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_PALETTES_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(p => p && typeof p.bg === 'string' && typeof p.fg === 'string' && typeof p.accent === 'string')
+        .map(p => ({
+          id: p.id || ('p' + Date.now() + Math.random().toString(36).slice(2,6)),
+          name: p.name || 'Моя схема',
+          bg: normalizeHex(p.bg) || '#000000',
+          fg: normalizeHex(p.fg) || '#ffffff',
+          accent: normalizeHex(p.accent) || '#888888',
+          pinned: !!p.pinned,
+          created: p.created || Date.now()
+        }));
+    } catch (e) { return []; }
+  }
+  function saveCustomPalettes(arr) {
+    try { localStorage.setItem(CUSTOM_PALETTES_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
+
+  // ===== ХРАНИЛИЩЕ КНИГ =====
   const META_KEY = 'reader_books_meta_v4';
   const TEXT_PREFIX = 'reader_book_text_';
   const OLD_META_KEY = 'reader_books_meta_v3';
@@ -1650,9 +1719,148 @@
   });
 
   function addGroup(title) {
+    if (!title) return;
     const t = document.createElement('div');
     t.className = 'cl-settings-group-title'; t.textContent = title;
     settingsModalBody.appendChild(t);
+  }
+
+  // --- RGB-редактор ---
+  function makeRgbEditor(label, key) {
+    const wrap = document.createElement('div');
+    wrap.className = 'rgb-editor';
+    const initial = normalizeHex(settings[key]) || '#000000';
+    let rgb = hexToRgb(initial);
+
+    const head = document.createElement('div');
+    head.className = 'rgb-head';
+    const lb = document.createElement('label'); lb.textContent = label;
+    const prev = document.createElement('div');
+    prev.className = 'rgb-preview'; prev.style.background = initial;
+    head.appendChild(lb); head.appendChild(prev);
+    wrap.appendChild(head);
+
+    const hexRow = document.createElement('div');
+    hexRow.className = 'rgb-hex';
+    const hexInp = document.createElement('input');
+    hexInp.type = 'text'; hexInp.value = initial; hexInp.maxLength = 7;
+    hexInp.placeholder = '#rrggbb';
+    hexInp.addEventListener('input', () => {
+      const v = normalizeHex(hexInp.value);
+      if (v) {
+        rgb = hexToRgb(v); syncSliders(v);
+        applyColor(v, false);
+      }
+    });
+    hexInp.addEventListener('blur', () => {
+      const v = normalizeHex(hexInp.value) || rgbToHex(rgb.r, rgb.g, rgb.b);
+      hexInp.value = v; rgb = hexToRgb(v); syncSliders(v); applyColor(v, true);
+    });
+    hexRow.appendChild(hexInp);
+    wrap.appendChild(hexRow);
+
+    function mkSlider(ch, cls, color) {
+      const row = document.createElement('div');
+      row.className = 'rgb-slider-row ' + cls;
+      const l = document.createElement('span'); l.className = 'lbl'; l.textContent = ch.toUpperCase();
+      const inp = document.createElement('input'); inp.type = 'range'; inp.min = 0; inp.max = 255;
+      inp.value = rgb[ch];
+      const val = document.createElement('span'); val.className = 'val'; val.textContent = rgb[ch];
+      inp.addEventListener('input', () => {
+        rgb[ch] = parseInt(inp.value, 10) || 0;
+        val.textContent = rgb[ch];
+        const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+        hexInp.value = hex; prev.style.background = hex;
+        applyColor(hex, false);
+      });
+      row.appendChild(l); row.appendChild(inp); row.appendChild(val);
+      return { row, inp, val };
+    }
+    const sr = mkSlider('r', 'r', '#ff0000');
+    const sg = mkSlider('g', 'g', '#00ff00');
+    const sb = mkSlider('b', 'b', '#0000ff');
+    wrap.appendChild(sr.row); wrap.appendChild(sg.row); wrap.appendChild(sb.row);
+
+    function syncSliders(hex) {
+      const c = hexToRgb(hex);
+      rgb = c;
+      sr.inp.value = c.r; sr.val.textContent = c.r;
+      sg.inp.value = c.g; sg.val.textContent = c.g;
+      sb.inp.value = c.b; sb.val.textContent = c.b;
+      prev.style.background = hex;
+    }
+    function applyColor(hex, save) {
+      settings[key] = hex;
+      if (save) saveSettings();
+      applySettings();
+      prev.style.background = hex;
+    }
+    return wrap;
+  }
+
+  // --- Рендер списка схем ---
+  function renderPaletteRow(p, groupKey, onApply) {
+    const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
+    const row = document.createElement('div');
+    row.className = 'cl-settings-row' + (isActive ? ' active' : '');
+    const sw = document.createElement('div');
+    sw.className = 'sw' + (isActive ? ' active' : '');
+    sw.style.background = p.bg; sw.style.color = p.fg;
+    sw.style.borderColor = isActive ? 'var(--accent)' : shade(p.bg,20);
+    sw.textContent = 'Aa';
+    const info = document.createElement('div'); info.className = 'info';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = p.name;
+    const sub = document.createElement('div'); sub.className = 'sub';
+    sub.textContent = p.bg + ' · ' + p.fg + ' · ' + p.accent;
+    info.appendChild(nm); info.appendChild(sub);
+    row.appendChild(sw); row.appendChild(info);
+
+    if (groupKey === 'custom') {
+      const acts = document.createElement('div'); acts.className = 'row-actions';
+      const pin = document.createElement('button');
+      pin.className = 'pin-btn' + (p.pinned ? ' pinned' : '');
+      pin.textContent = p.pinned ? '📌' : '📍';
+      pin.title = p.pinned ? 'Открепить' : 'Закрепить';
+      pin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const arr = loadCustomPalettes();
+        const it = arr.find(x => x.id === p.id); if (it) it.pinned = !it.pinned;
+        saveCustomPalettes(arr); openPaletteOnly();
+      });
+      const edit = document.createElement('button');
+      edit.textContent = '✎'; edit.title = 'Переименовать';
+      edit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askText('Название цвета:', p.name).then(n => {
+          if (n !== null && n.trim()) {
+            const arr = loadCustomPalettes();
+            const it = arr.find(x => x.id === p.id); if (it) it.name = n.trim();
+            saveCustomPalettes(arr); openPaletteOnly();
+          }
+        });
+      });
+      const del = document.createElement('button');
+      del.className = 'del-btn'; del.textContent = '✕'; del.title = 'Удалить';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askConfirm('Удалить цвет «' + p.name + '»?', 'Удалить', true).then(ok => {
+          if (!ok) return;
+          saveCustomPalettes(loadCustomPalettes().filter(x => x.id !== p.id));
+          openPaletteOnly();
+        });
+      });
+      acts.appendChild(pin); acts.appendChild(edit); acts.appendChild(del);
+      row.appendChild(acts);
+    } else if (isActive) {
+      const chk = document.createElement('div'); chk.className = 'check'; chk.textContent = '✓';
+      row.appendChild(chk);
+    }
+
+    row.addEventListener('click', () => {
+      settings.bg = p.bg; settings.fg = p.fg; settings.accent = p.accent;
+      saveSettings(); applySettings(); openPaletteOnly();
+    });
+    return row;
   }
 
   function openPaletteOnly() {
@@ -1661,40 +1869,59 @@
     settingsModalTitle.textContent = 'Цвет';
     settingsModalBody.innerHTML = '';
 
+    // 1. Свои цвета (закреплённые сверху)
+    const custom = loadCustomPalettes();
+    const pinned = custom.filter(p => p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
+    const unpinned = custom.filter(p => !p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
+
+    if (pinned.length || unpinned.length) {
+      if (pinned.length) {
+        addGroup('📌 Закреплённые');
+        pinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom')));
+      }
+      if (unpinned.length) {
+        addGroup('Мои цвета');
+        unpinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom')));
+      }
+    }
+
+    // 2. Сохранить текущие как свои
+    addGroup('Свои цвета');
+    const acts = document.createElement('div'); acts.className = 'palette-actions';
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '＋ Сохранить текущие как свою схему';
+    saveBtn.style.background = 'var(--bg-panel)';
+    saveBtn.addEventListener('click', () => {
+      askText('Название схемы:', 'Моя схема ' + (loadCustomPalettes().length + 1)).then(n => {
+        if (n === null) return;
+        const name = (n || '').trim() || ('Схема ' + (loadCustomPalettes().length + 1));
+        const arr = loadCustomPalettes();
+        arr.push({
+          id: 'p' + Date.now() + Math.random().toString(36).slice(2,6),
+          name, bg: settings.bg, fg: settings.fg, accent: settings.accent,
+          pinned: false, created: Date.now()
+        });
+        saveCustomPalettes(arr);
+        openPaletteOnly();
+        toast('Схема сохранена');
+      });
+    });
+    acts.appendChild(saveBtn);
+    settingsModalBody.appendChild(acts);
+
+    // 3. Редактор RGB
+    addGroup('Точная настройка (RGB / HEX)');
+    settingsModalBody.appendChild(makeRgbEditor('Фон', 'bg'));
+    settingsModalBody.appendChild(makeRgbEditor('Текст', 'fg'));
+    settingsModalBody.appendChild(makeRgbEditor('Акцент', 'accent'));
+
+    // 4. Пресеты
     PRESET_GROUPS.forEach(group => {
       addGroup(group.title);
       group.presets.forEach(pr => {
-        const isActive = settings.bg === pr.bg && settings.fg === pr.fg && settings.accent === pr.accent;
-        const row = document.createElement('div');
-        row.className = 'cl-settings-row' + (isActive ? ' active' : '');
-        row.innerHTML = '<div class="sw' + (isActive ? ' active' : '') + '" style="background:' + pr.bg + ';color:' + pr.fg + ';border-color:' + (isActive ? 'var(--accent)' : shade(pr.bg,20)) + ';">Aa</div>' +
-          '<div class="info"><div class="nm">' + escapeHtml(pr.name) + '</div><div class="sub">' + pr.bg + ' · ' + pr.fg + '</div></div>' +
-          (isActive ? '<div class="check">✓</div>' : '');
-        row.addEventListener('click', () => {
-          settings.bg = pr.bg; settings.fg = pr.fg; settings.accent = pr.accent;
-          saveSettings(); applySettings(); openPaletteOnly();
-        });
-        settingsModalBody.appendChild(row);
+        settingsModalBody.appendChild(renderPaletteRow(pr, 'preset'));
       });
     });
-
-    addGroup('Свои цвета');
-    const custom = document.createElement('div');
-    custom.style.cssText = 'padding:10px 16px 16px;';
-    const mkColorRow = (label, key) => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 0;min-height:44px;';
-      const lb = document.createElement('label'); lb.textContent = label; lb.style.cssText = 'font-size:14px;color:var(--fg);';
-      const inp = document.createElement('input'); inp.type = 'color'; inp.value = settings[key];
-      inp.style.cssText = 'width:44px;height:36px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);padding:2px;cursor:pointer;';
-      inp.addEventListener('input', (e) => { settings[key] = e.target.value; saveSettings(); applySettings(); });
-      row.appendChild(lb); row.appendChild(inp);
-      return row;
-    };
-    custom.appendChild(mkColorRow('Фон', 'bg'));
-    custom.appendChild(mkColorRow('Текст', 'fg'));
-    custom.appendChild(mkColorRow('Акцент', 'accent'));
-    settingsModalBody.appendChild(custom);
   }
 
   function openFontsOnly() {
@@ -1823,9 +2050,8 @@
     settingsModalBody.appendChild(libWrap);
   }
 
-  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ПОПАПОВ =====
+  // ===== ПОПАПЫ =====
   const popOverlay = $('pop-overlay');
-
   function ensurePopOverlay() {
     if (!popOverlay) return;
     popOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:345;display:none;';
@@ -1849,13 +2075,9 @@
 
   function showPopOverlayFor(el) {
     if (!popOverlay || !el) return;
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      popOverlay.style.display = 'block';
-    }
+    if (window.innerWidth <= 768) popOverlay.style.display = 'block';
   }
 
-  // Глобальное закрытие меню
   document.addEventListener('click', (e) => {
     const catMenu = $('category-menu');
     const popMenu = $('menu-pop');
@@ -1876,11 +2098,8 @@
     }
   });
 
-  // Escape закрывает всё
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeAllPopups();
-    }
+    if (e.key === 'Escape') closeAllPopups();
   });
 
   // ===== МЕНЕДЖЕР КАТЕГОРИЙ =====
@@ -1890,7 +2109,6 @@
     pop.innerHTML = ''; pop.style.transform = '';
     pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
 
-    // Шапка с кнопкой закрытия
     const head = document.createElement('div');
     head.className = 'group-head';
     const title = document.createElement('div');
@@ -1900,7 +2118,6 @@
     const closeBtn = document.createElement('button');
     closeBtn.className = 'pop-close';
     closeBtn.textContent = '✕';
-    closeBtn.title = 'Закрыть';
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       pop.classList.remove('show');
@@ -1994,7 +2211,6 @@
     const cats = loadCategories();
     menu.innerHTML = '';
 
-    // Шапка с кнопкой закрытия
     const head = document.createElement('div');
     head.className = 'cm-head';
     const headTitle = document.createElement('div');
@@ -2004,7 +2220,6 @@
     const closeBtn = document.createElement('button');
     closeBtn.className = 'cm-close';
     closeBtn.textContent = '✕';
-    closeBtn.title = 'Закрыть';
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       menu.classList.remove('show');
@@ -2021,7 +2236,6 @@
       const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s);
     }
 
-    // переименование
     const renameItem = document.createElement('div');
     renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
     renameItem.addEventListener('click', () => {
@@ -2069,7 +2283,6 @@
       });
     }
 
-    // создать новую категорию и сразу привязать
     const addCatItem = document.createElement('div');
     addCatItem.className = 'cm-item';
     addCatItem.textContent = '＋ Новая категория…';
@@ -2124,7 +2337,7 @@
     }, 0);
   }
 
-  // ===== КЛАССИКА: рендер библиотеки =====
+  // ===== БИБЛИОТЕКА =====
   function renderClassicLibrary() {
     const libraryList = $('library-list'); if (!libraryList) return;
     renderCategoriesBar();
@@ -2160,7 +2373,6 @@
       const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
       el.appendChild(title);
 
-      // теги категорий
       const catWrap = document.createElement('div');
       catWrap.className = 'book-categories';
       const bookCats = Array.isArray(b.categories) ? b.categories : [];
@@ -2332,7 +2544,7 @@
     window.addEventListener('pointercancel', onUp);
   }
 
-  // ===== ПАНЕЛЬ ФИЛЬТРОВ КАТЕГОРИЙ =====
+  // ===== ПАНЕЛЬ ФИЛЬТРОВ =====
   function renderCategoriesBar() {
     const bar = $('categories-bar'); if (!bar) return;
     const cats = loadCategories(); const books = loadMeta();
@@ -2846,7 +3058,6 @@
     });
 
     window.addEventListener('resize', () => {
-      // На мобильных попапы центрируются, при ресайзе — прячем оверлей
       if (window.innerWidth > 768 && popOverlay) popOverlay.style.display = 'none';
     });
   }
