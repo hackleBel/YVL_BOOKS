@@ -1682,83 +1682,102 @@
     const hexRow = document.createElement('div');
     hexRow.className = 'ce-hex';
     const hexInp = document.createElement('input');
-    hexInp.type = 'text'; hexInp.value = initial; hexInp.maxLength = 7;
+    hexInp.type = 'text';
+    hexInp.value = initial;
+    // ВАЖНО: не maxLength=7, иначе нельзя вставить/стереть полностью
     hexInp.placeholder = '#rrggbb';
-    hexInp.autocomplete = 'off'; hexInp.spellcheck = false;
+    hexInp.autocomplete = 'off';
+    hexInp.spellcheck = false;
+    hexInp.inputMode = 'text';
     hexRow.appendChild(hexInp);
     wrap.appendChild(hexRow);
 
-    let syncing = false; // чтобы не зациклить input -> apply -> input
+    // Обновить визуал свотча и color input
+    function syncVisual(hex) {
+      swatch.style.background = hex;
+      colorInput.value = hex;
+    }
 
-    function commit(hex, persist) {
-      const v = normalizeHex(hex); if (!v) return false;
+    // Применить цвет СРАЗУ: settings -> CSS -> визуал
+    function applyNow(hex) {
+      const v = normalizeHex(hex);
+      if (!v) return false;
       settings[key] = v;
-      if (persist) saveSettings();
-      // применяем ТОЛЬКО к CSS-переменным и превью, БЕЗ полной перерисовки
-      applyColorOnly(v);
-      swatch.style.background = v;
-      colorInput.value = v;
+      saveSettings();
+      // Мгновенно перекрашиваем CSS-переменные (без перерисовки книги)
+      paintCssFromSettings();
+      // Обновляем свой свотч + color input
+      syncVisual(v);
+      // Обновляем превью других редакторов на этом же экране (если открыт)
+      if (settingsModal && settingsModal.classList.contains('open')) {
+        // мягкое обновление полей HEX соседних редакторов
+        document.querySelectorAll('.color-editor').forEach(ed => {
+          // не трогаем тот, что сейчас в фокусе
+          const inp = ed.querySelector('.ce-hex input[type=text]');
+          const k = ed.dataset.key;
+          if (!inp || !k) return;
+          if (document.activeElement === inp) return;
+          const cur = normalizeHex(settings[k]);
+          if (cur && inp.value.toLowerCase() !== cur) inp.value = cur;
+        });
+      }
       return true;
     }
 
+    // --- color picker ---
     colorInput.addEventListener('input', () => {
-      if (syncing) return;
       const v = normalizeHex(colorInput.value);
-      if (v) {
-        syncing = true;
-        hexInp.value = v;
-        hexInp.classList.remove('invalid');
-        commit(v, false);
-        syncing = false;
-      }
+      if (v) applyNow(v);
     });
     colorInput.addEventListener('change', () => {
       const v = normalizeHex(colorInput.value);
-      if (v) commit(v, true);
+      if (v) applyNow(v);
     });
 
+    // --- hex input: НЕ трогаем значение, пока пользователь вводит ---
     hexInp.addEventListener('input', () => {
-      if (syncing) return;
-      let raw = hexInp.value.trim().toLowerCase();
-      if (!raw.startsWith('#')) raw = '#' + raw;
-      // даём вводить любые символы, но валидируем и применяем сразу, как только 7 символов
-      if (raw.length <= 7) {
-        const v = normalizeHex(raw);
-        if (v) {
-          hexInp.classList.remove('invalid');
-          syncing = true;
-          hexInp.value = v;   // дополняем до #rrggbb
-          commit(v, false);
-          syncing = false;
-        } else {
-          hexInp.classList.add('invalid');
-        }
+      const raw = hexInp.value.trim().toLowerCase();
+      const v = normalizeHex(raw);
+      if (v) {
+        hexInp.classList.remove('invalid');
+        // Применяем цвет, но НЕ переписываем значение в поле (иначе «дописывает нули»)
+        settings[key] = v;
+        saveSettings();
+        paintCssFromSettings();
+        swatch.style.background = v;
+        colorInput.value = v;
+      } else {
+        hexInp.classList.add('invalid');
       }
     });
+
+    // По blur — финализируем: приводим к #rrggbb или откатываем
     hexInp.addEventListener('blur', () => {
       const v = normalizeHex(hexInp.value);
       if (v) {
+        settings[key] = v;
+        saveSettings();
+        paintCssFromSettings();
         hexInp.value = v;
         hexInp.classList.remove('invalid');
-        commit(v, true);
+        syncVisual(v);
       } else {
         hexInp.value = normalizeHex(settings[key]) || '#000000';
         hexInp.classList.remove('invalid');
       }
     });
+
     hexInp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); }
     });
 
+    wrap.dataset.key = key;
     return wrap;
   }
 
-  // Точечное применение цвета к CSS без перерисовки книги/библиотеки.
-  // Это ключевой фикс: applySettings() перерисовывает контент и ломает ввод.
-  function applyColorOnly(hex) {
-    const k = arguments.callee._key; // не используется, оставлено для совместимости
-    // Определяем, какая переменная меняется — по сравнению с settings
-    // Проще: всегда применяем все три (bg/fg/accent) + производные.
+  // Единая функция: применяет settings.bg/fg/accent к CSS-переменным.
+  // НЕ перерисовывает книгу и библиотеку — чтобы не сбивать фокус.
+  function paintCssFromSettings() {
     const bg = normalizeHex(settings.bg) || '#000000';
     const fg = normalizeHex(settings.fg) || '#ffffff';
     const accent = normalizeHex(settings.accent) || '#888888';
@@ -1774,9 +1793,6 @@
     root.style.setProperty('--border-strong', shade(bg, 22));
     root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
     root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
-
-    // Шапку-настройки не трогаем (фокус сохранится).
-    // Книгу/библиотеку на каждый keystroke не перерисовываем.
   }
 
   // --- Рендер строки схемы ---
