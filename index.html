@@ -7,16 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>🕸️</title>
-
-<!-- ============================================================
-     ЧАСТЬ 1. HTML + CSS (интерфейс)
-     ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
-
 <style>
-  /* ---------- БАЗА ---------- */
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
     --bg: #14161a; --bg-header: #191c21; --bg-panel: #1e2228; --bg-input: #191c21;
@@ -68,7 +62,6 @@
     * { scrollbar-width: none; -ms-overflow-style: none; }
     *::-webkit-scrollbar { width: 0; height: 0; display: none; }
   }
-  .scroll-y { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; min-height: 0; }
 
   .reader-text { overflow-wrap: anywhere; word-break: break-word; hyphens: auto; -webkit-hyphens: auto;
     font-size: var(--font-size); }
@@ -77,7 +70,6 @@
   .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
     margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
 
-  /* ---------- ЭКРАН ВСТАВКИ ---------- */
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
     align-items: center; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch; }
@@ -125,7 +117,6 @@
     text-overflow: ellipsis; white-space: nowrap; padding-right: 52px; min-width: 0; }
   .book-item .meta { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 11px; color: var(--fg-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
   .book-item .book-categories { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
   .book-item .cat-tag { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
     font-size: 10px; color: var(--accent); letter-spacing: .3px; text-transform: uppercase;
@@ -137,7 +128,6 @@
   .book-item .cat-tag.none { color: var(--fg-dim); background: transparent; border-style: dashed; }
   .book-item .cat-tag .cat-x { margin-left: 4px; opacity: .6; }
   .book-item .cat-tag .cat-x:hover { opacity: 1; color: #ff9a9a; }
-
   .book-item .progress-line { height: 3px; border-radius: 2px; background: var(--border);
     overflow: hidden; margin-top: 2px; }
   .book-item .progress-line span { display: block; height: 100%; background: var(--accent); }
@@ -174,7 +164,6 @@
   .category-chip.add-chip { border-style: dashed; color: var(--fg-dim); padding: 6px 12px; }
   .category-chip.add-chip:hover { color: var(--accent); border-color: var(--accent); }
 
-  /* ---------- ПАНЕЛИ ---------- */
   .panel { position: fixed; top: 0; right: 0; width: min(380px, 100vw); height: 100%;
     background: var(--bg-header); border-left: 1px solid var(--border);
     z-index: 300; transform: translateX(100%); transition: transform .25s ease;
@@ -189,20 +178,6 @@
   .panel-body { flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0; -webkit-overflow-scrolling: touch; }
   .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
   .panel-overlay.open { display: block; }
-
-  .toc-item { padding: 12px 18px; font-size: 13px; color: var(--fg-mid);
-    cursor: pointer; line-height: 1.4; border-left: 2px solid transparent;
-    display: flex; justify-content: space-between; gap: 10px; align-items: baseline; min-height: 44px; }
-  .toc-item:hover { background: var(--bg-panel); color: var(--fg); border-left-color: var(--accent); }
-  .toc-item.active { color: var(--fg); border-left-color: var(--accent); }
-  .toc-item .toc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-  .toc-item .toc-pct { font-size: 11px; color: var(--fg-dim);
-    font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: .2px; }
-  .toc-item.active .toc-pct { color: var(--accent); }
-  #toc-empty { padding: 20px; font-size: 13px; color: var(--fg-dim); text-align: center; }
-  #toc-toolbar { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-  #toc-toolbar button { padding: 6px 10px; font-size: 12px; min-height: 34px; flex: 1; min-width: 100px; }
-  #toc-hint { padding: 8px 14px; font-size: 11px; color: var(--fg-dim); line-height: 1.4; border-bottom: 1px solid var(--border); }
 
   #marks-header-actions { display: flex; gap: 6px; }
   #marks-header button { padding: 6px 10px; font-size: 12px; min-height: 34px; }
@@ -266,7 +241,6 @@
   .find-hit { background: rgba(139,145,155,.35); border-radius: 3px;
     box-shadow: 0 0 0 1px var(--accent); transition: background .4s; }
 
-  /* ---------- ЧИТАЛКА ---------- */
   .reader-topbar {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 12px; padding-top: max(8px, var(--safe-top));
@@ -323,7 +297,6 @@
   @media (max-width: 1100px) { #side-progress { display: none !important; } }
   @media (hover: none) and (pointer: coarse) { #side-progress { display: none !important; } }
 
-  /* ---------- МОБИЛЬНАЯ ПАНЕЛЬ ---------- */
   #mobile-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-panel);
     border-top: 1px solid var(--border-strong); border-radius: 18px 18px 0 0;
     box-shadow: 0 -12px 40px rgba(0,0,0,.55); z-index: 400; transform: translateY(110%);
@@ -360,7 +333,6 @@
     font-size: 13px; color: var(--fg-mid); font-variant-numeric: tabular-nums;
     min-width: 46px; text-align: center; }
 
-  /* ---------- НАСТРОЙКИ ---------- */
   #settings-modal { position: fixed; inset: 0; z-index: 450; display: none;
     background: rgba(0,0,0,.55); align-items: center; justify-content: center;
     padding: 12px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -560,9 +532,6 @@
 </head>
 <body>
 
-<!-- ============================================================
-     ЧАСТЬ 1 (продолжение). HTML-разметка
-     ============================================================ -->
 <div id="boot-error"></div>
 <div id="file-toast"></div>
 <div id="progress-bar"></div>
@@ -600,19 +569,6 @@
     </div>
   </div>
 
-  <!-- TOC -->
-  <div id="toc-panel" class="panel">
-    <div class="panel-header"><span>Содержание</span><button id="toc-close">✕</button></div>
-    <div id="toc-hint">Заголовки распознаются автоматически: «Глава 1», «Часть I», «ПРОЛОГ» (капсом), «# Заголовок», «***». Если главы не найдены — нажмите «Разметить вручную».</div>
-    <div id="toc-toolbar">
-      <button id="toc-rescan">Пересканировать</button>
-      <button id="toc-manual">Разметить вручную</button>
-    </div>
-    <div class="panel-body" id="toc-list"></div>
-  </div>
-  <div class="panel-overlay" id="toc-overlay"></div>
-
-  <!-- Закладки -->
   <div id="marks-panel" class="panel">
     <div class="panel-header">
       <span>Закладки</span>
@@ -626,7 +582,6 @@
   </div>
   <div class="panel-overlay" id="marks-overlay"></div>
 
-  <!-- Поиск -->
   <div id="search-panel" class="panel">
     <div class="panel-header"><span>Поиск слова</span><div><button id="search-close">✕</button></div></div>
     <div id="search-input-wrap">
@@ -658,11 +613,9 @@
   <div id="side-progress"><div id="side-thumb"></div><div id="side-marks"></div></div>
 </div>
 
-<!-- Мобильная панель -->
 <div id="sheet-overlay"></div>
 <div id="mobile-sheet">
   <div id="sheet-handle"></div>
-
   <div class="sheet-section">
     <h5>Прогресс</h5>
     <div class="sheet-row">
@@ -670,7 +623,6 @@
       <span class="m-pct-value" id="m-pct-indicator">0.00%</span>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Размер текста</h5>
     <div class="sheet-row">
@@ -679,7 +631,6 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Ширина колонки</h5>
     <div class="sheet-row">
@@ -688,7 +639,6 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Межстрочный интервал</h5>
     <div class="sheet-row">
@@ -697,14 +647,12 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
       <button id="m-search">Поиск</button>
       <button id="m-font">Шрифт</button>
       <button id="m-theme">Цвет</button>
-      <button id="m-toc">Содержание</button>
       <button id="m-mark" class="mark-btn">Сделать закладку</button>
       <button id="m-marks" class="mark-btn">Закладки</button>
       <button id="m-categories">Категории</button>
@@ -715,7 +663,6 @@
   </div>
 </div>
 
-<!-- Настройки -->
 <div id="settings-modal">
   <div class="card">
     <div class="card-header">
@@ -726,7 +673,6 @@
   </div>
 </div>
 
-<!-- Инлайн-диалог -->
 <div id="inline-dialog">
   <div class="dlg">
     <h4 id="inline-dialog-title">Введите значение</h4>
@@ -739,14 +685,9 @@
   </div>
 </div>
 
-<!-- ============================================================
-     ЧАСТЬ 2. ЯДРО (утилиты, хранилище, настройки, парсинг файлов)
-     ============================================================ -->
 <script>
 (function () {
   'use strict';
-
-  /* ---------- УТИЛИТЫ ---------- */
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
 
@@ -810,7 +751,6 @@
     return s;
   }
 
-  /* ---------- INLINE-ДИАЛОГ ---------- */
   const inlineDlg = $('inline-dialog');
   const inlineTitle = $('inline-dialog-title');
   const inlineInput = $('inline-dialog-input');
@@ -845,14 +785,14 @@
     inlineDlg.classList.remove('open');
     if (inlineResolve) { const r = inlineResolve; inlineResolve = null; r(result); }
   }
-  if (inlineOk) inlineOk.addEventListener('click', () => {
+  inlineOk.addEventListener('click', () => {
     const isText = inlineTextarea.style.display !== 'none';
     closeInlineDialog(isText ? inlineTextarea.value : inlineInput.value);
   });
-  if (inlineCancel) inlineCancel.addEventListener('click', () => closeInlineDialog(null));
-  if (inlineDlg) inlineDlg.addEventListener('click', (e) => { if (e.target === inlineDlg) closeInlineDialog(null); });
-  if (inlineInput) inlineInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); inlineOk && inlineOk.click(); }
+  inlineCancel.addEventListener('click', () => closeInlineDialog(null));
+  inlineDlg.addEventListener('click', (e) => { if (e.target === inlineDlg) closeInlineDialog(null); });
+  inlineInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); inlineOk.click(); }
     if (e.key === 'Escape') { e.preventDefault(); closeInlineDialog(null); }
   });
 
@@ -862,7 +802,6 @@
     return openInlineDialog({ title, okText: okText || 'OK', danger: !!danger, hideCancel: false, value: '' }).then(v => v !== null);
   }
 
-  /* ---------- НАСТРОЙКИ ---------- */
   const DEFAULTS = {
     bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
     fontSize: 20, colWidth: 720, lineHeight: 1.85,
@@ -970,7 +909,6 @@
   let settings = loadSettings();
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
-  /* ---------- СВОИ ЦВЕТОВЫЕ СХЕМЫ ---------- */
   const CUSTOM_PALETTES_KEY = 'reader_custom_palettes_v1';
   function loadCustomPalettes() {
     try {
@@ -994,10 +932,8 @@
     try { localStorage.setItem(CUSTOM_PALETTES_KEY, JSON.stringify(arr)); } catch (e) {}
   }
 
-  /* ---------- ХРАНИЛИЩЕ КНИГ ---------- */
   const META_KEY = 'reader_books_meta_v5';
   const TEXT_PREFIX = 'reader_book_text_';
-  const TOC_OVERRIDE_PREFIX = 'reader_toc_override_';
   const OLD_META_KEY = 'reader_books_meta_v4';
   const OLD_COLLECTIONS_KEY = 'reader_collections_v2';
 
@@ -1028,19 +964,9 @@
     try { localStorage.setItem(TEXT_PREFIX + id, text); return true; }
     catch (e) { toast('Текст книги слишком велик', true); return false; }
   }
-  function getTocOverride(id) {
-    try { return JSON.parse(localStorage.getItem(TOC_OVERRIDE_PREFIX + id) || 'null'); } catch (e) { return null; }
-  }
-  function setTocOverride(id, arr) {
-    try {
-      if (arr && arr.length) localStorage.setItem(TOC_OVERRIDE_PREFIX + id, JSON.stringify(arr));
-      else localStorage.removeItem(TOC_OVERRIDE_PREFIX + id);
-    } catch (e) {}
-  }
   function removeBookData(id) {
     try { localStorage.removeItem(TEXT_PREFIX + id); } catch (e) {}
     try { localStorage.removeItem(marksKey(id)); } catch (e) {}
-    try { localStorage.removeItem(TOC_OVERRIDE_PREFIX + id); } catch (e) {}
   }
   const CATEGORIES_KEY = 'reader_categories_v3';
   function loadCategories() {
@@ -1067,7 +993,27 @@
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
 
-  /* ---------- РАЗБИЕНИЕ НА АБЗАЦЫ ---------- */
+  function glueBoldBlocks(text) {
+    let t = String(text || '');
+    const re = /\*\*\s*\n\s*([^\*]{1,200}?)\s*\n\s*\*\*/g;
+    let prev;
+    do {
+      prev = t;
+      t = t.replace(re, (m, inner) => '**' + inner.replace(/\s*\n\s*/g, ' ').trim() + '**');
+    } while (t !== prev);
+    return t;
+  }
+  function normalizeRawText(text) {
+    let t = String(text || '');
+    t = t.replace(/\r\n?/g, '\n');
+    t = t.replace(/\u00a0/g, ' ');
+    t = t.replace(/[ \t]+\n/g, '\n');
+    t = t.replace(/\n{4,}/g, '\n\n\n');
+    t = t.replace(/^\s+/, '').replace(/\s+$/, '');
+    t = glueBoldBlocks(t);
+    return t;
+  }
+
   function splitIntoParagraphs(text) {
     const blocks = String(text || '').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
     if (blocks.length <= 1) {
@@ -1078,36 +1024,14 @@
     return blocks;
   }
 
-  /* ---------- РАСПОЗНАВАНИЕ ЗАГОЛОВКОВ (мягкое) ---------- */
-  function isChapterTitle(text) {
-    if (!text) return false;
-    const t = text.trim();
-    if (t.length > 120 || t.length < 2) return false;
-    // 1. Явные маркеры
-    const patterns = [
-      /^(глава|часть|книга|том|пролог|эпилог|chapter|part|book|volume|prologue|epilogue)\b/i,
-      /^[IVXLCDM]{1,7}\.?\s*$/, /^\d+\.?\s*$/, /^#{1,3}\s+/, /^\*{3,}$/
-    ];
-    for (const p of patterns) if (p.test(t)) return true;
-    // 2. Короткая строка без точки в конце, где много заглавных
-    if (t.length < 70 && !/[.!?…]$/.test(t)) {
-      const letters = t.replace(/\s/g,'');
-      if (letters.length > 0) {
-        const upperRatio = (t.match(/[А-ЯЁA-Z]/g) || []).length / letters.length;
-        if (upperRatio > 0.6) return true;
-      }
-    }
-    // 3. Короткая строка без точки, начинающаяся с заглавной — только если она стоит отдельным блоком
-    //    (это ловит «Пролог», «Эпилог», «Вступление», но может ловить и обычные короткие абзацы)
-    if (t.length <= 40 && !/[.!?…]$/.test(t) && /^[А-ЯЁA-Z]/.test(t)) {
-      // отсекаем слишком «обычные» слова
-      const common = /^(он|она|они|оно|это|там|тут|так|вот|что|как|где|когда|если|но|и|а|да|нет)$/i;
-      if (!common.test(t)) return true;
-    }
-    return false;
+  function cleanHeadingForDisplay(rawText) {
+    return String(rawText || '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[\*\_`~>#]+/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
-  /* ---------- ЧТЕНИЕ ФАЙЛОВ ---------- */
   function decodeBuffer(buffer) {
     const bytes = new Uint8Array(buffer);
     if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF)
@@ -1290,9 +1214,9 @@
         text = decodeBuffer(buffer);
       }
       text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n').trim();
+      text = normalizeRawText(text);
       if (!text) { toast('Не удалось извлечь текст', true); return; }
-      const cid = (typeof activeCategory === 'string' && activeCategory) ? activeCategory : '';
-      const id = addBookRecord(name || guessTitle(text), text, cid);
+      const id = addBookRecord(name || guessTitle(text), text, '');
       if (!id) return;
       renderClassicLibrary();
       toast('Загружено: ' + (name || guessTitle(text)));
@@ -1301,21 +1225,19 @@
     }
   }
 
-  /* ---------- ЭКСПОРТ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ДЛЯ ЧАСТИ 3 ---------- */
   window.__READER_CORE__ = {
     $, root, showError, toast, escapeHtml, formatDate, shade, mix, contrastColor, normalizeHex,
     askText, askLongText, askConfirm, openInlineDialog,
     DEFAULTS, FONT_STACKS, FONTS, PRESET_GROUPS,
     loadSettings, saveSettings, getSettings: () => settings, setSettings: (s) => { settings = s; },
     loadCustomPalettes, saveCustomPalettes,
-    loadMeta, saveMeta, getBookText, setBookText, getTocOverride, setTocOverride,
+    loadMeta, saveMeta, getBookText, setBookText,
     removeBookData, loadCategories, saveCategories, marksKey, loadMarks, saveMarks,
-    sortBooks, guessTitle, countWords, splitIntoParagraphs, isChapterTitle, readFile,
-    addBookRecord,
-    CUSTOM_PALETTES_KEY, META_KEY, TEXT_PREFIX, TOC_OVERRIDE_PREFIX, CATEGORIES_KEY
+    sortBooks, guessTitle, countWords, splitIntoParagraphs, normalizeRawText,
+    cleanHeadingForDisplay, readFile, addBookRecord,
+    CUSTOM_PALETTES_KEY, META_KEY, TEXT_PREFIX, CATEGORIES_KEY
   };
 
-  /* ---------- ЗАГЛУШКА addBookRecord (реальная реализация — в части 3) ---------- */
   function addBookRecord(title, text, categoryId) {
     const meta = loadMeta();
     let minOrder = 0;
@@ -1336,11 +1258,9 @@
   }
   window.__READER_CORE__.addBookRecord = addBookRecord;
 
-  // глобальные переменные состояния (используются в части 3)
   window.__READER_STATE__ = {
     currentBookId: null,
     currentMarks: [],
-    chapters: [],
     activeChapter: -1,
     currentSearchHits: [],
     currentSearchIndex: -1,
@@ -1351,12 +1271,7 @@
     saveScrollTimer: null
   };
 })();
-</script>
 
-<!-- ============================================================
-     ЧАСТЬ 3. UI-ЛОГИКА (библиотека, читалка, TOC, закладки, поиск, меню)
-     ============================================================ -->
-<script>
 (function () {
   'use strict';
   const C = window.__READER_CORE__;
@@ -1373,17 +1288,11 @@
   const askText = C.askText;
   const askLongText = C.askLongText;
   const askConfirm = C.askConfirm;
+  const cleanHeadingForDisplay = C.cleanHeadingForDisplay;
 
   let settings = C.getSettings();
-
   function saveSettings() { C.saveSettings(); }
-  function reloadSettings() { settings = C.getSettings(); }
 
-  /* ---------- ЭЛЕМЕНТЫ ---------- */
-  const tocPanel = $('toc-panel');
-  const tocList = $('toc-list');
-  const tocClose = $('toc-close');
-  const tocOverlay = $('toc-overlay');
   const marksPanel = $('marks-panel');
   const marksList = $('marks-list');
   const marksClose = $('marks-close');
@@ -1405,7 +1314,6 @@
   const noteCancel = $('note-cancel');
   const noteSave = $('note-save');
 
-  /* ---------- ПРОКРУТКА / ПРОГРЕСС ---------- */
   function getActiveReaderEl() { return $('reader-screen'); }
   function getActiveContentEl() { return $('content'); }
   function getReaderScrollHeight() {
@@ -1435,7 +1343,7 @@
     const max = el.scrollHeight - el.clientHeight;
     return {
       pIndex: targetIdx, offsetInPara: offsetInPara, scrollTop: el.scrollTop,
-      pct: max > 0 ? el.scrollTop / max : 0, chapter: S.activeChapter
+      pct: max > 0 ? el.scrollTop / max : 0
     };
   }
   function restoreReadingPosition(pos) {
@@ -1453,225 +1361,27 @@
       const max = el.scrollHeight - el.clientHeight;
       el.scrollTop = pos.pct * Math.max(0, max);
     }
-    if (typeof pos.chapter === 'number') S.activeChapter = pos.chapter;
   }
 
-  /* ---------- РЕНДЕР КНИГИ ---------- */
   function renderBookIntoContent(text, contentEl) {
-    if (!contentEl) { S.chapters = []; return; }
-    contentEl.innerHTML = ''; S.chapters = [];
-    const paragraphs = C.splitIntoParagraphs(text);
-    let chapterCount = 0;
+    if (!contentEl) return;
+    contentEl.innerHTML = '';
+    const normalized = C.normalizeRawText(text);
+    const paragraphs = C.splitIntoParagraphs(normalized);
+
     const frag = document.createDocumentFragment();
     paragraphs.forEach((p, idx) => {
       const el = document.createElement('p');
-      el.textContent = p; el.dataset.pIndex = idx;
-      if (C.isChapterTitle(p)) {
-        el.classList.add('chapter-title');
-        chapterCount++;
-        S.chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
-      }
+      el.textContent = p;
+      el.dataset.pIndex = idx;
       frag.appendChild(el);
     });
     contentEl.appendChild(frag);
-    buildToc();
   }
 
-  /* ---------- TOC ---------- */
-  function buildToc() {
-    if (!tocList) return;
-    tocList.innerHTML = '';
-    if (!S.chapters.length) {
-      const empty = document.createElement('div'); empty.id = 'toc-empty';
-      empty.textContent = 'Главы не найдены. Нажмите «Разметить вручную» или оформите заголовки как «Глава 1», «Часть I», «ПРОЛОГ» (капсом), «# Заголовок», «***».';
-      tocList.appendChild(empty); return;
-    }
-    S.chapters.forEach((ch, i) => {
-      const el = document.createElement('div'); el.className = 'toc-item';
-      const name = document.createElement('span'); name.className = 'toc-name'; name.textContent = ch.title;
-      const pct = document.createElement('span'); pct.className = 'toc-pct'; pct.textContent = '0.00%';
-      el.appendChild(name); el.appendChild(pct);
-      el.addEventListener('click', () => { goToChapter(i); closeToc(); });
-      tocList.appendChild(el);
-    });
-    requestAnimationFrame(updateTocPercents);
-  }
-  function updateTocPercents() {
-    if (!tocList || !S.chapters.length) return;
-    const items = tocList.querySelectorAll('.toc-item');
-    if (!items.length) return;
-    const max = getReaderScrollHeight();
-    if (max <= 0) { items.forEach(i => { const p = i.querySelector('.toc-pct'); if (p) p.textContent = '0.00%'; }); return; }
-    S.chapters.forEach((ch, i) => {
-      const item = items[i]; if (!item) return;
-      const pctEl = item.querySelector('.toc-pct'); if (!pctEl) return;
-      const p = Math.max(0, Math.min(100, (ch.el.offsetTop / max) * 100));
-      pctEl.textContent = p.toFixed(2) + '%';
-    });
-  }
-  function highlightActiveToc() {
-    if (!tocList) return;
-    const items = tocList.querySelectorAll('.toc-item');
-    items.forEach((el, i) => el.classList.toggle('active', i === S.activeChapter));
-    if (S.activeChapter >= 0 && items[S.activeChapter]) items[S.activeChapter].scrollIntoView({ block: 'nearest' });
-  }
-  function goToChapter(i) {
-    if (i < 0 || i >= S.chapters.length) return;
-    S.activeChapter = i;
-    S.chapters[i].el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    highlightActiveToc();
-  }
-  function openToc() {
-    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
-    if (!tocPanel) return;
-    updateTocPercents(); tocPanel.classList.add('open'); tocOverlay.classList.add('open');
-    highlightActiveToc();
-  }
-  function closeToc() {
-    if (!tocPanel) return;
-    tocPanel.classList.remove('open'); tocOverlay.classList.remove('open');
-  }
-  if (tocClose) tocClose.addEventListener('click', closeToc);
-  if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
-
-  // Пересканировать TOC вручную
-  const tocRescan = $('toc-rescan');
-  if (tocRescan) tocRescan.addEventListener('click', () => {
-    if (!S.currentBookId) return;
-    const text = C.getBookText(S.currentBookId);
-    const savedPos = captureReadingPosition();
-    renderBookIntoContent(text, $('content'));
-    requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
-    toast('Содержание пересканировано');
-  });
-
-  // Ручная разметка TOC: диалог со списком абзацев
-  const tocManual = $('toc-manual');
-  if (tocManual) tocManual.addEventListener('click', () => {
-    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
-    openManualTocDialog();
-  });
-
-  function openManualTocDialog() {
-    const content = getActiveContentEl();
-    if (!content) return;
-    const paras = content.querySelectorAll('p');
-    const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:12px;font-family:-apple-system,Segoe UI,Roboto,sans-serif;';
-    const box = document.createElement('div');
-    box.style.cssText = 'width:100%;max-width:560px;max-height:88vh;background:var(--bg-panel);border:1px solid var(--border-strong);border-radius:14px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6);';
-    const head = document.createElement('div');
-    head.style.cssText = 'padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;';
-    head.innerHTML = '<h3 style="font-size:15px;font-weight:700;margin:0;">Ручная разметка глав</h3>';
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = '✕';
-    closeBtn.style.cssText = 'background:transparent;border:none;color:var(--fg-dim);font-size:20px;cursor:pointer;';
-    closeBtn.addEventListener('click', () => overlay.remove());
-    head.appendChild(closeBtn); box.appendChild(head);
-
-    const hint = document.createElement('div');
-    hint.style.cssText = 'padding:10px 16px;font-size:12px;color:var(--fg-dim);line-height:1.4;border-bottom:1px solid var(--border);';
-    hint.textContent = 'Отметьте абзацы, которые должны стать главами. Отмеченные сохранятся как ручное содержание и будут использоваться вместо автоматического.';
-    box.appendChild(hint);
-
-    const list = document.createElement('div');
-    list.style.cssText = 'flex:1;overflow-y:auto;padding:6px 0;min-height:0;';
-    const saved = C.getTocOverride(S.currentBookId) || [];
-    const savedSet = new Set(saved.map(x => x.pIndex));
-    paras.forEach((p, idx) => {
-      const row = document.createElement('label');
-      row.style.cssText = 'display:flex;gap:8px;padding:8px 16px;font-size:13px;line-height:1.35;cursor:pointer;align-items:flex-start;border-bottom:1px solid var(--border);';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox'; cb.checked = savedSet.has(idx);
-      cb.style.cssText = 'margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:var(--accent);';
-      const span = document.createElement('span');
-      span.textContent = p.textContent.length > 140 ? p.textContent.slice(0,140) + '…' : p.textContent;
-      span.style.cssText = 'flex:1;min-width:0;word-break:break-word;';
-      row.appendChild(cb); row.appendChild(span);
-      cb.addEventListener('change', () => { row.dataset.checked = cb.checked ? '1' : ''; });
-      list.appendChild(row);
-    });
-    box.appendChild(list);
-
-    const actions = document.createElement('div');
-    actions.style.cssText = 'padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;';
-    const clear = document.createElement('button');
-    clear.textContent = 'Сбросить';
-    clear.style.cssText = 'flex:1;padding:10px;';
-    clear.addEventListener('click', () => {
-      C.setTocOverride(S.currentBookId, []);
-      overlay.remove();
-      const text = C.getBookText(S.currentBookId);
-      const savedPos = captureReadingPosition();
-      renderBookIntoContent(text, $('content'));
-      requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
-      toast('Ручная разметка сброшена');
-    });
-    const save = document.createElement('button');
-    save.textContent = 'Сохранить';
-    save.style.cssText = 'flex:1;padding:10px;background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;';
-    save.addEventListener('click', () => {
-      const chosen = [];
-      list.querySelectorAll('label').forEach((row, idx) => {
-        const cb = row.querySelector('input[type=checkbox]');
-        if (cb && cb.checked) {
-          const p = paras[idx];
-          chosen.push({ pIndex: idx, title: (p.textContent || '').slice(0, 120) });
-        }
-      });
-      C.setTocOverride(S.currentBookId, chosen);
-      overlay.remove();
-      const text = C.getBookText(S.currentBookId);
-      const savedPos = captureReadingPosition();
-      renderBookIntoContent(text, $('content'));
-      requestAnimationFrame(() => { if (savedPos) restoreReadingPosition(savedPos); updateAllProgress(); });
-      toast('Сохранено глав: ' + chosen.length);
-    });
-    actions.appendChild(clear); actions.appendChild(save);
-    box.appendChild(actions);
-    overlay.appendChild(box);
-    document.body.appendChild(overlay);
-  }
-
-  // Применяем ручное оглавление при рендере: переопределяем isChapterTitle для этой книги
-  const origIsChapterTitle = C.isChapterTitle;
-  function isChapterTitleForCurrent(text, pIndex) {
-    if (S.currentBookId) {
-      const override = C.getTocOverride(S.currentBookId);
-      if (override && override.length) {
-        return override.some(x => x.pIndex === pIndex);
-      }
-    }
-    return origIsChapterTitle(text);
-  }
-
-  // Перепишем renderBookIntoContent с учётом override
-  function renderBookIntoContentWithOverride(text, contentEl) {
-    if (!contentEl) { S.chapters = []; return; }
-    contentEl.innerHTML = ''; S.chapters = [];
-    const paragraphs = C.splitIntoParagraphs(text);
-    let chapterCount = 0;
-    const frag = document.createDocumentFragment();
-    paragraphs.forEach((p, idx) => {
-      const el = document.createElement('p');
-      el.textContent = p; el.dataset.pIndex = idx;
-      if (isChapterTitleForCurrent(p, idx)) {
-        el.classList.add('chapter-title');
-        chapterCount++;
-        S.chapters.push({ title: p.trim(), el, num: chapterCount, pIndex: idx });
-      }
-      frag.appendChild(el);
-    });
-    contentEl.appendChild(frag);
-    buildToc();
-  }
-  // подменяем функцию
-  renderBookIntoContent = renderBookIntoContentWithOverride;
-
-  /* ---------- ЗАКЛАДКИ ---------- */
   function getCurrentSnippet() {
     const el = getActiveReaderEl(); const content = getActiveContentEl();
-    if (!el || !content) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
+    if (!el || !content) return { text:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
     const y = el.scrollTop + 40;
     const paras = content.querySelectorAll('p');
     let target = null, targetIndex = -1;
@@ -1680,18 +1390,14 @@
       if (p.offsetTop + p.offsetHeight > y) { target = p; targetIndex = i; break; }
     }
     if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
-    if (!target) return { text:'',chapter:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
+    if (!target) return { text:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
     const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
     const ratio = offsetInPara / Math.max(1, target.offsetHeight);
     const text = (target.textContent || '').trim();
     const snippet = text.length > 140 ? text.slice(0, 140) + '…' : text;
-    let chapterTitle = '';
-    for (let i = 0; i < S.chapters.length; i++) {
-      if (S.chapters[i].el.offsetTop <= y) chapterTitle = S.chapters[i].title; else break;
-    }
     const max = getReaderScrollHeight();
     const pct = max > 0 ? el.scrollTop / max : 0;
-    return { text: snippet, chapter: chapterTitle, pIndex: targetIndex, offsetInPara, ratio, pos: el.scrollTop, pct };
+    return { text: snippet, pIndex: targetIndex, offsetInPara, ratio, pos: el.scrollTop, pct };
   }
   function addMark() {
     if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
@@ -1706,7 +1412,7 @@
     S.pendingMarkAnchor = null;
     S.currentMarks.push(mark); C.saveMarks(S.currentBookId, S.currentMarks);
     renderSideMarks(); renderMarksList();
-    toast('Закладка сохранена' + (mark.chapter ? ' — ' + mark.chapter : ''));
+    toast('Закладка сохранена');
   }
   function openNoteEditor(markId) {
     S.editingMarkId = markId;
@@ -1732,10 +1438,10 @@
     S.editingMarkId = null;
     noteEditor.classList.remove('open'); noteInput.value = '';
   }
-  if (noteCancel) noteCancel.addEventListener('click', () => closeNoteEditor(false));
-  if (noteSave) noteSave.addEventListener('click', () => closeNoteEditor(true));
-  if (noteEditor) noteEditor.addEventListener('click', (e) => { if (e.target === noteEditor) closeNoteEditor(false); });
-  if (noteInput) noteInput.addEventListener('keydown', (e) => {
+  noteCancel.addEventListener('click', () => closeNoteEditor(false));
+  noteSave.addEventListener('click', () => closeNoteEditor(true));
+  noteEditor.addEventListener('click', (e) => { if (e.target === noteEditor) closeNoteEditor(false); });
+  noteInput.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { e.preventDefault(); closeNoteEditor(false); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); closeNoteEditor(true); }
   });
@@ -1760,7 +1466,6 @@
     }
     const filtered = query ? S.currentMarks.filter(m =>
       (m.text || '').toLowerCase().includes(query) ||
-      (m.chapter || '').toLowerCase().includes(query) ||
       (m.note || '').toLowerCase().includes(query)) : S.currentMarks;
     if (!filtered.length) {
       const empty = document.createElement('div'); empty.id = 'marks-empty';
@@ -1775,7 +1480,7 @@
     sorted.forEach(m => {
       const el = document.createElement('div'); el.className = 'mark-item';
       const title = document.createElement('div'); title.className = 'mark-title';
-      title.textContent = (m.chapter || 'Без главы') + ' · ' + ((m.pct || 0) * 100).toFixed(2) + '%';
+      title.textContent = ((m.pct || 0) * 100).toFixed(2) + '%';
       const text = document.createElement('div'); text.className = 'mark-text';
       text.textContent = m.text || '(пусто)';
       el.appendChild(title); el.appendChild(text);
@@ -1801,7 +1506,7 @@
       const mark = document.createElement('div'); mark.className = 'side-mark';
       const pct = Math.max(0, Math.min(1, m.pct || 0));
       mark.style.top = (pct * 100) + '%';
-      mark.title = (m.chapter || '') + ' · ' + (m.text || '').slice(0, 60);
+      mark.title = (m.text || '').slice(0, 60);
       sideMarks.appendChild(mark);
     });
   }
@@ -1827,12 +1532,11 @@
     if (!marksPanel) return;
     marksPanel.classList.remove('open'); marksOverlay.classList.remove('open');
   }
-  if (marksClose) marksClose.addEventListener('click', closeMarks);
-  if (marksOverlay) marksOverlay.addEventListener('click', closeMarks);
-  if (marksClear) marksClear.addEventListener('click', clearMarks);
-  if (marksSearch) marksSearch.addEventListener('input', renderMarksList);
+  marksClose.addEventListener('click', closeMarks);
+  marksOverlay.addEventListener('click', closeMarks);
+  marksClear.addEventListener('click', clearMarks);
+  marksSearch.addEventListener('input', renderMarksList);
 
-  /* ---------- ПОИСК ---------- */
   function normalizeSearch(str) { return String(str).toLowerCase().replace(/ё/g, 'е'); }
   function findInBook(query) {
     const result = []; if (!query) return result;
@@ -1841,14 +1545,6 @@
     if (!content) return result;
     const paras = content.querySelectorAll('p');
     const maxScroll = getReaderScrollHeight();
-    const chapterRanges = S.chapters.map(ch => ({ title: ch.title, startIndex: ch.pIndex }));
-    function chapterForPara(pIndex) {
-      let title = '';
-      for (let i = 0; i < chapterRanges.length; i++) {
-        if (chapterRanges[i].startIndex <= pIndex) title = chapterRanges[i].title; else break;
-      }
-      return title;
-    }
     for (let i = 0; i < paras.length; i++) {
       const p = paras[i]; const rawText = p.textContent || '';
       if (!rawText) continue;
@@ -1870,7 +1566,7 @@
           pct = (p.offsetTop + offset) / maxScroll;
           pct = Math.max(0, Math.min(1, pct));
         }
-        result.push({ pIndex: i, charStart: pos, charEnd: endPos, snippet, pct, chapter: chapterForPara(i) });
+        result.push({ pIndex: i, charStart: pos, charEnd: endPos, snippet, pct });
         from = pos + Math.max(1, q.length);
         if (result.length >= 300) return result;
       }
@@ -1900,7 +1596,7 @@
       el.className = 'search-item' + (idx === S.currentSearchIndex ? ' active' : '');
       const head = document.createElement('div'); head.className = 's-head';
       const chap = document.createElement('div'); chap.className = 's-chapter';
-      chap.textContent = h.chapter || 'Без главы';
+      chap.textContent = '';
       const pct = document.createElement('span'); pct.className = 's-pct';
       pct.textContent = (h.pct * 100).toFixed(2) + '%';
       head.appendChild(chap); head.appendChild(pct);
@@ -1942,32 +1638,29 @@
     if (!searchPanel) return;
     searchPanel.classList.remove('open'); searchOverlay.classList.remove('open');
   }
-  if (searchClose) searchClose.addEventListener('click', closeSearch);
-  if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
-  if (bookSearchClear) bookSearchClear.addEventListener('click', () => {
+  searchClose.addEventListener('click', closeSearch);
+  searchOverlay.addEventListener('click', closeSearch);
+  bookSearchClear.addEventListener('click', () => {
     bookSearchInput.value = ''; S.currentSearchHits = []; S.currentSearchIndex = -1;
     renderSearchResults(); bookSearchInput.focus();
   });
-  if (bookSearchInput) {
-    bookSearchInput.addEventListener('input', () => {
-      searchInputWrap.classList.toggle('has-value', !!bookSearchInput.value.trim());
-      if (S.searchDebounceTimer) clearTimeout(S.searchDebounceTimer);
-      S.searchDebounceTimer = setTimeout(() => {
-        S.currentSearchHits = findInBook(bookSearchInput.value); S.currentSearchIndex = -1;
-        renderSearchResults();
-      }, 220);
-    });
-    bookSearchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault(); if (!S.currentSearchHits.length) return;
-        const next = S.currentSearchIndex < 0 ? 0 : (S.currentSearchIndex + 1) % S.currentSearchHits.length;
-        scrollToSearchHit(next);
-      }
-      if (e.key === 'Escape') { e.preventDefault(); closeSearch(); }
-    });
-  }
+  bookSearchInput.addEventListener('input', () => {
+    searchInputWrap.classList.toggle('has-value', !!bookSearchInput.value.trim());
+    if (S.searchDebounceTimer) clearTimeout(S.searchDebounceTimer);
+    S.searchDebounceTimer = setTimeout(() => {
+      S.currentSearchHits = findInBook(bookSearchInput.value); S.currentSearchIndex = -1;
+      renderSearchResults();
+    }, 220);
+  });
+  bookSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); if (!S.currentSearchHits.length) return;
+      const next = S.currentSearchIndex < 0 ? 0 : (S.currentSearchIndex + 1) % S.currentSearchHits.length;
+      scrollToSearchHit(next);
+    }
+    if (e.key === 'Escape') { e.preventDefault(); closeSearch(); }
+  });
 
-  /* ---------- ПРОГРЕСС / СКРОЛЛ ---------- */
   function scheduleSaveProgress() {
     if (!S.currentBookId) return;
     if (S.saveScrollTimer) clearTimeout(S.saveScrollTimer);
@@ -1979,7 +1672,6 @@
       if (!pos) return;
       list[idx].scroll = pos.scrollTop;
       list[idx].pct = pos.pct;
-      list[idx].chapter = pos.chapter;
       list[idx].pIndex = pos.pIndex;
       list[idx].offsetInPara = pos.offsetInPara;
       C.saveMeta(list);
@@ -2002,16 +1694,8 @@
     const mInd = $('m-pct-indicator'); if (mInd) mInd.textContent = pct.toFixed(2) + '%';
     const mBar = $('m-pct-bar'); if (mBar) mBar.style.width = pct + '%';
     updateSideThumb(pct);
-    const el = getActiveReaderEl(); const st = el ? el.scrollTop : 0;
-    if (S.chapters.length && el) {
-      let idx = -1;
-      for (let i = 0; i < S.chapters.length; i++) {
-        if (S.chapters[i].el.offsetTop - 80 <= st) idx = i; else break;
-      }
-      if (idx !== S.activeChapter) { S.activeChapter = idx; highlightActiveToc(); }
-    }
     scheduleSaveProgress();
-    updateTocPercents(); renderSideMarks();
+    renderSideMarks();
   }
   function showScroller() {
     const sp = $('side-progress'); if (!sp) return;
@@ -2022,7 +1706,6 @@
     sp._t = setTimeout(() => { if (!sp.classList.contains('dragging')) sp.classList.remove('visible'); }, 500);
   }
 
-  /* ---------- МОБИЛЬНАЯ ПАНЕЛЬ ---------- */
   const mobileSheet = $('mobile-sheet');
   const sheetOverlay = $('sheet-overlay');
   const sheetHandle = $('sheet-handle');
@@ -2075,14 +1758,13 @@
     renderClassicLibrary();
   }
 
-  /* ---------- МОДАЛКА НАСТРОЕК ---------- */
   const settingsModal = $('settings-modal');
   const settingsModalTitle = $('settings-modal-title');
   const settingsModalBody = $('settings-modal-body');
   const settingsModalClose = $('settings-modal-close');
   function closeSettingsModal() { settingsModal?.classList.remove('open'); }
-  if (settingsModalClose) settingsModalClose.addEventListener('click', closeSettingsModal);
-  if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
+  settingsModalClose.addEventListener('click', closeSettingsModal);
+  settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
   function addGroup(title) {
     if (!title) return;
     const t = document.createElement('div');
@@ -2369,12 +2051,10 @@
     mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
     mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
     mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
-    mkBtn('Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
     mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
     settingsModalBody.appendChild(libWrap);
   }
 
-  /* ---------- ПОПАПЫ ---------- */
   const popOverlay = $('pop-overlay');
   function ensurePopOverlay() {
     if (!popOverlay) return;
@@ -2420,7 +2100,6 @@
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
 
-  /* ---------- КАТЕГОРИИ ---------- */
   function openCategoriesManager() {
     const pop = $('menu-pop'); if (!pop) return;
     closeAllPopups();
@@ -2505,7 +2184,6 @@
     });
   }
 
-  /* ---------- МЕНЮ КНИГИ ---------- */
   function showBookMenu(bookId, anchorEl) {
     const menu = $('category-menu'); if (!menu) return;
     closeAllPopups();
@@ -2615,7 +2293,6 @@
     }, 0);
   }
 
-  /* ---------- БИБЛИОТЕКА ---------- */
   function renderClassicLibrary() {
     const libraryList = $('library-list'); if (!libraryList) return;
     renderCategoriesBar();
@@ -2721,7 +2398,6 @@
     });
   }
 
-  /* ---------- ПЕРЕТАСКИВАНИЕ КНИГ ---------- */
   let dragState = null;
   function clearDragHighlights(container) {
     if (!container) return;
@@ -2809,7 +2485,6 @@
     window.addEventListener('pointercancel', onUp);
   }
 
-  /* ---------- ПАНЕЛЬ ФИЛЬТРОВ ---------- */
   function renderCategoriesBar() {
     const bar = $('categories-bar'); if (!bar) return;
     const cats = C.loadCategories(); const books = C.loadMeta();
@@ -2868,7 +2543,6 @@
     addChip.classList.add('add-chip');
   }
 
-  /* ---------- ОТКРЫТИЕ КНИГИ ---------- */
   function openBookClassic(id) {
     const b = C.loadMeta().find(x => x.id === id);
     if (!b) return;
@@ -2876,33 +2550,30 @@
     $('paste-screen').classList.remove('active');
     $('reader-shell').classList.add('active');
     renderBookIntoContent(C.getBookText(id), $('content'));
-    const pos = { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct, chapter: b.chapter };
+    const pos = { pIndex: b.pIndex, offsetInPara: b.offsetInPara, scrollTop: b.scroll, pct: b.pct };
     requestAnimationFrame(() => {
       restoreReadingPosition(pos);
       updateAllProgress();
     });
   }
   function backClassic() {
-    S.currentBookId = null; S.currentMarks = []; S.chapters = []; S.activeChapter = -1;
+    S.currentBookId = null; S.currentMarks = []; S.activeChapter = -1;
     $('paste-screen').classList.add('active');
     $('reader-shell').classList.remove('active');
     renderClassicLibrary();
   }
 
-  /* ---------- ДОБАВЛЕНИЕ КНИГ ---------- */
   async function promptAddBook() {
     const t = await askText('Название книги:', 'Новая книга');
     if (t === null) return;
     const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
     if (text === null || !text.trim()) { toast('Нет текста', true); return; }
-    const cid = (typeof S.activeCategory === 'string' && S.activeCategory) ? S.activeCategory : '';
-    const id = C.addBookRecord(t.trim() || C.guessTitle(text), text, cid);
+    const id = C.addBookRecord(t.trim() || C.guessTitle(text), text, '');
     if (!id) return;
     renderClassicLibrary();
     toast('Книга добавлена');
   }
 
-  /* ---------- PCT JUMP ---------- */
   let pctJumpEl = null;
   function ensurePctJump() {
     if (pctJumpEl) return pctJumpEl;
@@ -2965,37 +2636,31 @@
     }
   });
 
-  /* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
   function init() {
     C.loadMeta();
     applySettings();
     renderClassicLibrary();
 
-    const btnRead = $('btn-read');
-    if (btnRead) btnRead.addEventListener('click', async () => {
+    $('btn-read').addEventListener('click', async () => {
       const text = $('input').value;
       if (!text.trim()) { toast('Вставьте текст', true); return; }
-      const id = C.addBookRecord(C.guessTitle(text), text);
+      const normalized = C.normalizeRawText(text);
+      const id = C.addBookRecord(C.guessTitle(normalized), normalized);
       if (id) { $('input').value = ''; openBookClassic(id); }
     });
     const btnFile = $('btn-file'); const fileInput = $('file-input');
-    if (btnFile && fileInput) {
-      btnFile.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => {
-        const f = e.target.files && e.target.files[0];
-        if (f) C.readFile(f); fileInput.value = '';
-      });
-    }
-    const btnClear = $('btn-clear');
-    if (btnClear) btnClear.addEventListener('click', () => {
+    btnFile.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) C.readFile(f); fileInput.value = '';
+    });
+    $('btn-clear').addEventListener('click', () => {
       const input = $('input');
       if (!input.value.trim()) { input.focus(); return; }
       askConfirm('Очистить поле?', 'Очистить', true).then(ok => { if (ok) { input.value = ''; input.focus(); } });
     });
-    const libSearch = $('library-search');
-    if (libSearch) libSearch.addEventListener('input', renderClassicLibrary);
-    const libClear = $('library-search-clear');
-    if (libClear) libClear.addEventListener('click', () => {
+    $('library-search').addEventListener('input', renderClassicLibrary);
+    $('library-search-clear').addEventListener('click', () => {
       $('library-search').value = ''; renderClassicLibrary(); $('library-search').focus();
     });
 
@@ -3003,7 +2668,6 @@
     bindIf('btn-menu', openUnifiedSettings);
     bindIf('m-close', closeSheet);
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
-    bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
     bindIf('m-marks', () => { closeSheet(); setTimeout(openMarks, 180); });
     bindIf('m-mark', () => { closeSheet(); addMark(); });
     bindIf('m-categories', () => { closeSheet(); setTimeout(openCategoriesManager, 180); });
@@ -3043,8 +2707,7 @@
         return;
       }
       const ctrl = e.ctrlKey || e.metaKey;
-      if (ctrl && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); openToc(); }
-      else if (ctrl && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); openSearch(); }
+      if (ctrl && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); openSearch(); }
       else if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addMark(); }
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); openMarks(); }
     });
