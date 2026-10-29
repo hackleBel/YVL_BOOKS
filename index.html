@@ -1661,7 +1661,7 @@
     settingsModalBody.appendChild(t);
   }
 
-  // --- КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА: color picker + HEX ---
+   // --- КОМПАКТНЫЙ РЕДАКТОР ЦВЕТА: color picker + HEX ---
   function makeColorEditor(label, key) {
     const wrap = document.createElement('div');
     wrap.className = 'color-editor';
@@ -1684,41 +1684,99 @@
     const hexInp = document.createElement('input');
     hexInp.type = 'text'; hexInp.value = initial; hexInp.maxLength = 7;
     hexInp.placeholder = '#rrggbb';
+    hexInp.autocomplete = 'off'; hexInp.spellcheck = false;
     hexRow.appendChild(hexInp);
     wrap.appendChild(hexRow);
 
-    function applyHex(hex, persist) {
-      const v = normalizeHex(hex); if (!v) return;
+    let syncing = false; // чтобы не зациклить input -> apply -> input
+
+    function commit(hex, persist) {
+      const v = normalizeHex(hex); if (!v) return false;
       settings[key] = v;
       if (persist) saveSettings();
-      applySettings();
+      // применяем ТОЛЬКО к CSS-переменным и превью, БЕЗ полной перерисовки
+      applyColorOnly(v);
       swatch.style.background = v;
       colorInput.value = v;
-      hexInp.classList.remove('invalid');
-      if (hexInp.value.toLowerCase() !== v) hexInp.value = v;
+      return true;
     }
 
     colorInput.addEventListener('input', () => {
-      applyHex(colorInput.value, false);
+      if (syncing) return;
+      const v = normalizeHex(colorInput.value);
+      if (v) {
+        syncing = true;
+        hexInp.value = v;
+        hexInp.classList.remove('invalid');
+        commit(v, false);
+        syncing = false;
+      }
     });
     colorInput.addEventListener('change', () => {
-      applyHex(colorInput.value, true);
+      const v = normalizeHex(colorInput.value);
+      if (v) commit(v, true);
     });
+
     hexInp.addEventListener('input', () => {
-      const v = normalizeHex(hexInp.value);
-      if (v) { hexInp.classList.remove('invalid'); applyHex(v, false); }
-      else hexInp.classList.add('invalid');
+      if (syncing) return;
+      let raw = hexInp.value.trim().toLowerCase();
+      if (!raw.startsWith('#')) raw = '#' + raw;
+      // даём вводить любые символы, но валидируем и применяем сразу, как только 7 символов
+      if (raw.length <= 7) {
+        const v = normalizeHex(raw);
+        if (v) {
+          hexInp.classList.remove('invalid');
+          syncing = true;
+          hexInp.value = v;   // дополняем до #rrggbb
+          commit(v, false);
+          syncing = false;
+        } else {
+          hexInp.classList.add('invalid');
+        }
+      }
     });
     hexInp.addEventListener('blur', () => {
       const v = normalizeHex(hexInp.value);
-      if (v) applyHex(v, true);
-      else { hexInp.value = normalizeHex(settings[key]) || '#000000'; hexInp.classList.remove('invalid'); }
+      if (v) {
+        hexInp.value = v;
+        hexInp.classList.remove('invalid');
+        commit(v, true);
+      } else {
+        hexInp.value = normalizeHex(settings[key]) || '#000000';
+        hexInp.classList.remove('invalid');
+      }
     });
     hexInp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); }
     });
 
     return wrap;
+  }
+
+  // Точечное применение цвета к CSS без перерисовки книги/библиотеки.
+  // Это ключевой фикс: applySettings() перерисовывает контент и ломает ввод.
+  function applyColorOnly(hex) {
+    const k = arguments.callee._key; // не используется, оставлено для совместимости
+    // Определяем, какая переменная меняется — по сравнению с settings
+    // Проще: всегда применяем все три (bg/fg/accent) + производные.
+    const bg = normalizeHex(settings.bg) || '#000000';
+    const fg = normalizeHex(settings.fg) || '#ffffff';
+    const accent = normalizeHex(settings.accent) || '#888888';
+
+    root.style.setProperty('--bg', bg);
+    root.style.setProperty('--fg', fg);
+    root.style.setProperty('--accent', accent);
+    root.style.setProperty('--accent-contrast', contrastColor(accent));
+    root.style.setProperty('--bg-header', shade(bg, 6));
+    root.style.setProperty('--bg-panel', shade(bg, 10));
+    root.style.setProperty('--bg-input', shade(bg, 6));
+    root.style.setProperty('--border', shade(bg, 14));
+    root.style.setProperty('--border-strong', shade(bg, 22));
+    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
+    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+
+    // Шапку-настройки не трогаем (фокус сохранится).
+    // Книгу/библиотеку на каждый keystroke не перерисовываем.
   }
 
   // --- Рендер строки схемы ---
