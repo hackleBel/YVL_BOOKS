@@ -67,8 +67,11 @@
     font-size: var(--font-size); }
   .reader-text p { margin-bottom: 1.15em; text-indent: 2em; text-align: justify; orphans: 2; widows: 2; }
   .reader-text p:first-child { text-indent: 0; }
-  .reader-text .chapter-title { text-indent: 0 !important; text-align: center;
-    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: normal; }
+  .reader-text p.chapter-title { text-indent: 0 !important; text-align: center;
+    margin: 2.2em 0 1.4em; font-size: 1.1em; letter-spacing: 1px; font-weight: 600;
+    color: var(--accent); scroll-margin-top: 20px; }
+  .reader-text p.chapter-title.level-2 { font-size: 1em; margin: 1.6em 0 1em; }
+  .reader-text p.chapter-title.level-3 { font-size: .95em; margin: 1.2em 0 .8em; font-style: italic; }
 
   #classic-root { flex-direction: column; min-height: 0; }
   #paste-screen { display: none; flex: 1; flex-direction: column; padding: 12px;
@@ -179,6 +182,29 @@
   .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 299; display: none; }
   .panel-overlay.open { display: block; }
 
+  #toc-panel { width: min(440px, 100vw); }
+  #toc-list .toc-item { padding: 12px 18px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .15s; display: flex; align-items: center; gap: 10px; }
+  #toc-list .toc-item:hover { background: var(--bg-panel); }
+  #toc-list .toc-item.active { background: var(--bg-panel); border-left: 3px solid var(--accent); }
+  #toc-list .toc-num { font-size: 11px; color: var(--fg-dim); font-variant-numeric: tabular-nums;
+    min-width: 24px; text-align: right; flex-shrink: 0; }
+  #toc-list .toc-item.active .toc-num { color: var(--accent); }
+  #toc-list .toc-title { font-size: 13px; color: var(--fg); line-height: 1.4;
+    word-break: break-word; flex: 1; min-width: 0; }
+  #toc-list .toc-item.active .toc-title { color: var(--accent); font-weight: 600; }
+  #toc-list .toc-pct { font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 11px; color: var(--fg-dim); font-variant-numeric: tabular-nums;
+    flex-shrink: 0; min-width: 48px; text-align: right; padding-left: 6px;
+    background: rgba(139,145,155,.10); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 7px; }
+  #toc-list .toc-item.active .toc-pct { color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }
+  #toc-list .toc-item.level-2 { padding-left: 34px; }
+  #toc-list .toc-item.level-3 { padding-left: 50px; }
+  #toc-list .toc-item.level-2 .toc-title { font-size: 12px; color: var(--fg-mid); }
+  #toc-empty { padding: 24px 20px; font-size: 13px; color: var(--fg-dim);
+    text-align: center; line-height: 1.5; }
+
   #marks-header-actions { display: flex; gap: 6px; }
   #marks-header button { padding: 6px 10px; font-size: 12px; min-height: 34px; }
   #marks-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
@@ -250,6 +276,14 @@
   .reader-topbar .logo { display: flex; align-items: center; gap: 0;
     font-weight: 700; font-size: 15px; color: var(--fg);
     flex-shrink: 0; letter-spacing: -.3px; }
+  .reader-topbar .toc-btn {
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    color: var(--fg); height: 40px; border-radius: 10px;
+    font-size: 15px; padding: 0 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .reader-topbar .toc-btn:hover { background: var(--border-strong); }
   .reader-topbar .pct {
     margin-left: auto; margin-right: 4px;
     font-family: -apple-system, Segoe UI, Roboto, sans-serif;
@@ -520,6 +554,8 @@
     #note-editor .box { padding: 16px; }
     #settings-modal { padding: 8px; }
     #settings-modal .card { max-height: 92vh; }
+    .reader-topbar .toc-btn span.label { display: none; }
+    #toc-list .toc-pct { min-width: 42px; font-size: 10px; }
   }
   @media (max-width: 480px) {
     .sheet-grid { grid-template-columns: 1fr 1fr; }
@@ -562,12 +598,22 @@
     <div id="reader-shell">
       <div class="reader-topbar">
         <div class="logo"><span>🕸️</span></div>
+        <button class="toc-btn" id="btn-toc-top" title="Содержание">☰ <span class="label">Содержание</span></button>
         <span class="pct" id="pct-indicator" title="Клик — перейти на любой процент">0.00%</span>
         <button class="settings-btn" id="btn-menu" title="Настройки">⚙</button>
       </div>
       <div id="reader-screen"><div id="content" class="reader-text"></div></div>
     </div>
   </div>
+
+  <div id="toc-panel" class="panel">
+    <div class="panel-header">
+      <span>Содержание</span>
+      <div><button id="toc-close">✕</button></div>
+    </div>
+    <div class="panel-body" id="toc-list"></div>
+  </div>
+  <div class="panel-overlay" id="toc-overlay"></div>
 
   <div id="marks-panel" class="panel">
     <div class="panel-header">
@@ -650,6 +696,7 @@
   <div class="sheet-section">
     <h5>Разделы</h5>
     <div class="sheet-grid">
+      <button id="m-toc">☰ Содержание</button>
       <button id="m-search">Поиск</button>
       <button id="m-font">Шрифт</button>
       <button id="m-theme">Цвет</button>
@@ -993,16 +1040,31 @@
   }
   function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
 
-  function glueBoldBlocks(text) {
-    let t = String(text || '');
-    const re = /\*\*\s*\n\s*([^\*]{1,200}?)\s*\n\s*\*\*/g;
-    let prev;
-    do {
-      prev = t;
-      t = t.replace(re, (m, inner) => '**' + inner.replace(/\s*\n\s*/g, ' ').trim() + '**');
-    } while (t !== prev);
-    return t;
+  /* ==================== МАРКЕРЫ ГЛАВ ==================== */
+  const CH_OPEN = '\u0001CH:';
+  const CH_MID = '\u0002';
+  const CH_CLOSE = '\u0003';
+  const CH_RE = /\u0001CH:(\d+)\u0002([^\u0003]*)\u0003/g;
+
+  function makeChapterMarker(level, title) {
+    const t = String(title || '').replace(/[\u0001\u0002\u0003]/g, ' ').replace(/\s+/g, ' ').trim();
+    return CH_OPEN + (level || 1) + CH_MID + t + CH_CLOSE;
   }
+  function parseChapterMarkers(text) {
+    const chapters = [];
+    if (!text || text.indexOf(CH_OPEN) === -1) return { chapters, clean: text || '' };
+    const clean = String(text).replace(CH_RE, (m, lvl, title) => {
+      chapters.push({
+        index: chapters.length,
+        title: title.trim() || ('Раздел ' + (chapters.length + 1)),
+        level: parseInt(lvl, 10) || 1
+      });
+      return '';
+    });
+    return { chapters, clean };
+  }
+
+  /* ==================== НОРМАЛИЗАЦИЯ ==================== */
   function normalizeRawText(text) {
     let t = String(text || '');
     t = t.replace(/\r\n?/g, '\n');
@@ -1010,10 +1072,8 @@
     t = t.replace(/[ \t]+\n/g, '\n');
     t = t.replace(/\n{4,}/g, '\n\n\n');
     t = t.replace(/^\s+/, '').replace(/\s+$/, '');
-    t = glueBoldBlocks(t);
     return t;
   }
-
   function splitIntoParagraphs(text) {
     const blocks = String(text || '').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
     if (blocks.length <= 1) {
@@ -1023,15 +1083,11 @@
     }
     return blocks;
   }
-
   function cleanHeadingForDisplay(rawText) {
-    return String(rawText || '')
-      .replace(/\u00a0/g, ' ')
-      .replace(/[\*\_`~>#]+/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    return String(rawText || '').replace(/\u00a0/g, ' ').replace(/[\*\_`~>#]+/g, '').replace(/\s+/g, ' ').trim();
   }
 
+  /* ==================== ДЕКОДИРОВАНИЕ / UNZIP ==================== */
   function decodeBuffer(buffer) {
     const bytes = new Uint8Array(buffer);
     if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF)
@@ -1089,9 +1145,11 @@
     }
     return result;
   }
+
+  /* ==================== ИЗВЛЕЧЕНИЕ ТЕКСТА ==================== */
   function textFromHtml(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
-    doc.querySelectorAll('script,style,noscript,head,meta,link').forEach(n => n.remove());
+    doc.querySelectorAll('script,style,noscript,head,meta,link,nav').forEach(n => n.remove());
     const body = doc.body || doc.documentElement;
     body.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
     body.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,tr,section,article,blockquote').forEach(n => {
@@ -1105,11 +1163,24 @@
     if (doc.querySelector('parsererror')) return textFromHtml(xml);
     const body = doc.querySelector('body'); if (!body) return '';
     const out = [];
-    body.querySelectorAll('section').forEach(sec => {
-      sec.querySelectorAll('title').forEach(t => out.push('\n\n' + (t.textContent || '').trim() + '\n\n'));
-      sec.querySelectorAll('p').forEach(p => { const t = (p.textContent || '').trim(); if (t) out.push(t + '\n\n'); });
-    });
-    if (!out.length) body.querySelectorAll('p').forEach(p => { const t = (p.textContent || '').trim(); if (t) out.push(t + '\n\n'); });
+    const walk = (node) => {
+      for (const child of node.children) {
+        const tag = (child.tagName || '').toLowerCase();
+        if (tag === 'title') {
+          const t = (child.textContent || '').replace(/\s+/g, ' ').trim();
+          if (t) out.push(t + '\n\n');
+        } else if (tag === 'p') {
+          const t = (child.textContent || '').trim();
+          if (t) out.push(t + '\n\n');
+        } else if (tag === 'section' || tag === 'epigraph' || tag === 'annotation') {
+          walk(child);
+        } else if (tag === 'subtitle') {
+          const t = (child.textContent || '').replace(/\s+/g, ' ').trim();
+          if (t) out.push(t + '\n\n');
+        }
+      }
+    };
+    walk(body);
     return out.join('').replace(/\n{3,}/g, '\n\n').trim();
   }
   function textFromDocx(xml) {
@@ -1153,90 +1224,314 @@
   function textFromCsv(csv) {
     return csv.split(/\r?\n/).map(row => row.split(/[,;\t]/).map(c => c.replace(/^"|"$/g, '')).join(' ')).join('\n');
   }
-  async function readFile(file) {
-    toast('Обработка: ' + file.name);
-    const name = file.name.replace(/\.[^.]+$/, '') || 'Без названия';
-    const ext = (file.name.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
-    try {
-      const buffer = await file.arrayBuffer(); let text = '';
-      if (ext === 'epub') {
-        const files = await unzip(buffer);
-        let opfPath = null;
-        for (const n in files) if (/\.opf$/i.test(n)) { opfPath = n; break; }
-        const parts = [];
-        if (opfPath && files[opfPath]) {
-          const opfDoc = new DOMParser().parseFromString(files[opfPath], 'application/xml');
-          const baseDir = opfPath.includes('/') ? opfPath.replace(/[^/]+$/, '') : '';
-          const manifest = {};
-          opfDoc.querySelectorAll('manifest > item, item').forEach(it => {
-            const id = it.getAttribute('id'); const href = it.getAttribute('href');
-            if (id && href) manifest[id] = href;
-          });
-          opfDoc.querySelectorAll('spine > itemref, itemref').forEach(ref => {
-            const idref = ref.getAttribute('idref');
-            if (idref && manifest[idref]) {
-              let path = manifest[idref];
-              try { path = decodeURIComponent(path); } catch (e) {}
-              const raw = files[baseDir + path] || files[path];
-              if (raw) parts.push(textFromHtml(raw));
-            }
-          });
-        }
-        if (!parts.length) for (const n in files) if (/\.x?html?$/i.test(n)) parts.push(textFromHtml(files[n]));
-        text = parts.join('\n\n');
-      } else if (ext === 'docx') {
-        const files = await unzip(buffer);
-        const xml = files['word/document.xml'];
-        text = xml ? textFromDocx(xml) : '';
-      } else if (ext === 'odt') {
-        const files = await unzip(buffer);
-        const xml = files['content.xml'];
-        text = xml ? textFromOdt(xml) : '';
-      } else if (ext === 'fb2') {
-        text = textFromFb2(decodeBuffer(buffer));
-      } else if (ext === 'html' || ext === 'htm' || ext === 'xhtml') {
-        text = textFromHtml(decodeBuffer(buffer));
-      } else if (ext === 'rtf') {
-        text = textFromRtf(decodeBuffer(buffer));
-      } else if (ext === 'json') {
-        text = textFromJson(decodeBuffer(buffer));
-      } else if (ext === 'csv') {
-        text = textFromCsv(decodeBuffer(buffer));
-      } else if (ext === 'zip') {
-        const files = await unzip(buffer);
-        let chosen = null;
-        for (const n in files) { if (/\.(txt|md|html?|fb2|docx|odt|epub|json|csv|rtf)$/i.test(n)) { chosen = n; break; } }
-        if (!chosen) throw new Error('Внутри ZIP нет читаемого файла');
-        if (/\.x?html?$/i.test(chosen)) text = textFromHtml(files[chosen]);
-        else if (/\.fb2$/i.test(chosen)) text = textFromFb2(files[chosen]);
-        else text = files[chosen];
-      } else {
-        text = decodeBuffer(buffer);
-      }
-      text = text.replace(/\u0000/g, '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n').trim();
-      text = normalizeRawText(text);
-      if (!text) { toast('Не удалось извлечь текст', true); return; }
-      const id = addBookRecord(name || guessTitle(text), text, '');
-      if (!id) return;
-      renderClassicLibrary();
-      toast('Загружено: ' + (name || guessTitle(text)));
-    } catch (err) {
-      console.error(err); toast('Ошибка: ' + (err.message || err), true);
+
+  /* ==================== ГЛАВЫ ИЗ HTML/FB2/MD ==================== */
+  function chaptersFromHtml(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const out = [];
+    doc.querySelectorAll('h1, h2, h3, h4').forEach((h) => {
+      if (h.closest('nav')) return;
+      const t = (h.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!t) return;
+      const tag = (h.tagName || '').toUpperCase();
+      const lvl = tag === 'H1' ? 1 : tag === 'H2' ? 2 : 3;
+      out.push({ title: t, anchorText: t, level: lvl });
+    });
+    return out;
+  }
+  function chaptersFromMarkdown(md) {
+    const out = [];
+    const re = /^(#{1,4})\s+(.+)$/gm; let m;
+    while ((m = re.exec(md))) {
+      const t = m[2].trim();
+      if (t) out.push({ title: t, anchorText: t, level: Math.min(3, m[1].length) });
     }
+    return out;
+  }
+  function chaptersFromFb2(xml) {
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
+    if (doc.querySelector('parsererror')) return [];
+    const out = [];
+    doc.querySelectorAll('body section').forEach((sec) => {
+      let titleEl = null;
+      for (const child of sec.children) {
+        if ((child.tagName || '').toLowerCase() === 'title') { titleEl = child; break; }
+      }
+      if (!titleEl) return;
+      const t = (titleEl.textContent || '').replace(/\s+/g, ' ').trim();
+      if (t) out.push({ title: t, anchorText: t, level: 1 });
+    });
+    if (out.length) return out;
+    doc.querySelectorAll('body title').forEach((tEl) => {
+      const t = (tEl.textContent || '').replace(/\s+/g, ' ').trim();
+      if (t) out.push({ title: t, anchorText: t, level: 1 });
+    });
+    return out;
+  }
+  function chaptersFromEpubSpine(spineHtmlArr) {
+    const out = [];
+    spineHtmlArr.forEach(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('h1, h2, h3, h4').forEach((h) => {
+        if (h.closest('nav')) return;
+        const t = (h.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!t) return;
+        const tag = (h.tagName || '').toUpperCase();
+        const lvl = tag === 'H1' ? 1 : tag === 'H2' ? 2 : 3;
+        out.push({ title: t, anchorText: t, level: lvl });
+      });
+    });
+    return out;
+  }
+  function chaptersFromEpubNav(files, opfPath) {
+    let baseDir = '';
+    if (opfPath && opfPath.includes('/')) baseDir = opfPath.replace(/[^/]+$/, '');
+    const findLocal = (suffixRe) => {
+      if (baseDir) for (const n in files) {
+        if (!n.startsWith(baseDir)) continue;
+        if (suffixRe.test(n)) return n;
+      }
+      for (const n in files) if (suffixRe.test(n)) return n;
+      return null;
+    };
+    const navPath = findLocal(/(^|\/)nav\.x?html?$/i);
+    const ncxPath = findLocal(/(^|\/)toc\.ncx$/i);
+    const out = [];
+    if (ncxPath && files[ncxPath]) {
+      try {
+        const doc = new DOMParser().parseFromString(files[ncxPath], 'application/xml');
+        doc.querySelectorAll('navPoint').forEach(np => {
+          const label = np.querySelector('navLabel > text');
+          const t = label ? label.textContent.replace(/\s+/g, ' ').trim() : '';
+          if (t) out.push({ title: t, anchorText: t, level: 1 });
+        });
+      } catch (e) {}
+    }
+    if (navPath && files[navPath]) {
+      try {
+        const doc = new DOMParser().parseFromString(files[navPath], 'text/html');
+        doc.querySelectorAll('nav a, nav li a').forEach(a => {
+          const t = (a.textContent || '').replace(/\s+/g, ' ').trim();
+          if (t) out.push({ title: t, anchorText: t, level: 1 });
+        });
+      } catch (e) {}
+    }
+    const seen = new Set(); const uniq = [];
+    out.forEach(o => {
+      const k = o.title.toLowerCase();
+      if (!seen.has(k)) { seen.add(k); uniq.push(o); }
+    });
+    return uniq;
   }
 
-  window.__READER_CORE__ = {
-    $, root, showError, toast, escapeHtml, formatDate, shade, mix, contrastColor, normalizeHex,
-    askText, askLongText, askConfirm, openInlineDialog,
-    DEFAULTS, FONT_STACKS, FONTS, PRESET_GROUPS,
-    loadSettings, saveSettings, getSettings: () => settings, setSettings: (s) => { settings = s; },
-    loadCustomPalettes, saveCustomPalettes,
-    loadMeta, saveMeta, getBookText, setBookText,
-    removeBookData, loadCategories, saveCategories, marksKey, loadMarks, saveMarks,
-    sortBooks, guessTitle, countWords, splitIntoParagraphs, normalizeRawText,
-    cleanHeadingForDisplay, readFile, addBookRecord,
-    CUSTOM_PALETTES_KEY, META_KEY, TEXT_PREFIX, CATEGORIES_KEY
-  };
+  /* ==================== ВСТАВКА МАРКЕРОВ ==================== */
+  function mapHeadersToParagraphs(paragraphs, structural) {
+    const map = new Map();
+    let ptr = 0;
+    (structural || []).forEach((ch) => {
+      const needle = (ch.anchorText || ch.title || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      if (!needle) return;
+      let found = -1;
+      for (let i = ptr; i < paragraphs.length; i++) {
+        const hay = paragraphs[i].replace(/\s+/g, ' ').trim().toLowerCase();
+        if (hay === needle) { found = i; break; }
+      }
+      if (found < 0) for (let i = ptr; i < paragraphs.length; i++) {
+        const hay = paragraphs[i].replace(/\s+/g, ' ').trim().toLowerCase();
+        if (hay.startsWith(needle) && hay.length < needle.length + 150) { found = i; break; }
+      }
+      if (found < 0) for (let i = ptr; i < paragraphs.length; i++) {
+        const hay = paragraphs[i].replace(/\s+/g, ' ').trim().toLowerCase();
+        if (hay.length < 200 && hay.includes(needle)) { found = i; break; }
+      }
+      if (found < 0) return;
+      map.set(found, { title: ch.title || paragraphs[found], level: ch.level || 1 });
+      ptr = found + 1;
+    });
+    return map;
+  }
+
+  function scoreHeading(line, prev, next) {
+    const t = String(line || '').trim();
+    if (!t) return 0;
+    if (t.length > 120) return 0;
+    if (/[.!?…,;:]$/.test(t)) return 0;
+    let score = 0;
+    if (/^(глава|часть|книга|том|пролог|эпилог|chapter|part|book|prologue|epilogue)\b/i.test(t)) score += 6;
+    if (/^(\d+|[IVXLCDM]+)[\.\)]\s+\S/.test(t)) score += 2;
+    if (/^§\s*\d+/.test(t)) score += 5;
+    if (/^#{1,6}\s+/.test(t)) score += 3;
+    if (t === t.toUpperCase() && /[А-ЯA-Z]/.test(t)) score += 3;
+    if (t.length <= 50) score += 1;
+    if (!String(prev || '').trim()) score += 1;
+    if (!String(next || '').trim()) score += 1;
+    if (/^(стр\.|page|©|copyright|isbn|удк|ббк)\b/i.test(t)) score -= 5;
+    if (/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}$/.test(t)) score -= 6;
+    if (/^[-–—•*]\s/.test(t)) score -= 3;
+    return score;
+  }
+  function heuristicChapterMap(paragraphs) {
+    const map = new Map();
+    paragraphs.forEach((p, i) => {
+      if (scoreHeading(p, paragraphs[i-1] || '', paragraphs[i+1] || '') >= 6) {
+        map.set(i, { title: p.trim(), level: 1 });
+      }
+    });
+    return map;
+  }
+
+  function packBook(rawText, structural) {
+    const paragraphs = splitIntoParagraphs(normalizeRawText(rawText));
+    if (!paragraphs.length || (paragraphs.length === 1 && !paragraphs[0])) {
+      return { text: '', chapters: 0 };
+    }
+    let map = new Map();
+    if (structural && structural.length) {
+      map = mapHeadersToParagraphs(paragraphs, structural);
+    }
+    if (map.size === 0) {
+      map = heuristicChapterMap(paragraphs);
+    }
+    if (map.size === 0) {
+      map.set(0, { title: 'Книга целиком', level: 1 });
+    }
+    const out = paragraphs.map((p, i) => {
+      const m = map.get(i);
+      if (m) return makeChapterMarker(m.level, m.title) + p;
+      return p;
+    });
+    return { text: out.join('\n\n'), chapters: map.size };
+  }
+
+  /* ==================== ОСНОВНОЙ ПАРСЕР ФАЙЛОВ ==================== */
+  async function extractBook(file) {
+    const ext = (file.name.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
+    const buffer = await file.arrayBuffer();
+    let text = '';
+    let structural = [];
+    let spineHtml = null;
+
+    if (ext === 'epub') {
+      const files = await unzip(buffer);
+      let opfPath = null;
+      for (const n in files) if (/\.opf$/i.test(n)) { opfPath = n; break; }
+      const parts = [];
+      spineHtml = [];
+      if (opfPath && files[opfPath]) {
+        const opfDoc = new DOMParser().parseFromString(files[opfPath], 'application/xml');
+        const baseDir = opfPath.includes('/') ? opfPath.replace(/[^/]+$/, '') : '';
+        const manifest = {};
+        opfDoc.querySelectorAll('manifest > item, item').forEach(it => {
+          const id = it.getAttribute('id'); const href = it.getAttribute('href');
+          if (id && href) manifest[id] = href;
+        });
+        opfDoc.querySelectorAll('spine > itemref, itemref').forEach(ref => {
+          const idref = ref.getAttribute('idref');
+          if (idref && manifest[idref]) {
+            let path = manifest[idref];
+            try { path = decodeURIComponent(path); } catch (e) {}
+            const full = baseDir + path;
+            const raw = files[full] || files[path];
+            if (!raw) return;
+            if (/(^|\/)(nav|toc)\.x?html?$/i.test(path) || /(^|\/)titlepage/i.test(path)) return;
+            const plain = textFromHtml(raw);
+            if (plain) parts.push(plain);
+            spineHtml.push(raw);
+          }
+        });
+      }
+      if (!parts.length) {
+        for (const n in files) {
+          if (!/\.x?html?$/i.test(n)) continue;
+          if (/(^|\/)(nav|toc)\.x?html?$/i.test(n)) continue;
+          if (!files[n]) continue;
+          const plain = textFromHtml(files[n]);
+          if (plain) parts.push(plain);
+          spineHtml.push(files[n]);
+        }
+      }
+      text = parts.join('\n\n');
+      structural = chaptersFromEpubSpine(spineHtml);
+      if (structural.length === 0) {
+        structural = chaptersFromEpubNav(files, opfPath);
+      }
+    } else if (ext === 'fb2') {
+      const raw = decodeBuffer(buffer);
+      text = textFromFb2(raw);
+      structural = chaptersFromFb2(raw);
+    } else if (ext === 'html' || ext === 'htm' || ext === 'xhtml') {
+      const raw = decodeBuffer(buffer);
+      text = textFromHtml(raw);
+      structural = chaptersFromHtml(raw);
+    } else if (ext === 'md' || ext === 'markdown') {
+      const raw = decodeBuffer(buffer);
+      text = raw;
+      structural = chaptersFromMarkdown(raw);
+    } else if (ext === 'docx') {
+      const files = await unzip(buffer);
+      const xml = files['word/document.xml'];
+      text = xml ? textFromDocx(xml) : '';
+      structural = [];
+    } else if (ext === 'odt') {
+      const files = await unzip(buffer);
+      const xml = files['content.xml'];
+      text = xml ? textFromOdt(xml) : '';
+      structural = [];
+    } else if (ext === 'rtf') {
+      text = textFromRtf(decodeBuffer(buffer));
+      structural = [];
+    } else if (ext === 'json') {
+      text = textFromJson(decodeBuffer(buffer));
+      structural = [];
+    } else if (ext === 'csv') {
+      text = textFromCsv(decodeBuffer(buffer));
+      structural = [];
+    } else if (ext === 'zip') {
+      const files = await unzip(buffer);
+      let chosen = null;
+      for (const n in files) {
+        if (/\.(txt|md|html?|fb2|docx|odt|json|csv|rtf)$/i.test(n)) { chosen = n; break; }
+      }
+      if (!chosen) throw new Error('Внутри ZIP нет читаемого файла');
+      if (/\.x?html?$/i.test(chosen)) {
+        text = textFromHtml(files[chosen]);
+        structural = chaptersFromHtml(files[chosen]);
+      } else if (/\.fb2$/i.test(chosen)) {
+        text = textFromFb2(files[chosen]);
+        structural = chaptersFromFb2(files[chosen]);
+      } else if (/\.md$/i.test(chosen)) {
+        text = files[chosen];
+        structural = chaptersFromMarkdown(files[chosen]);
+      } else {
+        text = files[chosen];
+      }
+    } else {
+      text = decodeBuffer(buffer);
+      structural = [];
+    }
+
+    text = String(text || '').replace(/\u0000/g, '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{4,}/g, '\n\n\n').trim();
+    text = normalizeRawText(text);
+    return { text, structural };
+  }
+
+  async function readFile(file) {
+    toast('Обработка: ' + file.name);
+    const baseName = file.name.replace(/\.[^.]+$/, '') || 'Без названия';
+    try {
+      const { text, structural } = await extractBook(file);
+      if (!text) { toast('Не удалось извлечь текст', true); return; }
+      const packed = packBook(text, structural);
+      const title = baseName || guessTitle(text);
+      const id = addBookRecord(title, packed.text, '');
+      if (!id) return;
+      renderClassicLibrary();
+      toast('Загружено: ' + title + ' · глав: ' + packed.chapters);
+    } catch (err) {
+      console.error(err);
+      toast('Ошибка: ' + (err.message || err), true);
+    }
+  }
 
   function addBookRecord(title, text, categoryId) {
     const meta = loadMeta();
@@ -1256,11 +1551,29 @@
     saveMeta(meta);
     return id;
   }
-  window.__READER_CORE__.addBookRecord = addBookRecord;
+
+  window.__READER_CORE__ = {
+    $, root, showError, toast, escapeHtml, formatDate, shade, mix, contrastColor, normalizeHex,
+    askText, askLongText, askConfirm, openInlineDialog,
+    DEFAULTS, FONT_STACKS, FONTS, PRESET_GROUPS,
+    loadSettings, saveSettings, getSettings: () => settings, setSettings: (s) => { settings = s; },
+    loadCustomPalettes, saveCustomPalettes,
+    loadMeta, saveMeta, getBookText, setBookText,
+    removeBookData, loadCategories, saveCategories, marksKey, loadMarks, saveMarks,
+    sortBooks, guessTitle, countWords, splitIntoParagraphs, normalizeRawText,
+    cleanHeadingForDisplay, readFile, addBookRecord,
+    scoreHeading, heuristicChapterMap, mapHeadersToParagraphs,
+    makeChapterMarker, parseChapterMarkers,
+    packBook, extractBook,
+    CUSTOM_PALETTES_KEY, META_KEY, TEXT_PREFIX, CATEGORIES_KEY
+  };
 
   window.__READER_STATE__ = {
     currentBookId: null,
     currentMarks: [],
+    chapters: [],
+    chapterStarts: [],
+    lastScrollMax: 0,
     activeChapter: -1,
     currentSearchHits: [],
     currentSearchIndex: -1,
@@ -1271,24 +1584,23 @@
     saveScrollTimer: null
   };
 })();
-
+</script>
+<script>
 (function () {
   'use strict';
   const C = window.__READER_CORE__;
   const S = window.__READER_STATE__;
   const $ = C.$;
-  const root = C.root;
-  const toast = C.toast;
   const escapeHtml = C.escapeHtml;
   const formatDate = C.formatDate;
   const shade = C.shade;
-  const mix = C.mix;
   const contrastColor = C.contrastColor;
   const normalizeHex = C.normalizeHex;
   const askText = C.askText;
   const askLongText = C.askLongText;
   const askConfirm = C.askConfirm;
-  const cleanHeadingForDisplay = C.cleanHeadingForDisplay;
+  const toast = C.toast;
+  const root = C.root;
 
   let settings = C.getSettings();
   function saveSettings() { C.saveSettings(); }
@@ -1314,6 +1626,11 @@
   const noteCancel = $('note-cancel');
   const noteSave = $('note-save');
 
+  const tocPanel = $('toc-panel');
+  const tocList = $('toc-list');
+  const tocOverlay = $('toc-overlay');
+  const tocClose = $('toc-close');
+
   function getActiveReaderEl() { return $('reader-screen'); }
   function getActiveContentEl() { return $('content'); }
   function getReaderScrollHeight() {
@@ -1329,17 +1646,17 @@
     const el = getActiveReaderEl(); const content = getActiveContentEl();
     if (!el || !content) return null;
     const y = el.scrollTop + 40;
-    const paras = content.querySelectorAll('p');
+    const paras = content.querySelectorAll('p:not(.chapter-title)');
     let targetIdx = -1, offsetInPara = 0;
     for (let i = 0; i < paras.length; i++) {
       const p = paras[i];
       if (p.offsetTop + p.offsetHeight > y) {
-        targetIdx = i;
+        targetIdx = parseInt(p.dataset.pIndex, 10);
         offsetInPara = Math.max(0, Math.min(p.offsetHeight, y - p.offsetTop));
         break;
       }
     }
-    if (targetIdx < 0 && paras.length) { targetIdx = 0; offsetInPara = 0; }
+    if (targetIdx < 0 && paras.length) { targetIdx = parseInt(paras[0].dataset.pIndex, 10) || 0; offsetInPara = 0; }
     const max = el.scrollHeight - el.clientHeight;
     return {
       pIndex: targetIdx, offsetInPara: offsetInPara, scrollTop: el.scrollTop,
@@ -1350,9 +1667,9 @@
     if (!pos) return;
     const el = getActiveReaderEl(); const content = getActiveContentEl();
     if (!el || !content) return;
-    const paras = content.querySelectorAll('p');
-    if (typeof pos.pIndex === 'number' && paras[pos.pIndex]) {
-      const p = paras[pos.pIndex];
+    const paras = content.querySelectorAll('p:not(.chapter-title)');
+    const p = paras[pos.pIndex];
+    if (p) {
       const target = Math.max(0, p.offsetTop + (pos.offsetInPara || 0) - 40);
       el.scrollTop = target;
     } else if (typeof pos.scrollTop === 'number') {
@@ -1363,33 +1680,86 @@
     }
   }
 
-  function renderBookIntoContent(text, contentEl) {
+  /* ============ РЕНДЕР ============ */
+  function renderBookIntoContent(markedText, contentEl) {
     if (!contentEl) return;
     contentEl.innerHTML = '';
-    const normalized = C.normalizeRawText(text);
-    const paragraphs = C.splitIntoParagraphs(normalized);
+    const raw = C.splitIntoParagraphs(C.normalizeRawText(markedText));
+    const parsed = []; const chapters = [];
+    raw.forEach((chunk) => {
+      const m = chunk.match(/^\u0001CH:(\d+)\u0002([^\u0003]*)\u0003/);
+      if (m) {
+        const level = parseInt(m[1], 10) || 1;
+        const title = m[2].trim();
+        const rest = chunk.slice(m[0].length).trim();
+        const pIdx = parsed.length;
+        chapters.push({ index: chapters.length, title: title || ('Раздел ' + (chapters.length + 1)), level, pIndex: pIdx });
+        if (rest) parsed.push(rest);
+      } else {
+        parsed.push(chunk);
+      }
+    });
+    if (!chapters.length && parsed.length) {
+      const hmap = C.heuristicChapterMap(parsed);
+      if (hmap.size) {
+        hmap.forEach((v, pIdx) => {
+          chapters.push({ index: chapters.length, title: v.title, level: v.level, pIndex: pIdx });
+        });
+      } else {
+        chapters.push({ index: 0, title: 'Книга целиком', level: 1, pIndex: 0 });
+      }
+    }
+    chapters.sort((a, b) => a.pIndex - b.pIndex);
+    chapters.forEach((c, i) => { c.index = i; });
+    S.chapters = chapters;
+
+    const chapterStartMap = new Map();
+    chapters.forEach(ch => chapterStartMap.set(ch.pIndex, ch));
 
     const frag = document.createDocumentFragment();
-    paragraphs.forEach((p, idx) => {
+    parsed.forEach((p, idx) => {
+      const ch = chapterStartMap.get(idx);
+      if (ch) {
+        const head = document.createElement('p');
+        head.className = 'chapter-title level-' + (ch.level || 1);
+        head.textContent = C.cleanHeadingForDisplay(ch.title);
+        head.dataset.chapter = ch.index;
+        frag.appendChild(head);
+      }
       const el = document.createElement('p');
       el.textContent = p;
       el.dataset.pIndex = idx;
       frag.appendChild(el);
     });
     contentEl.appendChild(frag);
+    S.activeChapter = -1;
+    measureChapterStarts(contentEl);
+  }
+
+  function measureChapterStarts(contentEl) {
+    const content = contentEl || getActiveContentEl();
+    const reader = getActiveReaderEl();
+    if (!content || !reader) { S.chapterStarts = []; S.lastScrollMax = 0; return; }
+    const baseTop = content.getBoundingClientRect().top;
+    S.chapterStarts = S.chapters.map(ch => {
+      const head = content.querySelector('[data-chapter="' + ch.index + '"]');
+      if (!head) return 0;
+      return head.getBoundingClientRect().top - baseTop;
+    });
+    S.lastScrollMax = Math.max(0, reader.scrollHeight - reader.clientHeight);
   }
 
   function getCurrentSnippet() {
     const el = getActiveReaderEl(); const content = getActiveContentEl();
     if (!el || !content) return { text:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
     const y = el.scrollTop + 40;
-    const paras = content.querySelectorAll('p');
+    const paras = content.querySelectorAll('p:not(.chapter-title)');
     let target = null, targetIndex = -1;
     for (let i = 0; i < paras.length; i++) {
       const p = paras[i];
-      if (p.offsetTop + p.offsetHeight > y) { target = p; targetIndex = i; break; }
+      if (p.offsetTop + p.offsetHeight > y) { target = p; targetIndex = parseInt(p.dataset.pIndex, 10); break; }
     }
-    if (!target && paras.length) { target = paras[0]; targetIndex = 0; }
+    if (!target && paras.length) { target = paras[0]; targetIndex = parseInt(paras[0].dataset.pIndex, 10) || 0; }
     if (!target) return { text:'',pIndex:0,offsetInPara:0,ratio:0,pos:0,pct:0 };
     const offsetInPara = Math.max(0, Math.min(target.offsetHeight, y - target.offsetTop));
     const ratio = offsetInPara / Math.max(1, target.offsetHeight);
@@ -1399,6 +1769,93 @@
     const pct = max > 0 ? el.scrollTop / max : 0;
     return { text: snippet, pIndex: targetIndex, offsetInPara, ratio, pos: el.scrollTop, pct };
   }
+
+  /* ============ СОДЕРЖАНИЕ ============ */
+  function computeChapterPercents() {
+    if (!S.chapterStarts || !S.chapterStarts.length) measureChapterStarts();
+    const max = Math.max(1, S.lastScrollMax || getReaderScrollHeight());
+    return S.chapters.map((ch, i) => {
+      const top = (S.chapterStarts && S.chapterStarts[i]) || 0;
+      return Math.max(0, Math.min(100, (top / max) * 100));
+    });
+  }
+  function renderTocList() {
+    if (!tocList) return;
+    tocList.innerHTML = '';
+    if (!S.chapters.length) {
+      const empty = document.createElement('div'); empty.id = 'toc-empty';
+      empty.textContent = 'Главы не найдены.';
+      tocList.appendChild(empty);
+      return;
+    }
+    measureChapterStarts();
+    const pcts = computeChapterPercents();
+    S.chapters.forEach((ch, i) => {
+      const item = document.createElement('div');
+      item.className = 'toc-item' + (i === S.activeChapter ? ' active' : '') +
+        (ch.level === 2 ? ' level-2' : ch.level === 3 ? ' level-3' : '');
+      item.dataset.chapterIndex = i;
+      const num = document.createElement('div');
+      num.className = 'toc-num'; num.textContent = (i + 1);
+      const title = document.createElement('div');
+      title.className = 'toc-title';
+      title.textContent = C.cleanHeadingForDisplay(ch.title);
+      const pctEl = document.createElement('div');
+      pctEl.className = 'toc-pct';
+      pctEl.textContent = pcts[i].toFixed(1) + '%';
+      pctEl.title = 'Начало главы — ' + pcts[i].toFixed(2) + '% книги';
+      item.appendChild(num); item.appendChild(title); item.appendChild(pctEl);
+      item.addEventListener('click', () => { scrollToChapter(i); closeToc(); });
+      tocList.appendChild(item);
+    });
+  }
+  function scrollToChapter(index) {
+    if (index < 0 || index >= S.chapters.length) return;
+    const ch = S.chapters[index];
+    const content = getActiveContentEl(); if (!content) return;
+    const el = content.querySelector('[data-chapter="' + ch.index + '"]');
+    if (!el) return;
+    const reader = getActiveReaderEl();
+    const top = el.getBoundingClientRect().top - reader.getBoundingClientRect().top + reader.scrollTop - 20;
+    reader.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    S.activeChapter = index;
+    updateTocActiveHighlight();
+  }
+  function updateTocActiveHighlight() {
+    if (!tocList) return;
+    const items = tocList.querySelectorAll('.toc-item');
+    items.forEach((it, i) => it.classList.toggle('active', i === S.activeChapter));
+    const activeEl = tocList.querySelector('.toc-item.active');
+    if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+  }
+  function updateActiveChapter() {
+    if (!S.chapters.length) return;
+    const content = getActiveContentEl(); const reader = getActiveReaderEl();
+    if (!content || !reader) return;
+    const y = reader.scrollTop + 60;
+    let active = -1;
+    for (let i = 0; i < S.chapters.length; i++) {
+      const el = content.querySelector('[data-chapter="' + S.chapters[i].index + '"]');
+      if (!el) continue;
+      if (el.offsetTop <= y) active = i;
+    }
+    if (active !== S.activeChapter) {
+      S.activeChapter = active;
+      if (tocPanel && tocPanel.classList.contains('open')) updateTocActiveHighlight();
+    }
+  }
+  function openToc() {
+    if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
+    renderTocList();
+    tocPanel.classList.add('open'); tocOverlay.classList.add('open');
+  }
+  function closeToc() {
+    tocPanel.classList.remove('open'); tocOverlay.classList.remove('open');
+  }
+  if (tocClose) tocClose.addEventListener('click', closeToc);
+  if (tocOverlay) tocOverlay.addEventListener('click', closeToc);
+
+  /* ============ ЗАКЛАДКИ ============ */
   function addMark() {
     if (!S.currentBookId) { toast('Сначала откройте книгу', true); return; }
     S.pendingMarkAnchor = getCurrentSnippet(); openNoteEditor(null);
@@ -1513,10 +1970,11 @@
   function scrollToAnchor(item) {
     const el = getActiveReaderEl(); const content = getActiveContentEl();
     if (!el || !content) return;
-    const paras = content.querySelectorAll('p');
+    const paras = content.querySelectorAll('p:not(.chapter-title)');
     let top = 0;
-    if (typeof item.pIndex === 'number' && paras[item.pIndex]) {
-      const p = paras[item.pIndex]; const h = Math.max(1, p.offsetHeight);
+    const p = paras[item.pIndex];
+    if (p) {
+      const h = Math.max(1, p.offsetHeight);
       let offset = item.offsetInPara;
       if (typeof offset !== 'number' || isNaN(offset)) offset = (item.ratio || 0) * h;
       offset = Math.min(offset, h); top = p.offsetTop + offset;
@@ -1537,13 +1995,14 @@
   marksClear.addEventListener('click', clearMarks);
   marksSearch.addEventListener('input', renderMarksList);
 
+  /* ============ ПОИСК ============ */
   function normalizeSearch(str) { return String(str).toLowerCase().replace(/ё/g, 'е'); }
   function findInBook(query) {
     const result = []; if (!query) return result;
     const q = normalizeSearch(query.trim()); if (!q) return result;
     const content = getActiveContentEl();
     if (!content) return result;
-    const paras = content.querySelectorAll('p');
+    const paras = content.querySelectorAll('p:not(.chapter-title)');
     const maxScroll = getReaderScrollHeight();
     for (let i = 0; i < paras.length; i++) {
       const p = paras[i]; const rawText = p.textContent || '';
@@ -1596,7 +2055,6 @@
       el.className = 'search-item' + (idx === S.currentSearchIndex ? ' active' : '');
       const head = document.createElement('div'); head.className = 's-head';
       const chap = document.createElement('div'); chap.className = 's-chapter';
-      chap.textContent = '';
       const pct = document.createElement('span'); pct.className = 's-pct';
       pct.textContent = (h.pct * 100).toFixed(2) + '%';
       head.appendChild(chap); head.appendChild(pct);
@@ -1613,16 +2071,12 @@
       el.addEventListener('click', () => { scrollToSearchHit(idx); closeSearch(); });
       searchResults.appendChild(el);
     });
-    if (S.currentSearchIndex >= 0) {
-      const activeEl = searchResults.children[S.currentSearchIndex];
-      if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
-    }
   }
   function scrollToSearchHit(index) {
     if (index < 0 || index >= S.currentSearchHits.length) return;
     const hit = S.currentSearchHits[index];
     const content = getActiveContentEl(); if (!content) return;
-    const paras = content.querySelectorAll('p'); const el = paras[hit.pIndex]; if (!el) return;
+    const paras = content.querySelectorAll('p:not(.chapter-title)'); const el = paras[hit.pIndex]; if (!el) return;
     S.currentSearchIndex = index;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     el.classList.add('find-hit'); setTimeout(() => el.classList.remove('find-hit'), 1200);
@@ -1661,6 +2115,7 @@
     if (e.key === 'Escape') { e.preventDefault(); closeSearch(); }
   });
 
+  /* ============ ПРОГРЕСС ============ */
   function scheduleSaveProgress() {
     if (!S.currentBookId) return;
     if (S.saveScrollTimer) clearTimeout(S.saveScrollTimer);
@@ -1696,6 +2151,7 @@
     updateSideThumb(pct);
     scheduleSaveProgress();
     renderSideMarks();
+    updateActiveChapter();
   }
   function showScroller() {
     const sp = $('side-progress'); if (!sp) return;
@@ -1725,16 +2181,7 @@
   function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
 
   function applySettings() {
-    const { bg, fg, accent } = settings;
-    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
-    root.style.setProperty('--accent-contrast', contrastColor(accent));
-    root.style.setProperty('--bg-header', shade(bg, 6));
-    root.style.setProperty('--bg-panel', shade(bg, 10));
-    root.style.setProperty('--bg-input', shade(bg, 6));
-    root.style.setProperty('--border', shade(bg, 14));
-    root.style.setProperty('--border-strong', shade(bg, 22));
-    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
-    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
+    rootStyle(settings.bg, settings.fg, settings.accent);
     root.style.setProperty('--col-width', settings.colWidth + 'px');
     root.style.setProperty('--line-height', settings.lineHeight);
     root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
@@ -1748,16 +2195,34 @@
       const target = $('content');
       if (target) {
         const savedPos = captureReadingPosition();
+        const savedChapter = S.activeChapter;
         renderBookIntoContent(text, target);
+        S.activeChapter = savedChapter;
         requestAnimationFrame(() => {
           if (savedPos) restoreReadingPosition(savedPos);
           updateAllProgress();
+          measureChapterStarts();
+          if (tocPanel && tocPanel.classList.contains('open')) renderTocList();
         });
       }
     }
-    renderClassicLibrary();
+    if ($('paste-screen') && $('paste-screen').classList.contains('active')) {
+      renderClassicLibrary();
+    }
+  }
+  function rootStyle(bg, fg, accent) {
+    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
+    root.style.setProperty('--accent-contrast', contrastColor(accent));
+    root.style.setProperty('--bg-header', shade(bg, 6));
+    root.style.setProperty('--bg-panel', shade(bg, 10));
+    root.style.setProperty('--bg-input', shade(bg, 6));
+    root.style.setProperty('--border', shade(bg, 14));
+    root.style.setProperty('--border-strong', shade(bg, 22));
+    root.style.setProperty('--fg-dim', C.mix(fg, bg, 0.55));
+    root.style.setProperty('--fg-mid', C.mix(fg, bg, 0.25));
   }
 
+  /* ============ НАСТРОЙКИ ============ */
   const settingsModal = $('settings-modal');
   const settingsModalTitle = $('settings-modal-title');
   const settingsModalBody = $('settings-modal-body');
@@ -1771,82 +2236,47 @@
     t.className = 'cl-settings-group-title'; t.textContent = title;
     settingsModalBody.appendChild(t);
   }
-
   function makeColorEditor(label, key) {
     const wrap = document.createElement('div');
     wrap.className = 'color-editor';
     const initial = normalizeHex(settings[key]) || '#000000';
-    const head = document.createElement('div');
-    head.className = 'ce-head';
+    const head = document.createElement('div'); head.className = 'ce-head';
     const lb = document.createElement('label'); lb.textContent = label;
-    const swatch = document.createElement('div');
-    swatch.className = 'ce-swatch';
-    swatch.style.background = initial;
-    const colorInput = document.createElement('input');
-    colorInput.type = 'color'; colorInput.value = initial;
+    const swatch = document.createElement('div'); swatch.className = 'ce-swatch'; swatch.style.background = initial;
+    const colorInput = document.createElement('input'); colorInput.type = 'color'; colorInput.value = initial;
     swatch.appendChild(colorInput);
-    head.appendChild(lb); head.appendChild(swatch);
-    wrap.appendChild(head);
-    const hexRow = document.createElement('div');
-    hexRow.className = 'ce-hex';
-    const hexInp = document.createElement('input');
-    hexInp.type = 'text';
-    hexInp.value = initial;
-    hexInp.placeholder = '#rrggbb';
-    hexInp.autocomplete = 'off';
-    hexInp.spellcheck = false;
-    hexInp.inputMode = 'text';
-    hexRow.appendChild(hexInp);
-    wrap.appendChild(hexRow);
-
+    head.appendChild(lb); head.appendChild(swatch); wrap.appendChild(head);
+    const hexRow = document.createElement('div'); hexRow.className = 'ce-hex';
+    const hexInp = document.createElement('input'); hexInp.type = 'text'; hexInp.value = initial;
+    hexInp.placeholder = '#rrggbb'; hexInp.autocomplete = 'off'; hexInp.spellcheck = false;
+    hexRow.appendChild(hexInp); wrap.appendChild(hexRow);
     function syncVisual(hex) { swatch.style.background = hex; colorInput.value = hex; }
     function applyNow(hex) {
-      const v = normalizeHex(hex);
-      if (!v) return false;
-      settings[key] = v; saveSettings(); paintCssFromSettings(); syncVisual(v);
-      return true;
+      const v = normalizeHex(hex); if (!v) return false;
+      settings[key] = v; saveSettings();
+      rootStyle(normalizeHex(settings.bg) || '#000', normalizeHex(settings.fg) || '#fff', normalizeHex(settings.accent) || '#888');
+      syncVisual(v); return true;
     }
     colorInput.addEventListener('input', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
     colorInput.addEventListener('change', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
     hexInp.addEventListener('input', () => {
-      const raw = hexInp.value.trim().toLowerCase();
-      const v = normalizeHex(raw);
-      if (v) {
-        hexInp.classList.remove('invalid');
-        settings[key] = v; saveSettings(); paintCssFromSettings();
-        swatch.style.background = v; colorInput.value = v;
-      } else hexInp.classList.add('invalid');
+      const v = normalizeHex(hexInp.value);
+      if (v) { hexInp.classList.remove('invalid'); settings[key] = v; saveSettings();
+        rootStyle(normalizeHex(settings.bg) || '#000', normalizeHex(settings.fg) || '#fff', normalizeHex(settings.accent) || '#888');
+        swatch.style.background = v; colorInput.value = v; }
+      else hexInp.classList.add('invalid');
     });
     hexInp.addEventListener('blur', () => {
       const v = normalizeHex(hexInp.value);
-      if (v) {
-        settings[key] = v; saveSettings(); paintCssFromSettings();
-        hexInp.value = v; hexInp.classList.remove('invalid'); syncVisual(v);
-      } else {
-        hexInp.value = normalizeHex(settings[key]) || '#000000';
-        hexInp.classList.remove('invalid');
-      }
+      if (v) { settings[key] = v; saveSettings();
+        rootStyle(normalizeHex(settings.bg) || '#000', normalizeHex(settings.fg) || '#fff', normalizeHex(settings.accent) || '#888');
+        hexInp.value = v; hexInp.classList.remove('invalid'); syncVisual(v); }
+      else { hexInp.value = normalizeHex(settings[key]) || '#000000'; hexInp.classList.remove('invalid'); }
     });
     hexInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); } });
-    wrap.dataset.key = key;
     return wrap;
   }
-  function paintCssFromSettings() {
-    const bg = normalizeHex(settings.bg) || '#000000';
-    const fg = normalizeHex(settings.fg) || '#ffffff';
-    const accent = normalizeHex(settings.accent) || '#888888';
-    root.style.setProperty('--bg', bg); root.style.setProperty('--fg', fg); root.style.setProperty('--accent', accent);
-    root.style.setProperty('--accent-contrast', contrastColor(accent));
-    root.style.setProperty('--bg-header', shade(bg, 6));
-    root.style.setProperty('--bg-panel', shade(bg, 10));
-    root.style.setProperty('--bg-input', shade(bg, 6));
-    root.style.setProperty('--border', shade(bg, 14));
-    root.style.setProperty('--border-strong', shade(bg, 22));
-    root.style.setProperty('--fg-dim', mix(fg, bg, 0.55));
-    root.style.setProperty('--fg-mid', mix(fg, bg, 0.25));
-  }
-
-  function renderPaletteRow(p, groupKey) {
+  function renderPaletteRow(p) {
     const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
     const row = document.createElement('div');
     row.className = 'cl-settings-row' + (isActive ? ' active' : '');
@@ -1861,42 +2291,7 @@
     sub.textContent = p.bg + ' · ' + p.fg + ' · ' + p.accent;
     info.appendChild(nm); info.appendChild(sub);
     row.appendChild(sw); row.appendChild(info);
-    if (groupKey === 'custom') {
-      const acts = document.createElement('div'); acts.className = 'row-actions';
-      const pin = document.createElement('button');
-      pin.className = 'pin-btn' + (p.pinned ? ' pinned' : '');
-      pin.textContent = p.pinned ? '📌' : '📍';
-      pin.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const arr = C.loadCustomPalettes();
-        const it = arr.find(x => x.id === p.id); if (it) it.pinned = !it.pinned;
-        C.saveCustomPalettes(arr); openPaletteOnly();
-      });
-      const edit = document.createElement('button');
-      edit.textContent = '✎';
-      edit.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askText('Название цвета:', p.name).then(n => {
-          if (n !== null && n.trim()) {
-            const arr = C.loadCustomPalettes();
-            const it = arr.find(x => x.id === p.id); if (it) it.name = n.trim();
-            C.saveCustomPalettes(arr); openPaletteOnly();
-          }
-        });
-      });
-      const del = document.createElement('button');
-      del.className = 'del-btn'; del.textContent = '✕';
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askConfirm('Удалить цвет «' + p.name + '»?', 'Удалить', true).then(ok => {
-          if (!ok) return;
-          C.saveCustomPalettes(C.loadCustomPalettes().filter(x => x.id !== p.id));
-          openPaletteOnly();
-        });
-      });
-      acts.appendChild(pin); acts.appendChild(edit); acts.appendChild(del);
-      row.appendChild(acts);
-    } else if (isActive) {
+    if (isActive) {
       const chk = document.createElement('div'); chk.className = 'check'; chk.textContent = '✓';
       row.appendChild(chk);
     }
@@ -1906,42 +2301,20 @@
     });
     return row;
   }
-
   function openPaletteOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = 'Цвет';
     settingsModalBody.innerHTML = '';
-    const custom = C.loadCustomPalettes();
-    const pinned = custom.filter(p => p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
-    const unpinned = custom.filter(p => !p.pinned).sort((a,b) => (b.created||0) - (a.created||0));
-    if (pinned.length) { addGroup('📌 Закреплённые'); pinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom'))); }
-    if (unpinned.length) { addGroup('Мои цвета'); unpinned.forEach(p => settingsModalBody.appendChild(renderPaletteRow(p, 'custom'))); }
-    addGroup('Свои цвета');
-    const acts = document.createElement('div'); acts.className = 'palette-actions';
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = '💾 Сохранить текущие цвета';
-    saveBtn.style.background = 'var(--bg-panel)';
-    saveBtn.addEventListener('click', () => {
-      askText('Название схемы:', 'Моя схема ' + (C.loadCustomPalettes().length + 1)).then(n => {
-        if (n === null) return;
-        const name = (n || '').trim() || ('Схема ' + (C.loadCustomPalettes().length + 1));
-        const arr = C.loadCustomPalettes();
-        arr.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), name, bg: settings.bg, fg: settings.fg, accent: settings.accent, pinned: false, created: Date.now() });
-        C.saveCustomPalettes(arr); openPaletteOnly(); toast('Схема сохранена');
-      });
-    });
-    acts.appendChild(saveBtn); settingsModalBody.appendChild(acts);
     addGroup('Свои цвета (пипетка)');
     settingsModalBody.appendChild(makeColorEditor('Фон', 'bg'));
     settingsModalBody.appendChild(makeColorEditor('Текст', 'fg'));
     settingsModalBody.appendChild(makeColorEditor('Акцент', 'accent'));
     C.PRESET_GROUPS.forEach(group => {
       addGroup(group.title);
-      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr, 'preset')));
+      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr)));
     });
   }
-
   function openFontsOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
@@ -1958,45 +2331,12 @@
       row.addEventListener('click', () => { settings.fontFamily = f.id; saveSettings(); applySettings(); openFontsOnly(); });
       settingsModalBody.appendChild(row);
     });
-    addGroup('Параметры текста');
-    const rows = document.createElement('div');
-    rows.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
-    const mkRow = (label, ctrl) => {
-      const r = document.createElement('div');
-      r.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:44px;';
-      const lb = document.createElement('div');
-      lb.style.cssText = 'flex:1;font-size:14px;color:var(--fg);'; lb.textContent = label;
-      r.appendChild(lb); r.appendChild(ctrl); return r;
-    };
-    const mkStepper = (val, onChange) => {
-      const w = document.createElement('div'); w.style.cssText = 'display:flex;align-items:center;gap:6px;';
-      const dec = document.createElement('button'); dec.textContent = '−';
-      dec.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      dec.addEventListener('click', () => onChange(-1));
-      const valEl = document.createElement('div');
-      valEl.style.cssText = 'min-width:56px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px;';
-      valEl.textContent = val;
-      const inc = document.createElement('button'); inc.textContent = '+';
-      inc.style.cssText = 'width:38px;height:38px;border-radius:8px;font-size:16px;';
-      inc.addEventListener('click', () => onChange(1));
-      w.appendChild(dec); w.appendChild(valEl); w.appendChild(inc);
-      return { w, valEl };
-    };
-    const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
-    rows.appendChild(mkRow('Размер', fs.w));
-    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
-    rows.appendChild(mkRow('Ширина', wS.w));
-    const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
-    rows.appendChild(mkRow('Интервал', lhS.w));
-    settingsModalBody.appendChild(rows);
   }
-
   function openUnifiedSettings() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = '⚙';
     settingsModalBody.innerHTML = '';
-    addGroup('');
     const rowsRead = document.createElement('div');
     rowsRead.style.cssText = 'padding:6px 16px 12px;display:flex;flex-direction:column;gap:10px;';
     const mkRow = (label, ctrl) => {
@@ -2027,7 +2367,6 @@
     const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
     rowsRead.appendChild(mkRow('Интервал', lhS.w));
     settingsModalBody.appendChild(rowsRead);
-    addGroup('');
     const wrapBtns = document.createElement('div');
     wrapBtns.style.cssText = 'padding:6px 16px 12px;display:flex;gap:8px;flex-wrap:wrap;';
     const bFont = document.createElement('button');
@@ -2039,7 +2378,6 @@
     bPal.addEventListener('click', () => { closeSettingsModal(); setTimeout(openPaletteOnly, 120); });
     wrapBtns.appendChild(bPal);
     settingsModalBody.appendChild(wrapBtns);
-    addGroup('');
     const libWrap = document.createElement('div');
     libWrap.style.cssText = 'padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px;';
     const mkBtn = (label, fn) => {
@@ -2048,13 +2386,17 @@
       b.style.cssText = 'padding:12px 14px;border-radius:10px;font-size:14px;text-align:left;min-height:var(--tap);background:var(--bg-panel);border:1px solid var(--border-strong);color:var(--fg);cursor:pointer;';
       b.addEventListener('click', fn); libWrap.appendChild(b);
     };
-    mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
-    mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
-    mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    if (S.currentBookId) {
+      mkBtn('☰ Содержание', () => { closeSettingsModal(); setTimeout(openToc, 180); });
+      mkBtn('Поиск слова', () => { closeSettingsModal(); setTimeout(openSearch, 180); });
+      mkBtn('Сделать закладку', () => { closeSettingsModal(); setTimeout(addMark, 180); });
+      mkBtn('Закладки', () => { closeSettingsModal(); setTimeout(openMarks, 180); });
+    }
     mkBtn('Вернуться в меню', () => { closeSettingsModal(); backClassic(); });
     settingsModalBody.appendChild(libWrap);
   }
 
+  /* ============ POPUP ============ */
   const popOverlay = $('pop-overlay');
   function ensurePopOverlay() {
     if (!popOverlay) return;
@@ -2100,80 +2442,6 @@
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
 
-  function openCategoriesManager() {
-    const pop = $('menu-pop'); if (!pop) return;
-    closeAllPopups();
-    pop.innerHTML = ''; pop.style.transform = '';
-    pop.style.maxHeight = '80vh'; pop.style.overflowY = 'auto'; pop.style.minWidth = '300px';
-    const head = document.createElement('div'); head.className = 'group-head';
-    const title = document.createElement('div');
-    title.className = 'group-title'; title.textContent = 'Категории';
-    head.appendChild(title);
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'pop-close'; closeBtn.textContent = '✕';
-    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none'; });
-    head.appendChild(closeBtn); pop.appendChild(head);
-    const cats = C.loadCategories(); const books = C.loadMeta();
-    if (!cats.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding:10px 12px;color:var(--fg-dim);font-size:12px;';
-      empty.textContent = 'Пока нет категорий.'; pop.appendChild(empty);
-    } else {
-      cats.forEach(c => {
-        const row = document.createElement('div'); row.className = 'mi';
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between;';
-        const nm = document.createElement('span');
-        const count = books.filter(b => (b.categories || []).includes(c.id)).length;
-        nm.textContent = c.name + ' (' + count + ')';
-        nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-        const edit = document.createElement('button');
-        edit.textContent = '✎'; edit.style.cssText = 'padding:2px 8px;font-size:12px;min-height:32px;';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askText('Название категории:', c.name).then(n => {
-            if (n !== null && n.trim()) {
-              const arr = C.loadCategories(); const cc = arr.find(x => x.id === c.id);
-              if (cc) cc.name = n.trim(); C.saveCategories(arr);
-              openCategoriesManager(); renderClassicLibrary();
-            }
-          });
-        });
-        const del = document.createElement('button');
-        del.textContent = '✕'; del.style.cssText = 'padding:2px 8px;font-size:12px;color:#c97a7a;min-height:32px;';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askConfirm('Удалить категорию «' + c.name + '»? Книги останутся.', 'Удалить', true).then(ok => {
-            if (!ok) return;
-            C.saveCategories(C.loadCategories().filter(x => x.id !== c.id));
-            const arr = C.loadMeta(); arr.forEach(b => {
-              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
-            });
-            C.saveMeta(arr);
-            if (S.activeCategory === c.id) S.activeCategory = null;
-            openCategoriesManager(); renderClassicLibrary();
-          });
-        });
-        row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
-        pop.appendChild(row);
-      });
-    }
-    const sep = document.createElement('div'); sep.className = 'sep'; pop.appendChild(sep);
-    const addBtn = document.createElement('div'); addBtn.className = 'mi';
-    addBtn.textContent = '+ Новая категория';
-    addBtn.addEventListener('click', () => {
-      askText('Название новой категории:').then(n => {
-        if (n !== null && n.trim()) {
-          const arr = C.loadCategories();
-          arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-          C.saveCategories(arr); openCategoriesManager(); renderClassicLibrary();
-        }
-      });
-    });
-    pop.appendChild(addBtn);
-    pop.style.left = '50%'; pop.style.top = '50%';
-    pop.style.transform = 'translate(-50%, -50%)'; pop.classList.add('show');
-    showPopOverlayFor(pop);
-  }
   function promptAddCategory() {
     askText('Название новой категории:').then(n => {
       if (n !== null && n.trim()) {
@@ -2184,115 +2452,7 @@
     });
   }
 
-  function showBookMenu(bookId, anchorEl) {
-    const menu = $('category-menu'); if (!menu) return;
-    closeAllPopups();
-    const books = C.loadMeta(); const b = books.find(x => x.id === bookId);
-    if (!b) return;
-    const currentCats = Array.isArray(b.categories) ? b.categories.slice() : [];
-    const cats = C.loadCategories();
-    menu.innerHTML = '';
-    const head = document.createElement('div'); head.className = 'cm-head';
-    const headTitle = document.createElement('div');
-    headTitle.className = 'cm-head-title'; headTitle.textContent = b.title || 'Книга';
-    head.appendChild(headTitle);
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'cm-close'; closeBtn.textContent = '✕';
-    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none'; });
-    head.appendChild(closeBtn); menu.appendChild(head);
-    function mkTitle(text) { const t = document.createElement('div'); t.className = 'cm-title'; t.textContent = text; menu.appendChild(t); }
-    function mkSep() { const s = document.createElement('div'); s.className = 'cm-sep'; menu.appendChild(s); }
-    const renameItem = document.createElement('div');
-    renameItem.className = 'cm-item'; renameItem.textContent = '✎ Переименовать';
-    renameItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askText('Новое название:', b.title).then(n => {
-        if (n !== null && n.trim()) {
-          const arr = C.loadMeta(); const bk = arr.find(x => x.id === bookId);
-          if (bk) bk.title = n.trim(); C.saveMeta(arr);
-          renderClassicLibrary();
-        }
-      });
-    });
-    menu.appendChild(renameItem);
-    mkSep(); mkTitle('Категории (можно несколько)');
-    if (!cats.length) {
-      const empty = document.createElement('div');
-      empty.className = 'cm-item'; empty.style.cssText = 'color:var(--fg-dim);cursor:default;';
-      empty.textContent = 'Нет категорий'; menu.appendChild(empty);
-    } else {
-      cats.forEach(c => {
-        const isActive = currentCats.includes(c.id);
-        const item = document.createElement('div');
-        item.className = 'cm-item' + (isActive ? ' active' : '');
-        item.innerHTML = '<span class="cm-check">' + (isActive ? '✓' : '') + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(c.name) + '</span>';
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const arr = C.loadMeta(); const bk = arr.find(x => x.id === bookId);
-          if (!bk) return;
-          if (!Array.isArray(bk.categories)) bk.categories = [];
-          if (bk.categories.includes(c.id)) bk.categories = bk.categories.filter(id => id !== c.id);
-          else bk.categories.push(c.id);
-          C.saveMeta(arr);
-          const nowActive = bk.categories.includes(c.id);
-          item.classList.toggle('active', nowActive);
-          item.querySelector('.cm-check').textContent = nowActive ? '✓' : '';
-          renderClassicLibrary();
-        });
-        menu.appendChild(item);
-      });
-    }
-    const addCatItem = document.createElement('div');
-    addCatItem.className = 'cm-item'; addCatItem.textContent = '＋ Новая категория…';
-    addCatItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askText('Название новой категории:').then(n => {
-        if (n !== null && n.trim()) {
-          const arr = C.loadCategories();
-          const id = 'c' + Date.now();
-          arr.push({ id, name: n.trim(), created: Date.now() });
-          C.saveCategories(arr);
-          const bks = C.loadMeta(); const bk = bks.find(x => x.id === bookId);
-          if (bk) {
-            if (!Array.isArray(bk.categories)) bk.categories = [];
-            if (!bk.categories.includes(id)) bk.categories.push(id);
-            C.saveMeta(bks);
-          }
-          renderClassicLibrary();
-        }
-      });
-    });
-    menu.appendChild(addCatItem);
-    mkSep();
-    const delItem = document.createElement('div');
-    delItem.className = 'cm-item danger'; delItem.textContent = 'Удалить книгу';
-    delItem.addEventListener('click', () => {
-      menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
-        if (!ok) return;
-        C.removeBookData(bookId);
-        C.saveMeta(C.loadMeta().filter(x => x.id !== bookId));
-        if (S.currentBookId === bookId) backClassic();
-        renderClassicLibrary();
-      });
-    });
-    menu.appendChild(delItem);
-    const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 20, bottom: 80, top: 60 };
-    menu.style.left = Math.max(8, Math.min(window.innerWidth - 340, rect.left)) + 'px';
-    menu.style.top = (rect.bottom + 6) + 'px';
-    menu.classList.add('show');
-    showPopOverlayFor(menu);
-    setTimeout(() => {
-      const mh = menu.offsetHeight || 280;
-      if (rect.bottom + 6 + mh > window.innerHeight - 8) {
-        menu.style.top = Math.max(8, (rect.top || 60) - mh - 6) + 'px';
-      }
-    }, 0);
-  }
-
+  /* ============ БИБЛИОТЕКА ============ */
   function renderClassicLibrary() {
     const libraryList = $('library-list'); if (!libraryList) return;
     renderCategoriesBar();
@@ -2398,6 +2558,57 @@
     });
   }
 
+  /* меню категорий для книги (упрощённая версия) */
+  function showBookMenu(bookId, anchor) {
+    const menu = $('category-menu'); if (!menu || !anchor) return;
+    const cats = C.loadCategories();
+    const meta = C.loadMeta(); const bk = meta.find(x => x.id === bookId); if (!bk) return;
+    const bookCats = Array.isArray(bk.categories) ? bk.categories : [];
+    menu.innerHTML = '';
+    const title = document.createElement('div'); title.className = 'cm-title'; title.textContent = 'Категории книги';
+    menu.appendChild(title);
+    if (!cats.length) {
+      const none = document.createElement('div'); none.className = 'cm-item'; none.textContent = 'Нет категорий';
+      menu.appendChild(none);
+    }
+    cats.forEach(c => {
+      const active = bookCats.includes(c.id);
+      const it = document.createElement('div'); it.className = 'cm-item' + (active ? ' active' : '');
+      const chk = document.createElement('span'); chk.className = 'cm-check'; chk.textContent = active ? '✓' : '';
+      const nm = document.createElement('span'); nm.textContent = c.name; nm.style.flex = '1';
+      it.appendChild(chk); it.appendChild(nm);
+      it.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const arr = C.loadMeta(); const b = arr.find(x => x.id === bookId); if (!b) return;
+        const list = Array.isArray(b.categories) ? b.categories.slice() : [];
+        const i = list.indexOf(c.id);
+        if (i >= 0) list.splice(i, 1); else list.push(c.id);
+        b.categories = list; C.saveMeta(arr);
+        menu.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none';
+        renderClassicLibrary();
+      });
+      menu.appendChild(it);
+    });
+    const sep = document.createElement('div'); sep.className = 'cm-sep'; menu.appendChild(sep);
+    const add = document.createElement('div'); add.className = 'cm-item'; add.textContent = '＋ Новая категория';
+    add.addEventListener('click', (e) => {
+      e.stopPropagation(); menu.classList.remove('show');
+      if (popOverlay) popOverlay.style.display = 'none';
+      promptAddCategory();
+    });
+    menu.appendChild(add);
+    const r = anchor.getBoundingClientRect();
+    menu.style.display = 'block';
+    let left = r.left; let top = r.bottom + 6;
+    const w = menu.offsetWidth || 220; const h = menu.offsetHeight || 200;
+    if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+    menu.style.left = Math.max(8, left) + 'px';
+    menu.style.top = Math.max(8, top) + 'px';
+    menu.classList.add('show');
+    if (window.innerWidth <= 768 && popOverlay) popOverlay.style.display = 'block';
+  }
+
   let dragState = null;
   function clearDragHighlights(container) {
     if (!container) return;
@@ -2489,7 +2700,7 @@
     const bar = $('categories-bar'); if (!bar) return;
     const cats = C.loadCategories(); const books = C.loadMeta();
     bar.innerHTML = '';
-    function makeChip(label, count, isActive, onClick, extra) {
+    function makeChip(label, count, isActive, onClick) {
       const el = document.createElement('div');
       el.className = 'category-chip' + (isActive ? ' active' : '');
       const nameSpan = document.createElement('span');
@@ -2497,8 +2708,7 @@
       el.appendChild(nameSpan);
       const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = count;
       el.appendChild(cnt);
-      if (extra) extra(el);
-      el.addEventListener('click', (e) => { if (e.target.closest('.chip-actions')) return; onClick(); });
+      el.addEventListener('click', onClick);
       bar.appendChild(el); return el;
     }
     makeChip('Все', books.length, S.activeCategory === null, () => { S.activeCategory = null; renderClassicLibrary(); });
@@ -2509,40 +2719,13 @@
       makeChip(c.name, cnt, S.activeCategory === c.id, () => {
         S.activeCategory = (S.activeCategory === c.id) ? null : c.id;
         renderClassicLibrary();
-      }, (el) => {
-        const actions = document.createElement('span'); actions.className = 'chip-actions';
-        const edit = document.createElement('button'); edit.className = 'chip-edit'; edit.textContent = '✎';
-        edit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askText('Название категории:', c.name).then(n => {
-            if (n !== null) {
-              const arr = C.loadCategories(); const cc = arr.find(x => x.id === c.id);
-              if (cc) { cc.name = n.trim() || c.name; C.saveCategories(arr); }
-              renderClassicLibrary();
-            }
-          });
-        });
-        actions.appendChild(edit);
-        const del = document.createElement('button'); del.className = 'chip-del'; del.textContent = '✕';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          askConfirm('Удалить категорию «' + c.name + '»?', 'Удалить', true).then(ok => {
-            if (!ok) return;
-            C.saveCategories(C.loadCategories().filter(x => x.id !== c.id));
-            const arr = C.loadMeta(); arr.forEach(b => {
-              if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id);
-            });
-            C.saveMeta(arr); if (S.activeCategory === c.id) S.activeCategory = null; renderClassicLibrary();
-          });
-        });
-        actions.appendChild(del);
-        el.appendChild(actions);
       });
     });
     const addChip = makeChip('+ Категория', '', false, promptAddCategory);
     addChip.classList.add('add-chip');
   }
 
+  /* ============ ОТКРЫТИЕ ============ */
   function openBookClassic(id) {
     const b = C.loadMeta().find(x => x.id === id);
     if (!b) return;
@@ -2554,10 +2737,11 @@
     requestAnimationFrame(() => {
       restoreReadingPosition(pos);
       updateAllProgress();
+      measureChapterStarts();
     });
   }
   function backClassic() {
-    S.currentBookId = null; S.currentMarks = []; S.activeChapter = -1;
+    S.currentBookId = null; S.currentMarks = []; S.chapters = []; S.chapterStarts = []; S.activeChapter = -1;
     $('paste-screen').classList.add('active');
     $('reader-shell').classList.remove('active');
     renderClassicLibrary();
@@ -2568,12 +2752,14 @@
     if (t === null) return;
     const text = await askLongText('Вставьте текст книги:', '', 'Сюда текст...');
     if (text === null || !text.trim()) { toast('Нет текста', true); return; }
-    const id = C.addBookRecord(t.trim() || C.guessTitle(text), text, '');
+    const packed = C.packBook(text, []);
+    const id = C.addBookRecord(t.trim() || C.guessTitle(text), packed.text, '');
     if (!id) return;
     renderClassicLibrary();
     toast('Книга добавлена');
   }
 
+  /* ============ ПРОЦЕНТ ============ */
   let pctJumpEl = null;
   function ensurePctJump() {
     if (pctJumpEl) return pctJumpEl;
@@ -2636,16 +2822,17 @@
     }
   });
 
+  /* ============ INIT ============ */
   function init() {
     C.loadMeta();
     applySettings();
     renderClassicLibrary();
 
-    $('btn-read').addEventListener('click', async () => {
+    $('btn-read').addEventListener('click', () => {
       const text = $('input').value;
       if (!text.trim()) { toast('Вставьте текст', true); return; }
-      const normalized = C.normalizeRawText(text);
-      const id = C.addBookRecord(C.guessTitle(normalized), normalized);
+      const packed = C.packBook(text, []);
+      const id = C.addBookRecord(C.guessTitle(text), packed.text);
       if (id) { $('input').value = ''; openBookClassic(id); }
     });
     const btnFile = $('btn-file'); const fileInput = $('file-input');
@@ -2666,11 +2853,13 @@
 
     const bindIf = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
     bindIf('btn-menu', openUnifiedSettings);
+    bindIf('btn-toc-top', openToc);
     bindIf('m-close', closeSheet);
+    bindIf('m-toc', () => { closeSheet(); setTimeout(openToc, 180); });
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-marks', () => { closeSheet(); setTimeout(openMarks, 180); });
     bindIf('m-mark', () => { closeSheet(); addMark(); });
-    bindIf('m-categories', () => { closeSheet(); setTimeout(openCategoriesManager, 180); });
+    bindIf('m-categories', () => { closeSheet(); setTimeout(promptAddCategory, 180); });
     bindIf('m-library', () => { closeSheet(); backClassic(); });
     bindIf('m-theme', () => { closeSheet(); setTimeout(openPaletteOnly, 180); });
     bindIf('m-font', () => { closeSheet(); setTimeout(openFontsOnly, 180); });
@@ -2701,7 +2890,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (noteEditor && noteEditor.classList.contains('open')) return;
-      if (inlineDlg && inlineDlg.classList.contains('open')) return;
+      if ($('inline-dialog') && $('inline-dialog').classList.contains('open')) return;
       if (settingsModal && settingsModal.classList.contains('open')) {
         if (e.key === 'Escape') { e.preventDefault(); closeSettingsModal(); }
         return;
@@ -2710,6 +2899,7 @@
       if (ctrl && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); openSearch(); }
       else if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addMark(); }
       else if (ctrl && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); openMarks(); }
+      else if (ctrl && (e.key === 't' || e.key === 'T')) { e.preventDefault(); openToc(); }
     });
 
     const rs = $('reader-screen');
@@ -2768,6 +2958,7 @@
     });
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768 && popOverlay) popOverlay.style.display = 'none';
+      if (S.currentBookId) { measureChapterStarts(); if (tocPanel && tocPanel.classList.contains('open')) renderTocList(); }
     });
   }
 
