@@ -2700,59 +2700,94 @@
     const updated = meta.map(b => map.get(b.id) || b);
     C.saveMeta(updated);
     renderClassicLibrary();
-  }
-  function attachBookDragHandlers(el, bookId) {
-    const grip = el.querySelector('.grip');
-    if (!grip) return;
+  } 
+function attachBookDragHandlers(el, bookId) {
+  const grip = el.querySelector('.grip');
+  if (!grip) return;
+
+  let state = null;
+
+  const onPointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+    e.stopPropagation();
+    // ВАЖНО: контейнер берём здесь — el уже в DOM
     const container = el.parentElement;
-    grip.addEventListener('pointerdown', (e) => { e.preventDefault(); startBookDrag(e, el, bookId, container); });
-  }
-  function startBookDrag(e, bookEl, bookId, container) {
-    if (dragState) return;
-    dragState = { id: bookId, el: bookEl, startX: e.clientX, startY: e.clientY, pointerId: e.pointerId, active: false };
-    try { bookEl.setPointerCapture && bookEl.setPointerCapture(e.pointerId); } catch (_) {}
-    const onMove = (ev) => {
-      if (!dragState || ev.pointerId !== dragState.pointerId) return;
-      const dx = ev.clientX - dragState.startX;
-      const dy = ev.clientY - dragState.startY;
-      if (!dragState.active) {
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        dragState.active = true; dragState.el.classList.add('dragging');
-        document.body.style.userSelect = 'none';
-      }
-      clearDragHighlights(container);
-      const target = findDropTarget(container, ev.clientX, ev.clientY, dragState.el);
-      if (target) {
-        const midY = target.rect.top + target.rect.height / 2;
-        target.el.classList.add(ev.clientY < midY ? 'drop-before' : 'drop-after');
-      }
-      if (ev.cancelable) ev.preventDefault();
+    if (!container) return;
+    state = {
+      id: bookId,
+      el,
+      container,
+      startX: e.clientX,
+      startY: e.clientY,
+      pointerId: e.pointerId,
+      active: false,
+      pointerType: e.pointerType
     };
-    const onUp = (ev) => {
-      if (!dragState || ev.pointerId !== dragState.pointerId) return;
-      const wasActive = dragState.active;
-      const dragEl = dragState.el; const dragId = dragState.id;
-      const target = findDropTarget(container, ev.clientX, ev.clientY, dragEl);
-      let targetId = null, placeAfter = false;
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  };
+
+  const onPointerMove = (ev) => {
+    if (!state || ev.pointerId !== state.pointerId) return;
+    const dx = ev.clientX - state.startX;
+    const dy = ev.clientY - state.startY;
+
+    if (!state.active) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      state.active = true;
+      state.el.classList.add('dragging');
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+      if (ev.cancelable) ev.preventDefault();
+    } else {
+      if (ev.cancelable) ev.preventDefault();
+    }
+
+    clearDragHighlights(state.container);
+    const target = findDropTarget(state.container, ev.clientX, ev.clientY, state.el);
+    if (target) {
+      const midY = target.rect.top + target.rect.height / 2;
+      target.el.classList.add(ev.clientY < midY ? 'drop-before' : 'drop-after');
+    }
+  };
+
+  const onPointerUp = (ev) => {
+    if (!state || ev.pointerId !== state.pointerId) return;
+    const wasActive = state.active;
+    const dragEl = state.el;
+    const dragId = state.id;
+    const containerEl = state.container;
+
+    let targetId = null, placeAfter = false;
+    if (wasActive) {
+      const target = findDropTarget(containerEl, ev.clientX, ev.clientY, dragEl);
       if (target) {
         targetId = target.el.dataset.bookId;
         const midY = target.rect.top + target.rect.height / 2;
         placeAfter = ev.clientY >= midY;
       }
-      dragEl.classList.remove('dragging');
-      clearDragHighlights(container);
-      document.body.style.userSelect = '';
-      try { dragEl.releasePointerCapture && dragEl.releasePointerCapture(ev.pointerId); } catch (_) {}
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onUp);
-      dragState = null;
-      if (wasActive && targetId && targetId !== dragId) commitReorder(dragId, targetId, placeAfter);
-    };
-    window.addEventListener('pointermove', onMove, { passive: false });
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
-  }
+    }
+
+    dragEl.classList.remove('dragging');
+    clearDragHighlights(containerEl);
+    document.body.style.userSelect = '';
+    document.body.style.webkitUserSelect = '';
+
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    state = null;
+
+    if (wasActive && targetId && targetId !== dragId) {
+      commitReorder(dragId, targetId, placeAfter);
+    }
+  };
+
+  grip.addEventListener('pointerdown', onPointerDown);
+  grip.addEventListener('contextmenu', (e) => e.preventDefault());
+}
 
   /* ============ БАР КАТЕГОРИЙ (с удалением и переименованием) ============ */
   function renderCategoriesBar() {
