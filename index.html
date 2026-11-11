@@ -483,26 +483,35 @@
   #menu-pop .group-title { font-size: 10px; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--fg-dim); padding: 8px 12px 4px; font-weight: 600; }
 
-  #category-menu { position: fixed; z-index: 350; background: var(--bg-panel);
+  #category-menu { position: fixed; z-index: 355; background: var(--bg-panel);
     border: 1px solid var(--border-strong); border-radius: 10px; padding: 6px;
-    min-width: 200px; max-width: min(320px, calc(100vw - 24px)); max-height: 70vh; overflow-y: auto;
+    min-width: 240px; max-width: min(340px, calc(100vw - 24px)); max-height: 70vh;
     box-shadow: 0 12px 40px rgba(0,0,0,.55); display: none;
-    font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
-  #category-menu.show { display: block; }
-  #category-menu .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--fg-dim); padding: 6px 12px 4px; font-weight: 600; }
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif; flex-direction: column; }
+  #category-menu.show { display: flex; }
+  #category-menu .cm-header { display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 8px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; flex-shrink: 0; }
+  #category-menu .cm-header .cm-title { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg-dim); font-weight: 600; padding: 0; }
+  #category-menu .cm-header button { background: transparent; border: none; color: var(--fg-dim);
+    font-size: 16px; padding: 4px 8px; cursor: pointer; border-radius: 6px; min-height: 30px; min-width: 30px; line-height: 1; }
+  #category-menu .cm-header button:hover { background: var(--border-strong); color: var(--fg); }
+  #category-menu .cm-list { overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
   #category-menu .cm-item { padding: 9px 12px; font-size: 13px; color: var(--fg-mid);
     border-radius: 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     min-height: 38px; display: flex; align-items: center; gap: 8px; }
   #category-menu .cm-item:hover { background: var(--border-strong); color: var(--fg); }
   #category-menu .cm-item.active { color: var(--accent); }
-  #category-menu .cm-item .cm-check { width: 16px; height: 16px; border-radius: 4px;
+  #category-menu .cm-item .cm-check { width: 18px; height: 18px; border-radius: 4px;
     border: 1px solid var(--border-strong); display: inline-flex; align-items: center;
-    justify-content: center; font-size: 11px; flex-shrink: 0; }
+    justify-content: center; font-size: 12px; flex-shrink: 0; background: transparent; }
   #category-menu .cm-item.active .cm-check { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
-  #category-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; }
+  #category-menu .cm-sep { height: 1px; background: var(--border); margin: 6px 4px; flex-shrink: 0; }
   #category-menu .cm-item.danger { color: #c97a7a; }
   #category-menu .cm-item.danger:hover { background: #3a1a1a; color: #ffd0d0; }
+  #category-menu .cm-footer { padding: 8px 4px 2px; flex-shrink: 0; border-top: 1px solid var(--border); margin-top: 4px; }
+  #category-menu .cm-footer button { width: 100%; padding: 10px; font-size: 13px; border-radius: 8px;
+    background: var(--accent); color: var(--accent-contrast); border: 1px solid var(--accent); font-weight: 600; }
 
   #note-editor { position: fixed; inset: 0; background: rgba(0,0,0,.55);
     z-index: 340; display: none; align-items: center; justify-content: center;
@@ -1525,7 +1534,9 @@
       const title = baseName || guessTitle(text);
       const id = addBookRecord(title, packed.text, '');
       if (!id) return;
-      renderClassicLibrary();
+      if (window.__READER_UI__ && window.__READER_UI__.renderClassicLibrary) {
+        window.__READER_UI__.renderClassicLibrary();
+      }
       toast('Загружено: ' + title + ' · глав: ' + packed.chapters);
     } catch (err) {
       console.error(err);
@@ -1585,6 +1596,7 @@
   };
 })();
 </script>
+
 <script>
 (function () {
   'use strict';
@@ -2251,12 +2263,12 @@
     hexInp.placeholder = '#rrggbb'; hexInp.autocomplete = 'off'; hexInp.spellcheck = false;
     hexRow.appendChild(hexInp); wrap.appendChild(hexRow);
     function syncVisual(hex) { swatch.style.background = hex; colorInput.value = hex; }
-    function applyNow(hex) {
-      const v = normalizeHex(hex); if (!v) return false;
-      settings[key] = v; saveSettings();
-      rootStyle(normalizeHex(settings.bg) || '#000', normalizeHex(settings.fg) || '#fff', normalizeHex(settings.accent) || '#888');
-      syncVisual(v); return true;
-    }
+  function applyNow(hex) {
+  const v = normalizeHex(hex); if (!v) return false;
+  settings[key] = v; saveSettings();
+  applySettings();  // ← полное применение с перерисовкой
+  syncVisual(v); return true;
+}
     colorInput.addEventListener('input', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
     colorInput.addEventListener('change', () => { const v = normalizeHex(colorInput.value); if (v) applyNow(v); });
     hexInp.addEventListener('input', () => {
@@ -2276,7 +2288,13 @@
     hexInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); hexInp.blur(); } });
     return wrap;
   }
-  function renderPaletteRow(p) {
+
+  /* ===== ПАЛИТРА: пресеты + пользовательские схемы ===== */
+  function applyPalette(p) {
+    settings.bg = p.bg; settings.fg = p.fg; settings.accent = p.accent;
+    saveSettings(); applySettings();
+  }
+  function renderPresetRow(p) {
     const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
     const row = document.createElement('div');
     row.className = 'cl-settings-row' + (isActive ? ' active' : '');
@@ -2295,24 +2313,97 @@
       const chk = document.createElement('div'); chk.className = 'check'; chk.textContent = '✓';
       row.appendChild(chk);
     }
-    row.addEventListener('click', () => {
-      settings.bg = p.bg; settings.fg = p.fg; settings.accent = p.accent;
-      saveSettings(); applySettings(); openPaletteOnly();
-    });
+    row.addEventListener('click', () => { applyPalette(p); openPaletteOnly(); });
     return row;
   }
+  function renderCustomPaletteRow(p) {
+    const isActive = settings.bg === p.bg && settings.fg === p.fg && settings.accent === p.accent;
+    const row = document.createElement('div');
+    row.className = 'cl-settings-row' + (isActive ? ' active' : '');
+    const sw = document.createElement('div');
+    sw.className = 'sw' + (isActive ? ' active' : '');
+    sw.style.background = p.bg; sw.style.color = p.fg;
+    sw.style.borderColor = isActive ? 'var(--accent)' : shade(p.bg,20);
+    sw.textContent = 'Aa';
+    const info = document.createElement('div'); info.className = 'info';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = p.name;
+    const sub = document.createElement('div'); sub.className = 'sub';
+    sub.textContent = p.bg + ' · ' + p.fg + ' · ' + p.accent;
+    info.appendChild(nm); info.appendChild(sub);
+    const actions = document.createElement('div'); actions.className = 'row-actions';
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del-btn'; delBtn.textContent = '✕'; delBtn.title = 'Удалить схему';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      askConfirm('Удалить схему «' + p.name + '»?', 'Удалить', true).then(ok => {
+        if (!ok) return;
+        const arr = C.loadCustomPalettes().filter(x => x.id !== p.id);
+        C.saveCustomPalettes(arr);
+        openPaletteOnly();
+        toast('Схема удалена');
+      });
+    });
+    actions.appendChild(delBtn);
+    row.appendChild(sw); row.appendChild(info); row.appendChild(actions);
+    row.addEventListener('click', () => { applyPalette(p); openPaletteOnly(); });
+    return row;
+  }
+
   function openPaletteOnly() {
     if (!settingsModal) return;
     settingsModal.classList.add('open');
     settingsModalTitle.textContent = 'Цвет';
     settingsModalBody.innerHTML = '';
-    addGroup('Свои цвета (пипетка)');
+
+    /* --- Мои схемы (сохранённые пользователем) --- */
+    const custom = C.loadCustomPalettes();
+    addGroup('Мои схемы');
+    if (!custom.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:6px 16px 10px;font-size:12px;color:var(--fg-dim);line-height:1.4;';
+      empty.textContent = 'Пока нет сохранённых схем. Настройте цвета ниже и нажмите «💾 Сохранить схему».';
+      settingsModalBody.appendChild(empty);
+    } else {
+      custom.forEach(p => settingsModalBody.appendChild(renderCustomPaletteRow(p)));
+    }
+
+    /* --- Редактор цветов + кнопка сохранения --- */
+    addGroup('Настроить свои цвета');
     settingsModalBody.appendChild(makeColorEditor('Фон', 'bg'));
     settingsModalBody.appendChild(makeColorEditor('Текст', 'fg'));
     settingsModalBody.appendChild(makeColorEditor('Акцент', 'accent'));
+
+    const saveWrap = document.createElement('div');
+    saveWrap.className = 'palette-actions';
+    const saveBtn = document.createElement('button');
+    saveBtn.style.cssText = 'background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;';
+    saveBtn.textContent = '💾 Сохранить схему';
+    saveBtn.addEventListener('click', () => {
+      askText('Название схемы:', 'Моя схема ' + (C.loadCustomPalettes().length + 1)).then(name => {
+        if (name === null) return;
+        const n = String(name).trim();
+        if (!n) { toast('Введите название', true); return; }
+        const arr = C.loadCustomPalettes();
+        arr.push({
+          id: 'p' + Date.now() + Math.random().toString(36).slice(2,6),
+          name: n,
+          bg: normalizeHex(settings.bg) || '#000000',
+          fg: normalizeHex(settings.fg) || '#ffffff',
+          accent: normalizeHex(settings.accent) || '#888888',
+          created: Date.now()
+        });
+        C.saveCustomPalettes(arr);
+        openPaletteOnly();
+        toast('Схема «' + n + '» сохранена');
+      });
+    });
+    saveWrap.appendChild(saveBtn);
+    settingsModalBody.appendChild(saveWrap);
+
+    /* --- Встроенные пресеты --- */
     C.PRESET_GROUPS.forEach(group => {
       addGroup(group.title);
-      group.presets.forEach(pr => settingsModalBody.appendChild(renderPaletteRow(pr)));
+      group.presets.forEach(pr => settingsModalBody.appendChild(renderPresetRow(pr)));
     });
   }
   function openFontsOnly() {
@@ -2396,215 +2487,182 @@
     settingsModalBody.appendChild(libWrap);
   }
 
-  /* ============ POPUP ============ */
+  /* ============ POPUP / МЕНЮ КАТЕГОРИЙ КНИГИ ============ */
   const popOverlay = $('pop-overlay');
   function ensurePopOverlay() {
     if (!popOverlay) return;
     popOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:345;display:none;';
-    popOverlay.addEventListener('click', () => {
-      const catMenu = $('category-menu');
-      const popMenu = $('menu-pop');
-      if (catMenu) catMenu.classList.remove('show');
-      if (popMenu) popMenu.classList.remove('show');
-      popOverlay.style.display = 'none';
-    });
+    popOverlay.addEventListener('click', () => { closeAllPopups(); });
   }
   ensurePopOverlay();
   function closeAllPopups() {
     const catMenu = $('category-menu');
     const popMenu = $('menu-pop');
-    if (catMenu) catMenu.classList.remove('show');
+    if (catMenu) {
+      catMenu.classList.remove('show');
+      catMenu.style.display = '';       // сброс инлайнового display
+      catMenu.style.left = '';
+      catMenu.style.top = '';
+      catMenu.style.transform = '';
+      catMenu._anchor = null;
+    }
     if (popMenu) popMenu.classList.remove('show');
     if (popOverlay) popOverlay.style.display = 'none';
+    currentBookMenuId = null;
   }
-  function showPopOverlayFor(el) {
-    if (!popOverlay || !el) return;
-    if (window.innerWidth <= 768) popOverlay.style.display = 'block';
-  }
+
+  /* document click: закрываем меню только если клик ВНЕ меню/чипа */
   document.addEventListener('click', (e) => {
     const catMenu = $('category-menu');
     const popMenu = $('menu-pop');
+    /* меню категорий книги: закрываем при любом клике вне самого меню.
+       Клик по якорю (.cat-tag/.category-chip) тоже закрывает — но обработчик
+       якоря тут же откроет меню заново, поэтому визуально всё ок. */
     if (catMenu && catMenu.classList.contains('show')) {
-      if (!catMenu.contains(e.target) &&
-          !(e.target.closest && e.target.closest('.cat-tag')) &&
-          !(e.target.closest && e.target.closest('.category-chip'))) {
-        catMenu.classList.remove('show');
-        if (popOverlay && !popMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      if (!catMenu.contains(e.target)) {
+        closeAllPopups();
       }
     }
     if (popMenu && popMenu.classList.contains('show')) {
-      if (!popMenu.contains(e.target) &&
-          !(e.target.closest && e.target.closest('.category-chip'))) {
-        popMenu.classList.remove('show');
-        if (popOverlay && !catMenu?.classList.contains('show')) popOverlay.style.display = 'none';
+      if (!popMenu.contains(e.target)) {
+        closeAllPopups();
       }
     }
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPopups(); });
 
-  function promptAddCategory() {
+  function promptAddCategory(bookId) {
     askText('Название новой категории:').then(n => {
-      if (n !== null && n.trim()) {
-        const arr = C.loadCategories();
-        arr.push({ id: 'c' + Date.now(), name: n.trim(), created: Date.now() });
-        C.saveCategories(arr); renderClassicLibrary(); toast('Категория создана');
-      }
-    });
-  }
-
-  /* ============ БИБЛИОТЕКА ============ */
-  function renderClassicLibrary() {
-    const libraryList = $('library-list'); if (!libraryList) return;
-    renderCategoriesBar();
-    const all = C.loadMeta(); const sorted = C.sortBooks(all);
-    const searchEl = $('library-search');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    const wrap = $('library-search-wrap'); if (wrap) wrap.classList.toggle('has-value', !!query);
-    let books = sorted;
-    if (S.activeCategory === '') books = books.filter(b => !(b.categories || []).length);
-    else if (S.activeCategory) books = books.filter(b => (b.categories || []).includes(S.activeCategory));
-    const filtered = query ? books.filter(b => (b.title || '').toLowerCase().includes(query)) : books;
-    libraryList.innerHTML = '';
-    const noResults = $('library-no-results');
-    if (!sorted.length) {
-      if (noResults) noResults.classList.remove('show');
-      const empty = document.createElement('div'); empty.id = 'library-empty';
-      empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
-      libraryList.appendChild(empty); return;
-    }
-    if (!filtered.length) { if (noResults) noResults.classList.add('show'); return; }
-    if (noResults) noResults.classList.remove('show');
-    const cats = C.loadCategories();
-    filtered.forEach(b => {
-      const el = document.createElement('div');
-      el.className = 'book-item'; el.dataset.bookId = b.id;
-      const grip = document.createElement('div'); grip.className = 'grip';
-      grip.title = 'Перетащите, чтобы изменить порядок';
-      grip.innerHTML = '<span></span><span></span><span></span>';
-      el.appendChild(grip);
-      const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
-      el.appendChild(title);
-      const catWrap = document.createElement('div'); catWrap.className = 'book-categories';
-      const bookCats = Array.isArray(b.categories) ? b.categories : [];
-      if (!bookCats.length) {
-        const tag = document.createElement('div'); tag.className = 'cat-tag none'; tag.textContent = 'Без категории';
-        tag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, tag); });
-        catWrap.appendChild(tag);
+      if (n === null) return;
+      const name = String(n).trim();
+      if (!name) return;
+      const arr = C.loadCategories();
+      const newCat = { id: 'c' + Date.now(), name, created: Date.now() };
+      arr.push(newCat);
+      C.saveCategories(arr);
+      /* если добавляли из меню книги — сразу привяжем к ней */
+      if (bookId) {
+        const meta = C.loadMeta();
+        const bk = meta.find(x => x.id === bookId);
+        if (bk) {
+          const list = Array.isArray(bk.categories) ? bk.categories.slice() : [];
+          if (!list.includes(newCat.id)) list.push(newCat.id);
+          bk.categories = list;
+          C.saveMeta(meta);
+        }
+        renderClassicLibrary();
+        showBookMenu(bookId, null, true);
+        toast('Категория «' + name + '» добавлена книге');
       } else {
-        bookCats.forEach(cid => {
-          const cat = cats.find(c => c.id === cid); if (!cat) return;
-          const tag = document.createElement('div'); tag.className = 'cat-tag';
-          tag.innerHTML = escapeHtml(cat.name) + ' <span class="cat-x" title="Убрать">✕</span>';
-          tag.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (e.target.classList.contains('cat-x')) {
-              const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
-              if (bk) bk.categories = (bk.categories || []).filter(id => id !== cid);
-              C.saveMeta(arr); renderClassicLibrary();
-            } else showBookMenu(b.id, tag);
-          });
-          catWrap.appendChild(tag);
-        });
-        const addTag = document.createElement('div'); addTag.className = 'cat-tag none';
-        addTag.textContent = '＋'; addTag.title = 'Добавить категорию';
-        addTag.addEventListener('click', (e) => { e.stopPropagation(); showBookMenu(b.id, addTag); });
-        catWrap.appendChild(addTag);
+        renderClassicLibrary();
+        toast('Категория создана');
       }
-      el.appendChild(catWrap);
-      const meta = document.createElement('div'); meta.className = 'meta';
-      let metaText = (b.words || C.countWords(C.getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
-      const marksCount = C.loadMarks(b.id).length;
-      if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
-      if (b.pct > 0) metaText += ' · ' + (b.pct * 100).toFixed(2) + '%';
-      meta.textContent = metaText; el.appendChild(meta);
-      if (b.pct > 0.00005) {
-        const line = document.createElement('div'); line.className = 'progress-line';
-        const span = document.createElement('span');
-        span.style.width = Math.min(100, (b.pct || 0) * 100) + '%';
-        line.appendChild(span); el.appendChild(line);
-      }
-      const rename = document.createElement('button');
-      rename.className = 'rename'; rename.textContent = '✎';
-      rename.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askText('Новое название:', b.title).then(n => {
-          if (n !== null && n.trim()) {
-            const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
-            if (bk) bk.title = n.trim(); C.saveMeta(arr); renderClassicLibrary();
-          }
-        });
-      });
-      el.appendChild(rename);
-      const del = document.createElement('button');
-      del.className = 'del'; del.textContent = '✕';
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
-          if (!ok) return;
-          C.removeBookData(b.id);
-          C.saveMeta(C.loadMeta().filter(x => x.id !== b.id));
-          if (S.currentBookId === b.id) backClassic();
-          renderClassicLibrary();
-        });
-      });
-      el.appendChild(del);
-      el.addEventListener('click', (e) => {
-        if (e.target.closest('.del, .rename, .cat-tag, .grip')) return;
-        openBookClassic(b.id);
-      });
-      el.addEventListener('contextmenu', (e) => { e.preventDefault(); showBookMenu(b.id, el); });
-      attachBookDragHandlers(el, b.id);
-      libraryList.appendChild(el);
     });
   }
 
-  /* меню категорий для книги (упрощённая версия) */
-  function showBookMenu(bookId, anchor) {
-    const menu = $('category-menu'); if (!menu || !anchor) return;
+  /* ===== Новое меню «Категории книги» ===== */
+  let currentBookMenuId = null;
+  function showBookMenu(bookId, anchor, keepOpen) {
+    const menu = $('category-menu'); if (!menu) return;
+    const meta = C.loadMeta();
+    const bk = meta.find(x => x.id === bookId);
+    if (!bk) return;
+    currentBookMenuId = bookId;
+    if (!keepOpen) {
+      /* позиционируем при первом открытии */
+      menu._anchor = anchor || menu._anchor || null;
+    }
     const cats = C.loadCategories();
-    const meta = C.loadMeta(); const bk = meta.find(x => x.id === bookId); if (!bk) return;
-    const bookCats = Array.isArray(bk.categories) ? bk.categories : [];
+    const bookCats = Array.isArray(bk.categories) ? bk.categories.slice() : [];
     menu.innerHTML = '';
-    const title = document.createElement('div'); title.className = 'cm-title'; title.textContent = 'Категории книги';
-    menu.appendChild(title);
+
+    /* шапка с кнопкой закрытия */
+    const header = document.createElement('div');
+    header.className = 'cm-header';
+    const title = document.createElement('div');
+    title.className = 'cm-title'; title.textContent = 'Категории книги';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button'; closeBtn.textContent = '✕'; closeBtn.title = 'Закрыть';
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeAllPopups(); });
+    header.appendChild(title); header.appendChild(closeBtn);
+    menu.appendChild(header);
+
+    /* список категорий */
+    const listWrap = document.createElement('div');
+    listWrap.className = 'cm-list';
     if (!cats.length) {
-      const none = document.createElement('div'); none.className = 'cm-item'; none.textContent = 'Нет категорий';
-      menu.appendChild(none);
+      const none = document.createElement('div');
+      none.className = 'cm-item'; none.textContent = 'Нет категорий';
+      listWrap.appendChild(none);
     }
     cats.forEach(c => {
       const active = bookCats.includes(c.id);
-      const it = document.createElement('div'); it.className = 'cm-item' + (active ? ' active' : '');
-      const chk = document.createElement('span'); chk.className = 'cm-check'; chk.textContent = active ? '✓' : '';
-      const nm = document.createElement('span'); nm.textContent = c.name; nm.style.flex = '1';
+      const it = document.createElement('div');
+      it.className = 'cm-item' + (active ? ' active' : '');
+      const chk = document.createElement('span');
+      chk.className = 'cm-check'; chk.textContent = active ? '✓' : '';
+      const nm = document.createElement('span');
+      nm.textContent = c.name; nm.style.flex = '1';
       it.appendChild(chk); it.appendChild(nm);
       it.addEventListener('click', (e) => {
         e.stopPropagation();
-        const arr = C.loadMeta(); const b = arr.find(x => x.id === bookId); if (!b) return;
+        /* переключаем категорию у книги, меню НЕ закрываем */
+        const arr = C.loadMeta();
+        const b = arr.find(x => x.id === bookId);
+        if (!b) return;
         const list = Array.isArray(b.categories) ? b.categories.slice() : [];
-        const i = list.indexOf(c.id);
-        if (i >= 0) list.splice(i, 1); else list.push(c.id);
-        b.categories = list; C.saveMeta(arr);
-        menu.classList.remove('show'); if (popOverlay) popOverlay.style.display = 'none';
-        renderClassicLibrary();
+        const idx = list.indexOf(c.id);
+        if (idx >= 0) list.splice(idx, 1); else list.push(c.id);
+        b.categories = list;
+        C.saveMeta(arr);
+        /* обновляем галочку на месте */
+        const nowActive = list.includes(c.id);
+        it.classList.toggle('active', nowActive);
+        chk.textContent = nowActive ? '✓' : '';
+        /* обновляем фон библиотеки, не трогая меню */
+        renderLibraryListOnly();
       });
-      menu.appendChild(it);
+      listWrap.appendChild(it);
     });
+    menu.appendChild(listWrap);
+
+    /* разделитель + добавить */
     const sep = document.createElement('div'); sep.className = 'cm-sep'; menu.appendChild(sep);
-    const add = document.createElement('div'); add.className = 'cm-item'; add.textContent = '＋ Новая категория';
+    const add = document.createElement('div');
+    add.className = 'cm-item'; add.textContent = '＋ Новая категория';
     add.addEventListener('click', (e) => {
-      e.stopPropagation(); menu.classList.remove('show');
-      if (popOverlay) popOverlay.style.display = 'none';
-      promptAddCategory();
+      e.stopPropagation();
+      /* меню оставляем открытым, диалог открывается поверх */
+      promptAddCategory(bookId);
     });
     menu.appendChild(add);
-    const r = anchor.getBoundingClientRect();
-    menu.style.display = 'block';
-    let left = r.left; let top = r.bottom + 6;
-    const w = menu.offsetWidth || 220; const h = menu.offsetHeight || 200;
-    if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;
-    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
-    menu.style.left = Math.max(8, left) + 'px';
-    menu.style.top = Math.max(8, top) + 'px';
+
+    /* нижняя кнопка «Готово» */
+    const footer = document.createElement('div');
+    footer.className = 'cm-footer';
+    const doneBtn = document.createElement('button');
+    doneBtn.type = 'button'; doneBtn.textContent = 'Готово';
+    doneBtn.addEventListener('click', (e) => { e.stopPropagation(); closeAllPopups(); });
+    footer.appendChild(doneBtn);
+    menu.appendChild(footer);
+
+    /* позиционирование */
+    const anchorEl = menu._anchor;
+    menu.style.display = 'flex';
+    if (anchorEl && !keepOpen) {
+      const r = anchorEl.getBoundingClientRect();
+      let left = r.left, top = r.bottom + 6;
+      const w = Math.min(340, window.innerWidth - 24);
+      const h = Math.min(menu.offsetHeight || 260, window.innerHeight - 24);
+      if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;
+      if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+      menu.style.left = Math.max(8, left) + 'px';
+      menu.style.top = Math.max(8, top) + 'px';
+    } else if (!menu.style.left) {
+      menu.style.left = '50%';
+      menu.style.top = '40%';
+      menu.style.transform = 'translate(-50%, -50%)';
+    }
     menu.classList.add('show');
     if (window.innerWidth <= 768 && popOverlay) popOverlay.style.display = 'block';
   }
@@ -2696,6 +2754,7 @@
     window.addEventListener('pointercancel', onUp);
   }
 
+  /* ============ БАР КАТЕГОРИЙ (с удалением и переименованием) ============ */
   function renderCategoriesBar() {
     const bar = $('categories-bar'); if (!bar) return;
     const cats = C.loadCategories(); const books = C.loadMeta();
@@ -2706,23 +2765,183 @@
       const nameSpan = document.createElement('span');
       nameSpan.textContent = label; nameSpan.title = label;
       el.appendChild(nameSpan);
-      const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = count;
-      el.appendChild(cnt);
+      if (count !== '' && count !== null && typeof count !== 'undefined') {
+        const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = count;
+        el.appendChild(cnt);
+      }
       el.addEventListener('click', onClick);
       bar.appendChild(el); return el;
     }
     makeChip('Все', books.length, S.activeCategory === null, () => { S.activeCategory = null; renderClassicLibrary(); });
     const noneCount = books.filter(b => !(b.categories || []).length).length;
     if (noneCount > 0) makeChip('Без категории', noneCount, S.activeCategory === '', () => { S.activeCategory = ''; renderClassicLibrary(); });
+
     cats.forEach(c => {
       const cnt = books.filter(b => (b.categories || []).includes(c.id)).length;
-      makeChip(c.name, cnt, S.activeCategory === c.id, () => {
+      const chip = makeChip(c.name, cnt, S.activeCategory === c.id, () => {
         S.activeCategory = (S.activeCategory === c.id) ? null : c.id;
         renderClassicLibrary();
       });
+      const actions = document.createElement('span');
+      actions.className = 'chip-actions';
+      const editBtn = document.createElement('button');
+      editBtn.className = 'chip-edit'; editBtn.type = 'button';
+      editBtn.textContent = '✎'; editBtn.title = 'Переименовать';
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askText('Новое название категории:', c.name).then(n => {
+          if (n === null) return;
+          const nm = String(n).trim();
+          if (!nm) return;
+          const arr = C.loadCategories();
+          const found = arr.find(x => x.id === c.id);
+          if (found) { found.name = nm; C.saveCategories(arr); renderClassicLibrary(); toast('Категория переименована'); }
+        });
+      });
+      const delBtn = document.createElement('button');
+      delBtn.className = 'chip-del'; delBtn.type = 'button';
+      delBtn.textContent = '✕'; delBtn.title = 'Удалить категорию';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        askConfirm('Удалить категорию «' + c.name + '»?', 'Удалить', true).then(ok => {
+          if (!ok) return;
+          const arr = C.loadCategories().filter(x => x.id !== c.id);
+          C.saveCategories(arr);
+          const meta = C.loadMeta();
+          meta.forEach(b => { if (Array.isArray(b.categories)) b.categories = b.categories.filter(id => id !== c.id); });
+          C.saveMeta(meta);
+          if (S.activeCategory === c.id) S.activeCategory = null;
+          renderClassicLibrary();
+          toast('Категория удалена');
+        });
+      });
+      actions.appendChild(editBtn); actions.appendChild(delBtn);
+      chip.appendChild(actions);
     });
-    const addChip = makeChip('+ Категория', '', false, promptAddCategory);
+
+    const addChip = makeChip('+ Категория', '', false, () => promptAddCategory());
     addChip.classList.add('add-chip');
+  }
+
+  /* ============ БИБЛИОТЕКА ============ */
+  function renderLibraryListOnly() {
+    /* перерисовывает только сетку книг, не трогая бар категорий и открытое меню */
+    const libraryList = $('library-list'); if (!libraryList) return;
+    const all = C.loadMeta(); const sorted = C.sortBooks(all);
+    const searchEl = $('library-search');
+    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
+    let books = sorted;
+    if (S.activeCategory === '') books = books.filter(b => !(b.categories || []).length);
+    else if (S.activeCategory) books = books.filter(b => (b.categories || []).includes(S.activeCategory));
+    const filtered = query ? books.filter(b => (b.title || '').toLowerCase().includes(query)) : books;
+    libraryList.innerHTML = '';
+    const noResults = $('library-no-results');
+    if (!sorted.length) {
+      if (noResults) noResults.classList.remove('show');
+      const empty = document.createElement('div'); empty.id = 'library-empty';
+      empty.textContent = 'Пока пусто. Добавьте книгу — она появится здесь.';
+      libraryList.appendChild(empty); return;
+    }
+    if (!filtered.length) { if (noResults) noResults.classList.add('show'); return; }
+    if (noResults) noResults.classList.remove('show');
+    const cats = C.loadCategories();
+    filtered.forEach(b => libraryList.appendChild(buildBookItem(b, cats)));
+  }
+
+  function buildBookItem(b, cats) {
+    const el = document.createElement('div');
+    el.className = 'book-item'; el.dataset.bookId = b.id;
+    const grip = document.createElement('div'); grip.className = 'grip';
+    grip.title = 'Перетащите, чтобы изменить порядок';
+    grip.innerHTML = '<span></span><span></span><span></span>';
+    el.appendChild(grip);
+    const title = document.createElement('div'); title.className = 'title'; title.textContent = b.title;
+    el.appendChild(title);
+    const catWrap = document.createElement('div'); catWrap.className = 'book-categories';
+    const bookCats = Array.isArray(b.categories) ? b.categories : [];
+    if (!bookCats.length) {
+      const tag = document.createElement('div'); tag.className = 'cat-tag none'; tag.textContent = 'Без категории';
+      tag.addEventListener('click', (e) => { e.stopPropagation(); menuAnchorFor(b.id, tag); });
+      catWrap.appendChild(tag);
+    } else {
+      bookCats.forEach(cid => {
+        const cat = cats.find(c => c.id === cid); if (!cat) return;
+        const tag = document.createElement('div'); tag.className = 'cat-tag';
+        tag.innerHTML = escapeHtml(cat.name) + ' <span class="cat-x" title="Убрать">✕</span>';
+        tag.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (e.target.classList.contains('cat-x')) {
+            const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
+            if (bk) bk.categories = (bk.categories || []).filter(id => id !== cid);
+            C.saveMeta(arr); renderLibraryListOnly();
+          } else menuAnchorFor(b.id, tag);
+        });
+        catWrap.appendChild(tag);
+      });
+      const addTag = document.createElement('div'); addTag.className = 'cat-tag none';
+      addTag.textContent = '＋'; addTag.title = 'Добавить категорию';
+      addTag.addEventListener('click', (e) => { e.stopPropagation(); menuAnchorFor(b.id, addTag); });
+      catWrap.appendChild(addTag);
+    }
+    el.appendChild(catWrap);
+    const meta = document.createElement('div'); meta.className = 'meta';
+    let metaText = (b.words || C.countWords(C.getBookText(b.id))).toLocaleString('ru-RU') + ' слов';
+    const marksCount = C.loadMarks(b.id).length;
+    if (marksCount > 0) metaText += ' · 🔖 ' + marksCount;
+    if (b.pct > 0) metaText += ' · ' + (b.pct * 100).toFixed(2) + '%';
+    meta.textContent = metaText; el.appendChild(meta);
+    if (b.pct > 0.00005) {
+      const line = document.createElement('div'); line.className = 'progress-line';
+      const span = document.createElement('span');
+      span.style.width = Math.min(100, (b.pct || 0) * 100) + '%';
+      line.appendChild(span); el.appendChild(line);
+    }
+    const rename = document.createElement('button');
+    rename.className = 'rename'; rename.type = 'button'; rename.textContent = '✎';
+    rename.addEventListener('click', (e) => {
+      e.stopPropagation();
+      askText('Новое название:', b.title).then(n => {
+        if (n === null) return;
+        const nm = String(n).trim();
+        if (!nm) return;
+        const arr = C.loadMeta(); const bk = arr.find(x => x.id === b.id);
+        if (bk) bk.title = nm; C.saveMeta(arr); renderLibraryListOnly(); renderCategoriesBar();
+      });
+    });
+    el.appendChild(rename);
+    const del = document.createElement('button');
+    del.className = 'del'; del.type = 'button'; del.textContent = '✕';
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      askConfirm('Удалить «' + b.title + '»?', 'Удалить', true).then(ok => {
+        if (!ok) return;
+        C.removeBookData(b.id);
+        C.saveMeta(C.loadMeta().filter(x => x.id !== b.id));
+        if (S.currentBookId === b.id) backClassic();
+        renderClassicLibrary();
+      });
+    });
+    el.appendChild(del);
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.del, .rename, .cat-tag, .grip')) return;
+      openBookClassic(b.id);
+    });
+    el.addEventListener('contextmenu', (e) => { e.preventDefault(); menuAnchorFor(b.id, el); });
+    attachBookDragHandlers(el, b.id);
+    return el;
+  }
+
+  function menuAnchorFor(bookId, anchor) {
+    const menu = $('category-menu');
+    if (menu) { menu._anchor = anchor; menu.style.left = ''; menu.style.top = ''; menu.style.transform = ''; }
+    showBookMenu(bookId, anchor, false);
+  }
+
+  function renderClassicLibrary() {
+    renderCategoriesBar();
+    const searchEl = $('library-search');
+    const wrap = $('library-search-wrap'); if (wrap) wrap.classList.toggle('has-value', !!(searchEl && searchEl.value.trim()));
+    renderLibraryListOnly();
   }
 
   /* ============ ОТКРЫТИЕ ============ */
@@ -2827,6 +3046,7 @@
     C.loadMeta();
     applySettings();
     renderClassicLibrary();
+    window.__READER_UI__ = { renderClassicLibrary, renderLibraryListOnly, renderCategoriesBar };
 
     $('btn-read').addEventListener('click', () => {
       const text = $('input').value;
@@ -2846,7 +3066,11 @@
       if (!input.value.trim()) { input.focus(); return; }
       askConfirm('Очистить поле?', 'Очистить', true).then(ok => { if (ok) { input.value = ''; input.focus(); } });
     });
-    $('library-search').addEventListener('input', renderClassicLibrary);
+    $('library-search').addEventListener('input', () => {
+      const wrap = $('library-search-wrap');
+      if (wrap) wrap.classList.toggle('has-value', !!$('library-search').value.trim());
+      renderLibraryListOnly();
+    });
     $('library-search-clear').addEventListener('click', () => {
       $('library-search').value = ''; renderClassicLibrary(); $('library-search').focus();
     });
@@ -2859,7 +3083,7 @@
     bindIf('m-search', () => { closeSheet(); setTimeout(openSearch, 180); });
     bindIf('m-marks', () => { closeSheet(); setTimeout(openMarks, 180); });
     bindIf('m-mark', () => { closeSheet(); addMark(); });
-    bindIf('m-categories', () => { closeSheet(); setTimeout(promptAddCategory, 180); });
+    bindIf('m-categories', () => { closeSheet(); setTimeout(() => promptAddCategory(), 180); });
     bindIf('m-library', () => { closeSheet(); backClassic(); });
     bindIf('m-theme', () => { closeSheet(); setTimeout(openPaletteOnly, 180); });
     bindIf('m-font', () => { closeSheet(); setTimeout(openFontsOnly, 180); });
