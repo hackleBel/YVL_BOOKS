@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#14161a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>🎃</title>
+<title>🕸️</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Nunito:ital,wght@0,400;0,600;1,400&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Rubik:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
@@ -17,7 +17,7 @@
     --border: #23272e; --border-strong: #2e333b;
     --fg: #d4d7dc; --fg-dim: #6d737d; --fg-mid: #a8adb5;
     --accent: #8b919b; --accent-contrast: #14161a;
-    --col-width: 720px; --line-height: 1.85; --letter-spacing: 0;
+    --col-width: 92%; --line-height: 1.85; --letter-spacing: 0;
     --font-size: 20px;
     --font-stack: Georgia, 'Times New Roman', serif;
     --mark-color: #e0b84a;
@@ -860,7 +860,7 @@
 
   const DEFAULTS = {
     bg: '#14161a', fg: '#d4d7dc', accent: '#8b919b',
-    fontSize: 20, colWidth: 720, lineHeight: 1.85,
+    fontSize: 20, colWidth: 92, lineHeight: 1.85,
     letterSpacing: 0, fontFamily: 'serif'
   };
   const FONT_STACKS = {
@@ -957,11 +957,14 @@
     ]}
   ];
   function loadSettings() {
-    try {
-      const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
-      return Object.assign({}, DEFAULTS, s);
-    } catch (e) { return Object.assign({}, DEFAULTS); }
-  }
+  try {
+    const s = JSON.parse(localStorage.getItem('reader_settings') || '{}');
+    const merged = Object.assign({}, DEFAULTS, s);
+    // миграция: старые значения в пикселях (> 100) → проценты
+    if (merged.colWidth > 100) merged.colWidth = 92;
+    return merged;
+  } catch (e) { return Object.assign({}, DEFAULTS); }
+}
   let settings = loadSettings();
   function saveSettings() { try { localStorage.setItem('reader_settings', JSON.stringify(settings)); } catch (e) {} }
 
@@ -2189,18 +2192,18 @@
     sheetHandle.addEventListener('touchend', () => { sheetTouchStartY = null; });
   }
   function changeFont(delta) { settings.fontSize = Math.max(12, Math.min(48, settings.fontSize + delta)); saveSettings(); applySettings(); }
-  function changeWidth(delta) { settings.colWidth = Math.max(400, Math.min(1600, settings.colWidth + delta)); saveSettings(); applySettings(); }
+  function changeWidth(delta) { settings.colWidth = Math.max(50, Math.min(100, settings.colWidth + delta)); saveSettings(); applySettings(); }
   function changeLineHeight(delta) { settings.lineHeight = Math.max(1.2, Math.min(3.0, Math.round((settings.lineHeight + delta) * 100) / 100)); saveSettings(); applySettings(); }
 
   function applySettings() {
     rootStyle(settings.bg, settings.fg, settings.accent);
-    root.style.setProperty('--col-width', settings.colWidth + 'px');
+    root.style.setProperty('--col-width', settings.colWidth + '%');
     root.style.setProperty('--line-height', settings.lineHeight);
     root.style.setProperty('--letter-spacing', settings.letterSpacing.toFixed(2) + 'em');
     root.style.setProperty('--font-stack', C.FONT_STACKS[settings.fontFamily] || C.FONT_STACKS.serif);
     root.style.setProperty('--font-size', settings.fontSize + 'px');
     const msl = $('m-size-label'); if (msl) msl.textContent = settings.fontSize;
-    const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth;
+    const mwl = $('m-width-label'); if (mwl) mwl.textContent = settings.colWidth + '%';
     const mll = $('m-lh-label'); if (mll) mll.textContent = settings.lineHeight.toFixed(2);
     if (S.currentBookId) {
       const text = C.getBookText(S.currentBookId);
@@ -2453,7 +2456,7 @@
     };
     const fs = mkStepper(settings.fontSize, (sign) => { changeFont(sign * 2); fs.valEl.textContent = settings.fontSize; });
     rowsRead.appendChild(mkRow('Размер текста', fs.w));
-    const wS = mkStepper(settings.colWidth, (sign) => { changeWidth(sign * 40); wS.valEl.textContent = settings.colWidth; });
+    const wS = mkStepper(settings.colWidth + '%', (sign) => { changeWidth(sign * 2); wS.valEl.textContent = settings.colWidth + '%'; });
     rowsRead.appendChild(mkRow('Ширина колонки', wS.w));
     const lhS = mkStepper(settings.lineHeight.toFixed(2), (sign) => { changeLineHeight(sign * 0.1); lhS.valEl.textContent = settings.lineHeight.toFixed(2); });
     rowsRead.appendChild(mkRow('Интервал', lhS.w));
@@ -3124,7 +3127,7 @@ function attachBookDragHandlers(el, bookId) {
     bindIf('m-font', () => { closeSheet(); setTimeout(openFontsOnly, 180); });
     bindIf('m-add-book', () => { closeSheet(); setTimeout(promptAddBook, 180); });
     bindIf('m-font-dec', () => changeFont(-2)); bindIf('m-font-inc', () => changeFont(2));
-    bindIf('m-width-dec', () => changeWidth(-40)); bindIf('m-width-inc', () => changeWidth(40));
+    bindIf('m-width-dec', () => changeWidth(-2)); bindIf('m-width-inc', () => changeWidth(2));
     bindIf('m-lh-dec', () => changeLineHeight(-0.1)); bindIf('m-lh-inc', () => changeLineHeight(0.1));
 
     let dragCounter = 0;
